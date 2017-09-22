@@ -1,0 +1,24 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="CtLib.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="FILE_USERMANAGE" Type="System.String" Scope="User">
+      <Value Profile="(Default)">UserManage.bin</Value>
+    </Setting>
+    <Setting Name="PATH_MAIN" Type="System.String" Scope="User">
+      <Value Profile="(Default)">D:\CASTEC</Value>
+    </Setting>
+    <Setting Name="FOLD_CONFIG" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Config</Value>
+    </Setting>
+    <Setting Name="FOLD_LOG" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Log</Value>
+    </Setting>
+    <Setting Name="FOLD_PROJECT" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Project</Value>
+    </Setting>
+    <Setting Name="FOLD_RECIPE" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Recipe</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
