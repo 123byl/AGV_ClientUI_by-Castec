@@ -75,45 +75,33 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Ace.Adept, Version=3.5.3.0, Culture=neutral, PublicKeyToken=e79443b8f063fbad, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files\Adept Technology\Adept ACE\bin\Ace.Adept.dll</HintPath>
+    <Reference Include="Ace.Adept">
+      <HintPath>..\..\..\..\..\..\..\Program Files\Omron\ACE 3.6\bin\Ace.Adept.dll</HintPath>
     </Reference>
-    <Reference Include="Ace.Adept.Common, Version=3.4.0.0, Culture=neutral, PublicKeyToken=e79443b8f063fbad, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files\Adept Technology\Adept ACE\bin\Ace.Adept.Common.dll</HintPath>
+    <Reference Include="Ace.Adept.Common">
+      <HintPath>..\..\..\..\..\..\..\Program Files\Omron\ACE 3.6\bin\Ace.Adept.Common.dll</HintPath>
     </Reference>
-    <Reference Include="Ace.AdeptSight.Common, Version=3.4.0.0, Culture=neutral, PublicKeyToken=e79443b8f063fbad, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files\Adept Technology\Adept ACE\bin\Ace.AdeptSight.Common.dll</HintPath>
+    <Reference Include="Ace.AdeptSight.Common">
+      <HintPath>..\..\..\..\..\..\..\Program Files\Omron\ACE 3.6\bin\Ace.AdeptSight.Common.dll</HintPath>
     </Reference>
-    <Reference Include="Ace.Core, Version=3.4.0.0, Culture=neutral, PublicKeyToken=e79443b8f063fbad, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files\Adept Technology\Adept ACE\bin\Ace.Core.dll</HintPath>
+    <Reference Include="Ace.Core">
+      <HintPath>..\..\..\..\..\..\..\Program Files\Omron\ACE 3.6\bin\Ace.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Ace.Feeder.Common, Version=3.4.0.0, Culture=neutral, PublicKeyToken=e79443b8f063fbad, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files\Adept Technology\Adept ACE\bin\Ace.Feeder.Common.dll</HintPath>
+    <Reference Include="Ace.Feeder.Common">
+      <HintPath>..\..\..\..\..\..\..\Program Files\Omron\ACE 3.6\bin\Ace.Feeder.Common.dll</HintPath>
     </Reference>
-    <Reference Include="Ace.HSVision.Common, Version=3.4.0.0, Culture=neutral, PublicKeyToken=e79443b8f063fbad, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files\Adept Technology\Adept ACE\bin\Ace.HSVision.Common.dll</HintPath>
+    <Reference Include="Ace.HSVision.Common">
+      <HintPath>..\..\..\..\..\..\..\Program Files\Omron\ACE 3.6\bin\Ace.HSVision.Common.dll</HintPath>
     </Reference>
-    <Reference Include="Ace.ProcessManager.Common, Version=3.4.0.0, Culture=neutral, PublicKeyToken=e79443b8f063fbad, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files\Adept Technology\Adept ACE\bin\Ace.ProcessManager.Common.dll</HintPath>
+    <Reference Include="Ace.ProcessManager.Common">
+      <HintPath>..\..\..\..\..\..\..\Program Files\Omron\ACE 3.6\bin\Ace.ProcessManager.Common.dll</HintPath>
     </Reference>
-    <Reference Include="Ace.UIBuilder.Common, Version=3.4.0.0, Culture=neutral, PublicKeyToken=e79443b8f063fbad, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files\Adept Technology\Adept ACE\bin\Ace.UIBuilder.Common.dll</HintPath>
+    <Reference Include="Ace.UIBuilder.Common">
+      <HintPath>..\..\..\..\..\..\..\Program Files\Omron\ACE 3.6\bin\Ace.UIBuilder.Common.dll</HintPath>
     </Reference>
-    <Reference Include="AxInterop.HSDISPLAYLib">
-      <HintPath>C:\Program Files\Adept Technology\Adept ACE\bin\AxInterop.HSDISPLAYLib.dll</HintPath>
-    </Reference>
-    <Reference Include="CaoRCW, Version=1.0.0.0, Culture=neutral, PublicKeyToken=913101d92649464f, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="CaoRCW">
+      <HintPath>..\..\..\CtLib\CtLib\Dynamic Link Libraries\ORiN2\CaoRCW.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
-      <HintPath>bin\Debug\CaoRCW.dll</HintPath>
     </Reference>
     <Reference Include="Interop.HSDISPLAYLib">
       <HintPath>C:\Program Files\Omron\ACE 3.6\bin\Interop.HSDISPLAYLib.dll</HintPath>
@@ -132,9 +120,8 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="TwinCAT.Ads, Version=2.0.12.0, Culture=neutral, PublicKeyToken=180016cd49e5e8c3, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\TwinCAT\AdsApi\.NET\v2.0.50727\TwinCAT.Ads.dll</HintPath>
+    <Reference Include="TwinCAT.Ads">
+      <HintPath>..\..\..\CtLib\CtLib\Dynamic Link Libraries\Beckhoff\TwinCAT.Ads.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
