@@ -1,0 +1,34 @@
+﻿==========================================
+=                                        =
+= CtLib  Dynamic-Link Library  注意事項  =
+=                                        =
+==========================================
+
+
+
+
+/* 版本訊息 */
+
+Omron|Adept Automation Control Environment
+	組件		Ace
+	版本	
+	備註		因專案版本眾多，請執行 CopyDlls.cmd 來複製當前電腦的動態連結檔
+	版本控制	✗
+
+Beckhoff
+	組件		Ads (.Net)
+	版本		4.1.25.0
+	備註		for .Net 4.0 (含)以上版本
+	版本控制	✓
+
+Delta
+	組件		DMT
+	版本		2.4
+	備註
+	版本控制	✓
+
+ORiN2
+	組件		RCW (.Net)
+	版本		1.0.0.0
+	備註
+	版本控制	✓

@@ -447,6 +447,9 @@
       <Name>ServerOperation</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Dynamic Link Libraries\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>copy "D:\CASTEC\Config\" "$(ProjectDir)D1703.opc"</PreBuildEvent>

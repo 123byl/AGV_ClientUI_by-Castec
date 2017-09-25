@@ -493,6 +493,8 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <None Include="ClassDiagram1.cd" />
+    <None Include="Dynamic Link Libraries\Adept ACE\CopyDlls.cmd" />
+    <None Include="Dynamic Link Libraries\Staubli\StaubliSoap.dll.config" />
     <None Include="Properties\Settings.settings">
       <Generator>PublicSettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -530,6 +532,13 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="CASTEC.ico" />
+    <Content Include="Dynamic Link Libraries\Beckhoff\ReadMe_Ads.txt" />
+    <Content Include="Dynamic Link Libraries\Beckhoff\TwinCAT.Ads.dll" />
+    <Content Include="Dynamic Link Libraries\Beckhoff\TwinCAT.Ads.XML" />
+    <Content Include="Dynamic Link Libraries\Delta\DMT.dll" />
+    <Content Include="Dynamic Link Libraries\Note.txt" />
+    <Content Include="Dynamic Link Libraries\ORiN2\CaoRCW.dll" />
+    <Content Include="Dynamic Link Libraries\Staubli\StaubliSoap.dll" />
     <Content Include="Module\Delta\DMT.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

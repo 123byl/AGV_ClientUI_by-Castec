@@ -280,7 +280,6 @@ namespace ClientUI {
                     row.Cells[4].Value = false;
                     row.HeaderCell.Value = idx++.ToString();
                     dgvGoalPoint.InvokeIfNecessary(() => {
-
                         dgvGoalPoint.Rows.Add(row); 
                     });
                 }

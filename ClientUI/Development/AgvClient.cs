@@ -463,8 +463,9 @@ namespace ClientUI {
         ///     0.0.9   Jay [2017/09/25]
         ///         \ GoalSetting介面中DataGridView與ComboBox順序統一
         ///         \ LoadMap後DataGridView補上編號
+        ///         \ 將專案中所使用到的Dll加入專案當中
         /// </remarks>
-        public CtVersion Version { get { return new CtVersion( 0, 0, 7, "2017/09/18", "Jay Chang"); } }
+        public CtVersion Version { get { return new CtVersion( 0, 0, 9, "2017/09/25", "Jay Chang"); } }
 
         #endregion Version Information
 
