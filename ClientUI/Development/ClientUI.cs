@@ -33,7 +33,6 @@ namespace ClientUI {
 
         UserData UserData { get; }
         
-
         /// <summary>
         /// 是否Bypass Socket功能
         /// </summary>

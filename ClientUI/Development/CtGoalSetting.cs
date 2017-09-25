@@ -27,7 +27,7 @@ namespace ClientUI {
         /// <summary>
         /// Goal點集合
         /// </summary>
-        List<CartesianPos> Goals { get;}
+        List<CartesianPos> Goals { get; }
 
         /// <summary>
         /// 當前Map檔路徑
@@ -37,7 +37,7 @@ namespace ClientUI {
         /// <summary>
         /// 要新增的點位
         /// </summary>
-        CarPos AddPos { get; set;  }
+        CarPos AddPos { get; set; }
 
         /// <summary>
         /// Goal Setting相關事件
@@ -121,7 +121,7 @@ namespace ClientUI {
         #endregion Declaration - Fields
 
         #region Declaration - Properties
-        
+
         /// <summary>
         /// Goal點集合
         /// </summary>
@@ -146,7 +146,7 @@ namespace ClientUI {
             set {
                 if (rActFunc != null) {
                     rActFunc.AddPos = value;
-                }else {
+                } else {
                     mAddPos = value;
                 }
             }
@@ -156,7 +156,7 @@ namespace ClientUI {
 
         #region Funciton - Construcotrs
 
-        public CtGoalSetting(DockState defState = DockState.Float) :this(null,null,defState){
+        public CtGoalSetting(DockState defState = DockState.Float) : this(null, null, defState) {
 
         }
 
@@ -165,8 +165,8 @@ namespace ClientUI {
         /// </summary>
         /// <param name="goalSetting">GoalSetting方法實作物件參考</param>
         /// <param name="defState">預設停靠方式</param>
-        public CtGoalSetting(IGoalSetting goalSetting,DockState defState = DockState.Float)
-            : this(goalSetting,null, defState) {
+        public CtGoalSetting(IGoalSetting goalSetting, DockState defState = DockState.Float)
+            : this(goalSetting, null, defState) {
 
         }
 
@@ -176,8 +176,8 @@ namespace ClientUI {
         /// <param name="goalsetting">GoalSetting方法實作物件參考</param>
         /// <param name="main">主介面參考</param>
         /// <param name="defState">預設停靠方式</param>
-        public CtGoalSetting (IGoalSetting goalsetting,AgvClientUI main,DockState defState = DockState.Float)
-            :base (goalsetting,main,defState){
+        public CtGoalSetting(IGoalSetting goalsetting, AgvClientUI main, DockState defState = DockState.Float)
+            : base(goalsetting, main, defState) {
             InitializeComponent();
             FixedSize = new Size(776, 860);
             if (rActFunc == null) {
@@ -245,7 +245,7 @@ namespace ClientUI {
         /// </summary>
         /// <param name="carPos"></param>
         private void RefreshAddPos(CarPos carPos) {
-            CtInvoke.TextBoxText(txtAddPx,$"{carPos.x}");
+            CtInvoke.TextBoxText(txtAddPx, $"{carPos.x}");
             CtInvoke.TextBoxText(txtAddPy, $"{carPos.y}");
             CtInvoke.TextBoxText(txtAddPtheta, $"{carPos.theta}");
         }
@@ -268,18 +268,24 @@ namespace ClientUI {
             CtInvoke.DataGridViewClear(dgvGoalPoint);
             CtInvoke.ComboBoxClear(cmbGoalList);
             if (goals.Any()) {
-                CtInvoke.ComboBoxSelectedIndex(cmbGoalList, 0);
+                int idx = 1;
                 foreach (CartesianPos goal in goals) {
                     CtInvoke.ComboBoxAdd(cmbGoalList, goal.ToStr());
-                    CtInvoke.DataGridViewAddRow(
-                        dgvGoalPoint,
-                        new object[] {
-                            new CheckBox().Checked = false,
-                            goal.x,goal.y,goal.theta,
-                            false
-                        });
+                    DataGridViewRow row = new DataGridViewRow();
+                    row.CreateCells(dgvGoalPoint);
+                    row.Cells[0].Value = new CheckBox().Checked = false;
+                    row.Cells[1].Value = goal.x;
+                    row.Cells[2].Value = goal.y;
+                    row.Cells[3].Value = goal.theta;
+                    row.Cells[4].Value = false;
+                    row.HeaderCell.Value = idx++.ToString();
+                    dgvGoalPoint.InvokeIfNecessary(() => {
+
+                        dgvGoalPoint.Rows.Add(row); 
+                    });
                 }
-            }      
+                CtInvoke.ComboBoxSelectedIndex(cmbGoalList, 0);
+            }
         }
 
         /// <summary>
@@ -303,7 +309,7 @@ namespace ClientUI {
             if (rActFunc != null) {
                 rActFunc.GoalSettingEvent -= rActFunc_OnGoalSettingEvent;
             }
-            TextChecker.Remove(txtAddPx,txtAddPy,txtAddPtheta);
+            TextChecker.Remove(txtAddPx, txtAddPy, txtAddPtheta);
         }
 
         #endregion Function - Private
@@ -319,13 +325,13 @@ namespace ClientUI {
         private void btnDelete_Click(object sender, EventArgs e) {
             int saveCount = 0;
 
-            while(saveCount != dgvGoalPoint.Rows.Count) {
+            while (saveCount != dgvGoalPoint.Rows.Count) {
                 DataGridViewRow row = dgvGoalPoint.Rows[saveCount];
                 if ((bool)row.Cells[0].Value) {
                     dgvGoalPoint.Rows.Remove(row);
                     CtInvoke.ComboBoxRemove(cmbGoalList, saveCount);
                     rActFunc.DeleteGoal(saveCount);
-                }else {
+                } else {
                     saveCount++;
                     row.HeaderCell.Value = $"{saveCount}";
                 }
@@ -404,26 +410,26 @@ namespace ClientUI {
     /// <summary>
     /// Goal Setting 事件參數
     /// </summary>
-    public class GoalSettingEventArgs:EventArgs {
+    public class GoalSettingEventArgs : EventArgs {
         /// <summary>
         /// 事件類型
         /// </summary>
-        public GoalSettingEventType Type { get;}
+        public GoalSettingEventType Type { get; }
 
         /// <summary>
         /// 傳遞參數
         /// </summary>
         public object Value { get; }
-        
+
         /// <summary>
         /// 一般建構方法
         /// </summary>
         /// <param name="type">事件類型</param>
         /// <param name="value">傳遞參數</param>
-        public GoalSettingEventArgs(GoalSettingEventType type,object value = null) {
+        public GoalSettingEventArgs(GoalSettingEventType type, object value = null) {
             this.Type = type;
             this.Value = value;
-        } 
+        }
     }
 
     /// <summary>

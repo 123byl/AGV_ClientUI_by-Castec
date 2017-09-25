@@ -224,6 +224,14 @@ namespace ClientUI {
     /// </summary>
     internal static class AgvExtenstion {
 
+        /// <summary>擴充 <see cref="Control"/>，使用 <seealso cref="Control.Invoke(Delegate)"/> 方法執行不具任何簽章之委派</summary>
+        /// <param name="ctrl">欲調用的控制項</param>
+        /// <param name="action">欲執行的方法</param>
+        public static void InvokeIfNecessary(this Control ctrl, MethodInvoker action) {
+            if (ctrl.InvokeRequired) ctrl.Invoke(action);
+            else action();
+        }
+
         internal static  Pos ToPos(this CarInfo info) {
             return new Pos(info.X, info.Y, info.ThetaGyro);
         }
@@ -452,6 +460,9 @@ namespace ClientUI {
         ///     0,0,8   Jay [2017/09/20]
         ///         \ 移植到20170919版本方案中
         ///         \ 命令交握修改
+        ///     0.0.9   Jay [2017/09/25]
+        ///         \ GoalSetting介面中DataGridView與ComboBox順序統一
+        ///         \ LoadMap後DataGridView補上編號
         /// </remarks>
         public CtVersion Version { get { return new CtVersion( 0, 0, 7, "2017/09/18", "Jay Chang"); } }
 
