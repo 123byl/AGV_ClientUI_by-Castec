@@ -30,18 +30,6 @@ namespace ClientUI {
         #region Methods
 
         /// <summary>
-        /// 分配行為方法參考
-        /// </summary>
-        /// <param name="actFunc"></param>
-        void AssignmentActFunc(object actFunc);
-
-        /// <summary>
-        /// 分配主介面參考
-        /// </summary>
-        /// <param name="main">主介面物件參考</param>
-        void AssignmentMainUI(AgvClientUI main);
-
-        /// <summary>
         /// 分配<see cref="DockPanel"/>物件參考
         /// </summary>
         /// <param name="dockPanel"></param>
@@ -70,7 +58,7 @@ namespace ClientUI {
     /// <summary>
     /// 基礎的DockContent類
     /// </summary>
-    public class CtDockContent<T> : DockContent, ICtDockContent {
+    public class CtDockContent : DockContent, ICtDockContent {
 
         #region Declaration - Fiedls
         
@@ -83,11 +71,6 @@ namespace ClientUI {
         /// 表單固定大小
         /// </summary>
         private Size mFixedSize = new Size(0,0);
-
-        /// <summary>
-        /// 功能實例參考
-        /// </summary>
-        protected T rActFunc = default(T);
 
         /// <summary>
         /// 主介面參考
@@ -151,21 +134,12 @@ namespace ClientUI {
         }
 
         /// <summary>
-        /// 泛型建構方法
-        /// </summary>
-        /// <param name="mth">功能方法實例參考</param>
-        /// <param name="defState">預設的停靠狀態，不可為Unknown</param>
-        public CtDockContent(T mth,DockState defState = DockState.Float):this(defState) {
-            rActFunc = mth;
-        }
-
-        /// <summary>
         /// 附加主介面參考
         /// </summary>
         /// <param name="actFunc"></param>
         /// <param name="main"></param>
         /// <param name="defState"></param>
-        public CtDockContent(T actFunc, AgvClientUI main ,DockState defState):this(actFunc, defState) {
+        public CtDockContent(AgvClientUI main ,DockState defState):this( defState) {
             rMain = main;
         }
 
@@ -191,26 +165,6 @@ namespace ClientUI {
         #endregion Function - Events
         
         #region Function - Public Methods
-
-        /// <summary>
-        /// 分配行為方法參考
-        /// </summary>
-        /// <param name="obj">行為方法參考</param>
-        public void AssignmentActFunc(object obj) {
-            if (obj is T) {
-                AssignmentActFunc((T)obj);
-            } else {
-                throw new ArgumentException($"ActFunc類型須為{typeof(T)}");
-            }
-        }
-        
-        /// <summary>
-        /// 分配主介面參考
-        /// </summary>
-        /// <param name="main">主介面物件參考</param>
-        public void AssignmentMainUI(AgvClientUI main) {
-            rMain = main;
-        }
 
         /// <summary>
         /// 分配<see cref="DockPanel"/>物件參考
@@ -250,21 +204,6 @@ namespace ClientUI {
             }else {
                 action();
             }
-        }
-
-        /// <summary>
-        /// 分配行為方法類
-        /// </summary>
-        /// <param name="actFunc">行為方法類</param>
-        protected virtual void AssignmentActFunc(T actFunc) {
-            /*-- 若是已有參考則先釋放掉 --*/
-            if (rActFunc != null) {
-                RemoveEvent();
-            }
-
-            /*-- 保存參考並訂閱事件 --*/
-            rActFunc = actFunc;
-            AddEvent();
         }
        
         /// <summary>

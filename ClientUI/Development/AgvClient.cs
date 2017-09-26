@@ -442,7 +442,7 @@ namespace ClientUI {
     /// <summary>
     /// Agv功能類
     /// </summary>
-    public class AgvClient : IAgvClient,ICtVersion  {
+    public class AgvClient : ICtVersion  {
 
         #region Version Information
 
@@ -858,15 +858,6 @@ namespace ClientUI {
         public List<CarPos> PtCar { get; set; } = new List<CarPos>();
 
         public List<string> StrCar { get; set; } = new List<string>();
-        
-        /// <summary>
-        /// 要新增的點位
-        /// </summary>
-        /// <remarks>
-        /// 禁止IMapGL接口進行set
-        /// IMapGL使用SetAddPos方法進行設定(觸發GoalSetting事件)
-        /// </remarks>
-        CarPos IMapGL.AddPos { get { return AddPos; } }
 
         /// <summary>
         /// 地圖相關事件
@@ -1557,23 +1548,6 @@ namespace ClientUI {
 
         #region IConsole
 
-        /// <summary>
-        /// 訊息傳輸事件
-        /// </summary>
-        private event MessageTransmission mMsgTrans;
-        
-        /// <summary>
-        /// 訊息傳輸事件
-        /// </summary>
-        event MessageTransmission IConsole.MessageTransmission {
-            add {
-                mMsgTrans += value;
-            }
-
-            remove {
-                mMsgTrans -= value;
-            }
-        }
 
         #endregion IConsole
 
@@ -2490,7 +2464,6 @@ namespace ClientUI {
         /// </summary>
         /// <param name="msg">傳輸訊息內容</param>
         private void RaiseMsgTrans(string msg) {
-            mMsgTrans?.BeginInvoke(msg, null, null);    
         }
 
         /// <summary>

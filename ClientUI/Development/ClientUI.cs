@@ -17,81 +17,81 @@ using CtLib.Module.Ultity;
 using static CtLib.Forms.CtLogin;
 using CtLib.Forms;
 namespace ClientUI {
-    
-    /// <summary>
-    /// AGV Client端接口
-    /// </summary>
-    public interface IAgvClient :
-    #region 繼承的功能接口
-        IConsole,
-        IMapGL,
-        IGoalSetting,
-        ITesting,
-        IDisposable
-    #endregion 繼承的功能接口
-        {
 
-        UserData UserData { get; }
+    ///// <summary>
+    ///// AGV Client端接口
+    ///// </summary>
+    //public interface IAgvClient :
+    //#region 繼承的功能接口
+    //    IConsole,
+    //    IMapGL,
+    //    IGoalSetting,
+    //    ITesting,
+    //    IDisposable
+    //#endregion 繼承的功能接口
+    //    {
+
+    //    UserData UserData { get; }
         
-        /// <summary>
-        /// 是否Bypass Socket功能
-        /// </summary>
-        bool IsBypassSocket { get; set; }
+    //    /// <summary>
+    //    /// 是否Bypass Socket功能
+    //    /// </summary>
+    //    bool IsBypassSocket { get; set; }
 
-        /// <summary>
-        /// 是否Bypass LoadFile功能
-        /// </summary>
-        bool IsBypassLoadFile { get; set; }
+    //    /// <summary>
+    //    /// 是否Bypass LoadFile功能
+    //    /// </summary>
+    //    bool IsBypassLoadFile { get; set; }
 
-        /// <summary>
-        /// 當前語系
-        /// </summary>
-        /// <remarks>
-        /// 暫時用不到，未來開發多語系用
-        /// </remarks>
-        UILanguage Culture { get; }
+    //    /// <summary>
+    //    /// 當前語系
+    //    /// </summary>
+    //    /// <remarks>
+    //    /// 暫時用不到，未來開發多語系用
+    //    /// </remarks>
+    //    UILanguage Culture { get; }
 
-        /// <summary>
-        /// AGV客戶端事件
-        /// </summary>
-        event AgvClientEvent AgvClientEventTrigger;
+    //    /// <summary>
+    //    /// AGV客戶端事件
+    //    /// </summary>
+    //    event AgvClientEvent AgvClientEventTrigger;
 
-        ///// <summary>
-        ///// 車子資訊更新事件
-        ///// </summary>
-        //event CarInfoRefresh InfoRefresh;
+    //    ///// <summary>
+    //    ///// 車子資訊更新事件
+    //    ///// </summary>
+    //    //event CarInfoRefresh InfoRefresh;
         
-        ///// <summary>
-        ///// 使用者變更事件
-        ///// </summary>
-        //event UserChanged UserChanged;
+    //    ///// <summary>
+    //    ///// 使用者變更事件
+    //    ///// </summary>
+    //    //event UserChanged UserChanged;
 
-        /// <summary>
-        /// 顯示關於視窗
-        /// </summary>
-        void form_About();
+    //    /// <summary>
+    //    /// 顯示關於視窗
+    //    /// </summary>
+    //    void form_About();
         
-        /// <summary>
-        /// 模組版本註冊
-        /// </summary>
-        /// <remarks>
-        /// 用於紀錄使用到的模組版本
-        /// </remarks>
-        /// <param name="modName">模組名稱</param>
-        /// <param name="modVer">模組版本</param>
-        void RegisterVersion(string modName,string modVer);
+    //    /// <summary>
+    //    /// 模組版本註冊
+    //    /// </summary>
+    //    /// <remarks>
+    //    /// 用於紀錄使用到的模組版本
+    //    /// </remarks>
+    //    /// <param name="modName">模組名稱</param>
+    //    /// <param name="modVer">模組版本</param>
+    //    void RegisterVersion(string modName,string modVer);
 
-        /// <summary>
-        /// 依照當前權限決定登入或登出
-        /// </summary>
-        void Login();
+    //    /// <summary>
+    //    /// 依照當前權限決定登入或登出
+    //    /// </summary>
+    //    void Login();
 
-        /// <summary>
-        /// 使用者管理視窗
-        /// </summary>
-        void form_UserManager();
+    //    /// <summary>
+    //    /// 使用者管理視窗
+    //    /// </summary>
+    //    void form_UserManager();
         
-    }
+    //}
     
     /// <summary>
     /// 客戶端介面
@@ -103,7 +103,7 @@ namespace ClientUI {
         /// <summary>
         /// Agv Client端物件參考
         /// </summary>
-        private IAgvClient rAgvClient = null;
+        private AgvClient rAgvClient = null;
 
         /// <summary>
         /// ICtDockContent與MenuItem對照
@@ -181,7 +181,7 @@ namespace ClientUI {
         /// 傳入<see cref="IAgvClient"/>參考進行建置
         /// </summary>
         /// <param name="agvClient"><see cref="IAgvClient"/>參考實例</param>
-        public AgvClientUI(IAgvClient agvClient):this() {
+        public AgvClientUI(AgvClient agvClient):this() {
             rAgvClient = agvClient;
             rAgvClient.AgvClientEventTrigger += rAgvClient_OnAgvClientEventTrigger; ;
             
@@ -213,7 +213,7 @@ namespace ClientUI {
             CtInvoke.ToolStripItemChecked(miLoadFile, rAgvClient.IsBypassLoadFile);
 
             /*-- 檢查遠端設備IP --*/
-            tslbHostIP.Text = rAgvClient.HostIP;
+            //tslbHostIP.Text = rAgvClient.HostIP;
             
         }
         
@@ -420,7 +420,7 @@ namespace ClientUI {
         /// 清除所有Goal點
         /// </summary>
         public void DeleteAllGoal() {
-            MapGL?.DeleteAllGoal();
+            //MapGL?.DeleteAllGoal();
         }
 
         /// <summary>
@@ -428,21 +428,21 @@ namespace ClientUI {
         /// </summary>
         /// <param name="goal">Goal點</param>
         public void AddGoalPos(CarPos goal) {
-            MapGL?.AddGoalPos(goal);
+            //MapGL?.AddGoalPos(goal);
         }
 
         /// <summary>
         /// 設定GL模式
         /// </summary>
         public void SetGLMode(GLMode mode) {
-            MapGL?.SetGLMode(mode);
+            //MapGL?.SetGLMode(mode);
         }
 
         /// <summary>
         /// 清除地圖
         /// </summary>
         public void ClearMap() {
-            MapGL?.ClearMap();
+            //MapGL?.ClearMap();
         }
         
         #endregion Function - Public Methdos
@@ -470,6 +470,7 @@ namespace ClientUI {
                 { miMapGL,new CtMapGL( DockState.Document)}
             };
 
+
             /*-- 計算每個固定停靠區域所需的顯示大小 --*/
             foreach (var area in Enum.GetValues(typeof(DockAreas))) {
                 CalculateFixedPortion(dockPanel, (DockAreas)area);
@@ -481,8 +482,6 @@ namespace ClientUI {
                 ICtDockContent dokContent = kvp.Value as ICtDockContent;
 
                 /*-- 參考分配 --*/
-                dokContent.AssignmentActFunc(rAgvClient);
-                dokContent.AssignmentMainUI(this);
                 dokContent.AssignmentDockPanel(dockPanel);
 
                 /*-- 顯示視窗 --*/

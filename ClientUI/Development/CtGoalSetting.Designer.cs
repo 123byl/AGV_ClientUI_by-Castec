@@ -78,7 +78,6 @@
             this.btnGetMap.TabIndex = 62;
             this.btnGetMap.Text = "Get Map";
             this.btnGetMap.UseVisualStyleBackColor = true;
-            this.btnGetMap.Click += new System.EventHandler(this.btnGetMap_Click);
             // 
             // btnLoadMap
             // 
@@ -89,7 +88,6 @@
             this.btnLoadMap.TabIndex = 61;
             this.btnLoadMap.Text = "Load Map";
             this.btnLoadMap.UseVisualStyleBackColor = true;
-            this.btnLoadMap.Click += new System.EventHandler(this.btnLoadMap_Click);
             // 
             // btnSendMap
             // 
@@ -100,7 +98,6 @@
             this.btnSendMap.TabIndex = 60;
             this.btnSendMap.Text = "Send Map";
             this.btnSendMap.UseVisualStyleBackColor = true;
-            this.btnSendMap.Click += new System.EventHandler(this.btnSendMap_Click);
             // 
             // btnPath
             // 
@@ -112,7 +109,6 @@
             this.btnPath.TabIndex = 59;
             this.btnPath.Text = "Path";
             this.btnPath.UseVisualStyleBackColor = true;
-            this.btnPath.Click += new System.EventHandler(this.btnPath_Click);
             // 
             // btnSaveGoal
             // 
@@ -124,7 +120,6 @@
             this.btnSaveGoal.TabIndex = 58;
             this.btnSaveGoal.Text = "Save Goal List";
             this.btnSaveGoal.UseVisualStyleBackColor = true;
-            this.btnSaveGoal.Click += new System.EventHandler(this.btnSaveGoal_Click);
             // 
             // cmbGoalList
             // 
@@ -157,7 +152,6 @@
             this.btnGoGoal.TabIndex = 55;
             this.btnGoGoal.Text = "Run";
             this.btnGoGoal.UseVisualStyleBackColor = true;
-            this.btnGoGoal.Click += new System.EventHandler(this.btnGoGoal_Click);
             // 
             // label14
             // 
@@ -289,7 +283,6 @@
             this.btnNewPoint.TabIndex = 46;
             this.btnNewPoint.Text = "Add New Point";
             this.btnNewPoint.UseVisualStyleBackColor = true;
-            this.btnNewPoint.Click += new System.EventHandler(this.btnNewPoint_Click);
             // 
             // btnDeleteAll
             // 
@@ -300,7 +293,6 @@
             this.btnDeleteAll.TabIndex = 47;
             this.btnDeleteAll.Text = "Delete All";
             this.btnDeleteAll.UseVisualStyleBackColor = true;
-            this.btnDeleteAll.Click += new System.EventHandler(this.btnDeleteAll_Click);
             // 
             // btnDelete
             // 
@@ -311,7 +303,6 @@
             this.btnDelete.TabIndex = 48;
             this.btnDelete.Text = "Delete Selection";
             this.btnDelete.UseVisualStyleBackColor = true;
-            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
             // 
             // btnCurrPos
             // 
@@ -322,7 +313,6 @@
             this.btnCurrPos.TabIndex = 46;
             this.btnCurrPos.Text = "Add Current Point";
             this.btnCurrPos.UseVisualStyleBackColor = true;
-            this.btnCurrPos.Click += new System.EventHandler(this.btnCurrPos_Click);
             // 
             // CtGoalSetting
             // 
