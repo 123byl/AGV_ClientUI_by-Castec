@@ -5,6 +5,8 @@ using System.Drawing;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 using static ClientUI.Events.GoalSettingEvents;
+using MapProcessing;
+using CtLib.Library;
 
 namespace ClientUI
 {
@@ -376,6 +378,33 @@ namespace ClientUI
         private void btnSaveGoal_Click(object sender, EventArgs e)
         {
             SaveGoalEvent?.Invoke();
+        }
+
+        /// <summary>
+        /// 地圖載入
+        /// </summary>
+        /// <param name="goals"></param>
+        public void LoadGoals(List<CartesianPos> goals) {
+            CtInvoke.DataGridViewClear(dgvGoalPoint);
+            CtInvoke.ComboBoxClear(cmbGoalList);
+            if (goals.Count > 0) {
+                int idx = 1;
+                foreach (CartesianPos goal in goals) {
+                    CtInvoke.ComboBoxAdd(cmbGoalList, goal.ToStr());
+                    DataGridViewRow row = new DataGridViewRow();
+                    row.CreateCells(dgvGoalPoint);
+                    row.Cells[0].Value = new CheckBox().Checked = false;
+                    row.Cells[1].Value = goal.x;
+                    row.Cells[2].Value = goal.y;
+                    row.Cells[3].Value = goal.theta;
+                    row.Cells[4].Value = false;
+                    row.HeaderCell.Value = idx++.ToString();
+                    dgvGoalPoint.InvokeIfNecessary(() => {
+                        dgvGoalPoint.Rows.Add(row);
+                    });
+                }
+                CtInvoke.ComboBoxSelectedIndex(cmbGoalList, 0);
+            }
         }
         #endregion UI Event
     }

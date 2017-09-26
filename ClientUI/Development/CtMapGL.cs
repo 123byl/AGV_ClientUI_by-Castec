@@ -42,7 +42,76 @@ namespace ClientUI {
         }
 
         #endregion Function - Constructors
-        
+
+        #region Funciton - Public Methods
+
+        public void LoadMap(List<Line>obstacleLines ,List<Point> obstaclePoints,List<CartesianPos> goals) {
+            ClearMap();
+            glMap.RemoveAllPositonGoal();
+            DrawObstacle(obstacleLines, obstaclePoints);
+            glMap.AddPositionGoals(goals);
+        }
+
+
+        public void ClearMap() {
+            glMap.RemoveAllLines();
+            glMap.RemoveAllPoints();
+        }
+
+        /// <summary>
+        /// 障礙繪製
+        /// </summary>
+        /// <param name="obstacleLines">障礙線段集合</param>
+        /// <param name="obstaclePoints">障礙點集合</param>
+        public void DrawObstacle(List<Line> obstacleLines, List<Point> obstaclePoints) {
+            glMap.DrawLines(obstacleLines, Color.Black, "ObstacleLines", true);
+            glMap.DrawPoints(obstaclePoints, Color.Black, "ObstaclePoints", 1);
+        }
+
+        /// <summary>
+        /// Ori載入中
+        /// </summary>
+        /// <param name="dic"></param>
+        public void LoadOri(Pos carPos, List<CartesianPos> scanPoints) {
+            glMap.PosCar = carPos;
+            DrawPoints(scanPoints, Color.Black, 2, 1, "MAP");
+        }
+        #endregion Funciton - Public Methods
+
+        #region Funciton - Private Methods
+
+
+
+        /// <summary>
+        /// 畫多點
+        /// </summary>
+        /// <param name="carPos"><see cref="CartesianPos"/>點集合</param>
+        /// <param name="color">使用顏色</param>
+        /// <param name="pointSize">點尺寸</param>
+        /// <param name="layer">圖層數</param>
+        /// <param name="nameGroup">群組名稱</param>
+        private void DrawPoints(List<CartesianPos> carPos, Color color, float pointSize, int layer, string nameGroup) {
+            DrawPoints(carPos, color, nameGroup, pointSize, layer);
+        }
+
+        /// <summary>
+        /// 畫多點
+        /// </summary>
+        /// <param name="carPos"></param>
+        /// <param name="color"></param>
+        /// <param name="nameGroup"></param>
+        /// <param name="pointSize"></param>
+        /// <param name="layer"></param>
+        private void DrawPoints(List<CartesianPos> carPos, Color color, string nameGroup, float pointSize, int layer = -1) {
+            List<Point> points = carPos.ConvertAll(v => v.ToPoint());
+            if (layer != -1) {
+                glMap.DrawPoints(points, color, nameGroup, pointSize, false, layer);
+            } else {
+                glMap.DrawPoints(points, color, nameGroup, pointSize);
+            }
+        }
+        #endregion Function - Private Methods
+
     }
 
     /// <summary>

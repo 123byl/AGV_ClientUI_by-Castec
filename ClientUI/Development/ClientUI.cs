@@ -16,6 +16,13 @@ using CtLib.Library;
 using CtLib.Module.Ultity;
 using static CtLib.Forms.CtLogin;
 using CtLib.Forms;
+using MapProcessing;
+using System.Threading;
+using ServerOperation;
+using static MapGL.CastecMapUI;
+using System.Net;
+using System.Net.Sockets;
+
 namespace ClientUI
 {
 
@@ -26,6 +33,154 @@ namespace ClientUI
     {
 
         #region Declaration - Fields
+
+
+        /// <summary>
+        /// 當前Map檔路徑
+        /// </summary>
+        private string mCurMapPath = string.Empty;
+
+        /// <summary>
+        /// 是否已建立連線
+        /// </summary>
+        private bool mIsConnected = false;
+
+        /// <summary>
+        /// 進度條物件
+        /// </summary>
+        private CtProgress mProg = null;
+
+        /// <summary>Opcode 檔案名稱</summary>
+        private static readonly string FILENAME_OPCODE = "D1703.opc";
+
+        /// <summary>CtOpcode Object</summary>
+        private CtOpcode mOpcode = new CtOpcode();
+
+        /// <summary>
+        /// Server端IP
+        /// </summary>
+        private static string mHostIP = "127.0.0.1";
+
+        /// <summary>
+        /// 發送圖片的埠
+        /// </summary>
+        private static int mFilePort = 600;
+
+        /// <summary>
+        /// 接收請求的埠開啟後就一直進行偵聽
+        /// </summary>
+        private static int mRecvCmdPort = 400;
+
+        /// <summary>
+        /// 接收請求的埠開啟後就一直進行偵聽
+        /// </summary>
+        private static int mCmdPort = 800;
+
+        /// <summary>
+        /// 發送地圖的埠
+        /// </summary>
+        private static int mSendMapPort = 700;
+
+        /// <summary>
+        /// 路徑規劃接收埠
+        /// </summary>
+        private static int mRecvPathPort = 900;
+
+        /// <summary>
+        /// 地圖檔儲存路徑
+        /// </summary>
+        public string mDefMapDir = @"D:\MapInfo\";
+
+        /// <summary>
+        /// 車子馬達轉速
+        /// </summary>
+        private int mVelocity = 500;
+
+        /// <summary>
+        /// 命令接收物件
+        /// </summary>
+        private SocketMonitor mSoxMonitorCmd = null;
+
+        /// <summary>
+        /// 地圖資料接收物件
+        /// </summary>
+        private SocketMonitor mSoxMonitorFile = null;
+
+        /// <summary>
+        /// 路徑規劃接收物件
+        /// </summary>
+        private SocketMonitor mSoxMonitorPath = null;
+
+        /// <summary>
+        /// 地圖操作執行緒
+        /// </summary>
+        private Thread mTdMapOperation = null;
+
+        /// <summary>
+        /// Map檔載入執行緒
+        /// </summary>
+        private Thread mTdLoadMap = null;
+
+        /// <summary>
+        /// 地圖載入執行緒
+        /// </summary>
+        private Thread mLoadOriginScanning = null;
+
+        /// <summary>
+        /// 偵測多餘的呼叫
+        /// </summary>
+        private bool disposedValue = false;
+
+        /// <summary>
+        /// 模組版本集合
+        /// </summary>
+        private Dictionary<string, string> mModuleVersions = new Dictionary<string, string>();
+
+        /// <summary>
+        /// 使用者操作權限
+        /// </summary>
+        private UserData mUser = new UserData("CASTEC", "", AccessLevel.ADMINISTRATOR);
+
+        /// <summary>
+        /// 當前語系
+        /// </summary>
+        /// <remarks>
+        /// 未來開發多語系用
+        /// </remarks>
+        private UILanguage mCulture = UILanguage.ENGLISH;
+
+        /// <summary>
+        /// Socket通訊物件
+        /// </summary>
+        private Communication serverComm = new Communication(400, 600, 800);
+
+        /// <summary>
+        /// 車子資訊
+        /// </summary>
+        private CarInfo mCarInfo = new CarInfo();
+
+        /// <summary>
+        /// 車子模式
+        /// </summary>
+        private CarMode mCarMode = CarMode.OffLine;
+
+        private MapMatching mMapMatch = new MapMatching();
+
+        /// <summary>
+        /// 是否Bypass Socket通訊
+        /// </summary>
+        private bool mBypassSocket = false;
+
+        /// <summary>
+        /// 是否Bypass LoadFile功能
+        /// </summary>
+        private bool mBypassLoadFile = false;
+
+        /// <summary>
+        /// 是否Bypass Server
+        /// </summary>
+        private bool mByPassServer = false;
+
 
         /// <summary>
         /// ICtDockContent與MenuItem對照
@@ -46,10 +201,138 @@ namespace ClientUI
         /// 系統列圖示標題
         /// </summary>
         protected string mNotifyCaption = "AGV Client";
+        private List<CartesianPos> Goals;
 
         #endregion Declaration - Fields
 
         #region Declaration - Properties
+
+        /// <summary>
+        /// 伺服端是否還有在運作
+        /// </summary>
+        public bool IsServerAlive { get; private set; }
+
+        /// <summary>
+        /// 是否已建立連線
+        /// </summary>
+        public bool IsConnected {
+            get {
+                return mIsConnected;
+            }
+            set {
+                mIsConnected = value;
+                //RaiseGoalSettingEvent(GoalSettingEventType.Connect, value);
+            }
+        }
+
+        /// <summary>
+        /// 車子馬達速度
+        /// </summary>
+        public int Velocity {
+            get {
+                return mVelocity;
+            }
+            set {
+                mVelocity = value;
+            }
+        }
+
+        /// <summary>
+        /// GL模式
+        /// </summary>
+        public GLMode GLMode { get; set; }
+
+        /// <summary>
+        /// Ori檔路徑
+        /// </summary>
+        public string CurOriPath { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Map檔路徑
+        /// </summary>
+        public string CurMapPath {
+            get {
+                return mCurMapPath;
+            }
+            set {
+                mCurMapPath = value;
+                //RaiseGoalSettingEvent(GoalSettingEventType.CurMapPath, !string.IsNullOrEmpty(value));
+            }
+        }
+
+        /// <summary>
+        /// 車子資訊
+        /// </summary>
+        public CarInfo CarInfo { get; }
+
+        public List<CarPos> PtCar { get; set; } = new List<CarPos>();
+
+        public List<string> StrCar { get; set; } = new List<string>();
+
+        /// <summary>
+        /// 使用者資料
+        /// </summary>
+        public UserData UserData { get { return mUser; } }
+
+        /// <summary>
+        /// 目標設備IP
+        /// </summary>
+        public string HostIP { get { return mHostIP; } set { mHostIP = value; } }
+
+        /// <summary>
+        /// 是否Bypass Socket功能
+        /// </summary>
+        public bool IsBypassSocket { get { return mBypassSocket; } set { mBypassSocket = value; } }
+
+        /// <summary>
+        /// 是否Bypass LoadFile功能
+        /// </summary>
+        public bool IsBypassLoadFile { get { return mBypassLoadFile; } set { mBypassLoadFile = value; } }
+
+        /// <summary>
+        /// 使用者操作權限
+        /// </summary>
+        public AccessLevel UserLv { get { return mUser.Level; } }
+
+        /// <summary>
+        /// 當前語系
+        /// </summary>
+        /// <remarks>
+        /// 未來開發多語系的時候使用
+        /// </remarks>
+        public UILanguage Culture { get { return mCulture; } }
+
+        /// <summary>
+        /// 是否持續接收雷射資料
+        /// </summary>
+        public bool IsGettingLaser { get; set; } = false;
+
+        /// <summary>
+        /// 車子模式
+        /// </summary>
+        public CarMode CarMode {
+            get {
+                return mCarMode;
+            }
+            set {
+                //if (value == CarMode.Map) {
+                //    string oriName = string.Empty;
+                //    CtInput txtBox = new CtInput();
+                //    if (Stat.SUCCESS == txtBox.Start(
+                //        CtInput.InputStyle.TEXT,
+                //        "Set Map File Name", "MAP Name",
+                //        out oriName,
+                //        $"MAP{DateTime.Today:MMdd}")) {
+                //        SendMsg($"Set:OriName:{oriName}.Ori");
+                //    } else {
+                //        return;
+                //    }
+                //}
+                //mCarMode = value;
+                //SendMsg($"Set:Mode:{mCarMode}");
+                //RaiseAgvClientEvent(AgvClientEventType.Mode, mCarMode);
+            }
+        }
 
         /// <summary>
         /// MapGL子視窗
@@ -91,7 +374,7 @@ namespace ClientUI
         /// </summary>
         private IIConsole IConsole { get { return Console; } }
         private IIGoalSetting IGoalSetting { get { return GoalSetting; } }
-
+        
         #endregion Declaration - Properties
 
         #region Functin - Constructors
@@ -368,6 +651,230 @@ namespace ClientUI
         #region Function - Private Methods
 
         /// <summary>
+        /// 訊息傳送(會觸發事件)
+        /// </summary>
+        /// <param name="sendMseeage">傳送訊息內容</param>
+        /// <param name="passChkConn">是否略過檢查連線狀態</param>
+        /// <returns>Server端回應</returns>
+        private string[] SendMsg(string sendMseeage, bool passChkConn = true) {
+            if (mBypassSocket) {
+                /*-- Bypass略過不傳 --*/
+                return new string[] { "True" };
+            } else if (passChkConn && !IsServerAlive) {
+                /*-- 略過連線檢查且Server端未運作 --*/
+                return new string[] { "False" };
+            }
+
+            /*-- 顯示發送出去的訊息 --*/
+            string msg = $"{DateTime.Now} [Client] : {sendMseeage}\r\n";
+            IConsole.AddMsg(msg);
+
+            /*-- 等待Server端的回應 --*/
+            string rtnMsg = SendStrMsg(mHostIP, mRecvCmdPort, sendMseeage);
+
+            /*-- 顯示Server端回應 --*/
+            msg = $"{DateTime.Now} [Server] : {rtnMsg}\r\n";
+            IConsole.AddMsg(msg);
+
+            return rtnMsg.Split(':');
+        }
+
+        /// <summary>
+        /// 訊息傳送(具體Socket交握實現，但是不會觸發事件)
+        /// </summary>
+        /// <param name="serverIP">伺服端IP</param>
+        /// <param name="requerPort">通訊埠號</param>
+        /// <param name="sendMseeage">傳送訊息內容</param>
+        /// <returns>Server端回應</returns>
+        private string SendStrMsg(string serverIP, int requerPort, string sendMseeage) {
+
+            //可以在字串編碼上做文章，可以傳送各種資訊內容，目前主要有三種編碼方式：
+            //1.自訂連接字串編碼－－微量
+            //2.JSON編碼--輕量
+            //3.XML編碼--重量
+            int state;
+            int timeout = 5000;
+            byte[] recvBytes = new byte[8192];//開啟一個緩衝區，存儲接收到的資訊
+
+            IPEndPoint ipEndPoint = new IPEndPoint(IPAddress.Parse(serverIP.ToString()), requerPort);
+            Socket answerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            answerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, 5000);//設置接收資料超時
+            answerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.SendTimeout, timeout);
+            try {
+
+                answerSocket.Connect(ipEndPoint);//建立Socket連接
+                byte[] sendContents = Encoding.UTF8.GetBytes(sendMseeage);
+                state = answerSocket.Send(sendContents, sendContents.Length, 0);//發送二進位資料
+                state = answerSocket.Receive(recvBytes);
+                string strRecvCmd = Encoding.Default.GetString(recvBytes);//
+                strRecvCmd = strRecvCmd.Split(new char[] { '\0' })[0];
+                sendContents = null;
+                return strRecvCmd;
+
+            } catch (SocketException se) {
+                //Console.WriteLine("SocketException : {0}", se.ToString());
+                //MessageBox.Show("目標拒絕連線!!");
+                return "False";
+            } catch (ArgumentNullException ane) {
+                //Console.WriteLine("ArgumentNullException : {0}", ane.ToString());
+                return "False";
+            } catch (Exception ex) {
+                //Console.Write(ex.Message);
+                return "False";
+            } finally {
+                ipEndPoint = null;
+                recvBytes = null;
+                // answerSocket.Shutdown(SocketShutdown.Both);
+                // answerSocket.Disconnect(false);
+                answerSocket.Close();
+                // Console.Write("Disconnecting from server...\n");
+                //Console.ReadKey();
+                answerSocket.Dispose();
+            }
+
+        }
+        
+        /// <summary>
+        /// 載入地圖
+        /// </summary>
+        /// <param name="mapPath">Map檔路徑</param>
+        private void LoadMap(string mapPath) {
+            List<Line> dispLines = new List<Line>();
+            List<Point> dispPoint = new List<Point>();
+            List<CartesianPos> goalList = new List<CartesianPos>();
+            List<CartesianPos> obstaclePoints = new List<CartesianPos>();
+            List<MapLine> obstacleLine = new List<MapLine>();
+            mCurMapPath = mapPath;
+            string mPath = CtFile.GetFileName(mapPath);
+            SendMsg($"Set:MapName:{mPath}");
+
+            if (mBypassLoadFile) {
+                /*-- 空跑1秒模擬載入Map檔 --*/
+                SpinWait.SpinUntil(() => false, 1000);
+            } else {
+
+                CartesianPos minimumPos;
+                CartesianPos maximumPos;
+
+                #region - Retrive information from .map file -
+                
+                using (MapReading read = new MapReading(mCurMapPath)) {
+                    read.OpenFile();
+                    read.ReadMapBoundary(out minimumPos, out maximumPos);
+                    read.ReadMapGoalList(out goalList);
+                    read.ReadMapObstacleLines(out obstacleLine);
+                    read.ReadMapObstaclePoints(out obstaclePoints);
+                }
+                Goals = goalList;
+
+                mMapMatch.Reset();
+                for (int i = 0; i < obstacleLine.Count; i++) {
+                    int start = (int)obstacleLine[i].start.x;
+                    int end = (int)obstacleLine[i].end.x;
+                    int y = (int)obstacleLine[i].start.y;
+                    for (int x = start; x < end; x++) {
+                        mMapMatch.AddPoint(new CartesianPos(x, y));
+                    }
+                }
+
+                for (int i = 0; i < obstaclePoints.Count; i++) {
+                    mMapMatch.AddPoint(obstaclePoints[i]);
+                }
+                #endregion
+
+                #region  - Map information display -
+
+                for (int i = 0; i < obstacleLine.Count; i++) {
+                    dispLines.Add(
+                        new Line((int)obstacleLine[i].start.x, (int)obstacleLine[i].start.y,
+                        (int)obstacleLine[i].end.x, (int)obstacleLine[i].end.y)
+                    );
+                }
+
+                for (int i = 0; i < obstaclePoints.Count; i++) {
+                    dispPoint.Add(new Point((int)obstaclePoints[i].x, (int)obstaclePoints[i].y));
+                }
+                minimumPos = null;
+                maximumPos = null;
+                #endregion
+
+            }
+
+            MapGL.LoadMap(dispLines, dispPoint, goalList);
+            GoalSetting.LoadGoals(goalList);
+            
+            goalList = null;
+            obstaclePoints = null;
+            obstacleLine = null;
+
+            dispLines = null;
+            dispPoint = null;
+        }
+        
+        /// <summary>
+        /// 載入Ori檔
+        /// </summary>
+        /// <param name="oriPath"></param>
+        /// <returns></returns>
+        private void LoadOri(string oriPath) {
+            CurOriPath = oriPath;
+            MapGL.ClearMap();
+            MapReading MapReading = null;
+            if (!mBypassLoadFile) {//無BypassLoadFile
+                MapReading = new MapReading(CurOriPath);
+                CartesianPos carPos;
+                List<CartesianPos> laserData;
+                //List<Point> listMap = new List<Point>();
+                int dataLength = MapReading.OpenFile();
+                if (dataLength != 0) {
+                    for (int n = 0; n < dataLength; n++) {
+                        MapReading.ReadScanningInfo(n, out carPos, out laserData);
+                        MapGL.LoadOri(carPos.ToPos(), laserData);
+                        carPos = null;
+                        laserData = null;
+                    }
+                }
+            } else {//Bypass LoadFile功能
+                /*-- 空跑一秒，模擬檔案載入 --*/
+                SpinWait.SpinUntil(() => false, 1000);
+            }
+            MapReading = null;
+        }
+        
+        /// <summary>
+        /// 載入檔案
+        /// </summary>
+        /// <param name="type">載入檔案類型</param>
+        public async void LoadFile(FileType type) {
+            OpenFileDialog openMap = new OpenFileDialog();
+            openMap.InitialDirectory = mDefMapDir;
+            openMap.Filter = $"MAP|*.{type.ToString().ToLower()}";
+            if (openMap.ShowDialog() == DialogResult.OK) {
+                CtProgress prog = new CtProgress($"Load {type}", $"Loading {type}...");
+                try {
+                    switch (type) {
+                        case FileType.Ori:
+                            await Task.Run(() => LoadOri(openMap.FileName));
+                            //RaiseTestingEvent(TestingEventType.CurOriPath);
+                            break;
+                        case FileType.Map:
+                            await Task.Run(() => LoadMap(openMap.FileName));
+                            break;
+                        default:
+                            throw new ArgumentException($"無法載入未定義的檔案類型{type}");
+                    }
+                    SetBalloonTip($"Load { type}", $"The { type} is loaded", ToolTipIcon.Info, 10);
+                } catch (Exception ex) {
+                    CtMsgBox.Show("Error", ex.Message);
+                } finally {
+                    prog?.Close();
+                    prog = null;
+                }
+            }
+            openMap = null;
+        }
+
+        /// <summary>
         /// 車子模式切換時
         /// </summary>
         /// <param name="mode"></param>
@@ -638,8 +1145,7 @@ namespace ClientUI
             tslbAccessLv.Text = usrLv.ToString();
             tslbUserName.Text = usrName;
         }
-
-
+        
         #endregion Function - Private Methods
 
         /// <summary>
@@ -697,6 +1203,7 @@ namespace ClientUI
 
         private void IGoalSetting_LoadMapEvent()
         {
+            LoadFile(FileType.Map);
             IConsole.AddMsg("[Map Loading...]");
             IConsole.AddMsg("[Map Loaded]");
         }
@@ -1081,9 +1588,9 @@ namespace ClientUI
     /// </summary>
     public class CtGroupBox : GroupBox
     {
-        private Color _BorderColor = Color.Red;
+        private System.Drawing.Color _BorderColor = System.Drawing.Color.Red;
         [Description("設定或取得外框顏色")]
-        public Color BorderColor {
+        public System.Drawing.Color BorderColor {
             get { return _BorderColor; }
             set { _BorderColor = value; }
         }
