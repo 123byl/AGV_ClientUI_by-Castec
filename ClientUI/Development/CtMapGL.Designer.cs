@@ -70,9 +70,9 @@
             this.glMap.SizeGrid = 1000;
             this.glMap.TabIndex = 6;
             this.glMap.Zoom = 6.25D;
-            //this.glMap.MouseSelectObj += new MapGL.CastecMapUI.DelMouseSelectObj(this.glMap_MouseSelectObj);
-            //this.glMap.MouseClickRealPos += new MapGL.CastecMapUI.DelMouseClickRealPos(this.glMap_MouseClickRealPos);
-            //this.glMap.MouseSelectRange += new MapGL.CastecMapUI.DelMouseSelectRange(this.glMap_MouseSelectRange);
+            this.glMap.MouseSelectObj += new MapGL.CastecMapUI.DelMouseSelectObj(this.glMap_MouseSelectObj);
+            this.glMap.MouseClickRealPos += new MapGL.CastecMapUI.DelMouseClickRealPos(this.glMap_MouseClickRealPos);
+            this.glMap.MouseSelectRange += new MapGL.CastecMapUI.DelMouseSelectRange(this.glMap_MouseSelectRange);
             // 
             // CtMapGL
             // 
@@ -85,7 +85,6 @@
             this.Font = new System.Drawing.Font("新細明體", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.Name = "CtMapGL";
             this.Text = "MapGL";
-            //this.Load += new System.EventHandler(this.CtMapGL_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

@@ -369,12 +369,13 @@ namespace ClientUI
                 return mDockContent.ContainsKey(miGoalSetting) ? mDockContent[miGoalSetting] as CtGoalSetting : null;
             }
         }
+        
         /// <summary>
         /// Console子視窗
         /// </summary>
         private IIConsole IConsole { get { return Console; } }
         private IIGoalSetting IGoalSetting { get { return GoalSetting; } }
-        
+        private IIMapGL IMapGL { get { return MapGL; } }
         #endregion Declaration - Properties
 
         #region Functin - Constructors
@@ -649,6 +650,34 @@ namespace ClientUI
         #endregion Function - Public Methdos
 
         #region Function - Private Methods
+
+        /// <summary>
+        /// 前往目標Goal點
+        /// </summary>
+        /// <param name="numGoal">目標Goal點</param>
+        public void Run(int numGoal) {
+            /*-- 若是路徑資料則開始接收資料 --*/
+            string[] rtnMsg = SendMsg($"Set:Run:{numGoal}");
+            if ((rtnMsg?.Length ?? 0) > 3 &&
+                rtnMsg[1] == "Run" &&
+                rtnMsg[3] == "Done") {
+                mSoxMonitorPath.Start();
+            }
+        }
+
+        /// <summary>
+        /// 路徑規劃
+        /// </summary>
+        /// <param name="no">目標Goal點編號</param>
+        public void PathPlan(int numGoal) {
+            /*-- 若是路徑資料則開始接收資料 --*/
+            string[] rtnMsg = SendMsg($"Set:PathPlan:{numGoal}");
+            if ((rtnMsg?.Count() ?? 0) > 3 &&
+                rtnMsg[1] == "PathPlan" &&
+                rtnMsg[2] == "True") {
+                mSoxMonitorPath.Start();
+            }
+        }
 
         /// <summary>
         /// 訊息傳送(會觸發事件)
@@ -1165,7 +1194,28 @@ namespace ClientUI
             IGoalSetting.SaveGoalEvent += IGoalSetting_SaveGoalEvent;
             IGoalSetting.SendMapToAGVEvent += IGoalSetting_SendMapToAGVEvent;
             #endregion
+            #region IMapGL 事件連結
+            IMapGL.MouseClickRealPos += IMapGL_MouseClickRealPos;
+            IMapGL.MouseSelectObj += IMapGL_MouseSelectObj;
+            IMapGL.MouseSelectRange += IMapGL_MouseSelectRange;
+            #endregion 
         }
+
+        #region IMapGL事件連結
+        private void IMapGL_MouseSelectRange(int beginX, int beginY, int endX, int endY) {
+            throw new NotImplementedException();
+        }
+
+        private void IMapGL_MouseSelectObj(string name, double x, double y) {
+            throw new NotImplementedException();
+        }
+
+        private void IMapGL_MouseClickRealPos(double posX, double posY) {
+            
+        }
+
+        #endregion IMapGL 事件連結
+
         #region IGoalSetting 事件連結   
         private void IGoalSetting_SendMapToAGVEvent()
         {
@@ -1176,6 +1226,10 @@ namespace ClientUI
         private void IGoalSetting_SaveGoalEvent()
         {
             IConsole.AddMsg("[Save {0} Goals]", IGoalSetting.GoalCount);
+            List<CartesianPos> goals = IGoalSetting.GetGoals().ConvertAll(v =>
+                new CartesianPos(v.X, v.Y, v.Toward)
+                );
+            MapRecording.OverWriteGoal(goals, CurMapPath);
         }
 
         private void IGoalSetting_RunLoopEvent(IEnumerable<Info> goal)
@@ -1189,8 +1243,9 @@ namespace ClientUI
             IConsole.AddMsg("[AGV Move Finished]");
         }
 
-        private void IGoalSetting_RunGoalEvent(Info goal)
+        private void IGoalSetting_RunGoalEvent(Info goal,int idxGoal)
         {
+            Run(idxGoal);
             IConsole.AddMsg("[AGV Start Moving...]");
             IConsole.AddMsg("[AGV Arrived] - {0}", goal.ToString());
         }
@@ -1203,15 +1258,16 @@ namespace ClientUI
 
         private void IGoalSetting_LoadMapEvent()
         {
-            LoadFile(FileType.Map);
             IConsole.AddMsg("[Map Loading...]");
             IConsole.AddMsg("[Map Loaded]");
+            LoadFile(FileType.Map);
         }
 
-        private void IGoalSetting_FindPathEvent(Info goal)
+        private void IGoalSetting_FindPathEvent(Info goal,int idxGoal)
         {
             IConsole.AddMsg("[Find Path] - ", goal.ToString());
             IConsole.AddMsg("[AGV Find A Path]");
+            PathPlan(idxGoal);
         }
 
         private void IGoalSetting_DeleteGoalsEvent(IEnumerable<Info> goal)
@@ -1236,6 +1292,7 @@ namespace ClientUI
         {
             IConsole.AddMsg("[Add Goal] - {0}", goal.ToString());
             IGoalSetting.AddGoal(goal);
+            MapGL.AddGoalPos(goal);
         }
         #endregion
     }

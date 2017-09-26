@@ -334,8 +334,9 @@ namespace ClientUI
 
         private void btnPath_Click(object sender, EventArgs e)
         {
+
             Info goal = GetGoalByIndex(cmbGoalList.SelectedIndex);
-            if (goal.ID != 0) FindPathEvent?.Invoke(goal);
+            if (goal.ID != 0) FindPathEvent?.Invoke(goal,cmbGoalList.SelectedIndex);
         }
 
         private void btnSendMap_Click(object sender, EventArgs e)
@@ -350,7 +351,7 @@ namespace ClientUI
             {
                 goal = GetGoalByIndex(cmbGoalList.SelectedIndex);
             }
-            if (goal.ID != 0) RunGoalEvent?.Invoke(goal);
+            if (goal.ID != 0) RunGoalEvent?.Invoke(goal,cmbGoalList.SelectedIndex);
         }
         private void btnRunAll_Click(object sender, EventArgs e)
         {

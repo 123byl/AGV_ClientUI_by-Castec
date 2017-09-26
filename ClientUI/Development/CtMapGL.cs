@@ -25,8 +25,12 @@ namespace ClientUI {
     /// <summary>
     /// 地圖顯示介面
     /// </summary>
-    public partial class CtMapGL : CtDockContent {
-        
+    public partial class CtMapGL : CtDockContent,IIMapGL {
+
+        private List<CarPos> mPtCar = null;
+
+        private List<string> mStrCar = null;
+
         #region Function - Constructors
 
 
@@ -43,7 +47,146 @@ namespace ClientUI {
 
         #endregion Function - Constructors
 
+        #region Declaration - Events
+
+        public event DelMouseClickRealPos MouseClickRealPos{
+            add {
+                glMap.MouseClickRealPos += value;
+            }
+            remove {
+                glMap.MouseClickRealPos -= value;
+            }
+        }
+
+        public event DelMouseSelectObj MouseSelectObj {
+            add {
+                glMap.MouseSelectObj += value;
+            }
+            remove {
+                glMap.MouseSelectObj -= value;
+            }
+        }
+
+        public event DelMouseSelectRange MouseSelectRange {
+            add {
+                glMap.MouseSelectRange += value;
+            }
+            remove {
+                glMap.MouseSelectRange -= value;
+            }
+        }
+
+        #endregion Declaration - Events
+
+        #region Function - Events
+
+        /// <summary>
+        /// 物件被點選
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        private void glMap_MouseSelectObj(string name, double x, double y) {
+            string[] itemName = name.Split('_');
+
+            // 地圖回傳誰被按下
+            string msg = string.Format($"Delete {itemName[0]}({x},{y}) or not?");
+
+            MsgBoxButton dr = CtMsgBox.Show(msg, "Delete", MsgBoxButton.OK_CANCEL, MsgBoxStyle.INFORMATION);
+
+            //判斷使用者是否要刪除點位
+            if (dr == MsgBoxButton.OK) {
+                if (itemName[0] == CastecMapUI.ItemLayout.Goal.ToString()) {
+                    glMap.RemovePositonGoal(uint.Parse(itemName[1]));
+                } else if (itemName[0] == CastecMapUI.ItemLayout.Power.ToString()) {
+                    glMap.RemovePositonPower(uint.Parse(itemName[1]));
+                }
+            }
+        }
+
+        /// <summary>
+        /// 選取事件
+        /// </summary>
+        /// <param name="beginX"></param>
+        /// <param name="beginY"></param>
+        /// <param name="endX"></param>
+        /// <param name="endY"></param>
+        private void glMap_MouseSelectRange(int beginX, int beginY, int endX, int endY) {
+            // 當 GL 畫布中有被框選的時候會回傳框選範圍座標，可用全域變數接下 beginX、beginY、endX、endY
+            Pos pos = new Pos();
+            Size frame = new Size();
+            //DefineArea.Add(new Point(beginX, beginY));
+            //DefineArea.Add(new Point(endX, endY));
+            //繪製工作區域設定(顏色區別)
+            pos = new Pos((beginX + endX) / 2, (beginY + endY) / 2);
+            frame = new Size(Math.Abs(endX - beginX), Math.Abs(endY - beginY));
+            switch (GLMode) {
+                case GLMode.Erase:
+                    glMap.DrawRectangleFillFull(pos, frame, Color.White, "Erase", 1, (int)ItemLayout.Line);
+                    break;
+                case GLMode.Stop:
+                    glMap.DrawRectangleFillFull(pos, frame, Color.Red, "Stop", 1, (int)ItemLayout.Point);
+                    break;
+                case GLMode.Power:
+                    glMap.DrawRectangleFillFull(pos, frame, Color.Green, "Power", 1, (int)ItemLayout.Point);
+                    break;
+            }
+            pos = null;
+
+        }
+        CartesianPos pos = new CartesianPos();
+        /// <summary>
+        /// 點擊事件
+        /// </summary>
+        /// <param name="posX"></param>
+        /// <param name="posY"></param>
+        private void glMap_MouseClickRealPos(double posX, double posY) {
+            
+            /*-- 設定要新增的點位 --*/
+            SetAddPos(posX, posY);
+            if (GLMode == GLMode.SetCar) {
+                glMap.EnableCar = false;
+
+                mPtCar.Add(new CarPos(posX, posY));
+                mStrCar.Add($"CarTemp{mPtCar.Count}");
+                if (mPtCar.Count == 2) {
+                    #region - car pos setting -
+
+                    double Calx = posX - mPtCar[0].x;
+                    double Caly = posY - mPtCar[0].y;
+                    double Calt = Math.Atan2(Caly, Calx) * 180 / Math.PI;
+
+                    //SetPosition(mPtCar[0].X, mPtCar[0].Y, Calt);
+                    glMap.PosCar = new Pos(mPtCar[0].x, mPtCar[0].y, Calt);
+                    //Send POS to AGV   
+                    rActFunc?.SetPosition(mPtCar[0].x, mPtCar[0].y, Calt);
+                    glMap.RemoveGroupPoint(StrCar[0], StrCar[1]);
+
+                    StrCar.Clear();
+                    SetGLMode(GLMode.None);
+                    glMap.EnableCar = true;
+
+                    #endregion
+
+                    mPtCar.Clear();
+                } else {
+                    glMap.DrawPoint(Convert.ToInt32(posX), Convert.ToInt32(posY), Color.Blue, 3, 3, StrCar[mPtCar.Count - 1]);
+                }
+            }
+        }
+
+
+        #endregion Function - Events
+
         #region Funciton - Public Methods
+
+        /// <summary>
+        /// 增加Goal點
+        /// </summary>
+        /// <param name="goal"></param>
+        public void AddGoalPos(Info goal) {
+            glMap.AddPositonGoal(new Pos(goal.X,goal.Y,goal.Toward));
+        }
 
         public void LoadMap(List<Line>obstacleLines ,List<Point> obstaclePoints,List<CartesianPos> goals) {
             ClearMap();

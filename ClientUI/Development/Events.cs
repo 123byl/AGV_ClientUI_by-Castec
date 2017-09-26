@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using static ClientUI.Events.ConsoleEvents;
 using static ClientUI.Events.GoalSettingEvents;
+using static MapGL.CastecMapUI;
 
 namespace ClientUI
 {
@@ -153,6 +154,17 @@ namespace ClientUI
     }
 
     /// <summary>
+    /// MapGL視窗公開操作方法
+    /// </summary>
+    public interface IIMapGL {
+        event DelMouseClickRealPos MouseClickRealPos;
+
+        event DelMouseSelectObj MouseSelectObj;
+
+        event DelMouseSelectRange MouseSelectRange;
+    }
+
+    /// <summary>
     /// 點狀態資訊
     /// </summary>
     public struct Info
@@ -244,7 +256,7 @@ namespace ClientUI
             /// <summary>
             /// 尋找路徑
             /// </summary>
-            public delegate void DelFindPath(Info goal);
+            public delegate void DelFindPath(Info goal,int idxGoal);
 
             /// <summary>
             /// 載入地圖
@@ -259,7 +271,7 @@ namespace ClientUI
             /// <summary>
             /// 移動
             /// </summary>
-            public delegate void DelRunGoal(Info goal);
+            public delegate void DelRunGoal(Info goal,int idxGoal);
 
             /// <summary>
             /// 按照順序移動全部
@@ -280,6 +292,13 @@ namespace ClientUI
             /// 更新 Goal 點
             /// </summary>
             public delegate void DelUpdateGoal(Info newGoal);
+        }
+
+        /// <summary>
+        /// MapGL控制事件集合
+        /// </summary>
+        public static class MapGLEvents {
+            public delegate void MouseClickRealPos(double posX, double posY);
         }
     }
 }
