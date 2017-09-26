@@ -6,19 +6,47 @@
 ////	Mobile Robot 			相關設定：2000-2999
 ////	Beckhoff PLC			相關設定：12000-12999
 ////	Adept robot ACE			相關設定：22000-22999
-////	Delta					相關設定：50000-50999
 ////
 
 // CAMPro : 1000-1999
 //// CAMPro Options : 1000-1099
-1000,0,[ Computer ] = aFjaWMvIEQsUJwtvWaDoOEFzX+/bVkagRVSpQS1EK8M=
+1000,0,[ Computer ] = SZ+4hy97O/K+KtvU5uSxIQtrZnGpoPrkC5jf1jp7Y00=
 1001,0,[ Show CAMPro Exception ] = false
-1002,0,[ Using Buzzer ] = true
-1003,0,[ Bypass Adept ACE ] = true
-1004,0,[ Bypass Beckhoff PLC ] = true
+1002,0,[ Using Buzzer ] = false
+1003,0,[ BypassSocket] = false
+1004,0,[ BypassLoadFile] = false
+
+//// Communication Devices Setting : 1050-1099
+1050,0,[ Host IP ] = 192.168.31.217
+1051,0,[ File Port ] = 600
+1052,0,[ Recv Cmd Port ] = 400
+1053,0,[ Cmd Port ] = 800
+1054,0,[ Send Map Port ] = 700
+1055,0,[ Recv Pat hPort] = 900
+
+//// Product recipe : 1100-1199
+//1100,0,[ Recipe Name ] = D:\CASTEC\Recipe\E1509_CompRecipe\20160127_A.xml
+1101,0,[ Map Directory ] = D:\MapInfo\
+﻿
+////
+////	設備 Config 檔
+////	設備參數中各模組 opcode 範圍：
+////	CAMPro 					相關設定：1000-1999
+////	Mobile Robot 			相關設定：2000-2999
+////	Beckhoff PLC			相關設定：12000-12999
+////	Adept robot ACE			相關設定：22000-22999
+////
+
+// CAMPro : 1000-1999
+//// CAMPro Options : 1000-1099
+1000,0,[ Computer ] = SZ+4hy97O/K+KtvU5uSxIQtrZnGpoPrkC5jf1jp7Y00=
+1001,0,[ Show CAMPro Exception ] = false
+1002,0,[ Using Buzzer ] = false
+1003,0,[ Bypass Adept ACE ] = false
+1004,0,[ Bypass Beckhoff PLC ] = false
 1005,0,[ Bypass Delta ASDA-A2 ] = true
-1006,0,[ Bypass Delta SE ] = true
-1007,0,[ Bypass Oriental BLE-FLEX ] = true
+1006,0,[ Bypass Delta SE ] = false
+1007,0,[ Bypass Oriental BLE-FLEX ] = false
 
 //// Communication Devices Setting : 1050-1099
 1050,0,[ RS485 SerialPort ] = COM1
@@ -27,14 +55,14 @@
 1053,0,[ Delta ASDA-A2 For Conveyor Width Adjust ] = 3
 1054,0,[ 2 Channel Dimmer (Blue) ] = COM6
 1055,0,[ 5 Channel Dimmer (Red + White) ] = COM4
-1056,0,[ IAI RoboCylinder 1 ] = COM7
-1057,0,[ IAI RoboCylinder 2 ] = COM8
+1056,0,[ IAI RoboCylinder 1 ] = COM13
+1057,0,[ IAI RoboCylinder 2 ] = COM12
 1058,0,[ Oriental Loader Transfer Speed ] = 500,3000
-1059,0,[ Oriental Unloader Transfer Speed ] = 100,3000
-1060,0,[ Conveyor Width ] = -843920,1356843,1295248
+1059,0,[ Oriental Unloader Transfer Speed ] = 500,3000
+1060,0,[ Conveyor Width ] = -840468,1356843,1295248
 
 //// Product recipe : 1100-1199
-1100,0,[ Recipe Name ] = D:\CASTEC\Recipe\E1509_CompRecipe\20160309_A.xml
+1100,0,[ Recipe Name ] = D:\CASTEC\Recipe\E1509_CompRecipe\20160127_A.xml
 
 //// CAMPro Alarms : 1200-1299
 //////    [ Comment(zh-TW / en-US) ] = Error Code, Solution
@@ -104,7 +132,7 @@
 12211,0,[ 作業中防夾感測器觸發 ] = -2002,請檢查滑道與料盤匣之間是否有殘留料盤或異物
 12212,0,[ 升降台停留位置錯誤 ] = -2003,請檢查是否指定了錯誤的料盤匣位置
 12213,0,[ 作業中防夾感測器觸發 ] = -2004,請檢查滑道與料盤匣之間是否有殘留料盤或異物
-12214,0,[ 升降台馬達到位但訊號異常 ] = -2005,移動到位訊號異常，請清除錯誤並繼續
+12214,0,[ 升降台馬達到位但訊號異常 ] = -2005,請通知友上工程師確認馬達狀況
 12215,0,[ 升降台馬達發生異常 ] = -2006,請檢查馬達狀態並重新復歸
 12216,0,[ 料盤感測器異常 ] = -2007,請檢查料盤設定與料盤感測器狀態是否相符
 12217,0,[ 作業中防夾感測器觸發 ] = -2008,請檢查滑道與料盤匣之間是否有殘留料盤或異物
@@ -117,16 +145,16 @@
 12224,0,[ 料盤夾目標層偵測料盤異常 ] = -2015,請檢查目標層料盤狀況
 12225,0,[ 作業中防夾感測器觸發 ] = -2016,請檢查滑道與料盤匣之間是否有殘留料盤或異物
 12226,0,[ 料盤夾目標層感測器再度偵測異常 ] = -2017,請停止自動化模式並檢查相關感測器狀態
-12227,0,[ 升降台馬達到位但訊號異常 ] = -2018,移動到位訊號異常，請清除錯誤並繼續
-12228,0,[ 升降台馬達發生異常 ] = -2019,請檢查馬達狀態並重新初始化
+12227,0,[ 升降台馬達到位但訊號異常 ] = -2018,請通知友上工程師確認馬達狀況
+12228,0,[ 升降台馬達發生異常 ] = -2019,請檢查馬達狀態並重新復歸
 12229,0,[ 作業中防夾感測器觸發 ] = -2020,請檢查滑道與料盤匣之間是否有殘留料盤或異物
 12230,0,[ 料盤勾未正常下降 ] = -2021,請檢查料盤勾下降狀態或感測器訊號
 12231,0,[ 料盤勾上升控制訊號異常輸出 ] = -2022,請聯絡友上工程師檢查
 12232,0,[ 料盤勾伸出逾時 ] = -2023,請檢查料盤勾伸出狀態或感測器訊號
 12233,0,[ 料盤勾上升逾時 ] = -2024,請檢查料盤勾上升狀態或感測器訊號
 12234,0,[ 料盤勾縮回逾時 ] = -2025,請檢查料盤勾縮回狀態或感測器訊號
-12235,0,[ 料盤送至取料位置異常 ] = -2026,請檢查送出料盤的位置或感測器訊號
-12236,0,[ 升降台馬達到位但訊號異常 ] = -2027,移動到位訊號異常，請清除錯誤並繼續
+12235,0,[ 料盤送回料盤匣位置異常 ] = -2026,請檢查送回料盤的位置或感測器訊號
+12236,0,[ 升降台馬達到位但訊號異常 ] = -2027,請通知友上工程師確認馬達狀況
 12237,0,[ 升降台馬達發生異常 ] = -2028,請檢查馬達狀態並重新復歸
 12238,0,[ 作業中氣壓源異常 ] = -2029,請檢查氣壓源開關，壓力感測器是否正常
 12239,0,[ 作業中緊急停止鈕觸發 ] = -2030,請排除相關問題後解除緊急停止，並初始化
@@ -135,8 +163,7 @@
 12242,0,[ 料盤夾開啟異常 ] = -2033,請檢查料盤夾開啟狀態或感測器訊號
 12243,0,[ 作業中防夾感測器觸發 ] = -2034,請檢查滑道與料盤匣之間是否有殘留料盤或異物
 12244,0,[ 料盤參數異常 ] = -2035,請檢查所有料盤參數正確性
-12245,0,[ 料盤夾未到位 ] = -1011,請檢查感測器是否異常
-12246,0,[ 料盤位置異常 ] = -1012,請將料盤推至定位再繼續
+12245,0,[ 料盤夾爪無法到位 ] = -1011,請檢查料盤位置及氣缸位置，請注意位置感測器是否能正確感測
 
 12200,1,[ 初始化时紧急停止钮触发 ] = -1001,请排除相关问题后解除紧急停止，并初始化
 12201,1,[ 初始化时气压源异常 ] = -1002,请检查气压源开关，压力传感器是否正常
@@ -152,7 +179,7 @@
 12211,1,[ 作业中防夹传感器触发 ] = -2002,请检查滑道与料盘匣之间是否有残留料盘或异物
 12212,1,[ 升降台停留位置错误 ] = -2003,请检查是否指定了错误的料盘匣位置
 12213,1,[ 作业中防夹传感器触发 ] = -2004,请检查滑道与料盘匣之间是否有残留料盘或异物
-12214,1,[ 升降台马达到位但讯号异常 ] = -2005,移动到位讯号异常，请清除错误并继续
+12214,1,[ 升降台马达到位但讯号异常 ] = -2005,请通知友上工程师确认马达状况
 12215,1,[ 升降台马达发生异常 ] = -2006,请检查马达状态并重新复归
 12216,1,[ 料盘传感器异常 ] = -2007,请检查料盘设定与料盘传感器状态是否相符
 12217,1,[ 作业中防夹传感器触发 ] = -2008,请检查滑道与料盘匣之间是否有残留料盘或异物
@@ -165,7 +192,7 @@
 12224,1,[ 料盘夹目标层侦测料盘异常 ] = -2015,请检查目标层料盘状况
 12225,1,[ 作业中防夹传感器触发 ] = -2016,请检查滑道与料盘匣之间是否有残留料盘或异物
 12226,1,[ 料盘夹目标层传感器再度侦测异常 ] = -2017,请停止自动化模式并检查相关传感器状态
-12227,1,[ 升降台马达到位但讯号异常 ] = -2018,移动到位讯号异常，请清除错误并继续
+12227,1,[ 升降台马达到位但讯号异常 ] = -2018,请通知友上工程师确认马达状况
 12228,1,[ 升降台马达发生异常 ] = -2019,请检查马达状态并重新复归
 12229,1,[ 作业中防夹传感器触发 ] = -2020,请检查滑道与料盘匣之间是否有残留料盘或异物
 12230,1,[ 料盘勾未正常下降 ] = -2021,请检查料盘勾下降状态或传感器讯号
@@ -173,8 +200,8 @@
 12232,1,[ 料盘勾伸出逾时 ] = -2023,请检查料盘勾伸出状态或传感器讯号
 12233,1,[ 料盘勾上升逾时 ] = -2024,请检查料盘勾上升状态或传感器讯号
 12234,1,[ 料盘勾缩回逾时 ] = -2025,请检查料盘勾缩回状态或传感器讯号
-12235,1,[ 料盘送至取料位置异常 ] = -2026,请检查料盘的位置或传感器讯号
-12236,1,[ 升降台马达到位但讯号异常 ] = -2027,移动到位讯号异常，请清除错误并继续
+12235,1,[ 料盘送回料盘匣位置异常 ] = -2026,请检查送回料盘的位置或传感器讯号
+12236,1,[ 升降台马达到位但讯号异常 ] = -2027,请通知友上工程师确认马达状况
 12237,1,[ 升降台马达发生异常 ] = -2028,请检查马达状态并重新复归
 12238,1,[ 作业中气压源异常 ] = -2029,请检查气压源开关，压力传感器是否正常
 12239,1,[ 作业中紧急停止钮触发 ] = -2030,请排除相关问题后解除紧急停止，并初始化
@@ -183,8 +210,7 @@
 12242,1,[ 料盘夹开启异常 ] = -2033,请检查料盘夹开启状态或传感器讯号
 12243,1,[ 作业中防夹传感器触发 ] = -2034,请检查滑道与料盘匣之间是否有残留料盘或异物
 12244,1,[ 料盘参数异常 ] = -2035,请检查所有料盘参数正确性
-12245,1,[ 料盘勾未到位 ] = -1011,请检查传感器是否异常
-12246,1,[ 料盘位置异常 ] = -1012,请将料盘推至定位再继续
+12245,1,[ 料盘夹爪无法到位 ] = -1011,请检查料盘位置及气缸位置，请注意位置感测器是否能正确感测
 
 12200,2,[ EMO Trigger When Initial ] = -1001,Please remove all problems then release EMO and Initial Machine
 12201,2,[ CDA Pressure Alarm When Initial ] = -1002,Please check CDA switch or air pressure sensor
@@ -200,7 +226,7 @@
 12211,2,[ Safety Sensor Alarm ] = -2002,Please check if anything retained between slider and elevator
 12212,2,[ Elevator Position Error ] = -2003,Please if given incorrect command to elevator
 12213,2,[ Safety Sensor Alarm ] = -2004,Please check if anything retained between slider and elevator
-12214,2,[ Elevator Arrived but Motor Alarm ] = -2005,Please check motor and clean alarm to continue
+12214,2,[ Elevator Arrived but Motor Alarm ] = -2005,Please call CASTEC engineer to check
 12215,2,[ Elevator Motor Alarm ] = -2006,Please check the motor status and redo home
 12216,2,[ Tray Sensor Detect Error ] = -2007,Please check if tray setting and sensor signal is matched
 12217,2,[ Safety Sensor Alarm ] = -2008,Please check if anything retained between slider and elevator
@@ -213,7 +239,7 @@
 12224,2,[ Tray Detect Error of Destination Layer ] = -2015,Please check the destination layer status or its sensor signal
 12225,2,[ Safety Sensor Alarm ] = -2016,Please check if anything retained between slider and elevator
 12226,2,[ Destination Layer Sensor Still Alarm ] = -2017,STOP Auto-Run and check sensor signal
-12227,2,[ Elevator Arrived but Motor Alarm ] = -2018,Please check motor and clean alarm to continue
+12227,2,[ Elevator Arrived but Motor Alarm ] = -2018,Please call CASTEC engineer to check
 12228,2,[ Elevator Motor Alarm ] = -2019,Please check the motor status and redo home
 12229,2,[ Safety Sensor Alarm ] = -2020,Please check if anything retained between slider and elevator
 12230,2,[ Lift Down Error ] = -2021,Please check the lift DOWN status or sensor signal
@@ -221,18 +247,343 @@
 12232,2,[ Lift Open Error ] = -2023,Please check the lift OPEN status or sensor signal
 12233,2,[ Lift Up Error ] = -2024,Please check the lift UP status or sensor signal
 12234,2,[ Lift Close Error ] = -2025,Please check the lift CLOSE status or sensor signal
-12235,2,[ Tray Send To INP Error ] = -2026,Please check tray Status.
-12236,2,[ Elevator Arrived but Motor Alarm ] = -2027,Please check motor and clean alarm to continue
+12235,2,[ Tray Position Error When Sent to Cassette ] = -2026,Please check tray position or Inp. sensor signal
+12236,2,[ Elevator Arrived but Motor Alarm ] = -2027,Please call CASTEC engineer to check
 12237,2,[ Elevator Motor Alarm ] = -2028,Please check the motor status and redo home
 12238,2,[ CDA Pressure Alarm ] = -2029,Please check CDA switch or air pressure sensor
 12239,2,[ EMO Trigger ] = -2030,Please remove all problems then release EMO and Initial Machine
 12240,2,[ Slider or Elevator Motor Alarm ] = -2031,Please initial machine before Auto-Run
-12241,2,[ Initial Flag Error ] = -2032,Please initial machine before Auto-Run
+12241,2,[ Initial Flag Error= ] = -2032,Please initial machine before Auto-Run
 12242,2,[ Clamp Open Error ] = -2033,Please check the clamp open status or sensor signal
 12243,2,[ Safety Sensor Alarm ] = -2034,Please check if anything retained between slider and elevator
 12244,2,[ Tray Parameters Error ] = -2035,Please check all tray parameters
-12245,2,[ Clamp Sensor Error ] = -1011,Please Check Sensor Status
-12246,2,[ Tray Position Error ] = -1012,PLease Push Tray to Position and Continue
+12245,2,[ Slider Clamp Cannot Reach ] = -1011,Please check tray position and clamp sensor
+
+
+// Adept ACE：22000-22999
+//// ACE Global Setting : 22000-22099
+22000,0,[ ACE Module Name ] = sCobra800-Inverted
+22001,0,[ AceServer Name ] = ace
+22002,0,[ AceServer IP ] = localhost
+22003,0,[ AceServer Port ] = 43434
+22004,0,[ ACE Client Mode，(True)與ACE連結 (False)載入Workspace ] = true
+22005,0,[ Workspace 檔案路徑 ] = D:\CASTEC\Members\Dennis\robot codes\E1509 robot codes\主程式\E1509_2_1_6_20160118.awp
+
+//// ACE Recipes : 22100-22899
+//////    [ Comment ] = VariableName, (0)Real (1)String (2)Location (3)PrecisionPoint 
+22100,0,[ 插入點位 1 ] = comp_offset[1],2
+22101,0,[ 插入點位 2 ] = comp_offset[2],2
+22102,0,[ 插入點位 3 ] = comp_offset[3],2
+22103,0,[ 插入點位 4 ] = comp_offset[4],2
+22104,0,[ 插入點位 5 ] = comp_offset[5],2
+22105,0,[ 插入點位 6 ] = comp_offset[6],2
+22106,0,[ 插入點位 7 ] = comp_offset[7],2
+22107,0,[ 插入點位 8 ] = comp_offset[8],2
+22108,0,[ 插入點位 9 ] = comp_offset[9],2
+22109,0,[ 插入點位 10 ] = comp_offset[10],2
+22110,0,[ Foxconn DIMM 1 插入點位 ] = fox_dimm1_off,2
+22111,0,[ Foxconn DIMM 2 插入點位 ] = fox_dimm2_off,2
+22112,0,[ LOTES DIMM 1 插入點位 ] = lotes_dimm1_off,2
+22113,0,[ LOTES DIMM 2 插入點位 ] = lotes_dimm2_off,2
+
+
+//// ACE Alarms : 22900-22999
+//////    [ Comment(zh-TW / en-US) ] = Error Code, Solution
+22900,0,[ PCB 定位失敗  ] = -1001,請重新執行程序
+22901,0,[ 等待 PCB 進板過久 ] = -1002,請清除錯誤
+22902,0,[ Adept ACE 發生錯誤 ] = -10001,請重新執行程序
+22903,0,[ PCI 氣缸上升位置感測器偵測異常 ] = -10002,請檢查感測器訊號並重新執行
+22904,0,[ DIMM1 氣缸上升位置感測器偵測異常 ] = -10003,請檢查感測器訊號並重新執行
+22905,0,[ DIMM2 氣缸上升位置感測器偵測異常 ] = -10004,請檢查感測器訊號並重新執行
+22906,0,[ RJ-45 氣缸上升位置感測器偵測異常 ] = -10005,請檢查感測器訊號並重新執行
+22907,0,[ PCI 氣缸下降位置感測器偵測異常 ] = -10006,請檢查感測器訊號並重新執行
+22908,0,[ DIMM1 氣缸下降位置感測器偵測異常 ] = -10007,請檢查感測器訊號並重新執行
+22909,0,[ DIMM2 氣缸下降位置感測器偵測異常 ] = -10008,請檢查感測器訊號並重新執行
+22910,0,[ RJ-45 氣缸下降位置感測器偵測異常 ] = -10009,請檢查感測器訊號並重新執行
+22911,0,[ PCI 夾爪閉合或開啟異常 ] = -10010,請檢查感測器訊號並重新執行
+22912,0,[ DIMM1 夾爪閉合或開啟異常 ] = -10011,請檢查感測器訊號並重新執行
+22913,0,[ DIMM2 夾爪閉合或開啟異常 ] = -10012,請檢查感測器訊號並重新執行
+22914,0,[ RJ-45 夾爪閉合或開啟異常 ] = -10013,請檢查感測器訊號並重新執行
+22915,0,[ RJ-45 料盤放置錯誤 ] = -10014,請檢查料盤方向與位置，確認後請重新執行
+22916,0,[ RJ-45 料盤無法定位 ] = -10015,請檢查料盤中間兩顆元件是否放置良好，確認後請重新執行
+22917,0,[ DIMM 或 PCI 料盤放置錯誤 ] = -10016,請檢查料盤方向與位置，確認後請重新執行
+22918,0,[ 手臂姿態錯誤 ] = -10017,請斷電後手動將手臂推回安全範圍後復歸
+22919,0,[ RJ-45 翻轉機構料件檢測錯誤 ] = -10018,請檢查料件是否放置妥當
+22920,0,[ 教導時抓取料件失敗 ] = -10019,請重新執行
+22921,0,[ 教導時針腳辨識為 NG 料件 ] = -10020,請重新執行
+22900,1,[ PCB 定位失败  ] = -1001,请重新执行程序
+22901,1,[ 等待 PCB 进板过久 ] = -1002,请清除错误
+22902,1,[ Adept ACE 发生错误 ] = -10001,请重新执行程序
+22903,1,[ PCI 气缸上升位置感测器侦测异常 ] = -10002,请检查感测器讯号并重新执行
+22904,1,[ DIMM1 气缸上升位置感测器侦测异常 ] = -10003,请检查感测器讯号并重新执行
+22905,1,[ DIMM2 气缸上升位置感测器侦测异常 ] = -10004,请检查感测器讯号并重新执行
+22906,1,[ RJ-45 气缸上升位置感测器侦测异常 ] = -10005,请检查感测器讯号并重新执行
+22907,1,[ PCI 气缸下降位置感测器侦测异常 ] = -10006,请检查感测器讯号并重新执行
+22908,1,[ DIMM1 气缸下降位置感测器侦测异常 ] = -10007,请检查感测器讯号并重新执行
+22909,1,[ DIMM2 气缸下降位置感测器侦测异常 ] = -10008,请检查感测器讯号并重新执行
+22910,1,[ RJ-45 气缸下降位置感测器侦测异常 ] = -10009,请检查感测器讯号并重新执行
+22911,1,[ PCI 夹爪闭合或开启异常 ] = -10010,请检查感测器讯号并重新执行
+22912,1,[ DIMM1 夹爪闭合或开启异常 ] = -10011,请检查感测器讯号并重新执行
+22913,1,[ DIMM2 夹爪闭合或开启异常 ] = -10012,请检查感测器讯号并重新执行
+22914,1,[ RJ-45 夹爪闭合或开启异常 ] = -10013,请检查感测器讯号并重新执行
+22915,1,[ RJ-45 料盘放置错误 ] = -10014,请检查料盘方向与位置，确认后请重新执行
+22916,1,[ RJ-45 料盘无法定位 ] = -10015,请检查料盘中间两颗元件是否放置良好，确认后请重新执行
+22917,1,[ DIMM 或 PCI 料盘放置错误 ] = -10016,请检查料盘方向与位置，确认后请重新执行
+22918,1,[ 手臂姿态错误 ] = -10017,请断电后手动将手臂推回安全范围后复归
+22919,1,[ RJ-45 翻转机构料件检测错误 ] = -10018,请检查料件是否放置妥当
+22920,1,[ 教导时抓取料件失败 ] = -10019,请重新执行
+22921,1,[ 教导时针脚辨识为 NG 料件 ] = -10020,请重新执行
+22900,2,[ PCB 定位失败  ] = -1001,请重新执行程序
+22901,2,[ 等待 PCB 进板过久 ] = -1002,请清除错误
+22902,2,[ Adept ACE 发生错误 ] = -10001,请重新执行程序
+22903,2,[ PCI 气缸上升位置感测器侦测异常 ] = -10002,请检查感测器讯号并重新执行
+22904,2,[ DIMM1 气缸上升位置感测器侦测异常 ] = -10003,请检查感测器讯号并重新执行
+22905,2,[ DIMM2 气缸上升位置感测器侦测异常 ] = -10004,请检查感测器讯号并重新执行
+22906,2,[ RJ-45 气缸上升位置感测器侦测异常 ] = -10005,请检查感测器讯号并重新执行
+22907,2,[ PCI 气缸下降位置感测器侦测异常 ] = -10006,请检查感测器讯号并重新执行
+22908,2,[ DIMM1 气缸下降位置感测器侦测异常 ] = -10007,请检查感测器讯号并重新执行
+22909,2,[ DIMM2 气缸下降位置感测器侦测异常 ] = -10008,请检查感测器讯号并重新执行
+22910,2,[ RJ-45 气缸下降位置感测器侦测异常 ] = -10009,请检查感测器讯号并重新执行
+22911,2,[ PCI 夹爪闭合或开启异常 ] = -10010,请检查感测器讯号并重新执行
+22912,2,[ DIMM1 夹爪闭合或开启异常 ] = -10011,请检查感测器讯号并重新执行
+22913,2,[ DIMM2 夹爪闭合或开启异常 ] = -10012,请检查感测器讯号并重新执行
+22914,2,[ RJ-45 夹爪闭合或开启异常 ] = -10013,请检查感测器讯号并重新执行
+22915,2,[ RJ-45 料盘放置错误 ] = -10014,请检查料盘方向与位置，确认后请重新执行
+22916,2,[ RJ-45 料盘无法定位 ] = -10015,请检查料盘中间两颗元件是否放置良好，确认后请重新执行
+22917,2,[ DIMM 或 PCI 料盘放置错误 ] = -10016,请检查料盘方向与位置，确认后请重新执行
+22918,2,[ 手臂姿态错误 ] = -10017,请断电后手动将手臂推回安全范围后复归
+22919,2,[ RJ-45 翻转机构料件检测错误 ] = -10018,请检查料件是否放置妥当
+22920,2,[ 教导时抓取料件失败 ] = -10019,请重新执行
+22921,2,[ 教导时针脚辨识为 NG 料件 ] = -10020,请重新执行
+﻿
+////
+////	設備 Config 檔
+////	設備參數中各模組 opcode 範圍：
+////	CAMPro 					相關設定：1000-1999
+////	Mobile Robot 			相關設定：2000-2999
+////	Beckhoff PLC			相關設定：12000-12999
+////	Adept robot ACE			相關設定：22000-22999
+////	Delta					相關設定：50000-50999
+////
+
+// CAMPro : 1000-1999
+//// CAMPro Options : 1000-1099
+1000,0,[ Computer ] = SZ+4hy97O/K+KtvU5uSxIQtrZnGpoPrkC5jf1jp7Y00=
+1001,0,[ Show CAMPro Exception ] = false
+1002,0,[ Using Buzzer ] = false
+1003,0,[ Bypass Adept ACE ] = false
+1004,0,[ Bypass Beckhoff PLC ] = false
+1005,0,[ Bypass Delta ASDA-A2 ] = false
+1006,0,[ Bypass Delta SE ] = true
+1007,0,[ Bypass Oriental BLE-FLEX ] = false
+
+//// Communication Devices Setting : 1050-1099
+1050,0,[ RS485 SerialPort ] = COM1
+1051,0,[ Oriental BLE-FLEX For Loader Transfer ] = 1
+1052,0,[ Oriental BLE-FLEX For Unloader Transfer ] = 2
+1053,0,[ Delta ASDA-A2 For Conveyor Width Adjust ] = 3
+1054,0,[ 2 Channel Dimmer (Blue) ] = COM6
+1055,0,[ 5 Channel Dimmer (Red + White) ] = COM4
+1056,0,[ IAI RoboCylinder 1 ] = COM13
+1057,0,[ IAI RoboCylinder 2 ] = COM12
+1058,0,[ Oriental Loader Transfer Speed ] = 500,3000
+1059,0,[ Oriental Unloader Transfer Speed ] = 100,3000
+1060,0,[ Conveyor Width ] = -843920,1356843,1295248
+
+//// Product recipe : 1100-1199
+1100,0,[ Recipe Name ] = D:\CASTEC\Recipe\E1509_CompRecipe\ent1ctlt-va.xml
+
+//// CAMPro Alarms : 1200-1299
+//////    [ Comment(zh-TW / en-US) ] = Error Code, Solution
+1200,0,[ CAMPro 流程錯誤 ] = -1000,請重新執行CAMPro，如持續發生請聯絡友上工程師
+1201,0,[ CAMPro 與 Adept ACE 交握錯誤 ] = -1001,請檢查Adept ACE處於正確執行中，重新執行CAMPro並檢查連線是否正常、防火牆是否關閉。
+1202,0,[ CAMPro 與 Beckhoff PLC 交握錯誤 ] = -1002,請檢查網路連線是否正常、Beckhoff狀態燈號是否正常。如是網路連線請嘗試重新開機或進行連線測試。如是Beckhoff狀態異常，請聯絡友上工程師進行排除。
+1203,0,[ CAMPro 發生例外 ] = -1003,請重新執行CAMPro，如持續發生請聯絡友上工程師
+1204,0,[ NG 收料盒不在位置上 ] = -1100,請將收料盒重新放置定位
+1205,0,[ NGBox 2 不在位置上 ] = -1101,請將收料盒重新放置定位
+1206,0,[ NGBox 3 不在位置上 ] = -1102,請將收料盒重新放置定位
+1207,0,[ NG 收料盒已滿 (RJ-45) ] = 1001,請將收料盒內的料件清除
+1208,0,[ NG 收料盒已滿 (DIMM/PCI) ] = 1002,請將收料盒內的料件清除
+1209,0,[ NGBox 3 已滿 ] = 1003,請暫停自動化模式，將收料盒內的料件清除
+1210,0,[ 已關閉 Adept ACE，無法繼續執行相關動作 ] = -1200,請關閉 CAMPro。待重新執行 Adept ACE 後再重開 CAMPro
+1200,1,[ CAMPro 自动化流程错误 ] = -1000,请重新执行CAMPro。如持续发生请联络友上工程师。
+1201,1,[ CAMPro 与 Adept ACE 交握错误 ] = -1001,请检查Adept ACE处于正确执行中，重新执行CAMPro并检查联机是否正常、防火墙是否关闭。
+1202,1,[ CAMPro 与 Beckhoff PLC 交握错误 ] = -1002,请检查网络联机是否正常、Beckhoff状态灯号是否正常。如是网络联机请尝试重新启动或进行联机测试。如是Beckhoff状态异常，请联络友上工程师进行排除。
+1203,1,[ CAMPro 程序发生例外讯息 ] = -1003,请重新执行CAMPro。如持续发生请联络友上工程师。
+1204,1,[ NG 收料盒不在正确位置上 ] = -1100,请将抛料盒放置定位
+1205,1,[ NGBox 2 不在正确位置上 ] = -1101,请将抛料盒放置定位。确认放置完成后，请按「清除错误」。
+1206,1,[ NGBox 3 不在正确位置上 ] = -1102,请将抛料盒放置定位。确认放置完成后，请按「清除错误」。
+1207,1,[ NG 收料盒已满 (RJ-45)  ] = 1001,请将收料盒内的料件清除。
+1208,1,[ NG 收料盒已满 (DIMM/PCI) ] = 1002,请将收料盒内的料件清除。
+1209,1,[ NGBox 3 已满 ] = 1003,请「暂停」自动化流程，并将收料盒内的料件清除。
+1210,1,[ 已关闭 Adept ACE，无法继续执行相关动作 ] = -1200,请关闭 CAMPro。待重新执行 Adept ACE 后再重开 CAMPro
+1200,2,[ CAMPro automation procedure error ] = -1000,Restart CAMPro and retry. Contact CASTEC engineer if happen continuously.
+1201,2,[ CAMPro handshake error with Adept ACE ] = -1001,Please check Adept ACE is executing. Restart CAMPro and check the connection (Firewall must be turn-off)
+1202,2,[ CAMPro handshake error with Beckhoff PLC ] = -1002,Please make sure Ethernet connection is fine. If bad connection, try restart pc and do test with it. If Beckhoff PLC shows error led lamps, try contact CASTEC engineer to solve this problem and let him know led lamp status immediately
+1203,2,[ CAMPro exception occurred ] = -1003,Restart CAMPro and retry. Contact CASTEC engineer if happen continuously.
+1204,2,[ Couldn't detect NGBox 1 ] = -1100,Please put NG box back and "Clean Alarm"
+1205,2,[ Couldn't detect NGBox 2 ] = -1101,Please put NG box back and "Clean Alarm"
+1206,2,[ Couldn't detect NGBox 3 ] = -1102,Please put NG box back and "Clean Alarm"
+1207,2,[ NGBox 1 is full ] = 1000,"Pause" and clean the NG box
+1208,2,[ NGBox 2 is full ] = 1001,"Pause" and clean the NG box
+1209,2,[ NGBox 3 is full ] = 1002,"Pause" and clean the NG box
+1210,2,[ Adept ACE closed ] = -1200,Close CAMPro. Restart CAMPro until executing Adept ACE again.
+
+// Beckhoff : 12000-12999
+//// Beckhoff Global Settings : 12000-12049
+12000,0,[ Beckhoff PLC NetID ] = 5.33.208.224.1.1
+12001,0,[ Beckhoff PLC AdsPort ] = 801
+12002,0,[ 使用 PLC 的錯誤訊息 ] = false
+
+//// Beckhoff PLC DeviceNotification : 12050-12099
+//////    [ Comment ] = VariableName, (2)INT (3)DINT (4)REAL (5)LREAL (16)SINT (17)USINT (18)UINT (19)UDINT (20)LINT (21)ULINT (30)STRING (33)BOOL (40)TIME (99)ARRAY_STRUC
+12050,0,[ Initial Alarm ] = TRAY.pF_InitialAlarm, 33
+12051,0,[ Main Alarm ] = TRAY.pF_MainAlarm, 33
+12052,0,[ Tray Position ] = .pV_TrayPosNumber, 18
+
+
+//// Beckhoff PLC Recipes : 12100-12199
+//////    [ Comment ] = VariableName, (2)INT (3)DINT (4)REAL (5)LREAL (16)SINT (17)USINT (18)UINT (19)UDINT (20)LINT (21)ULINT (30)STRING (33)BOOL (40)TIME (99)ARRAY_STRUC
+
+//// Beckhoff PLC Alarms : 12200-12299
+//////    [ Comment(zh-TW / en-US) ] = Error Code, Solution
+12200,0,[ 初始化時緊急停止鈕觸發 ] = -1001,請排除相關問題後解除緊急停止，並初始化
+12201,0,[ 初始化時氣壓源異常 ] = -1002,請檢查氣壓源開關，壓力感測器是否正常
+12202,0,[ 無料盤資料 ] = -1003,請手動輸入料盤資料
+12203,0,[ 初始化時料盤位置資訊不完整 ] = -1004,請檢查滑道上料盤的資訊及位置
+12204,0,[ 初始化時防夾感測器觸發 ] = -1005,請將滑道上的料盤移至安全位置
+12205,0,[ 初始化時料盤匣感測異常 ] = -1006,請檢查所有料盤狀況
+12206,0,[ 升降台原點復歸異常 ] = -1007,請重做升降台原點復歸，或聯絡友上工程師排除
+12207,0,[ 初始化後升降台移至取料位置異常 ] = -1008,請檢查升降台狀況，或聯絡友上工程師排除
+12208,0,[ 初始化時料盤資料及位置資訊不完整 ] = -1009,請檢查料盤匣中所有料盤狀態
+12209,0,[ 初始化時安全門未關閉 ] = -1010,請將安全門確實關閉，再重做初始化
+12210,0,[ 作業中安全門未關閉 ] = -2001,請檢查安全門狀態或感測器狀態是否正常
+12211,0,[ 作業中防夾感測器觸發 ] = -2002,請檢查滑道與料盤匣之間是否有殘留料盤或異物
+12212,0,[ 升降台停留位置錯誤 ] = -2003,請檢查是否指定了錯誤的料盤匣位置
+12213,0,[ 作業中防夾感測器觸發 ] = -2004,請檢查滑道與料盤匣之間是否有殘留料盤或異物
+12214,0,[ 升降台馬達到位但訊號異常 ] = -2005,請通知友上工程師確認馬達狀況
+12215,0,[ 升降台馬達發生異常 ] = -2006,請檢查馬達狀態並重新復歸
+12216,0,[ 料盤感測器異常 ] = -2007,請檢查料盤設定與料盤感測器狀態是否相符
+12217,0,[ 作業中防夾感測器觸發 ] = -2008,請檢查滑道與料盤匣之間是否有殘留料盤或異物
+12218,0,[ 回料盤時料盤夾狀態異常 ] = -2009,請檢查料盤夾位置及位置感測器訊號
+12219,0,[ 回料盤異常 ] = -2010,請檢查料盤並將料盤推回料盤匣
+12220,0,[ 料盤匣感測器偵測異常 ] = -2011,請檢查料盤是否確實被推入料盤匣內
+12221,0,[ 機器手臂交握訊號異常 ] = -2012,請聯絡友上工程師檢查
+12222,0,[ 料盤匣內無料盤 ] = -2013,請檢查料盤匣內料盤狀況
+12223,0,[ 作業中防夾感測器觸發 ] = -2014,請檢查滑道與料盤匣之間是否有殘留料盤或異物
+12224,0,[ 料盤夾目標層偵測料盤異常 ] = -2015,請檢查目標層料盤狀況
+12225,0,[ 作業中防夾感測器觸發 ] = -2016,請檢查滑道與料盤匣之間是否有殘留料盤或異物
+12226,0,[ 料盤夾目標層感測器再度偵測異常 ] = -2017,請停止自動化模式並檢查相關感測器狀態
+12227,0,[ 升降台馬達到位但訊號異常 ] = -2018,請通知友上工程師確認馬達狀況
+12228,0,[ 升降台馬達發生異常 ] = -2019,請檢查馬達狀態並重新復歸
+12229,0,[ 作業中防夾感測器觸發 ] = -2020,請檢查滑道與料盤匣之間是否有殘留料盤或異物
+12230,0,[ 料盤勾未正常下降 ] = -2021,請檢查料盤勾下降狀態或感測器訊號
+12231,0,[ 料盤勾上升控制訊號異常輸出 ] = -2022,請聯絡友上工程師檢查
+12232,0,[ 料盤勾伸出逾時 ] = -2023,請檢查料盤勾伸出狀態或感測器訊號
+12233,0,[ 料盤勾上升逾時 ] = -2024,請檢查料盤勾上升狀態或感測器訊號
+12234,0,[ 料盤勾縮回逾時 ] = -2025,請檢查料盤勾縮回狀態或感測器訊號
+12235,0,[ 料盤送回料盤匣位置異常 ] = -2026,請檢查送回料盤的位置或感測器訊號
+12236,0,[ 升降台馬達到位但訊號異常 ] = -2027,請通知友上工程師確認馬達狀況
+12237,0,[ 升降台馬達發生異常 ] = -2028,請檢查馬達狀態並重新復歸
+12238,0,[ 作業中氣壓源異常 ] = -2029,請檢查氣壓源開關，壓力感測器是否正常
+12239,0,[ 作業中緊急停止鈕觸發 ] = -2030,請排除相關問題後解除緊急停止，並初始化
+12240,0,[ 滑道或升降台馬達狀態不正常 ] = -2031,請於生產前先完成初始化
+12241,0,[ 初始化旗標異常 ] = -2032,請於生產前先完成初始化
+12242,0,[ 料盤夾開啟異常 ] = -2033,請檢查料盤夾開啟狀態或感測器訊號
+12243,0,[ 作業中防夾感測器觸發 ] = -2034,請檢查滑道與料盤匣之間是否有殘留料盤或異物
+12244,0,[ 料盤參數異常 ] = -2035,請檢查所有料盤參數正確性
+
+12200,1,[ 初始化时紧急停止钮触发 ] = -1001,请排除相关问题后解除紧急停止，并初始化
+12201,1,[ 初始化时气压源异常 ] = -1002,请检查气压源开关，压力传感器是否正常
+12202,1,[ 无料盘数据 ] = -1003,请手动输入料盘数据
+12203,1,[ 初始化时料盘位置信息不完整 ] = -1004,请检查滑道上料盘的信息及位置
+12204,1,[ 初始化时防夹传感器触发 ] = -1005,请将滑道上的料盘移至安全位置
+12205,1,[ 初始化时料盘匣感测异常 ] = -1006,请检查所有料盘状况
+12206,1,[ 升降台原点复归异常 ] = -1007,请重做升降台原点复归，或联络友上工程师排除
+12207,1,[ 初始化后升降台移至取料位置异常 ] = -1008,请检查升降台状况，或联络友上工程师排除
+12208,1,[ 初始化时料盘数据及位置信息不完整 ] = -1009,请检查料盘匣中所有料盘状态
+12209,1,[ 初始化时安全门未关闭 ] = -1010,请将安全门确实关闭，再重做初始化
+12210,1,[ 作业中安全门未关闭 ] = -2001,请检查安全门状态或传感器状态是否正常
+12211,1,[ 作业中防夹传感器触发 ] = -2002,请检查滑道与料盘匣之间是否有残留料盘或异物
+12212,1,[ 升降台停留位置错误 ] = -2003,请检查是否指定了错误的料盘匣位置
+12213,1,[ 作业中防夹传感器触发 ] = -2004,请检查滑道与料盘匣之间是否有残留料盘或异物
+12214,1,[ 升降台马达到位但讯号异常 ] = -2005,请通知友上工程师确认马达状况
+12215,1,[ 升降台马达发生异常 ] = -2006,请检查马达状态并重新复归
+12216,1,[ 料盘传感器异常 ] = -2007,请检查料盘设定与料盘传感器状态是否相符
+12217,1,[ 作业中防夹传感器触发 ] = -2008,请检查滑道与料盘匣之间是否有残留料盘或异物
+12218,1,[ 回料盘时料盘夹状态异常 ] = -2009,请检查料盘夹位置及位置传感器讯号
+12219,1,[ 回料盘异常 ] = -2010,请检查料盘并将料盘推回料盘匣
+12220,1,[ 料盘匣传感器侦测异常 ] = -2011,请检查料盘是否确实被推入料盘匣内
+12221,1,[ 机器手臂交握讯号异常 ] = -2012,请联络友上工程师检查
+12222,1,[ 料盘匣内无料盘 ] = -2013,请检查料盘匣内料盘状况
+12223,1,[ 作业中防夹传感器触发 ] = -2014,请检查滑道与料盘匣之间是否有残留料盘或异物
+12224,1,[ 料盘夹目标层侦测料盘异常 ] = -2015,请检查目标层料盘状况
+12225,1,[ 作业中防夹传感器触发 ] = -2016,请检查滑道与料盘匣之间是否有残留料盘或异物
+12226,1,[ 料盘夹目标层传感器再度侦测异常 ] = -2017,请停止自动化模式并检查相关传感器状态
+12227,1,[ 升降台马达到位但讯号异常 ] = -2018,请通知友上工程师确认马达状况
+12228,1,[ 升降台马达发生异常 ] = -2019,请检查马达状态并重新复归
+12229,1,[ 作业中防夹传感器触发 ] = -2020,请检查滑道与料盘匣之间是否有残留料盘或异物
+12230,1,[ 料盘勾未正常下降 ] = -2021,请检查料盘勾下降状态或传感器讯号
+12231,1,[ 料盘勾上升控制讯号异常输出 ] = -2022,请联络友上工程师检查
+12232,1,[ 料盘勾伸出逾时 ] = -2023,请检查料盘勾伸出状态或传感器讯号
+12233,1,[ 料盘勾上升逾时 ] = -2024,请检查料盘勾上升状态或传感器讯号
+12234,1,[ 料盘勾缩回逾时 ] = -2025,请检查料盘勾缩回状态或传感器讯号
+12235,1,[ 料盘送回料盘匣位置异常 ] = -2026,请检查送回料盘的位置或传感器讯号
+12236,1,[ 升降台马达到位但讯号异常 ] = -2027,请通知友上工程师确认马达状况
+12237,1,[ 升降台马达发生异常 ] = -2028,请检查马达状态并重新复归
+12238,1,[ 作业中气压源异常 ] = -2029,请检查气压源开关，压力传感器是否正常
+12239,1,[ 作业中紧急停止钮触发 ] = -2030,请排除相关问题后解除紧急停止，并初始化
+12240,1,[ 滑道或升降台马达状态不正常 ] = -2031,请于生产前先完成初始化
+12241,1,[ 初始化旗标异常 ] = -2032,请于生产前先完成初始化
+12242,1,[ 料盘夹开启异常 ] = -2033,请检查料盘夹开启状态或传感器讯号
+12243,1,[ 作业中防夹传感器触发 ] = -2034,请检查滑道与料盘匣之间是否有残留料盘或异物
+12244,1,[ 料盘参数异常 ] = -2035,请检查所有料盘参数正确性
+
+12200,2,[ EMO Trigger When Initial ] = -1001,Please remove all problems then release EMO and Initial Machine
+12201,2,[ CDA Pressure Alarm When Initial ] = -1002,Please check CDA switch or air pressure sensor
+12202,2,[ No Data of Tray ] = -1003,Please input tray data manually
+12203,2,[ Tray Loaction and Data Incorrect When Initial ] = -1004,Please check location and data of the tray on slider
+12204,2,[ Safety Sensor Alarm When Initial ] = -1005,Please move the tray on slider to safe position
+12205,2,[ Cassette Detect Error When Initial ] = -1006,Please check all tray status in the cassette
+12206,2,[ Elevator Home Error ] = -1007,Please redo elevator HOME or Call CASTEC engineers
+12207,2,[ Elevator Move to Pick Position Error after Initial ] = -1008,Please check status of the elevator or Call CASTEC engineers
+12208,2,[ Tray Loaction and Data Incorrect When Initial ] = -1009,Please check location and data of all tray in the cassette
+12209,2,[ Door Open When Initial ] = -1010,Please the maintenance door then redo initial
+12210,2,[ Door Open Alarm ] = -2001,Please check the maintenance door or sensor status
+12211,2,[ Safety Sensor Alarm ] = -2002,Please check if anything retained between slider and elevator
+12212,2,[ Elevator Position Error ] = -2003,Please if given incorrect command to elevator
+12213,2,[ Safety Sensor Alarm ] = -2004,Please check if anything retained between slider and elevator
+12214,2,[ Elevator Arrived but Motor Alarm ] = -2005,Please call CASTEC engineer to check
+12215,2,[ Elevator Motor Alarm ] = -2006,Please check the motor status and redo home
+12216,2,[ Tray Sensor Detect Error ] = -2007,Please check if tray setting and sensor signal is matched
+12217,2,[ Safety Sensor Alarm ] = -2008,Please check if anything retained between slider and elevator
+12218,2,[ Clamp Close Alarm When Send Tray ] = -2009,Please check clamp position or snesor signal
+12219,2,[ Send Tray Alarm ] = -2010,Please check tray status and push it into cassette
+12220,2,[ Cassette Sensor Detect Error ] = -2011,Please check if the tray was push into cassette properly
+12221,2,[ Robot Handshake Signals Error ] = -2012,Please call CASTEC engineer to check
+12222,2,[ Tray Empty Alarm ] = -2013,Please tray status in the cassette
+12223,2,[ Safety Sensor Alarm ] = -2014,Please check if anything retained between slider and elevator
+12224,2,[ Tray Detect Error of Destination Layer ] = -2015,Please check the destination layer status or its sensor signal
+12225,2,[ Safety Sensor Alarm ] = -2016,Please check if anything retained between slider and elevator
+12226,2,[ Destination Layer Sensor Still Alarm ] = -2017,STOP Auto-Run and check sensor signal
+12227,2,[ Elevator Arrived but Motor Alarm ] = -2018,Please call CASTEC engineer to check
+12228,2,[ Elevator Motor Alarm ] = -2019,Please check the motor status and redo home
+12229,2,[ Safety Sensor Alarm ] = -2020,Please check if anything retained between slider and elevator
+12230,2,[ Lift Down Error ] = -2021,Please check the lift DOWN status or sensor signal
+12231,2,[ Lift Up Control Signal Error ] = -2022,Please call CASTEC engineer to check
+12232,2,[ Lift Open Error ] = -2023,Please check the lift OPEN status or sensor signal
+12233,2,[ Lift Up Error ] = -2024,Please check the lift UP status or sensor signal
+12234,2,[ Lift Close Error ] = -2025,Please check the lift CLOSE status or sensor signal
+12235,2,[ Tray Position Error When Sent to Cassette ] = -2026,Please check tray position or Inp. sensor signal
+12236,2,[ Elevator Arrived but Motor Alarm ] = -2027,Please call CASTEC engineer to check
+12237,2,[ Elevator Motor Alarm ] = -2028,Please check the motor status and redo home
+12238,2,[ CDA Pressure Alarm ] = -2029,Please check CDA switch or air pressure sensor
+12239,2,[ EMO Trigger ] = -2030,Please remove all problems then release EMO and Initial Machine
+12240,2,[ Slider or Elevator Motor Alarm ] = -2031,Please initial machine before Auto-Run
+12241,2,[ Initial Flag Error= ] = -2032,Please initial machine before Auto-Run
+12242,2,[ Clamp Open Error ] = -2033,Please check the clamp open status or sensor signal
+12243,2,[ Safety Sensor Alarm ] = -2034,Please check if anything retained between slider and elevator
+12244,2,[ Tray Parameters Error ] = -2035,Please check all tray parameters
 
 // Adept ACE：22000-22999
 //// ACE Global Setting : 22000-22099
@@ -243,7 +594,6 @@
 22004,0,[ ACE Client Mode，(True)與ACE連結 (False)載入Workspace ] = true
 22005,0,[ Workspace 檔案路徑 ] = D:\Projects\D1510_Wistron\Code\Workspace\D1510緯創1-1-1.awp
 22006,0,[ Alarm Halt List ] = -1,-2,-3,-406,-407,-562,-10013,-10014,-30002,-30003,-40000
-22007,0,[ Skip Current Component Variable ] = curr.skip
 
 //// ACE Recipes : 22100-22899
 //////    [ Comment ] = VariableName, (0)Real (1)String (2)Location (3)PrecisionPoint 
@@ -306,6 +656,7 @@
 22939,0,[ NG 流道馬達錯誤 ] = -40000,請檢查馬達狀態(I/O 1218)。排除後請執行初始化復歸
 22940,0,[ NG 已滿 ] = -40001,請清除 NG 流道上的料件。如異常感測，請檢查感測器(I/O 1217)
 22941,0,[ 此料件已 NG 超過 3 次 ] = -40002,請檢查影像辨識是否良好，如無法排解請聯絡友上工程師
+22942,0,[ 此料件無法吸取或夾取 ] = -10016,請停止相關動作，並檢查器件、吸嘴或夾爪是否正常
 22900,1,[ Adept ACE 内部错误 ] = -1,请重新开启 Adept ACE 与 CAMPro，如持续错误请联络友上工程师
 22901,1,[ 紧急停止按钮已触发 ] = -2,请确认状况排除后，解开紧急停止钮并进行初始化复归
 22902,1,[ 气压源压力过低 ] = -3,请确认气压源状况，气压稳定后请按下清除错误
@@ -347,6 +698,7 @@
 22939,1,[ NG 流道马达错误 ] = -40000,请检查马达状态(I/O 1218)。排除后请执行初始化复归
 22940,1,[ NG 已满 ] = -40001,请清除 NG 流道上的料件。如异常感测，请检查传感器(I/O 1217)
 22941,1,[ 此料件已 NG 超过 3 次 ] = -40002,请检查影像辨识是否良好，如无法排解请联络友上工程师
+22942,1,[ 此料件无法吸取或夹取 ] = -10016,请停止相关动作，并检查器件、吸嘴或夹爪是否正常
 22900,2,[ Adept ACE Inner Exception ] = -1,Please restart Adept ACE and CAMPro. Contact engineer if occurred continuously
 22901,2,[ E-Stop triggered ] = -2,Please clear state. Release EMO button and initialize
 22902,2,[ Low CDA poreesure ] = -3,Ensure CDA are stable
@@ -388,6 +740,7 @@
 22939,2,[ Motor alarmed in NG conveyor ] = -40000,Check motor status (I/O 1218). Initialize after state clear
 22940,2,[ NG conveyor is full ] = -40001,Clear components on NG conveyor. Check I/O 1217 if signal error
 22941,2,[ NG over 3 times continuously of this component ] = -40002,Ensure vision results
+22942,2,[ Can not grip the component. ] = -10016,Stop action and check the gripper
 
 // Delta : 50000-50999
 //// Delta Global Settings : 50000-50099
@@ -412,7 +765,460 @@
 50103,2,[ Can not get tubes ] = 5,Please reload tubes
 50104,2,[ Tube can not located and loaded ] = 6,Check tube stuck state
 50105,2,[ Pull times reached ] = 12,Please reload materials
+50106,0,[ 震動等待料管入料過久 ] = 7,請檢查震動盤狀況是否良好
+50106,1,[ 震动等待料管入料过久 ] = 7,请检查震动盘状况是否良好
+50106,2,[ Waiting tube timeout ] = 7,Please check vibration tray status
+﻿
+////
+////	設備 Config 檔
+////	設備參數中各模組 opcode 範圍：
+////	CAMPro 					相關設定：1000-1999
+////	Mobile Robot 			相關設定：2000-2999
+////	Beckhoff PLC			相關設定：12000-12999
+////	Adept robot ACE			相關設定：22000-22999
+////	Delta					相關設定：50000-50999
+////
 
+// CAMPro : 1000-1999
+//// CAMPro Options : 1000-1099
+1000,0,[ Computer ] = SZ+4hy97O/K+KtvU5uSxIQtrZnGpoPrkC5jf1jp7Y00=
+1001,0,[ Show CAMPro Exception ] = false
+1002,0,[ Using Buzzer ] = true
+1003,0,[ Bypass Adept ACE ] = false
+1004,0,[ Bypass Beckhoff PLC ] = true
+1005,0,[ Bypass Delta ASDA-A2 ] = true
+1006,0,[ Bypass Delta SE ] = true
+1007,0,[ Bypass Oriental BLE-FLEX ] = true
+1008,0,[ Project (0)E1509 (1)E1610 ] =  0
+
+//// Communication Devices Setting : 1050-1099
+1050,0,[ RS485 SerialPort ] = COM1
+1051,0,[ Oriental BLE-FLEX For Loader Transfer ] = 1
+1052,0,[ Oriental BLE-FLEX For Unloader Transfer ] = 2
+1053,0,[ Delta ASDA-A2 For Conveyor Width Adjust ] = 3
+1054,0,[ Dimmer 1  (E1509)Blue,2CH   (E1610)Red,4CH ] = COM6
+1055,0,[ Dimmer 2  (E1509)Red+White,5CH  (E1610)Blue+White,4CH ] = COM4
+1056,0,[ IAI RoboCylinder 1 (E1509/E1610)  (COM,DevID) ] = Gripper 1,COM7,2
+1057,0,[ IAI RoboCylinder 2 (E1509 Only)  (COM,DevID)] = Gripper 3,COM8,1
+1058,0,[ Oriental Loader Transfer Speed   (Slow,Fast) ] = 500,3000
+1059,0,[ Oriental Unloader Transfer Speed  (Slow,Fast) ] = 100,3000
+1060,0,[ 板號,位置] = EN11PWRB_D,-821693
+
+//// Product recipe : 1100-1199
+1100,0,[ Recipe Name ] = D:\CASTEC\Recipe\E1509_CompRecipe\EN11PWRB_E_161227.xml
+
+//// CAMPro Alarms : 1200-1299
+//////    [ Comment(zh-TW / en-US) ] = Error Code, Solution
+1200,0,[ CAMPro 流程錯誤 ] = -1000,請重新執行CAMPro，如持續發生請聯絡友上工程師
+1201,0,[ CAMPro 與 Adept ACE 交握錯誤 ] = -1001,請檢查Adept ACE處於正確執行中，重新執行CAMPro並檢查連線是否正常、防火牆是否關閉。
+1202,0,[ CAMPro 與 Beckhoff PLC 交握錯誤 ] = -1002,請檢查網路連線是否正常、Beckhoff狀態燈號是否正常。如是網路連線請嘗試重新開機或進行連線測試。如是Beckhoff狀態異常，請聯絡友上工程師進行排除。
+1203,0,[ CAMPro 發生例外 ] = -1003,請重新執行CAMPro，如持續發生請聯絡友上工程師
+1204,0,[ NG 收料盒不在位置上 ] = -1100,請將收料盒重新放置定位
+1205,0,[ NGBox 2 不在位置上 ] = -1101,請將收料盒重新放置定位
+1206,0,[ NGBox 3 不在位置上 ] = -1102,請將收料盒重新放置定位
+1207,0,[ NG 收料盒已滿 (RJ-45) ] = 1001,請將收料盒內的料件清除
+1208,0,[ NG 收料盒已滿 (DIMM/PCI) ] = 1002,請將收料盒內的料件清除
+1209,0,[ NGBox 3 已滿 ] = 1003,請暫停自動化模式，將收料盒內的料件清除
+1210,0,[ 已關閉 Adept ACE，無法繼續執行相關動作 ] = -1200,請關閉 CAMPro。待重新執行 Adept ACE 後再重開 CAMPro
+1200,1,[ CAMPro 自动化流程错误 ] = -1000,请重新执行CAMPro。如持续发生请联络友上工程师。
+1201,1,[ CAMPro 与 Adept ACE 交握错误 ] = -1001,请检查Adept ACE处于正确执行中，重新执行CAMPro并检查联机是否正常、防火墙是否关闭。
+1202,1,[ CAMPro 与 Beckhoff PLC 交握错误 ] = -1002,请检查网络联机是否正常、Beckhoff状态灯号是否正常。如是网络联机请尝试重新启动或进行联机测试。如是Beckhoff状态异常，请联络友上工程师进行排除。
+1203,1,[ CAMPro 程序发生例外讯息 ] = -1003,请重新执行CAMPro。如持续发生请联络友上工程师。
+1204,1,[ NG 收料盒不在正确位置上 ] = -1100,请将抛料盒放置定位
+1205,1,[ NGBox 2 不在正确位置上 ] = -1101,请将抛料盒放置定位。确认放置完成后，请按「清除错误」。
+1206,1,[ NGBox 3 不在正确位置上 ] = -1102,请将抛料盒放置定位。确认放置完成后，请按「清除错误」。
+1207,1,[ NG 收料盒已满 (RJ-45)  ] = 1001,请将收料盒内的料件清除。
+1208,1,[ NG 收料盒已满 (DIMM/PCI) ] = 1002,请将收料盒内的料件清除。
+1209,1,[ NGBox 3 已满 ] = 1003,请「暂停」自动化流程，并将收料盒内的料件清除。
+1210,1,[ 已关闭 Adept ACE，无法继续执行相关动作 ] = -1200,请关闭 CAMPro。待重新执行 Adept ACE 后再重开 CAMPro
+1200,2,[ CAMPro automation procedure error ] = -1000,Restart CAMPro and retry. Contact CASTEC engineer if happen continuously.
+1201,2,[ CAMPro handshake error with Adept ACE ] = -1001,Please check Adept ACE is executing. Restart CAMPro and check the connection (Firewall must be turn-off)
+1202,2,[ CAMPro handshake error with Beckhoff PLC ] = -1002,Please make sure Ethernet connection is fine. If bad connection, try restart pc and do test with it. If Beckhoff PLC shows error led lamps, try contact CASTEC engineer to solve this problem and let him know led lamp status immediately
+1203,2,[ CAMPro exception occurred ] = -1003,Restart CAMPro and retry. Contact CASTEC engineer if happen continuously.
+1204,2,[ Couldn't detect NGBox 1 ] = -1100,Please put NG box back and "Clean Alarm"
+1205,2,[ Couldn't detect NGBox 2 ] = -1101,Please put NG box back and "Clean Alarm"
+1206,2,[ Couldn't detect NGBox 3 ] = -1102,Please put NG box back and "Clean Alarm"
+1207,2,[ NGBox 1 is full ] = 1000,"Pause" and clean the NG box
+1208,2,[ NGBox 2 is full ] = 1001,"Pause" and clean the NG box
+1209,2,[ NGBox 3 is full ] = 1002,"Pause" and clean the NG box
+1210,2,[ Adept ACE closed ] = -1200,Close CAMPro. Restart CAMPro until executing Adept ACE again.
+
+// Beckhoff : 12000-12999
+//// Beckhoff Global Settings : 12000-12049
+12000,0,[ Beckhoff PLC NetID ] = 5.33.208.224.1.1
+12001,0,[ Beckhoff PLC AdsPort ] = 801
+12002,0,[ 使用 PLC 的錯誤訊息 ] = false
+
+//// Beckhoff PLC DeviceNotification : 12050-12099
+//////    [ Comment ] = VariableName, (2)INT (3)DINT (4)REAL (5)LREAL (16)SINT (17)USINT (18)UINT (19)UDINT (20)LINT (21)ULINT (30)STRING (33)BOOL (40)TIME (99)ARRAY_STRUC
+12050,0,[ Initial Alarm ] = TRAY.pF_InitialAlarm, 33
+12051,0,[ Main Alarm ] = TRAY.pF_MainAlarm, 33
+12052,0,[ Tray Position ] = .pV_TrayPosNumber, 18
+
+
+//// Beckhoff PLC Recipes : 12100-12199
+//////    [ Comment ] = VariableName, (2)INT (3)DINT (4)REAL (5)LREAL (16)SINT (17)USINT (18)UINT (19)UDINT (20)LINT (21)ULINT (30)STRING (33)BOOL (40)TIME (99)ARRAY_STRUC
+
+//// Beckhoff PLC Alarms : 12200-12299
+//////    [ Comment(zh-TW / en-US) ] = Error Code, Solution
+12200,0,[ 初始化時緊急停止鈕觸發 ] = -1001,請排除相關問題後解除緊急停止，並初始化
+12201,0,[ 初始化時氣壓源異常 ] = -1002,請檢查氣壓源開關，壓力感測器是否正常
+12202,0,[ 無料盤資料 ] = -1003,請手動輸入料盤資料
+12203,0,[ 初始化時料盤位置資訊不完整 ] = -1004,請檢查滑道上料盤的資訊及位置
+12204,0,[ 初始化時防夾感測器觸發 ] = -1005,請將滑道上的料盤移至安全位置
+12205,0,[ 初始化時料盤匣感測異常 ] = -1006,請檢查所有料盤狀況
+12206,0,[ 升降台原點復歸異常 ] = -1007,請重做升降台原點復歸，或聯絡友上工程師排除
+12207,0,[ 初始化後升降台移至取料位置異常 ] = -1008,請檢查升降台狀況，或聯絡友上工程師排除
+12208,0,[ 初始化時料盤資料及位置資訊不完整 ] = -1009,請檢查料盤匣中所有料盤狀態
+12209,0,[ 初始化時安全門未關閉 ] = -1010,請將安全門確實關閉，再重做初始化
+12210,0,[ 作業中安全門未關閉 ] = -2001,請檢查安全門狀態或感測器狀態是否正常
+12211,0,[ 作業中防夾感測器觸發 ] = -2002,請檢查滑道與料盤匣之間是否有殘留料盤或異物
+12212,0,[ 升降台停留位置錯誤 ] = -2003,請檢查是否指定了錯誤的料盤匣位置
+12213,0,[ 作業中防夾感測器觸發 ] = -2004,請檢查滑道與料盤匣之間是否有殘留料盤或異物
+12214,0,[ 升降台馬達到位但訊號異常 ] = -2005,移動到位訊號異常，請清除錯誤並繼續
+12215,0,[ 升降台馬達發生異常 ] = -2006,請檢查馬達狀態並重新復歸
+12216,0,[ 料盤感測器異常 ] = -2007,請檢查料盤設定與料盤感測器狀態是否相符
+12217,0,[ 作業中防夾感測器觸發 ] = -2008,請檢查滑道與料盤匣之間是否有殘留料盤或異物
+12218,0,[ 回料盤時料盤夾狀態異常 ] = -2009,請檢查料盤夾位置及位置感測器訊號
+12219,0,[ 回料盤異常 ] = -2010,請檢查料盤並將料盤推回料盤匣
+12220,0,[ 料盤匣感測器偵測異常 ] = -2011,請檢查料盤是否確實被推入料盤匣內
+12221,0,[ 機器手臂交握訊號異常 ] = -2012,請聯絡友上工程師檢查
+12222,0,[ 料盤匣內無料盤 ] = -2013,請檢查料盤匣內料盤狀況
+12223,0,[ 作業中防夾感測器觸發 ] = -2014,請檢查滑道與料盤匣之間是否有殘留料盤或異物
+12224,0,[ 料盤夾目標層偵測料盤異常 ] = -2015,請檢查目標層料盤狀況
+12225,0,[ 作業中防夾感測器觸發 ] = -2016,請檢查滑道與料盤匣之間是否有殘留料盤或異物
+12226,0,[ 料盤夾目標層感測器再度偵測異常 ] = -2017,請停止自動化模式並檢查相關感測器狀態
+12227,0,[ 升降台馬達到位但訊號異常 ] = -2018,移動到位訊號異常，請清除錯誤並繼續
+12228,0,[ 升降台馬達發生異常 ] = -2019,請檢查馬達狀態並重新復歸
+12229,0,[ 作業中防夾感測器觸發 ] = -2020,請檢查滑道與料盤匣之間是否有殘留料盤或異物
+12230,0,[ 料盤勾未正常下降 ] = -2021,請檢查料盤勾下降狀態或感測器訊號
+12231,0,[ 料盤勾上升控制訊號異常輸出 ] = -2022,請聯絡友上工程師檢查
+12232,0,[ 料盤勾伸出逾時 ] = -2023,請檢查料盤勾伸出狀態或感測器訊號
+12233,0,[ 料盤勾上升逾時 ] = -2024,請檢查料盤勾上升狀態或感測器訊號
+12234,0,[ 料盤勾縮回逾時 ] = -2025,請檢查料盤勾縮回狀態或感測器訊號
+12235,0,[ 料盤送至取料位置異常 ] = -2026,請檢查送出料盤的位置或感測器訊號
+12236,0,[ 升降台馬達到位但訊號異常 ] = -2027,移動到位訊號異常，請清除錯誤並繼續
+12237,0,[ 升降台馬達發生異常 ] = -2028,請檢查馬達狀態並重新復歸
+12238,0,[ 作業中氣壓源異常 ] = -2029,請檢查氣壓源開關，壓力感測器是否正常
+12239,0,[ 作業中緊急停止鈕觸發 ] = -2030,請排除相關問題後解除緊急停止，並初始化
+12240,0,[ 滑道或升降台馬達狀態不正常 ] = -2031,請於生產前先完成初始化
+12241,0,[ 初始化旗標異常 ] = -2032,請於生產前先完成初始化
+12242,0,[ 料盤夾開啟異常 ] = -2033,請檢查料盤夾開啟狀態或感測器訊號
+12243,0,[ 作業中防夾感測器觸發 ] = -2034,請檢查滑道與料盤匣之間是否有殘留料盤或異物
+12244,0,[ 料盤參數異常 ] = -2035,請檢查所有料盤參數正確性
+12245,0,[ 料盤夾未到位 ] = -1011,請檢查感測器是否異常
+12246,0,[ 料盤位置異常 ] = -1012,請將料盤推至定位再繼續
+
+12200,1,[ 初始化时紧急停止钮触发 ] = -1001,请排除相关问题后解除紧急停止，并初始化
+12201,1,[ 初始化时气压源异常 ] = -1002,请检查气压源开关，压力传感器是否正常
+12202,1,[ 无料盘数据 ] = -1003,请手动输入料盘数据
+12203,1,[ 初始化时料盘位置信息不完整 ] = -1004,请检查滑道上料盘的信息及位置
+12204,1,[ 初始化时防夹传感器触发 ] = -1005,请将滑道上的料盘移至安全位置
+12205,1,[ 初始化时料盘匣感测异常 ] = -1006,请检查所有料盘状况
+12206,1,[ 升降台原点复归异常 ] = -1007,请重做升降台原点复归，或联络友上工程师排除
+12207,1,[ 初始化后升降台移至取料位置异常 ] = -1008,请检查升降台状况，或联络友上工程师排除
+12208,1,[ 初始化时料盘数据及位置信息不完整 ] = -1009,请检查料盘匣中所有料盘状态
+12209,1,[ 初始化时安全门未关闭 ] = -1010,请将安全门确实关闭，再重做初始化
+12210,1,[ 作业中安全门未关闭 ] = -2001,请检查安全门状态或传感器状态是否正常
+12211,1,[ 作业中防夹传感器触发 ] = -2002,请检查滑道与料盘匣之间是否有残留料盘或异物
+12212,1,[ 升降台停留位置错误 ] = -2003,请检查是否指定了错误的料盘匣位置
+12213,1,[ 作业中防夹传感器触发 ] = -2004,请检查滑道与料盘匣之间是否有残留料盘或异物
+12214,1,[ 升降台马达到位但讯号异常 ] = -2005,移动到位讯号异常，请清除错误并继续
+12215,1,[ 升降台马达发生异常 ] = -2006,请检查马达状态并重新复归
+12216,1,[ 料盘传感器异常 ] = -2007,请检查料盘设定与料盘传感器状态是否相符
+12217,1,[ 作业中防夹传感器触发 ] = -2008,请检查滑道与料盘匣之间是否有残留料盘或异物
+12218,1,[ 回料盘时料盘夹状态异常 ] = -2009,请检查料盘夹位置及位置传感器讯号
+12219,1,[ 回料盘异常 ] = -2010,请检查料盘并将料盘推回料盘匣
+12220,1,[ 料盘匣传感器侦测异常 ] = -2011,请检查料盘是否确实被推入料盘匣内
+12221,1,[ 机器手臂交握讯号异常 ] = -2012,请联络友上工程师检查
+12222,1,[ {0}料盘匣内无料盘 ] = -2013,请检查料盘匣内料盘状况
+12223,1,[ 作业中防夹传感器触发 ] = -2014,请检查滑道与料盘匣之间是否有残留料盘或异物
+12224,1,[ 料盘夹目标层侦测料盘异常 ] = -2015,请检查目标层料盘状况
+12225,1,[ 作业中防夹传感器触发 ] = -2016,请检查滑道与料盘匣之间是否有残留料盘或异物
+12226,1,[ 料盘夹目标层传感器再度侦测异常 ] = -2017,请停止自动化模式并检查相关传感器状态
+12227,1,[ 升降台马达到位但讯号异常 ] = -2018,移动到位讯号异常，请清除错误并继续
+12228,1,[ 升降台马达发生异常 ] = -2019,请检查马达状态并重新复归
+12229,1,[ 作业中防夹传感器触发 ] = -2020,请检查滑道与料盘匣之间是否有残留料盘或异物
+12230,1,[ 料盘勾未正常下降 ] = -2021,请检查料盘勾下降状态或传感器讯号
+12231,1,[ 料盘勾上升控制讯号异常输出 ] = -2022,请联络友上工程师检查
+12232,1,[ 料盘勾伸出逾时 ] = -2023,请检查料盘勾伸出状态或传感器讯号
+12233,1,[ 料盘勾上升逾时 ] = -2024,请检查料盘勾上升状态或传感器讯号
+12234,1,[ 料盘勾缩回逾时 ] = -2025,请检查料盘勾缩回状态或传感器讯号
+12235,1,[ 料盘送至取料位置异常 ] = -2026,请检查料盘的位置或传感器讯号
+12236,1,[ 升降台马达到位但讯号异常 ] = -2027,移动到位讯号异常，请清除错误并继续
+12237,1,[ 升降台马达发生异常 ] = -2028,请检查马达状态并重新复归
+12238,1,[ 作业中气压源异常 ] = -2029,请检查气压源开关，压力传感器是否正常
+12239,1,[ 作业中紧急停止钮触发 ] = -2030,请排除相关问题后解除紧急停止，并初始化
+12240,1,[ 滑道或升降台马达状态不正常 ] = -2031,请于生产前先完成初始化
+12241,1,[ 初始化旗标异常 ] = -2032,请于生产前先完成初始化
+12242,1,[ 料盘夹开启异常 ] = -2033,请检查料盘夹开启状态或传感器讯号
+12243,1,[ 作业中防夹传感器触发 ] = -2034,请检查滑道与料盘匣之间是否有残留料盘或异物
+12244,1,[ 料盘参数异常 ] = -2035,请检查所有料盘参数正确性
+12245,1,[ 料盘勾未到位 ] = -1011,请检查传感器是否异常
+12246,1,[ 料盘位置异常 ] = -1012,请将料盘推至定位再继续
+
+12200,2,[ EMO Trigger When Initial ] = -1001,Please remove all problems then release EMO and Initial Machine
+12201,2,[ CDA Pressure Alarm When Initial ] = -1002,Please check CDA switch or air pressure sensor
+12202,2,[ No Data of Tray ] = -1003,Please input tray data manually
+12203,2,[ Tray Loaction and Data Incorrect When Initial ] = -1004,Please check location and data of the tray on slider
+12204,2,[ Safety Sensor Alarm When Initial ] = -1005,Please move the tray on slider to safe position
+12205,2,[ Cassette Detect Error When Initial ] = -1006,Please check all tray status in the cassette
+12206,2,[ Elevator Home Error ] = -1007,Please redo elevator HOME or Call CASTEC engineers
+12207,2,[ Elevator Move to Pick Position Error after Initial ] = -1008,Please check status of the elevator or Call CASTEC engineers
+12208,2,[ Tray Loaction and Data Incorrect When Initial ] = -1009,Please check location and data of all tray in the cassette
+12209,2,[ Door Open When Initial ] = -1010,Please the maintenance door then redo initial
+12210,2,[ Door Open Alarm ] = -2001,Please check the maintenance door or sensor status
+12211,2,[ Safety Sensor Alarm ] = -2002,Please check if anything retained between slider and elevator
+12212,2,[ Elevator Position Error ] = -2003,Please if given incorrect command to elevator
+12213,2,[ Safety Sensor Alarm ] = -2004,Please check if anything retained between slider and elevator
+12214,2,[ Elevator Arrived but Motor Alarm ] = -2005,Please call CASTEC engineer to check
+12215,2,[ Elevator Motor Alarm ] = -2006,Please check the motor status and redo home
+12216,2,[ Tray Sensor Detect Error ] = -2007,Please check if tray setting and sensor signal is matched
+12217,2,[ Safety Sensor Alarm ] = -2008,Please check if anything retained between slider and elevator
+12218,2,[ Clamp Close Alarm When Send Tray ] = -2009,Please check clamp position or snesor signal
+12219,2,[ Send Tray Alarm ] = -2010,Please check tray status and push it into cassette
+12220,2,[ Cassette Sensor Detect Error ] = -2011,Please check if the tray was push into cassette properly
+12221,2,[ Robot Handshake Signals Error ] = -2012,Please call CASTEC engineer to check
+12222,2,[ Tray Empty Alarm ] = -2013,Please tray status in the cassette
+12223,2,[ Safety Sensor Alarm ] = -2014,Please check if anything retained between slider and elevator
+12224,2,[ Tray Detect Error of Destination Layer ] = -2015,Please check the destination layer status or its sensor signal
+12225,2,[ Safety Sensor Alarm ] = -2016,Please check if anything retained between slider and elevator
+12226,2,[ Destination Layer Sensor Still Alarm ] = -2017,STOP Auto-Run and check sensor signal
+12227,2,[ Elevator Arrived but Motor Alarm ] = -2018,Please call CASTEC engineer to check
+12228,2,[ Elevator Motor Alarm ] = -2019,Please check the motor status and redo home
+12229,2,[ Safety Sensor Alarm ] = -2020,Please check if anything retained between slider and elevator
+12230,2,[ Lift Down Error ] = -2021,Please check the lift DOWN status or sensor signal
+12231,2,[ Lift Up Control Signal Error ] = -2022,Please call CASTEC engineer to check
+12232,2,[ Lift Open Error ] = -2023,Please check the lift OPEN status or sensor signal
+12233,2,[ Lift Up Error ] = -2024,Please check the lift UP status or sensor signal
+12234,2,[ Lift Close Error ] = -2025,Please check the lift CLOSE status or sensor signal
+12235,2,[ Tray Send To INP Error ] = -2026,Please check tray Status.
+12236,2,[ Elevator Arrived but Motor Alarm ] = -2027,Please check motor and clean alarm to continue
+12237,2,[ Elevator Motor Alarm ] = -2028,Please check the motor status and redo home
+12238,2,[ CDA Pressure Alarm ] = -2029,Please check CDA switch or air pressure sensor
+12239,2,[ EMO Trigger ] = -2030,Please remove all problems then release EMO and Initial Machine
+12240,2,[ Slider or Elevator Motor Alarm ] = -2031,Please initial machine before Auto-Run
+12241,2,[ Initial Flag Error ] = -2032,Please initial machine before Auto-Run
+12242,2,[ Clamp Open Error ] = -2033,Please check the clamp open status or sensor signal
+12243,2,[ Safety Sensor Alarm ] = -2034,Please check if anything retained between slider and elevator
+12244,2,[ Tray Parameters Error ] = -2035,Please check all tray parameters
+12245,2,[ Clamp Sensor Error ] = -1011,Please Check Sensor Status
+12246,2,[ Tray Position Error ] = -1012,PLease Push Tray to Position and Continue
+
+// Adept ACE：22000-22999
+//// ACE Global Setting : 22000-22099
+22000,0,[ ACE Module Name ] = sCobra800-Inverted
+22001,0,[ AceServer Name ] = ace
+22002,0,[ AceServer IP ] = localhost
+22003,0,[ AceServer Port ] = 43434
+22004,0,[ ACE Client Mode，(True)與ACE連結 (False)載入Workspace ] = true
+22005,0,[ Workspace 檔案路徑 ] = D:\CASTEC\Members\Dennis\Robot codes\main\CASTEC_HUAWE_NO3.awp
+22006,0,[ Alarm Halt List ] = -1,-2,-3,-406,-407,-562,-10013,-10014,-30002,-30003,-40000
+//22007,0,[ V+ 變數，跳過當前欲插件的料件，適用於連續 NG 時跳過當下料件 ] = skip
+22008,0,[ Pass line ] = -700
+22009,2000,[ 方形吸嘴(大)高度，單位為 mm ] = 10
+22009,2001,[ 圓形吸嘴高度，單位為 mm ] = 10
+22009,2002,[ 方形吸嘴(小)高度，單位為 mm ] = 10
+22009,30122,[ 夾爪(No.22)高度，單位為 mm ] = 10
+22009,30123,[ 夾爪(No.23)高度，單位為 mm ] = 10
+22009,30124,[ 夾爪(No.24)高度，單位為 mm ] = 10
+22009,30125,[ 夾爪(No.25)高度，單位為 mm ] = 10
+
+//// ACE Recipes : 22100-22899
+//////    [ Comment ] = VariableName, (0)Real (1)String (2)Location (3)PrecisionPoint 
+22100,0,[ 插入點位 1 ] = comp_offset[1],2
+22101,0,[ 插入點位 2 ] = comp_offset[2],2
+22102,0,[ 插入點位 3 ] = comp_offset[3],2
+22103,0,[ 插入點位 4 ] = comp_offset[4],2
+22104,0,[ 插入點位 5 ] = comp_offset[5],2
+22105,0,[ 插入點位 6 ] = comp_offset[6],2
+22106,0,[ 插入點位 7 ] = comp_offset[7],2
+22107,0,[ 插入點位 8 ] = comp_offset[8],2
+22108,0,[ 插入點位 9 ] = comp_offset[9],2
+22109,0,[ 插入點位 10 ] = comp_offset[10],2
+22110,0,[ Foxconn DIMM 1 插入點位 ] = fox_dimm1_off,2
+22111,0,[ Foxconn DIMM 2 插入點位 ] = fox_dimm2_off,2
+22112,0,[ LOTES DIMM 1 插入點位 ] = lotes_dimm1_off,2
+22113,0,[ LOTES DIMM 2 插入點位 ] = lotes_dimm2_off,2
+
+
+//// ACE Alarms : 22900-22999
+//////    [ Comment(zh-TW / en-US) ] = Error Code, Solution
+22900,0,[ Adept ACE 內部錯誤 ] = -1,請重新開啟 Adept ACE 與 CAMPro，如持續錯誤請聯絡友上工程師
+22901,0,[ 緊急停止按鈕已觸發 ] = -2,請確認狀況排除後，解開緊急停止鈕並進行初始化復歸
+22902,0,[ 氣壓源壓力過低 ] = -3,請確認氣壓源狀況，氣壓穩定後請按下清除錯誤
+22903,0,[ 維修門(右)已被開啟 ] = -4,請於完成動作後按下清除錯誤，將繼續執行
+22904,0,[ 維修門(左)已被開啟 ] = -5,請於完成動作後按下清除錯誤，將繼續執行
+22906,0,[ 未定義的參數或名稱  ] = -406,檔案被更改，請重新執行 Adept ACE，並請「不要存檔」！
+22907,0,[ 違法的參數  ] = -407,檔案被更改，請重新執行 Adept ACE，並請「不要存檔」！
+22908,0,[ 攝影機連線逾時  ] = -562,請檢查攝影機是否正確連接、攝影機是否可正常取像。如重複發生，請聯絡友上工程師
+22909,0,[ 機器手臂電源狀態錯誤 ] = -10000,請致能機器手臂
+22910,0,[ 電動夾爪異常(No.1) ] = -10001,請檢查 I/O 1255，並檢查是否有異物或是夾持、外力過大造成，排除後請清除錯誤
+22911,0,[ 吸嘴異常(No.2) ] = -10002,請檢查真空壓力、吸嘴完整性、吸取物是否完好與位置，排除後請清除錯誤，將繼續動作
+22912,0,[ 電動夾爪異常(No.3) ] = -10003,請檢查 I/O 1271，並檢查是否有異物或是夾持、外力過大造成，排除後請清除錯誤
+22913,0,[ 吸嘴異常(No.4) ] = -10004,請檢查真空壓力、吸嘴完整性、吸取物是否完好與位置，排除後請清除錯誤，將繼續動作
+22914,0,[ 電動夾爪(No.1)上升訊號異常 ] = -10005,請檢查氣缸是否正確作動、感測器是否正確感應，排除後請清除錯誤繼續動作
+22915,0,[ 電動夾爪(No.1)下降訊號異常 ] = -10006,請檢查氣缸是否正確作動、感測器是否正確感應，排除後請清除錯誤繼續動作
+22916,0,[ 吸嘴(No.2)上升訊號異常 ] = -10007,請檢查氣缸是否正確作動、感測器是否正確感應，排除後請清除錯誤繼續動作
+22917,0,[ 吸嘴(No.2)下降訊號異常 ] = -10008,請檢查氣缸是否正確作動、感測器是否正確感應，排除後請清除錯誤繼續動作
+22918,0,[ 電動夾爪(No.3)上升訊號異常 ] = -10009,請檢查氣缸是否正確作動、感測器是否正確感應，排除後請清除錯誤繼續動作
+22919,0,[ 電動夾爪(No.3)下降訊號異常 ] = -10010,請檢查氣缸是否正確作動、感測器是否正確感應，排除後請清除錯誤繼續動作
+22920,0,[ 吸嘴(No.4)上升訊號異常 ] = -10011,請檢查氣缸是否正確作動、感測器是否正確感應，排除後請清除錯誤繼續動作
+22921,0,[ 吸嘴(No.4)下降訊號異常 ] = -10012,請檢查氣缸是否正確作動、感測器是否正確感應，排除後請清除錯誤繼續動作
+22922,0,[ 機器手臂姿態錯誤，必須為右臂 ] = -10013,請停止相關動作，解除機器手臂電源後手動將手臂移至閒置區
+22923,0,[ 機器手臂姿態錯誤，必須為左臂 ] = -10014,請停止相關動作，解除機器手臂電源後手動將手臂移至閒置區
+22924,0,[ 等待台車入料時間過久 ] = -10015,請檢查台車上裝置是否正確作動，排除後請按清除錯誤重試
+22925,0,[ PCB 定位點取像後計算有誤(Ori) ] = -20000,請檢查 PCB 板上定位點是否有異物阻擋，清除錯誤後將重試。如持續發生請聯絡友上工程師
+22926,0,[ PCB 定位點取像後計算有誤(X) ] = -20001,請檢查 PCB 板上定位點是否有異物阻擋，清除錯誤後將重試。如持續發生請聯絡友上工程師
+22927,0,[ 料件針腳無法辨識 ] = -20002,請檢查料件是否正確夾取，清除錯誤後將繼續作動
+22928,0,[ 攝影機(機器手臂)取像逾時 ] = -20003,請停止相關動作，並檢查攝影機連線是否正常
+22929,0,[ 攝影機(左料盤)取像逾時 ] = -20004,請停止相關動作，並檢查攝影機連線是否正常
+22930,0,[ 攝影機(右料盤)取像逾時 ] = -20005,請停止相關動作，並檢查攝影機連線是否正常
+22931,0,[ 攝影機(VOF1)取像逾時 ] = -20006,請停止相關動作，並檢查攝影機連線是否正常
+22932,0,[ 攝影機(VOF2)取像逾時 ] = -20007,請停止相關動作，並檢查攝影機連線是否正常
+22933,0,[ PCB 定位感測錯誤 ] = -30000,若 PCB 已到位但無訊號，請檢查感測器(I/O 1239)。排除後請按清除錯誤繼續執行
+22934,0,[ 等待 PCB 入盤時間過久 ] = -30001,請檢查供盤是否正常，供盤無虞後請清除錯誤繼續動作
+22935,0,[ PCB 流道馬達 1 錯誤 ] = -30002,請檢查馬達狀態(I/O 1233)。排除後請執行初始化復歸
+22936,0,[ PCB 流道馬達 2 錯誤 ] = -30003,請檢查馬達狀態(I/O 1234)。排除後請執行初始化復歸
+22937,0,[ PCB 夾持氣缸上升訊號異常 ] = -30004,請檢查氣缸是否正常作動，並檢查感測器(I/O 1225)是否正確感應
+22938,0,[ PCB 夾持氣缸下降訊號異常 ] = -30005,請檢查氣缸是否正常作動，並檢查感測器(I/O 1226)是否正確感應
+22939,0,[ NG 流道馬達錯誤 ] = -40000,請檢查馬達狀態(I/O 1218)。排除後請執行初始化復歸
+22940,0,[ NG 已滿 ] = -40001,請清除 NG 流道上的料件。如異常感測，請檢查感測器(I/O 1217)
+22941,0,[ {0}此料件已 NG 超過 3 次 ] = -40002,請檢查影像辨識是否良好，如無法排解請聯絡友上工程師
+22942,0,[ 此料件無法吸取或夾取 ] = -10016,請停止相關動作，並檢查器件、吸嘴或夾爪是否正常
+22900,1,[ Adept ACE 内部错误 ] = -1,请重新开启 Adept ACE 与 CAMPro，如持续错误请联络友上工程师
+22901,1,[ 紧急停止按钮已触发 ] = -2,请确认状况排除后，解开紧急停止钮并进行初始化复归
+22902,1,[ 气压源压力过低 ] = -3,请确认气压源状况，气压稳定后请按下清除错误
+22903,1,[ 维修门(右)已被开启 ] = -4,请于完成动作后按下清除错误，将继续执行
+22904,1,[ 维修门(左)已被开启 ] = -5,请于完成动作后按下清除错误，将继续执行
+22906,1,[ 未定义的参数或名称  ] = -406,档案被更改，请重新执行 Adept ACE，并请「不要存盘」！
+22907,1,[ 违法的参数  ] = -407,档案被更改，请重新执行 Adept ACE，并请「不要存盘」！
+22908,1,[ 摄影机联机逾时  ] = -562,请检查摄影机是否正确连接、摄影机是否可正常取像。如重复发生，请联络友上工程师
+22909,1,[ 机器手臂电源状态错误 ] = -10000,请致能机器手臂
+22910,1,[ 电动夹爪异常(No.1) ] = -10001,请检查 I/O 1255，并检查是否有异物或是夹持、外力过大造成，排除后请清除错误
+22911,1,[ 吸嘴异常(No.2) ] = -10002,请检查真空压力、吸嘴完整性、吸取物是否完好与位置，排除后请清除错误，将继续动作
+22912,1,[ 电动夹爪异常(No.3) ] = -10003,请检查 I/O 1271，并检查是否有异物或是夹持、外力过大造成，排除后请清除错误
+22913,1,[ 吸嘴异常(No.4) ] = -10004,请检查真空压力、吸嘴完整性、吸取物是否完好与位置，排除后请清除错误，将继续动作
+22914,1,[ 电动夹爪(No.1)上升讯号异常 ] = -10005,请检查气缸是否正确作动、传感器是否正确感应，排除后请清除错误继续动作
+22915,1,[ 电动夹爪(No.1)下降讯号异常 ] = -10006,请检查气缸是否正确作动、传感器是否正确感应，排除后请清除错误继续动作
+22916,1,[ 吸嘴(No.2)上升讯号异常 ] = -10007,请检查气缸是否正确作动、传感器是否正确感应，排除后请清除错误继续动作
+22917,1,[ 吸嘴(No.2)下降讯号异常 ] = -10008,请检查气缸是否正确作动、传感器是否正确感应，排除后请清除错误继续动作
+22918,1,[ 电动夹爪(No.3)上升讯号异常 ] = -10009,请检查气缸是否正确作动、传感器是否正确感应，排除后请清除错误继续动作
+22919,1,[ 电动夹爪(No.3)下降讯号异常 ] = -10010,请检查气缸是否正确作动、传感器是否正确感应，排除后请清除错误继续动作
+22920,1,[ 吸嘴(No.4)上升讯号异常 ] = -10011,请检查气缸是否正确作动、传感器是否正确感应，排除后请清除错误继续动作
+22921,1,[ 吸嘴(No.4)下降讯号异常 ] = -10012,请检查气缸是否正确作动、传感器是否正确感应，排除后请清除错误继续动作
+22922,1,[ 机器手臂姿态错误，必须为右臂 ] = -10013,请停止相关动作，解除机器手臂电源后手动将手臂移至闲置区
+22923,1,[ 机器手臂姿态错误，必须为左臂 ] = -10014,请停止相关动作，解除机器手臂电源后手动将手臂移至闲置区
+22924,1,[ 等待台车入料时间过久 ] = -10015,请检查台车上装置是否正确作动，排除后请按清除错误重试
+22925,1,[ PCB 定位点取像后计算有误(Ori) ] = -20000,请检查 PCB 板上定位点是否有异物阻挡，清除错误后将重试。如持续发生请联络友上工程师
+22926,1,[ PCB 定位点取像后计算有误(X) ] = -20001,请检查 PCB 板上定位点是否有异物阻挡，清除错误后将重试。如持续发生请联络友上工程师
+22927,1,[ 料件针脚无法辨识 ] = -20002,请检查料件是否正确夹取，清除错误后将继续作动
+22928,1,[ 摄影机(机器手臂)取像逾时 ] = -20003,请停止相关动作，并检查摄影机联机是否正常
+22929,1,[ 摄影机(左料盘)取像逾时 ] = -20004,请停止相关动作，并检查摄影机联机是否正常
+22930,1,[ 摄影机(右料盘)取像逾时 ] = -20005,请停止相关动作，并检查摄影机联机是否正常
+22931,1,[ 摄影机(VOF1)取像逾时 ] = -20006,请停止相关动作，并检查摄影机联机是否正常
+22932,1,[ 摄影机(VOF2)取像逾时 ] = -20007,请停止相关动作，并检查摄影机联机是否正常
+22933,1,[ PCB 定位感测错误 ] = -30000,若 PCB 已到位但无讯号，请检查传感器(I/O 1239)。排除后请按清除错误继续执行
+22934,1,[ 等待 PCB 入盘时间过久 ] = -30001,请检查供盘是否正常，供盘无虞后请清除错误继续动作
+22935,1,[ PCB 流道马达 1 错误 ] = -30002,请检查马达状态(I/O 1233)。排除后请执行初始化复归
+22936,1,[ PCB 流道马达 2 错误 ] = -30003,请检查马达状态(I/O 1234)。排除后请执行初始化复归
+22937,1,[ PCB 夹持气缸上升讯号异常 ] = -30004,请检查气缸是否正常作动，并检查传感器(I/O 1225)是否正确感应
+22938,1,[ PCB 夹持气缸下降讯号异常 ] = -30005,请检查气缸是否正常作动，并检查传感器(I/O 1226)是否正确感应
+22939,1,[ NG 流道马达错误 ] = -40000,请检查马达状态(I/O 1218)。排除后请执行初始化复归
+22940,1,[ NG 已满 ] = -40001,请清除 NG 流道上的料件。如异常感测，请检查传感器(I/O 1217)
+22941,1,[ 此料件已 NG 超过 3 次 ] = -40002,请检查影像辨识是否良好，如无法排解请联络友上工程师
+22942,1,[ 此料件无法吸取或夹取 ] = -10016,请停止相关动作，并检查器件、吸嘴或夹爪是否正常
+22900,2,[ Adept ACE Inner Exception ] = -1,Please restart Adept ACE and CAMPro. Contact engineer if occurred continuously
+22901,2,[ E-Stop triggered ] = -2,Please clear state. Release EMO button and initialize
+22902,2,[ Low CDA poreesure ] = -3,Ensure CDA are stable
+22903,2,[ Maintain door openned (Right) ] = -4,Please close door and click CleanAlarm
+22904,2,[ Maintain door openned (Left) ] = -5,Please close door and click CleanAlarm
+22906,2,[ Undefined program or variable name  ] = -406,File had been changed, restart it and DO NOT SAVE!
+22907,2,[ Invalid argument  ] = -407,File had been changed, restart it and DO NOT SAVE!
+22908,2,[ Network Timeout  ] = -562,Ensure camera cables are connected suitable. Contact CASTEC engineer if can not clear it
+22909,2,[ Robot power state failed ] = -10000,Please enable robot power
+22910,2,[ Electrical gripper (No.1) alarm occurred ] = -10001,Check I/O 1255, ensure no objects blocked and force value. Resume after CleanAlarm
+22911,2,[ Vacuum gripper (No.2) alarm occurred ] = -10002,Ensure no objects blocked and target is located. Resume after CleanAlarm
+22912,2,[ Electrical gripper (No.3) alarm occurred ] = -10003,Check I/O 1271, ensure no objects blocked and force value. Resume after CleanAlarm
+22913,2,[ Vacuum gripper (No.4) alarm occurred ] = -10004,Ensure no objects blocked and target is located. Resume after CleanAlarm
+22914,2,[ Gripper (No.1) cylinder UP sensor signal error ] = -10005,Ensure cylinder is work and sensor signal is correct. Resume after CleanAlarm
+22915,2,[ Gripper (No.1) cylinder DOWN sensor signal error ] = -10006,Ensure cylinder is work and sensor signal is correct. Resume after CleanAlarm
+22916,2,[ Gripper (No.2) cylinder UP sensor signal error ] = -10007,Ensure cylinder is work and sensor signal is correct. Resume after CleanAlarm
+22917,2,[ Gripper (No.2) cylinder DOWN sensor signal error ] = -10008,Ensure cylinder is work and sensor signal is correct. Resume after CleanAlarm
+22918,2,[ Gripper (No.3) cylinder UP sensor signal error ] = -10009,Ensure cylinder is work and sensor signal is correct. Resume after CleanAlarm
+22919,2,[ Gripper (No.3) cylinder DOWN sensor signal error ] = -10010,Ensure cylinder is work and sensor signal is correct. Resume after CleanAlarm
+22920,2,[ Gripper (No.4) cylinder UP sensor signal error ] = -10011,Ensure cylinder is work and sensor signal is correct. Resume after CleanAlarm
+22921,2,[ Gripper (No.4) cylinder DOWN sensor signal error ] = -10012,Ensure cylinder is work and sensor signal is correct. Resume after CleanAlarm
+22922,2,[ Invalid robot pose, must be Righty ] = -10013,Stop action and release robot to idle region in hand
+22923,2,[ Invalid robot pose, must be Lefty ] = -10014,Stop action and release robot to idle region in hand
+22924,2,[ Waiting trolley ready timeout ] = -10015,Check trolley loaders are working. Retry after CleanAlarm
+22925,2,[ PCB locator failed (Ori) ] = -20000,Ensure nothing blocked. Retry after CleanAlarm
+22926,2,[ PCB locator failed (X) ] = -20001,Ensure nothing blocked. Retry after CleanAlarm
+22927,2,[ Can not find component pings ] = -20002,Check component is grip well.
+22928,2,[ Vision timeout (Robot Camera) ] = -20003,Stop action and check camera cables
+22929,2,[ Vision timeout (Tray1 Camera) ] = -20004,Stop action and check camera cables
+22930,2,[ Vision timeout (Tray2 Camera) ] = -20005,Stop action and check camera cables
+22931,2,[ Vision timeout (VOF1 Camera) ] = -20006,Stop action and check camera cables
+22932,2,[ Vision timeout (VOF2 Camera) ] = -20007,Stop action and check camera cables
+22933,2,[ PCB located sensor signal error ] = -30000,If PCB board located but signal error, check I/O 1239.
+22934,2,[ Wait PCB loading timeout ] = -30001,Check PCB loading state.
+22935,2,[ Motor 1 alarmed in PCB conveyor ] = -30002,Check motor status (I/O 1233). Initialize after state clear
+22936,2,[ Motor 2 alarmed in PCB conveyor ] = -30003,Check motor status (I/O 1234). Initialize after state clear
+22937,2,[ PCB clamp UP sensor signal error ] = -30004,Ensure cylinder is working. Check sensor(I/O 1225).
+22938,2,[ PCB clamp DOWN sensor signal error ] = -30005,Ensure cylinder is working. Check sensor(I/O 1226).
+22939,2,[ Motor alarmed in NG conveyor ] = -40000,Check motor status (I/O 1218). Initialize after state clear
+22940,2,[ NG conveyor is full ] = -40001,Clear components on NG conveyor. Check I/O 1217 if signal error
+22941,2,[ NG over 3 times continuously of this component ] = -40002,Ensure vision results
+22942,2,[ Can not grip the component. ] = -10016,Stop action and check the gripper
+22943,0,[流道PCB到位等待過久] = -30006,流道PCB到位等待過久
+22943,1,[流道PCB到位等待過久] = -30006,流道PCB到位等待過久
+22943,2,[流道PCB到位等待過久] = -30006,流道PCB到位等待過久
+22943,2,[流道PCB到位等待過久] = -30006,流道PCB到位等待過久
+22944,0,[NG已滿，無法拋料 ] = -40003,請立刻清除NG
+22944,1,[NG已滿，無法拋料 ] = -40003,請立刻清除NG
+22944,2,[NG已滿，無法拋料 ] = -40003,請立刻清除NG
+22945,0,[流道阻塞，無法出盤 ] = -30007,請清空出盤流道
+22945,1,[流道阻塞，無法出盤 ] = -30007,請清空出盤流道
+22945,2,[流道阻塞，無法出盤 ] = -30007,請清空出盤流道
+22946,0,[ACE 錯誤 ] = -9999,請檢查ACE
+22946,1,[ACE 错误 ] = -9999,请检查ACE
+22946,2,[ACE Error ] = -9999,Please check ACE
+
+// Delta : 50000-50999
+//// Delta Global Settings : 50000-50099
+
+//// Delta Alarms : 50100-50199
+//////    [ Comment(zh-TW / en-US) ] = Error Code, Solution
+50100,0,[ {0}前氣缸異常 ] = 2,請手動按壓氣缸讓其作動避免推壓不順，檢查氣缸感測器是否感應正確
+50101,0,[ {0}後氣缸異常 ] = 3,請手動按壓氣缸讓其作動避免推壓不順，檢查氣缸感測器是否感應正確
+50102,0,[ {0}料管到位異常 ] = 4,請檢查料管是否卡住
+50103,0,[ {0}缺料，已無料管 ] = 5,請補充料件
+50104,0,[ {0}換管異常且已無料管 ] = 6,請檢查料管是否卡住，並請補充料件
+50105,0,[ {0}下拉次數已到，缺料 ] = 12,請補充料件
+50100,1,[ {0}前气缸异常 ] = 2,请手动按压气缸让其作动避免推压不顺，检查气缸传感器是否感应正确
+50101,1,[ {0}后气缸异常 ] = 3,请手动按压气缸让其作动避免推压不顺，检查气缸传感器是否感应正确
+50102,1,[ {0}料管到位异常 ] = 4,请检查料管是否卡住
+50103,1,[ {0}缺料，已无料管 ] = 5,请补充料件
+50104,1,[ {0}换管异常且已无料管 ] = 6,请检查料管是否卡住，并请补充料件
+50105,1,[ {0}下拉次数已到，缺料 ] = 12,请补充料件
+50100,2,[ {0} Front cylinder error ] = 2,Push cylinder by hand. Check sensor reaction
+50101,2,[ {0} Rear cylinder error ] = 3,Push cylinder by hand. Check sensor reaction
+50102,2,[ {0} Tube can not located ] = 4,Check tube stuck state
+50103,2,[ {0} Can not get tubes ] = 5,Please reload tubes
+50104,2,[ {0} Tube can not located and loaded ] = 6,Check tube stuck state
+50105,2,[ {0} Pull times reached ] = 12,Please reload materials
+50106,0,[ {0}震動等待料管入料過久 ] = 7,請檢查震動盤狀況是否良好
+50106,1,[ {0}震动等待料管入料过久 ] = 7,请检查震动盘状况是否良好
+50106,2,[ {0} Waiting tube timeout ] = 7,Please check vibration tray status
+50107,0,[ {0}無連接供料器 ] = 24,請檢查台車與供料器是否正確連接
+50107,1,[ {0}無連接供料器 ] = 24,請檢查台車與供料器是否正確連接
+50107,2,[ {0}無連接供料器 ] = 24,請檢查台車與供料器是否正確連接
+50108,0,[ {0}連線失敗 ] = 50,請檢查連線是否有問題
+50108,1,[ {0}連線失敗 ] = 50,請檢查連線是否有問題
+50108,2,[ {0}連線失敗 ] = 50,請檢查連線是否有問題
+50109,0,[ {0}網路位址不存在 ] = 51,請檢查該供料器網路位址是否存在
+50109,1,[ {0}網路位址不存在 ] = 51,請檢查該供料器網路位址是否存在
+50109,2,[ {0}網路位址不存在 ] = 51,請檢查該供料器網路位址是否存在
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <CASTEC_IO>
   <Data>
@@ -674,6 +1480,9 @@
     <ADEPT_DO122 Device="ADEPT" Type="Output" IONum="0334" Enum="253">quadrant_4 feeder module1 DO 42</ADEPT_DO122>
     <ADEPT_DO123 Device="ADEPT" Type="Output" IONum="0335" Enum="254">quadrant_4 feeder module1 DO 43</ADEPT_DO123>
     <ADEPT_DO124 Device="ADEPT" Type="Output" IONum="0336" Enum="255">quadrant_4 feeder module1 DO 44</ADEPT_DO124>
+    <ADEPT_DO125 Device="ADEPT" Type="Output" IONum="-1" Enum="347">quadrant_4 feeder module1 DO 44</ADEPT_DO125>
+	<ADEPT_DO126 Enum="348" IONum="0104" Type="Output" Device="ADEPT">Light ON/OFF</ADEPT_DO126>
+
     <!--Beckhoff I/O : Input-->
     <BKF_DI000 Device="BECKHOFF" Type="Input" ID="X10101" Index="-1" Variable="" Enum="256">Elevator Door1 status</BKF_DI000>
     <BKF_DI001 Device="BECKHOFF" Type="Input" ID="X10102" Index="-1" Variable="" Enum="257">Elevator Door2 status</BKF_DI001>
@@ -740,6 +1549,14 @@
     <BKF_DO010 Device="BECKHOFF" Type="Output" ID="Y10206" Index="-1" Variable="" Enum="317">quadrant_3 feeder module1 DI 22 (XR1326)</BKF_DO010>
     <BKF_DO011 Device="BECKHOFF" Type="Output" ID="Y10207" Index="-1" Variable="" Enum="318">quadrant_3 feeder module1 DI 23 (XR1327)</BKF_DO011>
     <BKF_DO012 Device="BECKHOFF" Type="Output" ID="Y10208" Index="-1" Variable="" Enum="319">quadrant_3 feeder module1 DI 24 (XR1328)</BKF_DO012>
+
+    <BKF_DO013 Device="BECKHOFF" Type="Output" ID="Y10209" Index="-1" Variable="TRAY.pIF_TrayBack" Enum="344">Manual Mode</BKF_DO013>
+    <BKF_DO014 Device="BECKHOFF" Type="Output" ID="Y10210" Index="-1" Variable="TRAY.pF_ManualMode" Enum="345">Tray Back</BKF_DO014>
+    <BKF_DO015 Device="BECKHOFF" Type="Output" ID="Y10211" Index="-1" Variable=".pV_TrayType" Enum="346">TrayType Robot</BKF_DO015>
+    <BKF_DO016 Device="BECKHOFF" Type="Output" ID="Y10212" Index="-1" Variable="TRAY.pIF_ChangeTray" Enum="359">Change</BKF_DO016>	
+    <BKF_DO017 Device="BECKHOFF" Type="Output" ID="Y10213" Index="-1" Variable="TRAY.pF_Initial" Enum="353">Change</BKF_DO017>	
+    <BKF_DO018 Device="BECKHOFF" Type="Output" ID="Y10214" Index="-1" Variable="TRAY.pF_MainAlarm" Enum="354">Clear Alarm</BKF_DO018>	
+    
     <!--Beckhoff Flag-->
     <BKF_DF000 Device="BECKHOFF" Type="Input" ID="F10000" Index="-1" Variable="TRAY.pMV_SliderStatus.pF_MotorReady" Enum="320">Ready flag of Slider motor</BKF_DF000>
     <BKF_DF001 Device="BECKHOFF" Type="Input" ID="F10001" Index="-1" Variable="TRAY.pMV_SliderStatus.pF_MotorEnable" Enum="321">Enable flag of Slider motor</BKF_DF001>
@@ -764,381 +1581,383 @@
     <BKF_DF020 Device="BECKHOFF" Type="Input" ID="F10020" Index="-1" Variable="TRAY.pMF_ElevCW" Enum="340">Jog CW Btn of Elevator motor</BKF_DF020>
     <BKF_DF021 Device="BECKHOFF" Type="Input" ID="F10021" Index="-1" Variable="TRAY.pMF_ElevCCW" Enum="341">Jog CCW Btn of Elevator motor</BKF_DF021>
     <BKF_DF022 Device="BECKHOFF" Type="Input" ID="F10022" Index="-1" Variable="TRAY.pF_AutoRun" Enum="342">Connect-A to control Auto_Mode</BKF_DF022>
+    <BKF_DF023 Device="BECKHOFF" Type="Input" ID="F10023" Index="-1" Variable="TRAY.pF_Initial" Enum="343">PLC Initial</BKF_DF023>
+    <BKF_DF024 Device="BECKHOFF" Type="Input" ID="F10024" Index="-1" Variable="TRAY.pF_Initial" Enum="360">PLC Initial</BKF_DF024>
+    <BKF_DF025 Device="BECKHOFF" Type="Input" ID="F10025" Index="-1" Variable="TRAY.pF_MainAlarm" Enum="361">Clear Alarm</BKF_DF025>	
   </Data>
-</CASTEC_IO>﻿
-////SZ+4hy97O/K+KtvU5uSxIavRTFd1KG2b6rIyvtR0SYA=
-////設備 Config 檔
-////設備參數中各模組 opcode 範圍：
-////CAMPro 相關設定：1000-1999
-////Mobile Robot 相關設定：2000-2999
-////Beckhoff PLC相關設定：12000-12999
-////Adept robot ACE相關設定：22000-22999
-////
-
-// CAMPro : 1000-1999
-//// CAMPro Options : 1000-1099
-1000,0,[ Computer ] = SZ+4hy97O/K+KtvU5uSxIavRTFd1KG2b6rIyvtR0SYA=
-1001,0,[ Show CAMPro Exception ] = false
-1002,0,[ Using Buzzer ] = true
-1003,0,[ Bypass Adept ACE ] = false
-1004,0,[ Bypass Beckhoff PLC ] = false
-1005,0,[ Bypass Socket ] = false
-1006,0,[ Hisense IT Server IP ] = 127.0.0.1
-1007,0,[ Hisense IT Server Port ] = 6120
-1008,0,[ Hisense Handshake Delay (Second) ] = 5
-
-//// Product recipe : 1100-1199
-1100,0,[ Recipe Name ] = D:\CASTEC\Recipe\9010065302.xml
-1101,0,[ Plate Count ] = 20
-1102,0,[ Product List ] = JDSU,JDSU2,QLOGIC,NOKIA,HPE,HP,CISCO,HUAWEI
-1103,0,[ Housing List ] = Housing_HP,Housing_JDSU,Housing_JDSU2
-1104,0,[ Vision Result ] = 未识别,0,Control
-1104,1,[ Vision Result ] = 允许,1,LightGreen
-1104,2,[ Vision Result ] = 定位,2,Pink
-1104,3,[ Vision Result ] = 贴反,3,Khaki
-1104,4,[ Vision Result ] = 条码,4,LightGray
-1104,5,[ Vision Result ] = 污损,5,LightSkyBlue
-1104,6,[ Vision Result ] = 字符,6,LightSalmon
-1104,7,[ Vision Result ] = 搭边,7,MediumSlateBlue
-1105,0,[ Barcode Result ] = 允许,0,Green
-1105,1,[ Barcode Result ] = 未识别,1,MediumVioletRed
-1105,2,[ Barcode Result ] = 条码错,2,DarkGoldenrod
-1105,3,[ Barcode Result ] = 连字,3,OrangeRed
-1105,4,[ Barcode Result ] = 残缺,4,Blue
-
-//// CAMPro Alarms : 1200-1299
-//////    [ Comment(zh-TW / en-US) ] = Error Code, Solution
-1200,0,[ CAMPro 流程錯誤 ] = -1000,請重新執行CAMPro，如持續發生請聯絡友上工程師
-1201,0,[ CAMPro 與 Adept ACE 交握錯誤 ] = -1001,請檢查Adept ACE處於正確執行中，重新執行CAMPro並檢查連線是否正常、防火牆是否關閉。
-1202,0,[ CAMPro 與 Beckhoff PLC 交握錯誤 ] = -1002,請檢查網路連線是否正常、Beckhoff狀態燈號是否正常。如是網路連線請嘗試重新開機或進行連線測試。如是Beckhoff狀態異常，請聯絡友上工程師進行排除。
-1203,0,[ CAMPro 發生例外 ] = -1003,請重新執行CAMPro，如持續發生請聯絡友上工程師
-1204,0,[ NG 收料盒不在位置上 ] = -1100,請將收料盒重新放置定位
-1205,0,[ NGBox 2 不在位置上 ] = -1101,請將收料盒重新放置定位
-1206,0,[ NGBox 3 不在位置上 ] = -1102,請將收料盒重新放置定位
-1207,0,[ NG 收料盒已滿 (RJ-45) ] = 1001,請將收料盒內的料件清除
-1208,0,[ NG 收料盒已滿 (DIMM/PCI) ] = 1002,請將收料盒內的料件清除
-1209,0,[ NGBox 3 已滿 ] = 1003,請暫停自動化模式，將收料盒內的料件清除
-1210,0,[ 已關閉 Adept ACE，無法繼續執行相關動作 ] = -1200,請關閉 CAMPro。待重新執行 Adept ACE 後再重開 CAMPro
-1200,1,[ CAMPro 自动化流程错误 ] = -1000,请重新执行CAMPro。如持续发生请联络友上工程师。
-1201,1,[ CAMPro 与 Adept ACE 交握错误 ] = -1001,请检查Adept ACE处于正确执行中，重新执行CAMPro并检查联机是否正常、防火墙是否关闭。
-1202,1,[ CAMPro 与 Beckhoff PLC 交握错误 ] = -1002,请检查网络联机是否正常、Beckhoff状态灯号是否正常。如是网络联机请尝试重新启动或进行联机测试。如是Beckhoff状态异常，请联络友上工程师进行排除。
-1203,1,[ CAMPro 程序发生例外讯息 ] = -1003,请重新执行CAMPro。如持续发生请联络友上工程师。
-1204,1,[ NG 收料盒不在正确位置上 ] = -1100,请将抛料盒放置定位
-1205,1,[ NGBox 2 不在正确位置上 ] = -1101,请将抛料盒放置定位。确认放置完成后，请按「清除错误」。
-1206,1,[ NGBox 3 不在正确位置上 ] = -1102,请将抛料盒放置定位。确认放置完成后，请按「清除错误」。
-1207,1,[ NG 收料盒已满 (RJ-45)  ] = 1001,请将收料盒内的料件清除。
-1208,1,[ NG 收料盒已满 (DIMM/PCI) ] = 1002,请将收料盒内的料件清除。
-1209,1,[ NGBox 3 已满 ] = 1003,请「暂停」自动化流程，并将收料盒内的料件清除。
-1210,1,[ 已关闭 Adept ACE，无法继续执行相关动作 ] = -1200,请关闭 CAMPro。待重新执行 Adept ACE 后再重开 CAMPro
-1200,2,[ CAMPro automation procedure error ] = -1000,Restart CAMPro and retry. Contact CASTEC engineer if happen continuously.
-1201,2,[ CAMPro handshake error with Adept ACE ] = -1001,Please check Adept ACE is executing. Restart CAMPro and check the connection (Firewall must be turn-off)
-1202,2,[ CAMPro handshake error with Beckhoff PLC ] = -1002,Please make sure Ethernet connection is fine. If bad connection, try restart pc and do test with it. If Beckhoff PLC shows error led lamps, try contact CASTEC engineer to solve this problem and let him know led lamp status immediately
-1203,2,[ CAMPro exception occurred ] = -1003,Restart CAMPro and retry. Contact CASTEC engineer if happen continuously.
-1204,2,[ Couldn't detect NGBox 1 ] = -1100,Please put NG box back and "Clean Alarm"
-1205,2,[ Couldn't detect NGBox 2 ] = -1101,Please put NG box back and "Clean Alarm"
-1206,2,[ Couldn't detect NGBox 3 ] = -1102,Please put NG box back and "Clean Alarm"
-1207,2,[ NGBox 1 is full ] = 1000,"Pause" and clean the NG box
-1208,2,[ NGBox 2 is full ] = 1001,"Pause" and clean the NG box
-1209,2,[ NGBox 3 is full ] = 1002,"Pause" and clean the NG box
-1210,2,[ Adept ACE closed ] = -1200,Close CAMPro. Restart CAMPro until executing Adept ACE again.
-
-// Beckhoff : 12000-12999
-//// Beckhoff Global Settings : 12000-12049
-12000,0,[ Beckhoff PLC NetID ] = 5.36.30.209.1.1
-12001,0,[ Beckhoff PLC AdsPort ] = 801
-12002,0,[ 使用 PLC 的錯誤訊息 ] = false
-
-//// Beckhoff PLC DeviceNotification : 12050-12099
-//////    [ Comment ] = VariableName, (2)INT (3)DINT (4)REAL (5)LREAL (16)SINT (17)USINT (18)UINT (19)UDINT (20)LINT (21)ULINT (30)STRING (33)BOOL (40)TIME (99)ARRAY_STRUC
-12050,0,[ Initial Alarm ] = TRAY.pF_InitialAlarm, 33
-12051,0,[ Main Alarm ] = TRAY.pF_MainAlarm, 33
-12052,0,[ Loader Table Ready ] = TRAY.pF_TableRdy, 33
-12053,0,[ Loader Table Busy ] = TRAY.pF_TableBusy, 33
-12054,0,[ Door 1 ] = TRAY.pI_Door1, 33
-12055,0,[ Door 2 ] = TRAY.pI_Door2, 33
-12056,0,[ 整盤均已辨識完成 ] = TRAY.pF_CheckDone, 33
-12057,0,[ Cycle Time ] = TRAY.pT_CycleTime, 40
-12059,0,[ Plate Row ] = TRAY.pV_PosCount, 18
-12060,0,[ Send Tray Ready ] = TRAY.pQ_Rdy_To_Down, 33
-
-
-//// Beckhoff PLC Recipes : 12100-12199
-//////    [ Comment ] = VariableName, (2)INT (3)DINT (4)REAL (5)LREAL (16)SINT (17)USINT (18)UINT (19)UDINT (20)LINT (21)ULINT (30)STRING (33)BOOL (40)TIME (99)ARRAY_STRUC
-12100,0,[ Table 位置 01 ] = TRAY.pARY_Table[1], 5
-12101,0,[ Table 位置 02 ] = TRAY.pARY_Table[2], 5
-12102,0,[ Table 位置 03 ] = TRAY.pARY_Table[3], 5
-12103,0,[ Table 位置 04 ] = TRAY.pARY_Table[4], 5
-12104,0,[ Table 位置 05 ] = TRAY.pARY_Table[5], 5
-12105,0,[ Table 位置 06 ] = TRAY.pARY_Table[6], 5
-12106,0,[ Table 位置 07 ] = TRAY.pARY_Table[7], 5
-12107,0,[ Table 位置 08 ] = TRAY.pARY_Table[8], 5
-12108,0,[ Table 位置 09 ] = TRAY.pARY_Table[9], 5
-12109,0,[ Table 位置 10 ] = TRAY.pARY_Table[10], 5
-
-
-//// Beckhoff PLC Alarms : 12200-12299
-//////    [ Comment(zh-TW / en-US) ] = Error Code, Solution
-12200,0,[ 緊急停止觸發 ] = -1001,請排除相關問題後解除緊急停止，並初始化
-12201,0,[ 氣壓狀態異常 ] = -1002,請檢查氣壓源開關，壓力感測器是否正常
-12202,0,[ 電源狀態異常 ] = -1003,請檢察MC2電源開關，訊號是否正常
-12203,0,[ 安全門未關閉 ] = -1004,請將安全門確實關閉，再重做初始化
-12204,0,[ 未知錯誤 ] = -1005,請聯絡友上工程師檢測感測器異常
-12205,0,[ 請檢察入料端狀態 ] = -1006,請檢察入料端狀態是否正常
-12206,0,[ 請檢察出料端狀態 ] = -1007,請檢察出料端載盤位置是否正常
-12207,0,[ 馬達歸零失敗 ] = -1008,馬達歸零失敗，請清除錯誤重試
-12208,0,[ 載盤偵測異常 ] = -2001,請檢察入料端載盤位置，是否有料盤或異物
-12209,0,[ 阻擋缸下降延遲 ] = -2002,請檢察阻擋缸下降狀態
-12210,0,[ 載盤傳送延遲 ] = -2003,請檢察載盤狀態是否異常
-12211,0,[ 料盤夾上升延遲 ] = -3001,請檢查料盤夾上升狀態或感測器訊號
-12212,0,[ 料盤夾下降延遲 ] = -3002,請檢查料盤夾下降狀態或感測器訊號
-12213,0,[ 阻擋缸上升延遲 ] = -3003,請檢查阻擋缸上升狀態或感測器訊號
-12214,0,[ 阻擋缸下降延遲 ] = -3004,請檢查阻擋缸下降狀態或感測器訊號
-12215,0,[ 感測器異常 ] = -3005,請檢察料盤夾與阻擋缸感測器狀態
-12216,0,[ 馬達位置異常 ] = -3006,位置異常，請執行初始化
-12217,0,[ 馬達停止延遲 ] = -3007,請檢測馬達狀態
-12218,0,[ 料盤夾下降延遲 ] = -3008,請檢查料盤夾下降狀態或感測器訊號
-12219,0,[ 馬達移動異常 ] = -3009,請通知友上工程師確認馬達狀況
-12220,0,[ 緊急停止觸發 ] = -3010,請排除相關問題後解除緊急停止，並初始化
-12221,0,[ 氣壓狀態異常 ] = -3011,請檢查氣壓源開關，壓力感測器是否正常
-12222,0,[ 電源狀態異常 ] = -3012,請檢察MC2電源開關，訊號是否正常
-12223,0,[ 初始化旗標異常 ] = -3013,請先執行初始化再開始
-
-
-12200,1,[ 紧急停止触发 ] = -1001,请排除相关问题后解除紧急停止，并初始化
-12201,1,[ 气压状态异常 ] = -1002,请检查气压源开关，压力传感器是否正常
-12202,1,[ 电源状态异常 ] = -1003,请检察电源开关，讯号是否正常
-12203,1,[ 安全门未关闭 ] = -1004,请将安全门确实关闭，再重做初始化
-12204,1,[ 未知错误 ] = -1005,请联络友上工程师检测传感器异常
-12205,1,[ 请检察入料端状态 ] = -1006,请检察入料端状态是否正常
-12206,1,[ 请检察出料端状态 ] = -1007,请检察出料端载盘位置是否正常
-12207,1,[ 马达归零失败 ] = -1008,马达归零失败，请清除错误重试
-12208,1,[ 载盘侦测异常 ] = -2001,请检察入料端载盘位置，是否有料盘或异物
-12209,1,[ 阻挡缸下降延迟 ] = -2002,请检察阻挡缸下降状态
-12210,1,[ 载盘传送延迟 ] = -2003,请检察载盘状态是否异常
-12211,1,[ 料盘夹上升延迟 ] = -3001,请检查料盘夹上升状态或传感器讯号
-12212,1,[ 料盘夹下降延迟 ] = -3002,请检查料盘夹下降状态或传感器讯号
-12213,1,[ 阻挡缸上升延迟 ] = -3003,请检查阻挡缸上升状态或传感器讯号
-12214,1,[ 阻挡缸下降延迟 ] = -3004,请检查阻挡缸下降状态或传感器讯号
-12215,1,[ 传感器异常 ] = -3005,请检察料盘夹与阻挡缸传感器状态
-12216,1,[ 马达位置异常 ] = -3006,位置异常，请执行初始化
-12217,1,[ 马达停止延迟 ] = -3007,请检测马达状态
-12218,1,[ 料盘夹下降延迟 ] = -3008,请检查料盘夹下降状态或传感器讯号
-12219,1,[ 马达移动异常 ] = -3009,请通知友上工程师确认马达状况
-12220,1,[ 紧急停止触发 ] = -3010,请排除相关问题后解除紧急停止，并初始化
-12221,1,[ 气压状态异常 ] = -3011,请检查气压源开关，压力传感器是否正常
-12222,1,[ 电源状态异常 ] = -3012,请检察MC2电源开关，讯号是否正常
-12223,1,[ 初始化旗标异常 ] = -3013,请先执行初始化再开始
-
-
-12200,2,[ EStop Signal Error ] = -1001,Please remove all problems then release EMO and Initial Machine
-12201,2,[ CDA Error ] = -1002,Please check CDA switch or air pressure sensor
-12202,2,[ MC2 Error ] = -1003,Please check Hi-Power status
-12203,2,[ Door Open ] = -1004,Please close the door or press bypass button
-12204,2,[ Unknown Error ] = -1005,Please contact CASTEC Engineers for help
-12205,2,[ Load Status Error Happened ] = -1006,Please check load status
-12206,2,[ Please Check Unload Status ] = -1007,Please check unload status
-12207,2,[ Homing Error ] = -1008,Motor Homing Error, please clearn alarm to retry
-12208,2,[ Canot Find Tray ] = -2001,Please check load status and sensor
-12209,2,[ Stopper Down Error ] = -2002,Please check stopper down sensor and status
-12210,2,[ Send Tray Error ] = -2003,Please check tray status
-12211,2,[ Clamper Up Sensor Error ] = -3001,Please check clamper up sensor and status
-12212,2,[ Clamper Down Sensor Error ] = -3002,Please check clamper down sensor and status
-12213,2,[ Stopper Up Sensor Error ] = -3003,Please check stopper up sensor and status
-12214,2,[ Stopper Down Sensor Error ] = -3004,Please check stopper down sensor and status
-12215,2,[ Unknown Error Please Check Sensor ] = -3005,Please check clamper and stopper status
-12216,2,[ Position Error Please Initial ] = -3006,Please initial to restart
-12217,2,[ Motor Stop Delay Error ] = -3007,Please check motor status
-12218,2,[ Clamper Open Delay ] = -3008,Please check clamper down sensor and status
-12219,2,[ Move To Pos Error ] = -3009,Please check motor status
-12220,2,[ E STOP Error ] = -3010,Please remove all problems then release EMO and Initial Machine
-12221,2,[ CDA Error  ] = -3011,Please check CDA switch or air pressure sensor
-12222,2,[ MC2 Error  ] = -3012,Please check Hi-Power status
-12223,2,[ Please Initial First ] = -3013,Please initial first
-
-// Adept ACE：22000-22999
-//// ACE Global Setting : 22000-22099
-22000,0,[ ACE Module Name ] = VisionSystem
-22001,0,[ AceServer Name ] = ace
-22002,0,[ AceServer IP ] = localhost
-22003,0,[ AceServer Port ] = 43434
-22004,0,[ ACE Client Mode，(True)與ACE連結 (False)載入Workspace ] = true
-22005,0,[ Workspace 檔案路徑 ] = D:\CASTEC\Project\ACE\[E1518] 20160622.awp
-
-//// ACE Recipes : 22100-22899
-//////    [ Comment ] = VariableName, (0)Real (1)String (2)Location (3)PrecisionPoint 
-22100,0,[ 產品名稱 ] = $input_item,1
-22101,0,[ 汙損檢測 斑點最小面積,值越小看越細 ] = thres_iden.min,0
-22102,0,[ 汙損檢測 反二質化門檻值 ] = thres_iden1_2,0  
-22103,0,[ 汙損檢測 二值化門檻值 ] = thres_iden2_3,0
-22104,0,[ 汙損檢測 CCD1 辨識框位置 ] = idenf_off[1],2
-22105,0,[ 汙損檢測 CCD1 辨識框大小 ] = idenf_reg[1],2
-22106,0,[ 汙損檢測 CCD2 辨識框位置 ] = idenf_off[2],2
-22107,0,[ 汙損檢測 CCD2 辨識框大小 ] = idenf_reg[2],2
-22108,0,[ 汙損檢測 CCD3 辨識框位置 ] = idenf_off[3],2
-22109,0,[ 汙損檢測 CCD3 辨識框大小 ] = idenf_reg[3],2
-22110,0,[ 條碼檢測 CCD1 二值化門檻值 ] = thres_bardark[1],0
-22111,0,[ 條碼檢測 CCD2 二值化門檻值 ] = thres_bardark[2],0
-22112,0,[ 條碼檢測 CCD3 二值化門檻值 ] = thres_bardark[3],0
-22113,0,[ 條碼檢測 最長減最短不超過此值 ] = barcode_h_thres,0
-22114,0,[ 條碼檢測 設定有(1~3)組條碼,0 無一維條碼 ] = count_bar.num,0
-22115,0,[ 條碼檢測 第一段條碼總數量 ] = count_barcode,0
-22116,0,[ 條碼檢測 第二段條碼總數量 ] = count_barcode2,0
-22117,0,[ 條碼檢測 第三段條碼總數量 ] = count_barcode3,0   
-22118,0,[ 條碼檢測 CCD1 第一段定位框位置 ] = barcode_off[1],2
-22119,0,[ 條碼檢測 CCD1 第一段定位框大小 ] = barcode_reg[1],2
-22120,0,[ 條碼檢測 CCD2 第一段定位框位置 ] = barcode_off[2],2
-22121,0,[ 條碼檢測 CCD2 第一段定位框大小 ] = barcode_reg[2],2
-22122,0,[ 條碼檢測 CCD3 第一段定位框位置 ] = barcode_off[3],2
-22123,0,[ 條碼檢測 CCD3 第一段定位框大小 ] = barcode_reg[3],2
-22124,0,[ 條碼檢測 CCD1 第二段辨識框位置 ] = barcode_off2[1],2
-22125,0,[ 條碼檢測 CCD1 第二段辨識框大小 ] = barcode_reg2[1],2
-22126,0,[ 條碼檢測 CCD2 第二段辨識框位置 ] = barcode_off2[2],2
-22127,0,[ 條碼檢測 CCD2 第二段辨識框大小 ] = barcode_reg2[2],2
-22128,0,[ 條碼檢測 CCD3 第二段辨識框位置 ] = barcode_off2[3],2
-22129,0,[ 條碼檢測 CCD3 第二段辨識框大小 ] = barcode_reg2[3],2
-22130,0,[ 條碼檢測 CCD1 第三段辨識框位置 ] = barcode_off3[1],2
-22131,0,[ 條碼檢測 CCD1 第三段辨識框大小 ] = barcode_reg3[1],2
-22132,0,[ 條碼檢測 CCD2 第三段辨識框位置 ] = barcode_off3[2],2
-22133,0,[ 條碼檢測 CCD2 第三段辨識框大小 ] = barcode_reg3[2],2
-22134,0,[ 條碼檢測 CCD3 第三段辨識框位置 ] = barcode_off3[3],2
-22135,0,[ 條碼檢測 CCD3 第三段辨識框大小 ] = barcode_reg3[3],2
-22136,0,[ 是否忽略虛線圓,1 忽略, 0 不忽略 ] = bypass_arc,0
-22137,0,[ 如忽略虛線圓,虛線到圓中心的MAX距離 ] = pass_arcdis[0],0
-22138,0,[ 如忽略虛線圓,虛線到圓中心的MIN距離 ] = pass_arcdis[1],0 
-22139,0,[ 是否忽略housing check,1 忽略, 0 不忽略 ] = bypass_hchk,0   
-22140,0,[ 設定Label vs housing 夾角超過此角度NG ] = diff_housdeg,0  
-22141,0,[ 設定Label vs housing 距離相差多少為NG ] = diff_houslen,0  
-22142,0,[ Lable輪廓匹配的百分比 ] = thres_percent,0   
-22143,0,[ Housing輪廓匹配的百分比 ] = thres_percenth,0
-22144,0,[ Arc忽略輪廓匹配的百分比 ] = thres_percenta,0
-22145,0,[ 字符輪廓匹配的百分比 ] = thres_percentw,0
-22146,0,[ 設定字符檢測模塊總數 ] = count_word,0
-22147,0,[ 保存給NI的圖片是否反轉,0 NO 1 turn ] = cvt.img.fliper,0
-22148,0,[ Arc_1 檢查輪廓匹配的百分比 ] = thres_percenta[1],0
-22149,0,[ Arc_2 檢查輪廓匹配的百分比 ] = thres_percenta[2],0
-22150,0,[ Arc_3 檢查輪廓匹配的百分比 ] = thres_percenta[3],0
-
-
-//// ACE Alarms : 22900-22999
-//////    [ Comment(zh-TW / en-US) ] = Error Code, Solution
-22900,0,[ 未定義的參數或名稱  ] = -406,檔案被更改，請重新執行 Adept ACE，並請「不要存檔」！
-22901,0,[ 違法的參數  ] = -407,檔案被更改，請重新執行 Adept ACE，並請「不要存檔」！
-22902,0,[ 攝影機連線逾時  ] = -562,請檢查攝影機是否正確連接、攝影機是否可正常取像。如重複發生，請聯絡友上工程師。
-22903,0,[ 辨識系統內部錯誤  ] = -1001,請重新執行自動化模式。如重複發生，請聯絡友上工程師。
-22904,0,[ 辨識系統等待超時  ] = -1003,請重新執行自動化模式。如重複發生，請聯絡友上工程師。
-22900,1,[ 未定义的参数或名称  ] = -406,档案被更改，请重新执行 Adept ACE，并请「不要存盘」！
-22901,1,[ 违法的参数  ] = -407,档案被更改，请重新执行 Adept ACE，并请「不要存盘」！
-22902,1,[ 摄影机联机逾时  ] = -562,请检查摄影机是否正确连接、摄影机是否可正常取像。如重复发生，请联络友上工程师。
-22903,1,[ 辨识系统内部错误  ] = -1001,请重新执行自动化模式。如重复发生，请联络友上工程师。
-22904,1,[ 辨识系统等待超时  ] = -1003,请重新执行自动化模式。如重复发生，请联络友上工程师。
-22900,2,[ Undefined program or variable name  ] = -406,File had been changed, restart it and DO NOT SAVE!
-22901,2,[ Invalid argument  ] = -407,File had been changed, restart it and DO NOT SAVE!
-22902,2,[ Network Timeout  ] = -562,Ensure camera cables are connected suitable. Contact CASTEC engineer if can not clear it.
-22903,2,[ Inner exception of vision system  ] = -1001,Restart Adept ACE and CAMPro
-22904,2,[ Timeout of vision system  ] = -1003,Restart Adept ACE and CAMPro。Contact CASTEC engineer if can not clear it.
-﻿<?xml version="1.0" encoding="UTF-8"?>
+</CASTEC_IO>﻿<?xml version="1.0" encoding="UTF-8"?>
 <CASTEC_IO>
   <Data>
     <!--Adept I/O : Input-->
-    <ADEPT_DI000 Device="ADEPT" DevNum="0" Type="Input" IONum="2001" Enum="0">Loader ready</ADEPT_DI000>
-    <ADEPT_DI001 Device="ADEPT" DevNum="0" Type="Input" IONum="2002" Enum="1">Loader busy</ADEPT_DI001>
+    <ADEPT_DI000 Device="ADEPT" Type="Input" IONum="1009" Enum="0">Gripper nozzle 0 vacuum pressure sensor</ADEPT_DI000>
+    <ADEPT_DI001 Device="ADEPT" Type="Input" IONum="1010" Enum="1">Gripper nozzle 1 vacuum pressure sensor</ADEPT_DI001>
+    <ADEPT_DI002 Device="ADEPT" Type="Input" IONum="1011" Enum="2">Gripper nozzle 2 vacuum pressure sensor</ADEPT_DI002>
+    <ADEPT_DI003 Device="ADEPT" Type="Input" IONum="1097" Enum="3">Gripper 1 UP Sensor</ADEPT_DI003>
+    <ADEPT_DI004 Device="ADEPT" Type="Input" IONum="1098" Enum="4">Gripper 1 DOWN Sensor</ADEPT_DI004>
+    <ADEPT_DI005 Device="ADEPT" Type="Input" IONum="1099" Enum="5">Gripper 2 UP Sensor</ADEPT_DI005>
+    <ADEPT_DI006 Device="ADEPT" Type="Input" IONum="1100" Enum="6">Gripper 2 DOWN Sensor</ADEPT_DI006>
+    <ADEPT_DI007 Device="ADEPT" Type="Input" IONum="1101" Enum="7">Gripper 3 UP Sensor</ADEPT_DI007>
+    <ADEPT_DI008 Device="ADEPT" Type="Input" IONum="1102" Enum="8">Gripper 3 DOWN Sensor</ADEPT_DI008>
+    <ADEPT_DI009 Device="ADEPT" Type="Input" IONum="1103" Enum="9">Gripper 4 UP Sensor</ADEPT_DI009>
+    <ADEPT_DI010 Device="ADEPT" Type="Input" IONum="1104" Enum="10">Gripper 4 DOWN Sensor</ADEPT_DI010>
+    <ADEPT_DI011 Device="ADEPT" Type="Input" IONum="1003" Enum="11">E - Stop status</ADEPT_DI011>
+    <ADEPT_DI012 Device="ADEPT" Type="Input" IONum="1004" Enum="12">MC 2/3 status (HI Power)</ADEPT_DI012>
+    <ADEPT_DI013 Device="ADEPT" Type="Input" IONum="1005" Enum="13">Auto/Manual switch</ADEPT_DI013>
+    <ADEPT_DI014 Device="ADEPT" Type="Input" IONum="1006" Enum="14">CDA 1 low pressure</ADEPT_DI014>
+    <ADEPT_DI015 Device="ADEPT" Type="Input" IONum="1007" Enum="15">Left side door status</ADEPT_DI015>
+    <ADEPT_DI016 Device="ADEPT" Type="Input" IONum="1008" Enum="16">Right side door status</ADEPT_DI016>
+    <ADEPT_DI017 Device="ADEPT" Type="Input" IONum="1209" Enum="17">NG detect sensor</ADEPT_DI017>
+    <ADEPT_DI018 Device="ADEPT" Type="Input" IONum="-1" Enum="18">NG Conveyo motor alarm</ADEPT_DI018>
+    <ADEPT_DI019 Device="ADEPT" Type="Input" IONum="1211" Enum="19">NG Empty button (White)</ADEPT_DI019>
+    <ADEPT_DI020 Device="ADEPT" Type="Input" IONum="1213" Enum="20">Upstream feeder modulerier ready</ADEPT_DI020>
+    <ADEPT_DI021 Device="ADEPT" Type="Input" IONum="1214" Enum="21">Downstream ready for feeder modulerier</ADEPT_DI021>
+    <ADEPT_DI022 Device="ADEPT" Type="Input" IONum="1215" Enum="22">PCB Conveyor ST2 Fix Clamp cylinder UP sensor *2</ADEPT_DI022>
+    <ADEPT_DI023 Device="ADEPT" Type="Input" IONum="1216" Enum="23">PCB Conveyor ST2 Fix Clamp cylinder DOWN sensor *2</ADEPT_DI023>
+    <ADEPT_DI024 Device="ADEPT" Type="Input" IONum="-1" Enum="24">quadrant_1 feeder check sensor</ADEPT_DI024>
+    <ADEPT_DI025 Device="ADEPT" Type="Input" IONum="-1" Enum="25">quadrant_2 feeder check sensor</ADEPT_DI025>
+    <ADEPT_DI026 Device="ADEPT" Type="Input" IONum="-1" Enum="26">quadrant_3 feeder check sensor</ADEPT_DI026>
+    <ADEPT_DI027 Device="ADEPT" Type="Input" IONum="-1" Enum="27">quadrant_4 feeder check sensor</ADEPT_DI027>
+    <ADEPT_DI028 Device="ADEPT" Type="Input" IONum="1217" Enum="28">PCB Conveyo motor1 alarm</ADEPT_DI028>
+    <ADEPT_DI029 Device="ADEPT" Type="Input" IONum="1218" Enum="29">PCB Conveyo motor2 alarm</ADEPT_DI029>
+    <ADEPT_DI030 Device="ADEPT" Type="Input" IONum="1219" Enum="30">PCB Conveyor1 feed-in sensor</ADEPT_DI030>
+    <ADEPT_DI031 Device="ADEPT" Type="Input" IONum="1221" Enum="31">PCB Conveyor1 Buffer sensor</ADEPT_DI031>
+    <ADEPT_DI032 Device="ADEPT" Type="Input" IONum="1222" Enum="32">PCB Conveyor2 SlowDown sensor</ADEPT_DI032>
+    <ADEPT_DI033 Device="ADEPT" Type="Input" IONum="1223" Enum="33">PCB Conveyor2 INP sensor</ADEPT_DI033>
+    <ADEPT_DI034 Device="ADEPT" Type="Input" IONum="1224" Enum="34">PCB Conveyor2 transfer out sensor</ADEPT_DI034>
+    <ADEPT_DI035 Device="ADEPT" Type="Input" IONum="1225" Enum="35">Electric gripper_1 DI 01 (1B)</ADEPT_DI035>
+    <ADEPT_DI036 Device="ADEPT" Type="Input" IONum="1226" Enum="36">Electric gripper_1 DI 02 (2B)</ADEPT_DI036>
+    <ADEPT_DI037 Device="ADEPT" Type="Input" IONum="1227" Enum="37">Electric gripper_1 DI 03 (3B)</ADEPT_DI037>
+    <ADEPT_DI038 Device="ADEPT" Type="Input" IONum="1228" Enum="38">Electric gripper_1 DI 04 (4B)</ADEPT_DI038>
+    <ADEPT_DI039 Device="ADEPT" Type="Input" IONum="1229" Enum="39">Electric gripper_1 DI 05 (5B)</ADEPT_DI039>
+    <ADEPT_DI040 Device="ADEPT" Type="Input" IONum="1230" Enum="40">Electric gripper_1 DI 06 (6B)</ADEPT_DI040>
+    <ADEPT_DI041 Device="ADEPT" Type="Input" IONum="1231" Enum="41">Electric gripper_1 DI 07 (7B)</ADEPT_DI041>
+    <ADEPT_DI042 Device="ADEPT" Type="Input" IONum="1232" Enum="42">Electric gripper_1 DI 08 (8B)</ADEPT_DI042>
+    <ADEPT_DI043 Device="ADEPT" Type="Input" IONum="1233" Enum="43">Electric gripper_1 DI 09 (9B)</ADEPT_DI043>
+    <ADEPT_DI044 Device="ADEPT" Type="Input" IONum="1234" Enum="44">Electric gripper_1 DI 10 (10B)</ADEPT_DI044>
+    <ADEPT_DI045 Device="ADEPT" Type="Input" IONum="1235" Enum="45">Electric gripper_1 DI 11 (11B)</ADEPT_DI045>
+    <ADEPT_DI046 Device="ADEPT" Type="Input" IONum="1236" Enum="46">Electric gripper_1 DI 12 (12B)</ADEPT_DI046>
+    <ADEPT_DI047 Device="ADEPT" Type="Input" IONum="1237" Enum="47">Electric gripper_1 DI 13 (13B)</ADEPT_DI047>
+    <ADEPT_DI048 Device="ADEPT" Type="Input" IONum="1238" Enum="48">Electric gripper_1 DI 14 (14B)</ADEPT_DI048>
+    <ADEPT_DI049 Device="ADEPT" Type="Input" IONum="1239" Enum="49">Electric gripper_1 DI 15 (15B)</ADEPT_DI049>
+    <ADEPT_DI050 Device="ADEPT" Type="Input" IONum="1240" Enum="50">Electric gripper_1 DI 16 (16B)</ADEPT_DI050>
+    <ADEPT_DI051 Device="ADEPT" Type="Input" IONum="-1" Enum="51">Electric gripper_2 DI 01 (1B)</ADEPT_DI051>
+    <ADEPT_DI052 Device="ADEPT" Type="Input" IONum="-1" Enum="52">Electric gripper_2 DI 02 (2B)</ADEPT_DI052>
+    <ADEPT_DI053 Device="ADEPT" Type="Input" IONum="-1" Enum="53">Electric gripper_2 DI 03 (3B)</ADEPT_DI053>
+    <ADEPT_DI054 Device="ADEPT" Type="Input" IONum="-1" Enum="54">Electric gripper_2 DI 04 (4B)</ADEPT_DI054>
+    <ADEPT_DI055 Device="ADEPT" Type="Input" IONum="-1" Enum="55">Electric gripper_2 DI 05 (5B)</ADEPT_DI055>
+    <ADEPT_DI056 Device="ADEPT" Type="Input" IONum="-1" Enum="56">Electric gripper_2 DI 06 (6B)</ADEPT_DI056>
+    <ADEPT_DI057 Device="ADEPT" Type="Input" IONum="-1" Enum="57">Electric gripper_2 DI 07 (7B)</ADEPT_DI057>
+    <ADEPT_DI058 Device="ADEPT" Type="Input" IONum="-1" Enum="58">Electric gripper_2 DI 08 (8B)</ADEPT_DI058>
+    <ADEPT_DI059 Device="ADEPT" Type="Input" IONum="-1" Enum="59">Electric gripper_2 DI 09 (9B)</ADEPT_DI059>
+    <ADEPT_DI060 Device="ADEPT" Type="Input" IONum="-1" Enum="60">Electric gripper_2 DI 10 (10B)</ADEPT_DI060>
+    <ADEPT_DI061 Device="ADEPT" Type="Input" IONum="-1" Enum="61">Electric gripper_2 DI 11 (11B)</ADEPT_DI061>
+    <ADEPT_DI062 Device="ADEPT" Type="Input" IONum="-1" Enum="62">Electric gripper_2 DI 12 (12B)</ADEPT_DI062>
+    <ADEPT_DI063 Device="ADEPT" Type="Input" IONum="-1" Enum="63">Electric gripper_2 DI 13 (13B)</ADEPT_DI063>
+    <ADEPT_DI064 Device="ADEPT" Type="Input" IONum="-1" Enum="64">Electric gripper_2 DI 14 (14B)</ADEPT_DI064>
+    <ADEPT_DI065 Device="ADEPT" Type="Input" IONum="-1" Enum="65">Electric gripper_2 DI 15 (15B)</ADEPT_DI065>
+    <ADEPT_DI066 Device="ADEPT" Type="Input" IONum="-1" Enum="66">Electric gripper_2 DI 16 (16B)</ADEPT_DI066>
+    <ADEPT_DI067 Device="ADEPT" Type="Input" IONum="1241" Enum="67">quadrant_1 feeder module1 DI 11</ADEPT_DI067>
+    <ADEPT_DI068 Device="ADEPT" Type="Input" IONum="1242" Enum="68">quadrant_1 feeder module1 DI 12</ADEPT_DI068>
+    <ADEPT_DI069 Device="ADEPT" Type="Input" IONum="1243" Enum="69">quadrant_1 feeder module1 DI 13</ADEPT_DI069>
+    <ADEPT_DI070 Device="ADEPT" Type="Input" IONum="1244" Enum="70">quadrant_1 feeder module1 DI 14</ADEPT_DI070>
+    <ADEPT_DI071 Device="ADEPT" Type="Input" IONum="1245" Enum="71">quadrant_1 feeder module1 DI 21</ADEPT_DI071>
+    <ADEPT_DI072 Device="ADEPT" Type="Input" IONum="1246" Enum="72">quadrant_1 feeder module1 DI 22</ADEPT_DI072>
+    <ADEPT_DI073 Device="ADEPT" Type="Input" IONum="1247" Enum="73">quadrant_1 feeder module1 DI 23</ADEPT_DI073>
+    <ADEPT_DI074 Device="ADEPT" Type="Input" IONum="1248" Enum="74">quadrant_1 feeder module1 DI 24</ADEPT_DI074>
+    <ADEPT_DI075 Device="ADEPT" Type="Input" IONum="-1" Enum="75">quadrant_1 feeder module1 DI 31</ADEPT_DI075>
+    <ADEPT_DI076 Device="ADEPT" Type="Input" IONum="-1" Enum="76">quadrant_1 feeder module1 DI 32</ADEPT_DI076>
+    <ADEPT_DI077 Device="ADEPT" Type="Input" IONum="-1" Enum="77">quadrant_1 feeder module1 DI 33</ADEPT_DI077>
+    <ADEPT_DI078 Device="ADEPT" Type="Input" IONum="-1" Enum="78">quadrant_1 feeder module1 DI 34</ADEPT_DI078>
+    <ADEPT_DI079 Device="ADEPT" Type="Input" IONum="-1" Enum="79">quadrant_1 feeder module1 DI 41</ADEPT_DI079>
+    <ADEPT_DI080 Device="ADEPT" Type="Input" IONum="-1" Enum="80">quadrant_1 feeder module1 DI 42</ADEPT_DI080>
+    <ADEPT_DI081 Device="ADEPT" Type="Input" IONum="-1" Enum="81">quadrant_1 feeder module1 DI 43</ADEPT_DI081>
+    <ADEPT_DI082 Device="ADEPT" Type="Input" IONum="-1" Enum="82">quadrant_1 feeder module1 DI 44</ADEPT_DI082>
+    <ADEPT_DI083 Device="ADEPT" Type="Input" IONum="1249" Enum="83">quadrant_2 feeder module1 DI 11</ADEPT_DI083>
+    <ADEPT_DI084 Device="ADEPT" Type="Input" IONum="1250" Enum="84">quadrant_2 feeder module1 DI 12</ADEPT_DI084>
+    <ADEPT_DI085 Device="ADEPT" Type="Input" IONum="1251" Enum="85">quadrant_2 feeder module1 DI 13</ADEPT_DI085>
+    <ADEPT_DI086 Device="ADEPT" Type="Input" IONum="1252" Enum="86">quadrant_2 feeder module1 DI 14</ADEPT_DI086>
+    <ADEPT_DI087 Device="ADEPT" Type="Input" IONum="-1" Enum="87">quadrant_2 feeder module1 DI 21</ADEPT_DI087>
+    <ADEPT_DI088 Device="ADEPT" Type="Input" IONum="-1" Enum="88">quadrant_2 feeder module1 DI 22</ADEPT_DI088>
+    <ADEPT_DI089 Device="ADEPT" Type="Input" IONum="-1" Enum="89">quadrant_2 feeder module1 DI 23</ADEPT_DI089>
+    <ADEPT_DI090 Device="ADEPT" Type="Input" IONum="-1" Enum="90">quadrant_2 feeder module1 DI 24</ADEPT_DI090>
+    <ADEPT_DI091 Device="ADEPT" Type="Input" IONum="-1" Enum="91">quadrant_2 feeder module1 DI 31</ADEPT_DI091>
+    <ADEPT_DI092 Device="ADEPT" Type="Input" IONum="-1" Enum="92">quadrant_2 feeder module1 DI 32</ADEPT_DI092>
+    <ADEPT_DI093 Device="ADEPT" Type="Input" IONum="-1" Enum="93">quadrant_2 feeder module1 DI 33</ADEPT_DI093>
+    <ADEPT_DI094 Device="ADEPT" Type="Input" IONum="-1" Enum="94">quadrant_2 feeder module1 DI 34</ADEPT_DI094>
+    <ADEPT_DI095 Device="ADEPT" Type="Input" IONum="-1" Enum="95">quadrant_2 feeder module1 DI 41</ADEPT_DI095>
+    <ADEPT_DI096 Device="ADEPT" Type="Input" IONum="-1" Enum="96">quadrant_2 feeder module1 DI 42</ADEPT_DI096>
+    <ADEPT_DI097 Device="ADEPT" Type="Input" IONum="-1" Enum="97">quadrant_2 feeder module1 DI 43</ADEPT_DI097>
+    <ADEPT_DI098 Device="ADEPT" Type="Input" IONum="-1" Enum="98">quadrant_2 feeder module1 DI 44</ADEPT_DI098>
+    <ADEPT_DI099 Device="ADEPT" Type="Input" IONum="1253" Enum="99">quadrant_3 feeder module1 DI 11</ADEPT_DI099>
+    <ADEPT_DI100 Device="ADEPT" Type="Input" IONum="1254" Enum="100">quadrant_3 feeder module1 DI 12</ADEPT_DI100>
+    <ADEPT_DI101 Device="ADEPT" Type="Input" IONum="1255" Enum="101">quadrant_3 feeder module1 DI 13</ADEPT_DI101>
+    <ADEPT_DI102 Device="ADEPT" Type="Input" IONum="1256" Enum="102">quadrant_3 feeder module1 DI 14</ADEPT_DI102>
+    <ADEPT_DI103 Device="ADEPT" Type="Input" IONum="-1" Enum="103">quadrant_3 feeder module1 DI 21</ADEPT_DI103>
+    <ADEPT_DI104 Device="ADEPT" Type="Input" IONum="-1" Enum="104">quadrant_3 feeder module1 DI 22</ADEPT_DI104>
+    <ADEPT_DI105 Device="ADEPT" Type="Input" IONum="-1" Enum="105">quadrant_3 feeder module1 DI 23</ADEPT_DI105>
+    <ADEPT_DI106 Device="ADEPT" Type="Input" IONum="-1" Enum="106">quadrant_3 feeder module1 DI 24</ADEPT_DI106>
+    <ADEPT_DI107 Device="ADEPT" Type="Input" IONum="-1" Enum="107">quadrant_3 feeder module1 DI 31</ADEPT_DI107>
+    <ADEPT_DI108 Device="ADEPT" Type="Input" IONum="-1" Enum="108">quadrant_3 feeder module1 DI 32</ADEPT_DI108>
+    <ADEPT_DI109 Device="ADEPT" Type="Input" IONum="-1" Enum="109">quadrant_3 feeder module1 DI 33</ADEPT_DI109>
+    <ADEPT_DI110 Device="ADEPT" Type="Input" IONum="-1" Enum="110">quadrant_3 feeder module1 DI 34</ADEPT_DI110>
+    <ADEPT_DI111 Device="ADEPT" Type="Input" IONum="-1" Enum="111">quadrant_3 feeder module1 DI 41</ADEPT_DI111>
+    <ADEPT_DI112 Device="ADEPT" Type="Input" IONum="-1" Enum="112">quadrant_3 feeder module1 DI 42</ADEPT_DI112>
+    <ADEPT_DI113 Device="ADEPT" Type="Input" IONum="-1" Enum="113">quadrant_3 feeder module1 DI 43</ADEPT_DI113>
+    <ADEPT_DI114 Device="ADEPT" Type="Input" IONum="-1" Enum="114">quadrant_3 feeder module1 DI 44</ADEPT_DI114>
+    <ADEPT_DI115 Device="ADEPT" Type="Input" IONum="-1" Enum="115">quadrant_4 feeder module1 DI 11</ADEPT_DI115>
+    <ADEPT_DI116 Device="ADEPT" Type="Input" IONum="-1" Enum="116">quadrant_4 feeder module1 DI 12</ADEPT_DI116>
+    <ADEPT_DI117 Device="ADEPT" Type="Input" IONum="-1" Enum="117">quadrant_4 feeder module1 DI 13</ADEPT_DI117>
+    <ADEPT_DI118 Device="ADEPT" Type="Input" IONum="-1" Enum="118">quadrant_4 feeder module1 DI 14</ADEPT_DI118>
+    <ADEPT_DI119 Device="ADEPT" Type="Input" IONum="-1" Enum="119">quadrant_4 feeder module1 DI 21</ADEPT_DI119>
+    <ADEPT_DI120 Device="ADEPT" Type="Input" IONum="-1" Enum="120">quadrant_4 feeder module1 DI 22</ADEPT_DI120>
+    <ADEPT_DI121 Device="ADEPT" Type="Input" IONum="-1" Enum="121">quadrant_4 feeder module1 DI 23</ADEPT_DI121>
+    <ADEPT_DI122 Device="ADEPT" Type="Input" IONum="-1" Enum="122">quadrant_4 feeder module1 DI 24</ADEPT_DI122>
+    <ADEPT_DI123 Device="ADEPT" Type="Input" IONum="-1" Enum="123">quadrant_4 feeder module1 DI 31</ADEPT_DI123>
+    <ADEPT_DI124 Device="ADEPT" Type="Input" IONum="-1" Enum="124">quadrant_4 feeder module1 DI 32</ADEPT_DI124>
+    <ADEPT_DI125 Device="ADEPT" Type="Input" IONum="-1" Enum="125">quadrant_4 feeder module1 DI 33</ADEPT_DI125>
+    <ADEPT_DI126 Device="ADEPT" Type="Input" IONum="-1" Enum="126">quadrant_4 feeder module1 DI 34</ADEPT_DI126>
+    <ADEPT_DI127 Device="ADEPT" Type="Input" IONum="-1" Enum="127">quadrant_4 feeder module1 DI 41</ADEPT_DI127>
+    <ADEPT_DI128 Device="ADEPT" Type="Input" IONum="-1" Enum="128">quadrant_4 feeder module1 DI 42</ADEPT_DI128>
+    <ADEPT_DI129 Device="ADEPT" Type="Input" IONum="-1" Enum="129">quadrant_4 feeder module1 DI 43</ADEPT_DI129>
+    <ADEPT_DI130 Device="ADEPT" Type="Input" IONum="-1" Enum="130">quadrant_4 feeder module1 DI 44</ADEPT_DI130>
+	<ADEPT_DI131 Device="ADEPT" Type="Input" IONum="1012" Enum="343">Gripper Open/Close Cylinder pressure</ADEPT_DI131>
+	<ADEPT_DI132 Device="ADEPT" Type="Input" IONum="1105" Enum="344">Trolley Left side door status</ADEPT_DI132>
+	<ADEPT_DI133 Device="ADEPT" Type="Input" IONum="1106" Enum="345">Trolley Right side door status</ADEPT_DI133>
+	<ADEPT_DI134 Device="ADEPT" Type="Input" IONum="1107" Enum="346">NG Conveyo motor alarm</ADEPT_DI134>
     <!--Adept I/O : Output-->
-    <ADEPT_DO000 Device="ADEPT" DevNum="0" Type="Output" IONum="2017" Enum="2">Unknown</ADEPT_DO000>
-    <ADEPT_DO001 Device="ADEPT" DevNum="0" Type="Output" IONum="2018" Enum="3">Current row pictured</ADEPT_DO001>
+    <ADEPT_DO000 Device="ADEPT" Type="Output" IONum="0001" Enum="131">Gripper 1 UP/DOWN Cylinder</ADEPT_DO000>
+    <ADEPT_DO001 Device="ADEPT" Type="Output" IONum="0002" Enum="132">Gripper 2 UP/DOWN Cylinder</ADEPT_DO001>
+    <ADEPT_DO002 Device="ADEPT" Type="Output" IONum="0003" Enum="133">Gripper 3 UP/DOWN Cylinder</ADEPT_DO002>
+    <ADEPT_DO003 Device="ADEPT" Type="Output" IONum="0004" Enum="134">Gripper 4 UP/DOWN Cylinder</ADEPT_DO003>
+    <ADEPT_DO004 Device="ADEPT" Type="Output" IONum="0097" Enum="135">Robot nozzle 0 vacuum</ADEPT_DO004>
+    <ADEPT_DO005 Device="ADEPT" Type="Output" IONum="0098" Enum="136">Robot nozzle 0 blow</ADEPT_DO005>
+    <ADEPT_DO006 Device="ADEPT" Type="Output" IONum="0099" Enum="137">Robot nozzle 1 vacuum</ADEPT_DO006>
+    <ADEPT_DO007 Device="ADEPT" Type="Output" IONum="0100" Enum="138">Robot nozzle 1 blow</ADEPT_DO007>
+    <ADEPT_DO008 Device="ADEPT" Type="Output" IONum="0101" Enum="139">Robot nozzle 2 vacuum</ADEPT_DO008>
+    <ADEPT_DO009 Device="ADEPT" Type="Output" IONum="0102" Enum="140">Robot nozzle 2 blow</ADEPT_DO009>
+    <ADEPT_DO010 Device="ADEPT" Type="Output" IONum="0209" Enum="141">Tower Lamp Red</ADEPT_DO010>
+    <ADEPT_DO011 Device="ADEPT" Type="Output" IONum="0210" Enum="142">Tower Lamp Yellow</ADEPT_DO011>
+    <ADEPT_DO012 Device="ADEPT" Type="Output" IONum="0211" Enum="143">Tower Lamp Green</ADEPT_DO012>
+    <ADEPT_DO013 Device="ADEPT" Type="Output" IONum="0212" Enum="144">buzzer</ADEPT_DO013>
+    <ADEPT_DO014 Device="ADEPT" Type="Output" IONum="0214" Enum="145">PCB Conveyor ST2 Fix Clamp cylinder UP/DOWN SOL</ADEPT_DO014>
+    <ADEPT_DO015 Device="ADEPT" Type="Output" IONum="-1" Enum="146">Right Side door HI POWER</ADEPT_DO015>
+    <ADEPT_DO016 Device="ADEPT" Type="Output" IONum="0216" Enum="147">NG Empty button light (White)</ADEPT_DO016>
+    <ADEPT_DO017 Device="ADEPT" Type="Output" IONum="0005" Enum="148">Plug-in machines conveyor ready to Upstream</ADEPT_DO017>
+    <ADEPT_DO018 Device="ADEPT" Type="Output" IONum="0006" Enum="149">Plug-in machines feeder modulerier ready to Downstream</ADEPT_DO018>
+    <ADEPT_DO019 Device="ADEPT" Type="Output" IONum="0007" Enum="150">NG Conveyo motor START</ADEPT_DO019>
+    <ADEPT_DO020 Device="ADEPT" Type="Output" IONum="0008" Enum="151">NG Conveyo motor alarm reset</ADEPT_DO020>
+    <ADEPT_DO021 Device="ADEPT" Type="Output" IONum="0217" Enum="152">Conveyor motor1 FWD</ADEPT_DO021>
+    <ADEPT_DO022 Device="ADEPT" Type="Output" IONum="0218" Enum="153">Conveyor motor1 alarm reset</ADEPT_DO022>
+    <ADEPT_DO023 Device="ADEPT" Type="Output" IONum="0219" Enum="154">Conveyor motor2 FWD</ADEPT_DO023>
+    <ADEPT_DO024 Device="ADEPT" Type="Output" IONum="0220" Enum="155">Conveyor motor2 alarm reset</ADEPT_DO024>
+    <ADEPT_DO025 Device="ADEPT" Type="Output" IONum="0221" Enum="156">Conveyor motor1 Bit0</ADEPT_DO025>
+    <ADEPT_DO026 Device="ADEPT" Type="Output" IONum="0222" Enum="157">Conveyor motor1 Bit1</ADEPT_DO026>
+    <ADEPT_DO027 Device="ADEPT" Type="Output" IONum="0223" Enum="158">Conveyor motor2 Bit0</ADEPT_DO027>
+    <ADEPT_DO028 Device="ADEPT" Type="Output" IONum="0224" Enum="159">Conveyor motor2 Bit1</ADEPT_DO028>
+    <ADEPT_DO029 Device="ADEPT" Type="Output" IONum="0225" Enum="160">Electric gripper_1 DO 01 (5A)</ADEPT_DO029>
+    <ADEPT_DO030 Device="ADEPT" Type="Output" IONum="0226" Enum="161">Electric gripper_1 DO 02 (6A)</ADEPT_DO030>
+    <ADEPT_DO031 Device="ADEPT" Type="Output" IONum="0227" Enum="162">Electric gripper_1 DO 03 (7A)</ADEPT_DO031>
+    <ADEPT_DO032 Device="ADEPT" Type="Output" IONum="0228" Enum="163">Electric gripper_1 DO 04 (8A)</ADEPT_DO032>
+    <ADEPT_DO033 Device="ADEPT" Type="Output" IONum="0229" Enum="164">Electric gripper_1 DO 05 (9A)</ADEPT_DO033>
+    <ADEPT_DO034 Device="ADEPT" Type="Output" IONum="0230" Enum="165">Electric gripper_1 DO 06 (10A)</ADEPT_DO034>
+    <ADEPT_DO035 Device="ADEPT" Type="Output" IONum="0231" Enum="166">Electric gripper_1 DO 07 (11A)</ADEPT_DO035>
+    <ADEPT_DO036 Device="ADEPT" Type="Output" IONum="0232" Enum="167">Electric gripper_1 DO 08 (12A)</ADEPT_DO036>
+    <ADEPT_DO037 Device="ADEPT" Type="Output" IONum="0233" Enum="168">Electric gripper_1 DO 09 (13A)</ADEPT_DO037>
+    <ADEPT_DO038 Device="ADEPT" Type="Output" IONum="0234" Enum="169">Electric gripper_1 DO 10 (14A)</ADEPT_DO038>
+    <ADEPT_DO039 Device="ADEPT" Type="Output" IONum="0235" Enum="170">Electric gripper_1 DO 11 (15A)</ADEPT_DO039>
+    <ADEPT_DO040 Device="ADEPT" Type="Output" IONum="0236" Enum="171">Electric gripper_1 DO 12 (16A)</ADEPT_DO040>
+    <ADEPT_DO041 Device="ADEPT" Type="Output" IONum="0237" Enum="172">Electric gripper_1 DO 13 (17A)</ADEPT_DO041>
+    <ADEPT_DO042 Device="ADEPT" Type="Output" IONum="0238" Enum="173">Electric gripper_1 DO 14 (18A)</ADEPT_DO042>
+    <ADEPT_DO043 Device="ADEPT" Type="Output" IONum="0239" Enum="174">Electric gripper_1 DO 15 (19A)</ADEPT_DO043>
+    <ADEPT_DO044 Device="ADEPT" Type="Output" IONum="0240" Enum="175">Electric gripper_1 DO 16 (20A)</ADEPT_DO044>
+    <ADEPT_DO045 Device="ADEPT" Type="Output" IONum="-1" Enum="176">Electric gripper_2 DO 01 (5A)</ADEPT_DO045>
+    <ADEPT_DO046 Device="ADEPT" Type="Output" IONum="-1" Enum="177">Electric gripper_2 DO 02 (6A)</ADEPT_DO046>
+    <ADEPT_DO047 Device="ADEPT" Type="Output" IONum="-1" Enum="178">Electric gripper_2 DO 03 (7A)</ADEPT_DO047>
+    <ADEPT_DO048 Device="ADEPT" Type="Output" IONum="-1" Enum="179">Electric gripper_2 DO 04 (8A)</ADEPT_DO048>
+    <ADEPT_DO049 Device="ADEPT" Type="Output" IONum="-1" Enum="180">Electric gripper_2 DO 05 (9A)</ADEPT_DO049>
+    <ADEPT_DO050 Device="ADEPT" Type="Output" IONum="-1" Enum="181">Electric gripper_2 DO 06 (10A)</ADEPT_DO050>
+    <ADEPT_DO051 Device="ADEPT" Type="Output" IONum="-1" Enum="182">Electric gripper_2 DO 07 (11A)</ADEPT_DO051>
+    <ADEPT_DO052 Device="ADEPT" Type="Output" IONum="-1" Enum="183">Electric gripper_2 DO 08 (12A)</ADEPT_DO052>
+    <ADEPT_DO053 Device="ADEPT" Type="Output" IONum="-1" Enum="184">Electric gripper_2 DO 09 (13A)</ADEPT_DO053>
+    <ADEPT_DO054 Device="ADEPT" Type="Output" IONum="-1" Enum="185">Electric gripper_2 DO 10 (14A)</ADEPT_DO054>
+    <ADEPT_DO055 Device="ADEPT" Type="Output" IONum="-1" Enum="186">Electric gripper_2 DO 11 (15A)</ADEPT_DO055>
+    <ADEPT_DO056 Device="ADEPT" Type="Output" IONum="-1" Enum="187">Electric gripper_2 DO 12 (16A)</ADEPT_DO056>
+    <ADEPT_DO057 Device="ADEPT" Type="Output" IONum="-1" Enum="188">Electric gripper_2 DO 13 (17A)</ADEPT_DO057>
+    <ADEPT_DO058 Device="ADEPT" Type="Output" IONum="-1" Enum="189">Electric gripper_2 DO 14 (18A)</ADEPT_DO058>
+    <ADEPT_DO059 Device="ADEPT" Type="Output" IONum="-1" Enum="190">Electric gripper_2 DO 15 (19A)</ADEPT_DO059>
+    <ADEPT_DO060 Device="ADEPT" Type="Output" IONum="-1" Enum="191">Electric gripper_2 DO 16 (20A)</ADEPT_DO060>
+    <ADEPT_DO061 Device="ADEPT" Type="Output" IONum="0241" Enum="192">quadrant_1 feeder module1 DO 11</ADEPT_DO061>
+    <ADEPT_DO062 Device="ADEPT" Type="Output" IONum="0242" Enum="193">quadrant_1 feeder module1 DO 12</ADEPT_DO062>
+    <ADEPT_DO063 Device="ADEPT" Type="Output" IONum="0243" Enum="194">quadrant_1 feeder module1 DO 13</ADEPT_DO063>
+    <ADEPT_DO064 Device="ADEPT" Type="Output" IONum="0244" Enum="195">quadrant_1 feeder module1 DO 14</ADEPT_DO064>
+    <ADEPT_DO065 Device="ADEPT" Type="Output" IONum="0245" Enum="196">quadrant_1 feeder module1 DO 21</ADEPT_DO065>
+    <ADEPT_DO066 Device="ADEPT" Type="Output" IONum="0246" Enum="197">quadrant_1 feeder module1 DO 22</ADEPT_DO066>
+    <ADEPT_DO067 Device="ADEPT" Type="Output" IONum="0247" Enum="198">quadrant_1 feeder module1 DO 23</ADEPT_DO067>
+    <ADEPT_DO068 Device="ADEPT" Type="Output" IONum="0248" Enum="199">quadrant_1 feeder module1 DO 24</ADEPT_DO068>
+    <ADEPT_DO069 Device="ADEPT" Type="Output" IONum="0249" Enum="200">quadrant_1 feeder module1 DO 31</ADEPT_DO069>
+    <ADEPT_DO070 Device="ADEPT" Type="Output" IONum="0250" Enum="201">quadrant_1 feeder module1 DO 32</ADEPT_DO070>
+    <ADEPT_DO071 Device="ADEPT" Type="Output" IONum="-1" Enum="202">EMO Status To PLC</ADEPT_DO071>
+    <ADEPT_DO072 Device="ADEPT" Type="Output" IONum="-1" Enum="203">CDA Status To PLC</ADEPT_DO072>
+    <ADEPT_DO073 Device="ADEPT" Type="Output" IONum="0251" Enum="204">quadrant_1 feeder module1 DO 41</ADEPT_DO073>
+    <ADEPT_DO074 Device="ADEPT" Type="Output" IONum="0252" Enum="205">quadrant_1 feeder module1 DO 42</ADEPT_DO074>
+    <ADEPT_DO075 Device="ADEPT" Type="Output" IONum="-1" Enum="206">quadrant_1 feeder module1 DO 43</ADEPT_DO075>
+    <ADEPT_DO076 Device="ADEPT" Type="Output" IONum="-1" Enum="207">quadrant_1 feeder module1 DO 44</ADEPT_DO076>
+    <ADEPT_DO077 Device="ADEPT" Type="Output" IONum="0257" Enum="208">quadrant_2 feeder module1 DO 11</ADEPT_DO077>
+    <ADEPT_DO078 Device="ADEPT" Type="Output" IONum="0258" Enum="209">quadrant_2 feeder module1 DO 12</ADEPT_DO078>
+    <ADEPT_DO079 Device="ADEPT" Type="Output" IONum="0259" Enum="210">quadrant_2 feeder module1 DO 13</ADEPT_DO079>
+    <ADEPT_DO080 Device="ADEPT" Type="Output" IONum="0260" Enum="211">quadrant_2 feeder module1 DO 14</ADEPT_DO080>
+    <ADEPT_DO081 Device="ADEPT" Type="Output" IONum="-1" Enum="212">quadrant_2 feeder module1 DO 21</ADEPT_DO081>
+    <ADEPT_DO082 Device="ADEPT" Type="Output" IONum="-1" Enum="213">quadrant_2 feeder module1 DO 22</ADEPT_DO082>
+    <ADEPT_DO083 Device="ADEPT" Type="Output" IONum="-1" Enum="214">quadrant_2 feeder module1 DO 23</ADEPT_DO083>
+    <ADEPT_DO084 Device="ADEPT" Type="Output" IONum="-1" Enum="215">quadrant_2 feeder module1 DO 24</ADEPT_DO084>
+    <ADEPT_DO085 Device="ADEPT" Type="Output" IONum="-1" Enum="216">quadrant_2 feeder module1 DO 31</ADEPT_DO085>
+    <ADEPT_DO086 Device="ADEPT" Type="Output" IONum="-1" Enum="217">quadrant_2 feeder module1 DO 32</ADEPT_DO086>
+    <ADEPT_DO087 Device="ADEPT" Type="Output" IONum="-1" Enum="218">quadrant_2 feeder module1 DO 33</ADEPT_DO087>
+    <ADEPT_DO088 Device="ADEPT" Type="Output" IONum="-1" Enum="219">quadrant_2 feeder module1 DO 34</ADEPT_DO088>
+    <ADEPT_DO089 Device="ADEPT" Type="Output" IONum="-1" Enum="220">quadrant_2 feeder module1 DO 41</ADEPT_DO089>
+    <ADEPT_DO090 Device="ADEPT" Type="Output" IONum="-1" Enum="221">quadrant_2 feeder module1 DO 42</ADEPT_DO090>
+    <ADEPT_DO091 Device="ADEPT" Type="Output" IONum="-1" Enum="222">quadrant_2 feeder module1 DO 43</ADEPT_DO091>
+    <ADEPT_DO092 Device="ADEPT" Type="Output" IONum="-1" Enum="223">quadrant_2 feeder module1 DO 44</ADEPT_DO092>
+    <ADEPT_DO093 Device="ADEPT" Type="Output" IONum="0261" Enum="224">quadrant_3 feeder module1 DO 11</ADEPT_DO093>
+    <ADEPT_DO094 Device="ADEPT" Type="Output" IONum="0262" Enum="225">quadrant_3 feeder module1 DO 12</ADEPT_DO094>
+    <ADEPT_DO095 Device="ADEPT" Type="Output" IONum="0263" Enum="226">quadrant_3 feeder module1 DO 13</ADEPT_DO095>
+    <ADEPT_DO096 Device="ADEPT" Type="Output" IONum="0264" Enum="227">quadrant_3 feeder module1 DO 14</ADEPT_DO096>
+    <ADEPT_DO097 Device="ADEPT" Type="Output" IONum="-1" Enum="228">quadrant_3 feeder module1 DO 21</ADEPT_DO097>
+    <ADEPT_DO098 Device="ADEPT" Type="Output" IONum="-1" Enum="229">quadrant_3 feeder module1 DO 22</ADEPT_DO098>
+    <ADEPT_DO099 Device="ADEPT" Type="Output" IONum="-1" Enum="230">quadrant_3 feeder module1 DO 23</ADEPT_DO099>
+    <ADEPT_DO100 Device="ADEPT" Type="Output" IONum="-1" Enum="231">quadrant_3 feeder module1 DO 24</ADEPT_DO100>
+    <ADEPT_DO101 Device="ADEPT" Type="Output" IONum="-1" Enum="232">quadrant_3 feeder module1 DO 31</ADEPT_DO101>
+    <ADEPT_DO102 Device="ADEPT" Type="Output" IONum="-1" Enum="233">quadrant_3 feeder module1 DO 32</ADEPT_DO102>
+    <ADEPT_DO103 Device="ADEPT" Type="Output" IONum="-1" Enum="234">quadrant_3 feeder module1 DO 33</ADEPT_DO103>
+    <ADEPT_DO104 Device="ADEPT" Type="Output" IONum="-1" Enum="235">quadrant_3 feeder module1 DO 34</ADEPT_DO104>
+    <ADEPT_DO105 Device="ADEPT" Type="Output" IONum="-1" Enum="236">quadrant_3 feeder module1 DO 41</ADEPT_DO105>
+    <ADEPT_DO106 Device="ADEPT" Type="Output" IONum="-1" Enum="237">quadrant_3 feeder module1 DO 42</ADEPT_DO106>
+    <ADEPT_DO107 Device="ADEPT" Type="Output" IONum="-1" Enum="238">quadrant_3 feeder module1 DO 43</ADEPT_DO107>
+    <ADEPT_DO108 Device="ADEPT" Type="Output" IONum="-1" Enum="239">quadrant_3 feeder module1 DO 44</ADEPT_DO108>
+    <ADEPT_DO109 Device="ADEPT" Type="Output" IONum="-1" Enum="240">quadrant_4 feeder module1 DO 11</ADEPT_DO109>
+    <ADEPT_DO110 Device="ADEPT" Type="Output" IONum="-1" Enum="241">quadrant_4 feeder module1 DO 12</ADEPT_DO110>
+    <ADEPT_DO111 Device="ADEPT" Type="Output" IONum="-1" Enum="242">quadrant_4 feeder module1 DO 13</ADEPT_DO111>
+    <ADEPT_DO112 Device="ADEPT" Type="Output" IONum="-1" Enum="243">quadrant_4 feeder module1 DO 14</ADEPT_DO112>
+    <ADEPT_DO113 Device="ADEPT" Type="Output" IONum="-1" Enum="244">quadrant_4 feeder module1 DO 21</ADEPT_DO113>
+    <ADEPT_DO114 Device="ADEPT" Type="Output" IONum="-1" Enum="245">quadrant_4 feeder module1 DO 22</ADEPT_DO114>
+    <ADEPT_DO115 Device="ADEPT" Type="Output" IONum="-1" Enum="246">quadrant_4 feeder module1 DO 23</ADEPT_DO115>
+    <ADEPT_DO116 Device="ADEPT" Type="Output" IONum="-1" Enum="247">quadrant_4 feeder module1 DO 24</ADEPT_DO116>
+    <ADEPT_DO117 Device="ADEPT" Type="Output" IONum="-1" Enum="248">quadrant_4 feeder module1 DO 31</ADEPT_DO117>
+    <ADEPT_DO118 Device="ADEPT" Type="Output" IONum="-1" Enum="249">quadrant_4 feeder module1 DO 32</ADEPT_DO118>
+    <ADEPT_DO119 Device="ADEPT" Type="Output" IONum="-1" Enum="250">quadrant_4 feeder module1 DO 33</ADEPT_DO119>
+    <ADEPT_DO120 Device="ADEPT" Type="Output" IONum="-1" Enum="251">quadrant_4 feeder module1 DO 34</ADEPT_DO120>
+    <ADEPT_DO121 Device="ADEPT" Type="Output" IONum="-1" Enum="252">quadrant_4 feeder module1 DO 41</ADEPT_DO121>
+    <ADEPT_DO122 Device="ADEPT" Type="Output" IONum="-1" Enum="253">quadrant_4 feeder module1 DO 42</ADEPT_DO122>
+    <ADEPT_DO123 Device="ADEPT" Type="Output" IONum="-1" Enum="254">quadrant_4 feeder module1 DO 43</ADEPT_DO123>
+    <ADEPT_DO124 Device="ADEPT" Type="Output" IONum="-1" Enum="255">quadrant_4 feeder module1 DO 44</ADEPT_DO124>
+	<ADEPT_DO125 Device="ADEPT" Type="Output" IONum="0103" Enum="347">Gripper Open/Close Cylinder</ADEPT_DO125>
+	<ADEPT_DO126 Device="ADEPT" Type="Output" IONum="0104" Enum="348">Light ON/OFF</ADEPT_DO126>
+	<ADEPT_DO127 Device="ADEPT" Type="Output" IONum="-1" Enum="354">Emergency Stopped</ADEPT_DO127>
+	<ADEPT_DO128 Device="ADEPT" Type="Output" IONum="-1" Enum="355">Automation / Maintaince</ADEPT_DO128>
     <!--Beckhoff I/O : Input-->
-    <BKF_DI000 Device="BECKHOFF" DevNum="0" Type="Input" ID="X0011" Index="-1" Variable="TRAY.pI_EStop" Enum="4">EStop Signal</BKF_DI000>
-    <BKF_DI001 Device="BECKHOFF" DevNum="0" Type="Input" ID="X0012" Index="-1" Variable="TRAY.pI_MC_Status" Enum="5">MC 2 status</BKF_DI001>
-    <BKF_DI002 Device="BECKHOFF" DevNum="0" Type="Input" ID="X0013" Index="-1" Variable="TRAY.pI_CDA" Enum="6">CDA Status</BKF_DI002>
-    <BKF_DI003 Device="BECKHOFF" DevNum="0" Type="Input" ID="X0014" Index="-1" Variable="TRAY.pI_Door1" Enum="7">Door1 Status</BKF_DI003>
-    <BKF_DI004 Device="BECKHOFF" DevNum="0" Type="Input" ID="X0015" Index="-1" Variable="TRAY.pI_Door2" Enum="8">Door2 Status</BKF_DI004>
-    <BKF_DI005 Device="BECKHOFF" DevNum="0" Type="Input" ID="X0016" Index="-1" Variable="TRAY.pI_Upstream_Rdy" Enum="9">Upstream Carrier Ready</BKF_DI005>
-    <BKF_DI006 Device="BECKHOFF" DevNum="0" Type="Input" ID="X0017" Index="-1" Variable="TRAY.pI_Downstream_Rdy" Enum="10">Downstream Ready for Carrier</BKF_DI006>
-    <BKF_DI007 Device="BECKHOFF" DevNum="0" Type="Input" ID="X0021" Index="-1" Variable="TRAY.pI_LD_Feed_in" Enum="11">Loader Conveyor feed-in sensor</BKF_DI007>
-    <BKF_DI008 Device="BECKHOFF" DevNum="0" Type="Input" ID="X0022" Index="-1" Variable="TRAY.pI_LD_Transout" Enum="12">Loader Conveyor transfer out sensor</BKF_DI008>
-    <BKF_DI009 Device="BECKHOFF" DevNum="0" Type="Input" ID="X0023" Index="-1" Variable="TRAY.pI_ULD_Tray_Detect" Enum="13">AOI Table Conveyor Detect Sensor</BKF_DI009>
-    <BKF_DI010 Device="BECKHOFF" DevNum="0" Type="Input" ID="X0024" Index="-1" Variable="TRAY.pI_ULD_INP" Enum="14">AOI Table Conveyor Tray In Place Sensor</BKF_DI010>
-    <BKF_DI011 Device="BECKHOFF" DevNum="0" Type="Input" ID="X0025" Index="-1" Variable="TRAY.pI_LD_StopperUp" Enum="15">Loader ConveyorStopper UP Sensor</BKF_DI011>
-    <BKF_DI012 Device="BECKHOFF" DevNum="0" Type="Input" ID="X0026" Index="-1" Variable="TRAY.pI_LD_StopperDown" Enum="16">Load Stopper Down sensor</BKF_DI012>
-    <BKF_DI013 Device="BECKHOFF" DevNum="0" Type="Input" ID="X0027" Index="-1" Variable="TRAY.pI_ULD_ClamperUP" Enum="17">AOI Conveyor Tray Clamper UP Sensor</BKF_DI013>
-    <BKF_DI014 Device="BECKHOFF" DevNum="0" Type="Input" ID="X0028" Index="-1" Variable="TRAY.pI_ULD_ClamperDown" Enum="18">AOI Conveyor Tray Clamper DOWN Snesor</BKF_DI014>
-    <BKF_DI015 Device="BECKHOFF" DevNum="0" Type="Input" ID="X0031" Index="-1" Variable="TRAY.pI_ULD_StopperDown" Enum="19">Unloader Conveyor Stopper Down Sensor</BKF_DI015>
-    <BKF_DI016 Device="BECKHOFF" DevNum="0" Type="Input" ID="X0032" Index="-1" Variable="TRAY.pI_ULD_StopperUp" Enum="20">Unloader Conveyor Stopper UP Sensor</BKF_DI016>
-    <BKF_DI017 Device="BECKHOFF" DevNum="0" Type="Input" ID="X0033" Index="-1" Variable="TRAY.pI_TableINP" Enum="21">AOI Table In Place Sensor</BKF_DI017>
+    <BKF_DI000 Device="BECKHOFF" Type="Input" ID="X10101" Index="-1" Variable="" Enum="256">Elevator Door1 status</BKF_DI000>
+    <BKF_DI001 Device="BECKHOFF" Type="Input" ID="" Index="-1" Variable="" Enum="257">Elevator Door2 status</BKF_DI001>
+    <BKF_DI002 Device="BECKHOFF" Type="Input" ID="X10103" Index="-1" Variable="TRAY.pI_SafeSensor" Enum="258">Slider safty sensor</BKF_DI002>
+    <BKF_DI003 Device="BECKHOFF" Type="Input" ID="X10104" Index="-1" Variable="TRAY.pI_TrayInp" Enum="259">Slider Tray detect sensor</BKF_DI003>
+    <BKF_DI004 Device="BECKHOFF" Type="Input" ID="X10105" Index="-1" Variable="TRAY.pI_TrayTransOut" Enum="260">Slider Tray transfer out sensor</BKF_DI004>
+    <BKF_DI005 Device="BECKHOFF" Type="Input" ID="X10108" Index="-1" Variable="TRAY.pI_ClampOpen" Enum="261">Slider Clamp cylinder OPEN sensor</BKF_DI005>
+    <BKF_DI006 Device="BECKHOFF" Type="Input" ID="X10107" Index="-1" Variable="TRAY.pI_ClampClose" Enum="262">Slider Clamp cylinder CLOSE sensor</BKF_DI006>
+    <BKF_DI007 Device="BECKHOFF" Type="Input" ID="X10201" Index="-1" Variable="TRAY.pI_LiftUp" Enum="263">Slider lift pin cylinder UP sensor</BKF_DI007>
+    <BKF_DI008 Device="BECKHOFF" Type="Input" ID="X10202" Index="-1" Variable="TRAY.pI_LiftUp" Enum="264">Slider lift pin cylinder DOWN sensor</BKF_DI008>
+    <BKF_DI009 Device="BECKHOFF" Type="Input" ID="X10203" Index="-1" Variable="TRAY.pI_CylinderOpen" Enum="265">Slider lift pin cylinder OPEN sensor</BKF_DI009>
+    <BKF_DI010 Device="BECKHOFF" Type="Input" ID="X10204" Index="-1" Variable="TRAY.pI_CylinderClose" Enum="266">Slider lift pin cylinder CLOSE sensor</BKF_DI010>
+    <BKF_DI011 Device="BECKHOFF" Type="Input" ID="X10205" Index="-1" Variable="TRAY.pI_RotateOpen" Enum="267">Rotate cylinder OPEN sensor</BKF_DI011>
+    <BKF_DI012 Device="BECKHOFF" Type="Input" ID="X10206" Index="-1" Variable="TRAY.pI_RotateClose" Enum="268">Rotate cylinder CLOSE sensor</BKF_DI012>
+    <BKF_DI013 Device="BECKHOFF" Type="Input" ID="" Index="-1" Variable="TRAY.pI_PushUp" Enum="269">Rotate cylinder UP sensor</BKF_DI013>
+    <BKF_DI014 Device="BECKHOFF" Type="Input" ID="" Index="-1" Variable="TRAY.pI_PushDown" Enum="270">Rotate cylinder DOWN sensor</BKF_DI014>
+    <BKF_DI015 Device="BECKHOFF" Type="Input" ID="X10301" Index="-1" Variable="TRAY.pI_Tray1" Enum="271">Tray 1 detect sensor</BKF_DI015>
+    <BKF_DI016 Device="BECKHOFF" Type="Input" ID="X10302" Index="-1" Variable="TRAY.pI_Tray2" Enum="272">Tray 2 detect sensor</BKF_DI016>
+    <BKF_DI017 Device="BECKHOFF" Type="Input" ID="X10303" Index="-1" Variable="TRAY.pI_Tray3" Enum="273">Tray 3 detect sensor</BKF_DI017>
+    <BKF_DI018 Device="BECKHOFF" Type="Input" ID="X10304" Index="-1" Variable="TRAY.pI_Tray4" Enum="274">Tray 4 detect sensor</BKF_DI018>
+    <BKF_DI019 Device="BECKHOFF" Type="Input" ID="X10305" Index="-1" Variable="TRAY.pI_Tray5" Enum="275">Tray 5 detect sensor</BKF_DI019>
+    <BKF_DI020 Device="BECKHOFF" Type="Input" ID="X10306" Index="-1" Variable="TRAY.pI_Tray6" Enum="276">Tray 6 detect sensor</BKF_DI020>
+    <BKF_DI021 Device="BECKHOFF" Type="Input" ID="X10307" Index="-1" Variable="TRAY.pI_Tray7" Enum="277">Tray 7 detect sensor</BKF_DI021>
+    <BKF_DI022 Device="BECKHOFF" Type="Input" ID="X10308" Index="-1" Variable="TRAY.pI_Tray8" Enum="278">Tray 8 detect sensor</BKF_DI022>
+    <BKF_DI023 Device="BECKHOFF" Type="Input" ID="X10401" Index="-1" Variable="TRAY.pI_Tray9" Enum="279">Tray 9 detect sensor</BKF_DI023>
+    <BKF_DI024 Device="BECKHOFF" Type="Input" ID="X10402" Index="-1" Variable="TRAY.pI_Tray10" Enum="280">Tray 10 detect sensor</BKF_DI024>
+    <BKF_DI025 Device="BECKHOFF" Type="Input" ID="X10403" Index="-1" Variable="TRAY.pI_Tray11" Enum="281">Tray 11 detect sensor</BKF_DI025>
+    <BKF_DI026 Device="BECKHOFF" Type="Input" ID="X10404" Index="-1" Variable="TRAY.pI_Tray12" Enum="282">Tray 12 detect sensor</BKF_DI026>
+    <BKF_DI027 Device="BECKHOFF" Type="Input" ID="X10405" Index="-1" Variable="TRAY.pI_Tray13" Enum="283">Tray 13 detect sensor</BKF_DI027>
+    <BKF_DI028 Device="BECKHOFF" Type="Input" ID="X10406" Index="-1" Variable="TRAY.pI_Tray14" Enum="284">Tray 14 detect sensor</BKF_DI028>
+    <BKF_DI029 Device="BECKHOFF" Type="Input" ID="X10407" Index="-1" Variable="TRAY.pI_Tray15" Enum="285">Tray 15 detect sensor</BKF_DI029>
+    <BKF_DI030 Device="BECKHOFF" Type="Input" ID="X10408" Index="-1" Variable="TRAY.pI_Tray16" Enum="286">Tray 16 detect sensor</BKF_DI030>
+    <BKF_DI031 Device="BECKHOFF" Type="Input" ID="X10501" Index="-1" Variable="TRAY.pI_Tray17" Enum="287">Tray 17 detect sensor</BKF_DI031>
+    <BKF_DI032 Device="BECKHOFF" Type="Input" ID="X10502" Index="-1" Variable="TRAY.pI_Tray18" Enum="288">Tray 18 detect sensor</BKF_DI032>
+    <BKF_DI033 Device="BECKHOFF" Type="Input" ID="X10503" Index="-1" Variable="TRAY.pI_Tray19" Enum="289">Tray 19 detect sensor</BKF_DI033>
+    <BKF_DI034 Device="BECKHOFF" Type="Input" ID="X10504" Index="-1" Variable="TRAY.pI_Tray20" Enum="290">Tray 20 detect sensor</BKF_DI034>
+    <BKF_DI035 Device="BECKHOFF" Type="Input" ID="X10505" Index="-1" Variable="" Enum="291">quadrant_3 feeder module1 DO 11 (YR0305) bit 0</BKF_DI035>
+    <BKF_DI036 Device="BECKHOFF" Type="Input" ID="X10506" Index="-1" Variable="" Enum="292">quadrant_3 feeder module1 DO 12 (YR0306) bit 1</BKF_DI036>
+    <BKF_DI037 Device="BECKHOFF" Type="Input" ID="X10507" Index="-1" Variable="" Enum="293">quadrant_3 feeder module1 DO 13 (YR0307) bit 2</BKF_DI037>
+    <BKF_DI038 Device="BECKHOFF" Type="Input" ID="X10508" Index="-1" Variable="" Enum="294">quadrant_3 feeder module1 DO 14 (YR0308) bit 3</BKF_DI038>
+    <BKF_DI039 Device="BECKHOFF" Type="Input" ID="X10601" Index="-1" Variable="" Enum="295">quadrant_3 feeder module1 DO 21 (YR0309) bit 4</BKF_DI039>
+    <BKF_DI040 Device="BECKHOFF" Type="Input" ID="X10602" Index="-1" Variable="" Enum="296">quadrant_3 feeder module1 DO 22 (YR0310) Change</BKF_DI040>
+    <BKF_DI041 Device="BECKHOFF" Type="Input" ID="X10603" Index="-1" Variable="" Enum="297">quadrant_3 feeder module1 DO 23 (YR0311) Empty</BKF_DI041>
+    <BKF_DI042 Device="BECKHOFF" Type="Input" ID="X10604" Index="-1" Variable="" Enum="298">quadrant_3 feeder module1 DO 24 (YR0312) Back</BKF_DI042>
+    <BKF_DI043 Device="BECKHOFF" Type="Input" ID="X10605" Index="-1" Variable="" Enum="299">quadrant_3 feeder module1 DO 31 (YR0313) Busy</BKF_DI043>
+    <BKF_DI044 Device="BECKHOFF" Type="Input" ID="X10606" Index="-1" Variable="" Enum="300">quadrant_3 feeder module1 DO 32 (YR0314) EMO</BKF_DI044>
+    <BKF_DI045 Device="BECKHOFF" Type="Input" ID="X10607" Index="-1" Variable="" Enum="301">quadrant_3 feeder module1 DO 33 (YR0315) CDA low</BKF_DI045>
+    <BKF_DI046 Device="BECKHOFF" Type="Input" ID="X10608" Index="-1" Variable="" Enum="302">quadrant_3 feeder module1 DO 34 (YR0316)</BKF_DI046>
+    <BKF_DI047 Device="BECKHOFF" Type="Input" ID="" Index="-1" Variable="" Enum="303">quadrant_3 feeder module1 DO 41 (YR0317)</BKF_DI047>
+    <BKF_DI048 Device="BECKHOFF" Type="Input" ID="" Index="-1" Variable="" Enum="304">quadrant_3 feeder module1 DO 42 (YR0318)</BKF_DI048>
+    <BKF_DI049 Device="BECKHOFF" Type="Input" ID="" Index="-1" Variable="" Enum="305">quadrant_3 feeder module1 DO 43 (YR0319)</BKF_DI049>
+    <BKF_DI050 Device="BECKHOFF" Type="Input" ID="" Index="-1" Variable="" Enum="306">quadrant_3 feeder module1 DO 44 (YR0320)</BKF_DI050>
+	<BKF_DI051 Device="BECKHOFF" Type="Input" ID="X10102" Index="-1" Variable="" Enum="349">Slider Motor Alarm</BKF_DI051>
     <!--Beckhoff I/O : Output-->
-    <BKF_DO000 Device="BECKHOFF" DevNum="0" Type="Output" ID="Y0011" Index="-1" Variable="TRAY.pQ_Lamp_Red" Enum="22">Tower Lamp Red</BKF_DO000>
-    <BKF_DO001 Device="BECKHOFF" DevNum="0" Type="Output" ID="Y0012" Index="-1" Variable="TRAY.pQ_Lamp_Yellow" Enum="23">Tower Lamp Yellow</BKF_DO001>
-    <BKF_DO002 Device="BECKHOFF" DevNum="0" Type="Output" ID="Y0013" Index="-1" Variable="TRAY.pQ_Lamp_Green" Enum="24">Tower Lamp Green</BKF_DO002>
-    <BKF_DO003 Device="BECKHOFF" DevNum="0" Type="Output" ID="Y0014" Index="-1" Variable="TRAY.pQ_Buzzer" Enum="25">Buzzer</BKF_DO003>
-    <BKF_DO004 Device="BECKHOFF" DevNum="0" Type="Output" ID="Y0015" Index="-1" Variable="TRAY.pQ_Rdy_To_Up" Enum="26">Ready to Upstream</BKF_DO004>
-    <BKF_DO005 Device="BECKHOFF" DevNum="0" Type="Output" ID="Y0016" Index="-1" Variable="TRAY.pQ_Rdy_To_Down" Enum="27">Ready To Downstream</BKF_DO005>
-    <BKF_DO006 Device="BECKHOFF" DevNum="0" Type="Output" ID="Y0021" Index="-1" Variable="TRAY.pQ_LD_Stopper" Enum="28">Loader Conveyor Stopper</BKF_DO006>
-    <BKF_DO007 Device="BECKHOFF" DevNum="0" Type="Output" ID="Y0022" Index="-1" Variable="TRAY.pQ_ULD_Clamp" Enum="29">AOI Conveyor Tray Clamp</BKF_DO007>
-    <BKF_DO008 Device="BECKHOFF" DevNum="0" Type="Output" ID="Y0023" Index="-1" Variable="TRAY.pQ_ULD_Stopper" Enum="30">AOI Conveyor Tray Stopper</BKF_DO008>
-    <!--Beckhoff I/O : InOut-->
-    <BKF_FLAG000 Device="BECKHOFF" DevNum="0" Type="InOut" ID="F10000" Index="-1" Variable="TRAY.pMV_LoaderStatus.pF_MotorReady" Enum="31">Ready flag of Loader motor</BKF_FLAG000>
-    <BKF_FLAG001 Device="BECKHOFF" DevNum="0" Type="InOut" ID="F10001" Index="-1" Variable="TRAY.pMV_LoaderStatus.pF_MotorEnable" Enum="32">Enable flag of Loader motor</BKF_FLAG001>
-    <BKF_FLAG002 Device="BECKHOFF" DevNum="0" Type="InOut" ID="F10002" Index="-1" Variable="TRAY.pMV_LoaderStatus.pF_MotorBusy" Enum="33">Busy flag of Loader motor</BKF_FLAG002>
-    <BKF_FLAG003 Device="BECKHOFF" DevNum="0" Type="InOut" ID="F10003" Index="-1" Variable="TRAY.pMV_LoaderStatus.pF_MotorFault" Enum="34">Fault flag of Loader motor</BKF_FLAG003>
-    <BKF_FLAG004 Device="BECKHOFF" DevNum="0" Type="InOut" ID="F10004" Index="-1" Variable="TRAY.pMV_TableStatus.pF_MotorReady" Enum="35">Ready flag of Table motor</BKF_FLAG004>
-    <BKF_FLAG005 Device="BECKHOFF" DevNum="0" Type="InOut" ID="F10005" Index="-1" Variable="TRAY.pMV_TableStatus.pF_MotorEnable" Enum="36">Enable flag of Table motor</BKF_FLAG005>
-    <BKF_FLAG006 Device="BECKHOFF" DevNum="0" Type="InOut" ID="F10006" Index="-1" Variable="TRAY.pMV_TableStatus.pF_MotorBusy" Enum="37">Busy flag of Table motor</BKF_FLAG006>
-    <BKF_FLAG007 Device="BECKHOFF" DevNum="0" Type="InOut" ID="F10007" Index="-1" Variable="TRAY.pMV_TableStatus.pF_MotorFault" Enum="38">Fault flag of Table motor</BKF_FLAG007>
-    <BKF_FLAG008 Device="BECKHOFF" DevNum="0" Type="InOut" ID="F10008" Index="-1" Variable="TRAY.pIF_Table_CWLimit" Enum="39">CW Limit flag of Table motor</BKF_FLAG008>
-    <BKF_FLAG009 Device="BECKHOFF" DevNum="0" Type="InOut" ID="F10009" Index="-1" Variable="TRAY.pIF_Table_Home" Enum="40">Home sensor signal of Table motor</BKF_FLAG009>
-    <BKF_FLAG010 Device="BECKHOFF" DevNum="0" Type="InOut" ID="F10010" Index="-1" Variable="TRAY.pIF_Table_CCWLimit" Enum="41">CCW Limit flag of Table motor</BKF_FLAG010>
-    <BKF_FLAG011 Device="BECKHOFF" DevNum="0" Type="InOut" ID="F10011" Index="-1" Variable="TRAY.pMF_LD_ServoOn" Enum="42">ServoON Btn of Loader motor</BKF_FLAG011>
-    <BKF_FLAG012 Device="BECKHOFF" DevNum="0" Type="InOut" ID="F10012" Index="-1" Variable="TRAY.pMF_LD_Reset" Enum="43">Reset Btn of Loader motor</BKF_FLAG012>
-    <BKF_FLAG013 Device="BECKHOFF" DevNum="0" Type="InOut" ID="F10013" Index="-1" Variable="TRAY.pMF_LD_Stop" Enum="44">STOP Btn of Loader motor</BKF_FLAG013>
-    <BKF_FLAG014 Device="BECKHOFF" DevNum="0" Type="InOut" ID="F10014" Index="-1" Variable="TRAY.pMF_LD_JogBack" Enum="45">Jog CW Btn of Loader motor</BKF_FLAG014>
-    <BKF_FLAG015 Device="BECKHOFF" DevNum="0" Type="InOut" ID="F10015" Index="-1" Variable="TRAY.pMF_LD_JogFW" Enum="46">Jog CCW Btn of Loader motor</BKF_FLAG015>
-    <BKF_FLAG016 Device="BECKHOFF" DevNum="0" Type="InOut" ID="F10016" Index="-1" Variable="TRAY.pMF_Table_Home" Enum="47">HOME Btn of Table motor</BKF_FLAG016>
-    <BKF_FLAG017 Device="BECKHOFF" DevNum="0" Type="InOut" ID="F10017" Index="-1" Variable="TRAY.pMF_Table_ServoOn" Enum="48">ServoON Btn of Table motor</BKF_FLAG017>
-    <BKF_FLAG018 Device="BECKHOFF" DevNum="0" Type="InOut" ID="F10018" Index="-1" Variable="TRAY.pMF_Table_Reset" Enum="49">Reset Btn of Table motor</BKF_FLAG018>
-    <BKF_FLAG019 Device="BECKHOFF" DevNum="0" Type="InOut" ID="F10019" Index="-1" Variable="TRAY.pMF_Table_Stop" Enum="50">STOP Btn of Table motor</BKF_FLAG019>
-    <BKF_FLAG020 Device="BECKHOFF" DevNum="0" Type="InOut" ID="F10020" Index="-1" Variable="TRAY.pMF_Table_FW" Enum="51">Jog CW Btn of Table motor</BKF_FLAG020>
-    <BKF_FLAG021 Device="BECKHOFF" DevNum="0" Type="InOut" ID="F10021" Index="-1" Variable="TRAY.pMF_Table_Back" Enum="52">Jog CCW Btn of Table motor</BKF_FLAG021>
-    <BKF_FLAG022 Device="BECKHOFF" DevNum="0" Type="InOut" ID="F10022" Index="-1" Variable="TRAY.pF_AutoRun" Enum="53">Connect-A to control Auto_Mode</BKF_FLAG022>
-    <BKF_FLAG023 Device="BECKHOFF" DevNum="0" Type="InOut" ID="F10023" Index="-1" Variable="TRAY.pMV_UnloaderStatus.pF_MotorReady" Enum="54">Ready flag of Unloader motor</BKF_FLAG023>
-    <BKF_FLAG024 Device="BECKHOFF" DevNum="0" Type="InOut" ID="F10024" Index="-1" Variable="TRAY.pMV_UnloaderStatus.pF_MotorEnable" Enum="55">Enable flag of Unloader motor</BKF_FLAG024>
-    <BKF_FLAG025 Device="BECKHOFF" DevNum="0" Type="InOut" ID="F10025" Index="-1" Variable="TRAY.pMV_UnloaderStatus.pF_MotorBusy" Enum="56">Busy flag of Unloader motor</BKF_FLAG025>
-    <BKF_FLAG026 Device="BECKHOFF" DevNum="0" Type="InOut" ID="F10026" Index="-1" Variable="TRAY.pMV_UnloaderStatus.pF_MotorFault" Enum="57">Fault flag of Unloader motor</BKF_FLAG026>
-    <BKF_FLAG027 Device="BECKHOFF" DevNum="0" Type="InOut" ID="F10027" Index="-1" Variable="TRAY.pMF_ULD_ServoOn" Enum="58">ServoON Btn of Unloader motor</BKF_FLAG027>
-    <BKF_FLAG028 Device="BECKHOFF" DevNum="0" Type="InOut" ID="F10028" Index="-1" Variable="TRAY.pMF_ULD_Reset" Enum="59">Reset Btn of Unloader motor</BKF_FLAG028>
-    <BKF_FLAG029 Device="BECKHOFF" DevNum="0" Type="InOut" ID="F10029" Index="-1" Variable="TRAY.pMF_ULD_Stop" Enum="60">STOP Btn of Unloader motor</BKF_FLAG029>
-    <BKF_FLAG030 Device="BECKHOFF" DevNum="0" Type="InOut" ID="F10030" Index="-1" Variable="TRAY.pMF_ULD_JogBack" Enum="61">Jog CW Btn of Unloader motor</BKF_FLAG030>
-    <BKF_FLAG031 Device="BECKHOFF" DevNum="0" Type="InOut" ID="F10031" Index="-1" Variable="TRAY.pMF_ULD_JogFW" Enum="62">Jog CCW Btn of Unloader motor</BKF_FLAG031>
-	<BKF_FLAG032 Device="BECKHOFF" DevNum="0" Type="InOut" ID="F10032" Index="-1" Variable="TRAY.pF_Initial" Enum="63">Connect-A to control Initial_Mode</BKF_FLAG032>
-	<BKF_FLAG033 Device="BECKHOFF" DevNum="0" Type="InOut" ID="F10033" Index="-1" Variable="TRAY.pF_DoorByPass" Enum="64">Door Bypass Signal</BKF_FLAG033>
+    <BKF_DO000 Device="BECKHOFF" Type="Output" ID="Y10101" Index="-1" Variable="TRAY.pQ_Clamp" Enum="307">Slider Clamp cylinder OPEN/CLOSE sol</BKF_DO000>
+    <BKF_DO001 Device="BECKHOFF" Type="Output" ID="Y10102" Index="-1" Variable="TRAY.pQ_LiftUp" Enum="308">Slider lift pin cylinder UP/DOWN sol</BKF_DO001>
+    <BKF_DO002 Device="BECKHOFF" Type="Output" ID="Y10103" Index="-1" Variable="TRAY.pQ_CylinderOpen" Enum="309">Slider lift pin cylinder OPEN/CLOSE sol</BKF_DO002>
+    <BKF_DO003 Device="BECKHOFF" Type="Output" ID="Y10104" Index="-1" Variable="TRAY.pQ_RotateOpen" Enum="310">Rotate cylinder OPEN/CLOSE sol</BKF_DO003>
+    <BKF_DO004 Device="BECKHOFF" Type="Output" ID="" Index="-1" Variable="TRAY.pQ_PushUp" Enum="311">Rotate cylinder UP/DOWN sol</BKF_DO004>
+    <BKF_DO005 Device="BECKHOFF" Type="Output" ID="Y10201" Index="-1" Variable="" Enum="312">quadrant_3 feeder module1 DI 11 (XR1321) Ready</BKF_DO005>
+    <BKF_DO006 Device="BECKHOFF" Type="Output" ID="Y10202" Index="-1" Variable="" Enum="313">quadrant_3 feeder module1 DI 12 (XR1322) Busy</BKF_DO006>
+    <BKF_DO007 Device="BECKHOFF" Type="Output" ID="Y10203" Index="-1" Variable="" Enum="314">quadrant_3 feeder module1 DI 13 (XR1323)</BKF_DO007>
+    <BKF_DO008 Device="BECKHOFF" Type="Output" ID="Y10204" Index="-1" Variable="" Enum="315">quadrant_3 feeder module1 DI 14 (XR1324)</BKF_DO008>
+    <BKF_DO009 Device="BECKHOFF" Type="Output" ID="Y10205" Index="-1" Variable="" Enum="316">quadrant_3 feeder module1 DI 21 (XR1325)</BKF_DO009>
+    <BKF_DO010 Device="BECKHOFF" Type="Output" ID="Y10206" Index="-1" Variable="" Enum="317">quadrant_3 feeder module1 DI 22 (XR1326)</BKF_DO010>
+    <BKF_DO011 Device="BECKHOFF" Type="Output" ID="Y10207" Index="-1" Variable="" Enum="318">quadrant_3 feeder module1 DI 23 (XR1327)</BKF_DO011>
+    <BKF_DO012 Device="BECKHOFF" Type="Output" ID="Y10208" Index="-1" Variable="" Enum="319">quadrant_3 feeder module1 DI 24 (XR1328)</BKF_DO012>
+	<BKF_DO013 Device="BECKHOFF" Type="Output" ID="Y10105" Index="-1" Variable="" Enum="350">Slider Motor CW</BKF_DO013>
+	<BKF_DO014 Device="BECKHOFF" Type="Output" ID="Y10106" Index="-1" Variable="" Enum="351">Slider Motor CCW</BKF_DO014>
+	<BKF_DO015 Device="BECKHOFF" Type="Output" ID="Y10107" Index="-1" Variable="" Enum="352">Slider Motor Alarm reset</BKF_DO015>
+	<BKF_DO016 Device="BECKHOFF" Type="Output" ID="Y10108" Index="-1" Variable="TRAY.pF_Initial" Enum="353">PLC Initial</BKF_DO016>
+	
+	<BKF_DO017 Device="BECKHOFF" Type="Output" ID="Y10209" Index="-1" Variable="TRAY.pIF_TrayBack" Enum="356">Manual Mode</BKF_DO017>
+    <BKF_DO018 Device="BECKHOFF" Type="Output" ID="Y10210" Index="-1" Variable="TRAY.pF_ManualMode" Enum="357">Tray Back</BKF_DO018>
+    <BKF_DO019 Device="BECKHOFF" Type="Output" ID="Y10211" Index="-1" Variable=".pV_TrayType" Enum="358">TrayType Robot</BKF_DO019>
+    <BKF_DO020 Device="BECKHOFF" Type="Output" ID="Y10212" Index="-1" Variable="TRAY.pIF_ChangeTray" Enum="359">Change</BKF_DO020>	
+    <BKF_DO021 Device="BECKHOFF" Type="Output" ID="Y10213" Index="-1" Variable="TRAY.pF_Initial" Enum="360">Initial</BKF_DO021>	
+    <BKF_DO022 Device="BECKHOFF" Type="Output" ID="Y10214" Index="-1" Variable="TRAY.pF_MainAlarm" Enum="361">Clear Alarm</BKF_DO022>
+    <!--Beckhoff Flag-->
+    <BKF_DF000 Device="BECKHOFF" Type="Input" ID="F10000" Index="-1" Variable="TRAY.pMV_SliderStatus.pF_MotorReady" Enum="320">Ready flag of Slider motor</BKF_DF000>
+    <BKF_DF001 Device="BECKHOFF" Type="Input" ID="F10001" Index="-1" Variable="TRAY.pMV_SliderStatus.pF_MotorEnable" Enum="321">Enable flag of Slider motor</BKF_DF001>
+    <BKF_DF002 Device="BECKHOFF" Type="Input" ID="F10002" Index="-1" Variable="TRAY.pMV_SliderStatus.pF_MotorBusy" Enum="322">Busy flag of Slider motor</BKF_DF002>
+    <BKF_DF003 Device="BECKHOFF" Type="Input" ID="F10003" Index="-1" Variable="TRAY.pMV_SliderStatus.pF_MotorFault" Enum="323">Fault flag of Slider motor</BKF_DF003>
+    <BKF_DF004 Device="BECKHOFF" Type="Input" ID="F10004" Index="-1" Variable="TRAY.pMV_ElevStatus.pF_MotorReady" Enum="324">Ready flag of Elevator motor</BKF_DF004>
+    <BKF_DF005 Device="BECKHOFF" Type="Input" ID="F10005" Index="-1" Variable="TRAY.pMV_ElevStatus.pF_MotorEnable" Enum="325">Enable flag of Elevator motor</BKF_DF005>
+    <BKF_DF006 Device="BECKHOFF" Type="Input" ID="F10006" Index="-1" Variable="TRAY.pMV_ElevStatus.pF_MotorBusy" Enum="326">Busy flag of Elevator motor</BKF_DF006>
+    <BKF_DF007 Device="BECKHOFF" Type="Input" ID="F10007" Index="-1" Variable="TRAY.pMV_ElevStatus.pF_MotorFault" Enum="327">Fault flag of Elevator motor</BKF_DF007>
+    <BKF_DF008 Device="BECKHOFF" Type="Input" ID="F10008" Index="-1" Variable="TRAY.pIF_ElevCWLimit" Enum="328">CW Limit flag of Elevator motor</BKF_DF008>
+    <BKF_DF009 Device="BECKHOFF" Type="Input" ID="F10009" Index="-1" Variable="TRAY.pIF_ElevHome" Enum="329">Home sensor signal of Elevator motor</BKF_DF009>
+    <BKF_DF010 Device="BECKHOFF" Type="Input" ID="F10010" Index="-1" Variable="TRAY.pIF_ElevCCWLimit" Enum="330">CCW Limit flag of Elevator motor</BKF_DF010>
+    <BKF_DF011 Device="BECKHOFF" Type="Input" ID="F10011" Index="-1" Variable="TRAY.pMF_Elev_ServoOn" Enum="331">ServoON Btn of Slider motor</BKF_DF011>
+    <BKF_DF012 Device="BECKHOFF" Type="Input" ID="F10012" Index="-1" Variable="TRAY.pQ_SliderReset" Enum="332">Reset Btn of Slider motor</BKF_DF012>
+    <BKF_DF013 Device="BECKHOFF" Type="Input" ID="F10013" Index="-1" Variable="TRAY.pMF_Elev_Stop" Enum="333">STOP Btn of Slider motor</BKF_DF013>
+    <BKF_DF014 Device="BECKHOFF" Type="Input" ID="F10014" Index="-1" Variable="TRAY.pQ_SliderCW" Enum="334">Jog CW Btn of Slider motor</BKF_DF014>
+    <BKF_DF015 Device="BECKHOFF" Type="Input" ID="F10015" Index="-1" Variable="TRAY.pQ_SliderCCW" Enum="335">Jog CCW Btn of Slider motor</BKF_DF015>
+    <BKF_DF016 Device="BECKHOFF" Type="Input" ID="F10016" Index="-1" Variable="TRAY.pMF_ElevHome" Enum="336">HOME Btn of Elevator motor</BKF_DF016>
+    <BKF_DF017 Device="BECKHOFF" Type="Input" ID="F10017" Index="-1" Variable="TRAY.pMF_Elev_ServoOn" Enum="337">ServoON Btn of Elevator motor</BKF_DF017>
+    <BKF_DF018 Device="BECKHOFF" Type="Input" ID="F10018" Index="-1" Variable="TRAY.pMF_Elev_Reset" Enum="338">Reset Btn of Elevator motor</BKF_DF018>
+    <BKF_DF019 Device="BECKHOFF" Type="Input" ID="F10019" Index="-1" Variable="TRAY.pMF_Elev_Stop" Enum="339">STOP Btn of Elevator motor</BKF_DF019>
+    <BKF_DF020 Device="BECKHOFF" Type="Input" ID="F10020" Index="-1" Variable="TRAY.pMF_ElevCW" Enum="340">Jog CW Btn of Elevator motor</BKF_DF020>
+    <BKF_DF021 Device="BECKHOFF" Type="Input" ID="F10021" Index="-1" Variable="TRAY.pMF_ElevCCW" Enum="341">Jog CCW Btn of Elevator motor</BKF_DF021>
+    <BKF_DF022 Device="BECKHOFF" Type="Input" ID="F10022" Index="-1" Variable="TRAY.pF_AutoRun" Enum="342">Connect-A to control Auto_Mode</BKF_DF022>
 	</Data>
-</CASTEC_IO>7z��' U���      Z       v�!�L��] w�����3%;α9�<�R�{��K"�k��O�����k5+Ð׮Tw��[;��XgJ���(�`K�|��� �{PCޱۅ��X����C��(#��p3����؏+�T?�!����p�>�!#�Dg��-�A`��q�׈u����T1du����7�:X���8�WbA~��w2��pН�H%�����Wgqeڡ^�!�G��jw��xh��oa�Y��{��ϗ�"U���}>�����(����*��>m(8i�����_d��'8��'L�,	�mj�h�Q���� �6\�9as��pE*���l��4ͫ��3�� }������b*6�����Y�@�Ƴ��ab������Ph�Phù�R\2^MZ`       ��  �       @                                   �   � �	�!�L�!Require Windows
-$��-H��~H��~H��~'��~J��~'��~I��~���~O��~'��~C��~A�H~G��~H��~���~A�N~I��~A�X~O��~A�_~e��~V�O~I��~A�J~I��~RichH��~                        PE  L ���M        � 	  7z��' ��q{Y�      �       ��H��b�0] &��a��
-�UD����}%ُ��=Gj�C}����F������ζ�N�x�ʋ�@�:�B��Σ;�s��﻿
-////
-////	設備 Config 檔
-////	設備參數中各模組 opcode 範圍：
-////	CAMPro 					相關設定：1000-1999
-////	Mobile Robot 			相關設定：2000-2999
-////	Beckhoff PLC			相關設定：12000-12999
-////	Adept robot ACE			相關設定：22000-22999
-////
-
-// CAMPro : 1000-1999
-//// CAMPro Options : 1000-1099
-1000,0,[ Computer ] = SZ+4hy97O/K+KtvU5uSxIQtrZnGpoPrkC5jf1jp7Y00=
-1001,0,[ Show CAMPro Exception ] = false
-1002,0,[ Using Buzzer ] = false
-1003,0,[ BypassSocket] = false
-1004,0,[ BypassLoadFile] = false
-
-//// Communication Devices Setting : 1050-1099
-1050,0,[ Host IP ] = 192.168.31.217
-1051,0,[ File Port ] = 600
-1052,0,[ Recv Cmd Port ] = 400
-1053,0,[ Cmd Port ] = 800
-1054,0,[ Send Map Port ] = 700
-1055,0,[ Recv Pat hPort] = 900
-
-//// Product recipe : 1100-1199
-//1100,0,[ Recipe Name ] = D:\CASTEC\Recipe\E1509_CompRecipe\20160127_A.xml
-1101,0,[ Map Directory ] = D:\MapInfo\
+</CASTEC_IO>
+﻿9YrhUDu1fGeczZ6JUpct0jDJveDGCgkGj0Lrynf8b304V3DGTG7eTGIRE6DhwMhLN6Bc/n9iLXI1xrhOXq2Srg==
+9YrhUDu1fGeczZ6JUpct0hghAd9A1ELKojUNg9GZio4VY+HvNIrBIZi14hYC0xRJmsNqgYtDZhvUZ8lo8Ngr9w==
 

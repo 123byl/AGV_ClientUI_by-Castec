@@ -1,0 +1,365 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="ClientUI.CarPos" Collapsed="true">
+    <Position X="12.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAgAAAAAAAAACAAIAAIAAAAAAAAiA=</HashCode>
+      <FileName>Development\AgvClient.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ClientUI.AgvExtenstion" Collapsed="true">
+    <Position X="17.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAAABIAIAAAAAAAAAAAACAAAAAoAAAAAAQAAA=</HashCode>
+      <FileName>Development\AgvClient.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ClientUI.AgvClientEventArgs" Collapsed="true">
+    <Position X="12.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAgAAAAAAA=</HashCode>
+      <FileName>Development\AgvClient.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ClientUI.AgvClient" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="10.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>sSJQySAk2zMgIkJkhEEAFA2RCSSDNqYx6WgWggcMJTI=</HashCode>
+      <FileName>Development\AgvClient.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ClientUI.SocketMonitor" Collapsed="true">
+    <Position X="14" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAQASAAAEAAAAAAAAAACAAAAQAAAEAAAAAAAAA=</HashCode>
+      <FileName>Development\AgvClient.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ClientUI.VarDef" Collapsed="true">
+    <Position X="14" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABQAAAAAAIAAAAACCAAAAAAAAAAAAAEAAAAAAqAA=</HashCode>
+      <FileName>Development\AgvClient.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ClientUI.AgvClientUI" Collapsed="true">
+    <Position X="15.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>lwCAoIcFQqMQIhEASVHghAQCjDBCBAiyKsCABADgAgE=</HashCode>
+      <FileName>Development\ClientUI.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ClientUI.CtNotifyIcon" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="15.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gIAgIIgAACABABAAAAAAAAAAAEAAAAAIAAAAEgACABA=</HashCode>
+      <FileName>Development\ClientUI.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ClientUI.MenuItems" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="15.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAACAACAAAAAEAAAAAAACAAAAAAAAIAgBAAAA=</HashCode>
+      <FileName>Development\ClientUI.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ClientUI.CtGroupBox" Collapsed="true">
+    <Position X="14" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAAAAAAACAAAAAAAACAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Development\ClientUI.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ClientUI.CtConsole" Collapsed="true">
+    <Position X="0.75" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAgBAAQCAAAACgAAAAABAAAAAAAAAAAA=</HashCode>
+      <FileName>Development\CtConsole.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ClientUI.CtDockContent&lt;T&gt;" Collapsed="true">
+    <Position X="4" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAiAAoAAACAQAgBAABAAAAQACgAAAAQAAAAAAABACCA=</HashCode>
+      <FileName>Development\CtDockContent.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ClientUI.DockMth" Collapsed="true">
+    <Position X="17.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAAAAAAAAAAAAgAAAAAACAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Development\CtDockContent.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ClientUI.CtGoalSetting" Collapsed="true">
+    <Position X="7.5" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BwAA4IUAACAAAkRACYaACAmCADAQABIwSEBoUAIAIQQ=</HashCode>
+      <FileName>Development\CtGoalSetting.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ClientUI.GoalSettingEventArgs" Collapsed="true">
+    <Position X="10.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAgAAAAAAA=</HashCode>
+      <FileName>Development\CtGoalSetting.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ClientUI.CtMapGL" Collapsed="true">
+    <Position X="5.25" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ggBB8QQAAyMAMiBoIECABMkCADQCEAQAcYAAAEQAEAA=</HashCode>
+      <FileName>Development\CtMapGL.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ClientUI.MapEventArgs" Collapsed="true">
+    <Position X="14" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAgAAAAAAA=</HashCode>
+      <FileName>Development\CtMapGL.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ClientUI.MapDrawParam" Collapsed="true">
+    <Position X="12.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAoAA=</HashCode>
+      <FileName>Development\CtMapGL.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ClientUI.CtTesting" Collapsed="true">
+    <Position X="3" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BEcYECAmAXQJIg5gB4HC4WwKhBgMMFIgABjGgLAUgAA=</HashCode>
+      <FileName>Development\CtTesting.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ClientUI.TestingEventArgs" Collapsed="true">
+    <Position X="10.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAgAAAAAAA=</HashCode>
+      <FileName>Development\CtTesting.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ClientUI.TextChecker" Collapsed="true">
+    <Position X="12.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACIAAAAAAAAAAAAAAAAABAACAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Development\CtTesting.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ClientUI.SocketTest" Collapsed="true">
+    <Position X="17.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAYdACICETQNKBYgAgHAYcyilBgVNEEhAAD0BoKU4BQ=</HashCode>
+      <FileName>Development\SocketTest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ClientUI.SocketOperator" Collapsed="true">
+    <Position X="15.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAA=</HashCode>
+      <FileName>Development\SocketTest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ClientUI.AgvServerSocket" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="10.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAAAEAAEAAAAGACAgCAAAAAAAAAAAAAQAAAAA=</HashCode>
+      <FileName>Development\SocketTest.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ClientUI.AgvClientSocket" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="14" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AYRABACAIDIAIkBIAEAAEAgUACwBMAQCIEAEgAEEADI=</HashCode>
+      <FileName>Development\SocketTest.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ClientUI.Program" Collapsed="true">
+    <Position X="17.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAABAAAAAQ=</HashCode>
+      <FileName>Program.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ClientUI.Properties.Resources" Collapsed="true">
+    <Position X="10.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QBc/4IiKQmBAKgiAmNERHZIGGcWAyQgyoQAEAMAIKq4=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ClientUI.Properties.Settings" Collapsed="true">
+    <Position X="12.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAIAAAAAABAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="ClientUI.CarInfo" Collapsed="true">
+    <Position X="10.5" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAEAAAAgAAAAAAAEAAAAAAAAAQAAACAAAAAYAA=</HashCode>
+      <FileName>Development\AgvClient.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Interface Name="ClientUI.IAgvClient" Collapsed="true">
+    <Position X="0.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAAAAAAAEAEAAAAAAAAASAAAAIAAAAQAAQIAAA=</HashCode>
+      <FileName>Development\ClientUI.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ClientUI.IConsole" Collapsed="true">
+    <Position X="0.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Development\CtConsole.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ClientUI.ICtDockContent" Collapsed="true">
+    <Position X="14" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACQAgAAAAAAAAAAABAAAAQACAAAAAAAAAAACABAACA=</HashCode>
+      <FileName>Development\CtDockContent.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ClientUI.IGoalSetting" Collapsed="true">
+    <Position X="8" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAACAAAAAABEAAAAgAAAAABAAAQAAEAAIAJCI=</HashCode>
+      <FileName>Development\CtGoalSetting.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ClientUI.IMapGL" Collapsed="true">
+    <Position X="5.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAQAAAAQEAAAAgAAAAAAAAAAAAAgQAYUAAAAAAAAA=</HashCode>
+      <FileName>Development\CtMapGL.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ClientUI.ITesting" Collapsed="true">
+    <Position X="3.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gABAgCAECQIAAABgBAEABAAQACACAIAAAQAGAAUEBCA=</HashCode>
+      <FileName>Development\CtTesting.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ClientUI.IAgvServerSocket" Collapsed="true">
+    <Position X="12.25" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAEAAAAGAAAAAAAAAAAAAAAAAAQAAAAA=</HashCode>
+      <FileName>Development\SocketTest.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ClientUI.IAgvClientSocket" Collapsed="true">
+    <Position X="10.5" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIBABACAACIAAgBAAAAAAAAUAAwAEAQCIAAEAAAAACI=</HashCode>
+      <FileName>Development\SocketTest.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="ClientUI.AgvClientEventType" Collapsed="true">
+    <Position X="10.5" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAgAAAAIAAIAAAAAAAAAAAAAACAAAAAAAEAAAABAA=</HashCode>
+      <FileName>Development\AgvClient.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="ClientUI.CarMode" Collapsed="true">
+    <Position X="14" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgAAABAABAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Development\AgvClient.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="ClientUI.FileType" Collapsed="true">
+    <Position X="15.75" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAABAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAA=</HashCode>
+      <FileName>Development\AgvClient.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="ClientUI.GoalSettingEventType" Collapsed="true">
+    <Position X="10.5" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAADAAAAAAIkAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Development\CtGoalSetting.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="ClientUI.MapEventType" Collapsed="true">
+    <Position X="12.25" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgBAkAAAAAEAMACAQEAAAAEAAAACAAQAAAAAgEQAAAA=</HashCode>
+      <FileName>Development\CtMapGL.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="ClientUI.GLMode" Collapsed="true">
+    <Position X="17.5" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAQAAAAAAAAAAAEAACAAAAAABIAAAAAEAAAA=</HashCode>
+      <FileName>Development\CtMapGL.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="ClientUI.MotionDirection" Collapsed="true">
+    <Position X="14" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAACAAAAAAAAAAAAAAAAEAAAAAAAAIAAAABAAAAI=</HashCode>
+      <FileName>Development\CtTesting.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="ClientUI.TestingEventType" Collapsed="true">
+    <Position X="15.75" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAEAAAAAAA=</HashCode>
+      <FileName>Development\CtTesting.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="ClientUI.AgvPort" Collapsed="true">
+    <Position X="12.25" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAABAAAIAIAAAAAAAAAAAAAABAAAAAEAAAAAAA=</HashCode>
+      <FileName>Development\SocketTest.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Delegate Name="ClientUI.AgvClientEvent" Collapsed="true">
+    <Position X="10.5" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAABAAAQAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Development\AgvClient.cs</FileName>
+    </TypeIdentifier>
+  </Delegate>
+  <Delegate Name="ClientUI.MessageTransmission" Collapsed="true">
+    <Position X="15.75" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Development\CtConsole.cs</FileName>
+    </TypeIdentifier>
+  </Delegate>
+  <Delegate Name="ClientUI.GoalSettingEvent" Collapsed="true">
+    <Position X="12.25" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAQAEAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Development\CtGoalSetting.cs</FileName>
+    </TypeIdentifier>
+  </Delegate>
+  <Delegate Name="ClientUI.MapEvent" Collapsed="true">
+    <Position X="14" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAEAQAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Development\CtMapGL.cs</FileName>
+    </TypeIdentifier>
+  </Delegate>
+  <Delegate Name="ClientUI.TestingEvent" Collapsed="true">
+    <Position X="17.5" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAQAAAAAAACAAAAAAAAAAA=</HashCode>
+      <FileName>Development\CtTesting.cs</FileName>
+    </TypeIdentifier>
+  </Delegate>
+  <Font Name="Microsoft JhengHei UI" Size="9" />
+</ClassDiagram>

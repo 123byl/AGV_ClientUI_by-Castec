@@ -19,7 +19,11 @@ namespace ClientUI {
     /// </summary>
     public interface IGoalSetting {
 
-        CarInfo Carinfo { get; }
+        /// <summary>
+        /// 車子資訊
+        /// </summary>
+        CarInfo CarInfo { get; }
+        
         ///// <summary>
         ///// 是否與Server地圖同步
         ///// </summary>
@@ -215,13 +219,13 @@ namespace ClientUI {
         private void btnCurrPos_Click(object sender, EventArgs e) {
             /*-- 將Goal點資訊加入DataGridView --*/
             dgvGoalPoint.Rows.Add(new Object[] { new CheckBox().Checked = false,
-             rActFunc.Carinfo.X, rActFunc.Carinfo.Y, rActFunc.Carinfo.ThetaGyro, false});
+             rActFunc.CarInfo.X, rActFunc.CarInfo.Y, rActFunc.CarInfo.ThetaGyro, false});
             dgvGoalPoint.Rows[dgvGoalPoint.Rows.Count - 1].HeaderCell.Value = string.Format("{0}", dgvGoalPoint.Rows.Count);
 
-            CtInvoke.ComboBoxAdd(cmbGoalList,$"{rActFunc.Carinfo.X},{rActFunc.Carinfo.Y},{rActFunc.Carinfo.ThetaGyro}");
+            CtInvoke.ComboBoxAdd(cmbGoalList,$"{rActFunc.CarInfo.X},{rActFunc.CarInfo.Y},{rActFunc.CarInfo.ThetaGyro}");
 
             /*-- 從底層觸發 --*/
-            rActFunc.AddGoalPos(new CarPos(rActFunc.Carinfo.X, rActFunc.Carinfo.Y, rActFunc.Carinfo.ThetaGyro));
+            rActFunc.AddGoalPos(new CarPos(rActFunc.CarInfo.X, rActFunc.CarInfo.Y, rActFunc.CarInfo.ThetaGyro));
 
         }
 

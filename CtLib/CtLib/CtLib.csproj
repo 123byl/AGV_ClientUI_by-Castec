@@ -492,7 +492,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <None Include="ClassDiagram1.cd" />
     <None Include="Dynamic Link Libraries\Adept ACE\CopyDlls.cmd" />
     <None Include="Dynamic Link Libraries\Staubli\StaubliSoap.dll.config" />
     <None Include="Properties\Settings.settings">
