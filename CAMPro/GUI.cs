@@ -948,7 +948,6 @@ namespace CAMPro {
                     recvBytes = null;
                     if (strArray[0] == "Get") {
                         if (strArray[1] == "Car" && strArray.Length == 9) {
-
                             carID = strArray[2];
                             double.TryParse(strArray[3], out carX);
                             double.TryParse(strArray[4], out carY);

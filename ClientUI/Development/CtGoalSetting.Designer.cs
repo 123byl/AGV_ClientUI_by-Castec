@@ -23,6 +23,10 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
+            this.grbMap = new ClientUI.CtGroupBox();
+            this.btnGetMap = new System.Windows.Forms.Button();
+            this.btnLoadMap = new System.Windows.Forms.Button();
+            this.btnSendMap = new System.Windows.Forms.Button();
             this.btnPath = new System.Windows.Forms.Button();
             this.btnSaveGoal = new System.Windows.Forms.Button();
             this.cmbGoalList = new System.Windows.Forms.ComboBox();
@@ -43,22 +47,68 @@
             this.btnNewPoint = new System.Windows.Forms.Button();
             this.btnDeleteAll = new System.Windows.Forms.Button();
             this.btnDelete = new System.Windows.Forms.Button();
-            this.grbMap = new ClientUI.CtGroupBox();
-            this.btnGetMap = new System.Windows.Forms.Button();
-            this.btnLoadMap = new System.Windows.Forms.Button();
-            this.btnSendMap = new System.Windows.Forms.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.dgvGoalPoint)).BeginInit();
+            this.btnCurrPos = new System.Windows.Forms.Button();
             this.grbMap.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvGoalPoint)).BeginInit();
             this.SuspendLayout();
+            // 
+            // grbMap
+            // 
+            this.grbMap.BorderColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.grbMap.Controls.Add(this.btnGetMap);
+            this.grbMap.Controls.Add(this.btnLoadMap);
+            this.grbMap.Controls.Add(this.btnSendMap);
+            this.grbMap.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.grbMap.Location = new System.Drawing.Point(19, 5);
+            this.grbMap.Margin = new System.Windows.Forms.Padding(2);
+            this.grbMap.Name = "grbMap";
+            this.grbMap.Padding = new System.Windows.Forms.Padding(2);
+            this.grbMap.Size = new System.Drawing.Size(242, 112);
+            this.grbMap.TabIndex = 63;
+            this.grbMap.TabStop = false;
+            this.grbMap.Text = "Map";
+            // 
+            // btnGetMap
+            // 
+            this.btnGetMap.Enabled = false;
+            this.btnGetMap.Font = new System.Drawing.Font("微軟正黑體", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.btnGetMap.Location = new System.Drawing.Point(86, 27);
+            this.btnGetMap.Name = "btnGetMap";
+            this.btnGetMap.Size = new System.Drawing.Size(68, 68);
+            this.btnGetMap.TabIndex = 62;
+            this.btnGetMap.Text = "Get Map";
+            this.btnGetMap.UseVisualStyleBackColor = true;
+            this.btnGetMap.Click += new System.EventHandler(this.btnGetMap_Click);
+            // 
+            // btnLoadMap
+            // 
+            this.btnLoadMap.Font = new System.Drawing.Font("微軟正黑體", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.btnLoadMap.Location = new System.Drawing.Point(13, 27);
+            this.btnLoadMap.Name = "btnLoadMap";
+            this.btnLoadMap.Size = new System.Drawing.Size(68, 68);
+            this.btnLoadMap.TabIndex = 61;
+            this.btnLoadMap.Text = "Load Map";
+            this.btnLoadMap.UseVisualStyleBackColor = true;
+            this.btnLoadMap.Click += new System.EventHandler(this.btnLoadMap_Click);
+            // 
+            // btnSendMap
+            // 
+            this.btnSendMap.Font = new System.Drawing.Font("微軟正黑體", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.btnSendMap.Location = new System.Drawing.Point(160, 27);
+            this.btnSendMap.Name = "btnSendMap";
+            this.btnSendMap.Size = new System.Drawing.Size(68, 68);
+            this.btnSendMap.TabIndex = 60;
+            this.btnSendMap.Text = "Send Map";
+            this.btnSendMap.UseVisualStyleBackColor = true;
+            this.btnSendMap.Click += new System.EventHandler(this.btnSendMap_Click);
             // 
             // btnPath
             // 
             this.btnPath.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.btnPath.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnPath.Location = new System.Drawing.Point(565, 222);
-            this.btnPath.Margin = new System.Windows.Forms.Padding(4);
+            this.btnPath.Location = new System.Drawing.Point(424, 178);
             this.btnPath.Name = "btnPath";
-            this.btnPath.Size = new System.Drawing.Size(160, 62);
+            this.btnPath.Size = new System.Drawing.Size(120, 50);
             this.btnPath.TabIndex = 59;
             this.btnPath.Text = "Path";
             this.btnPath.UseVisualStyleBackColor = true;
@@ -68,10 +118,9 @@
             // 
             this.btnSaveGoal.Enabled = false;
             this.btnSaveGoal.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.btnSaveGoal.Location = new System.Drawing.Point(565, 572);
-            this.btnSaveGoal.Margin = new System.Windows.Forms.Padding(4);
+            this.btnSaveGoal.Location = new System.Drawing.Point(424, 458);
             this.btnSaveGoal.Name = "btnSaveGoal";
-            this.btnSaveGoal.Size = new System.Drawing.Size(160, 62);
+            this.btnSaveGoal.Size = new System.Drawing.Size(120, 50);
             this.btnSaveGoal.TabIndex = 58;
             this.btnSaveGoal.Text = "Save Goal List";
             this.btnSaveGoal.UseVisualStyleBackColor = true;
@@ -81,19 +130,19 @@
             // 
             this.cmbGoalList.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.cmbGoalList.FormattingEnabled = true;
-            this.cmbGoalList.Location = new System.Drawing.Point(565, 181);
+            this.cmbGoalList.Location = new System.Drawing.Point(424, 145);
+            this.cmbGoalList.Margin = new System.Windows.Forms.Padding(2);
             this.cmbGoalList.Name = "cmbGoalList";
-            this.cmbGoalList.Size = new System.Drawing.Size(160, 33);
+            this.cmbGoalList.Size = new System.Drawing.Size(121, 28);
             this.cmbGoalList.TabIndex = 57;
             // 
             // btnRunAll
             // 
             this.btnRunAll.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.btnRunAll.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnRunAll.Location = new System.Drawing.Point(565, 362);
-            this.btnRunAll.Margin = new System.Windows.Forms.Padding(4);
+            this.btnRunAll.Location = new System.Drawing.Point(424, 290);
             this.btnRunAll.Name = "btnRunAll";
-            this.btnRunAll.Size = new System.Drawing.Size(160, 62);
+            this.btnRunAll.Size = new System.Drawing.Size(120, 50);
             this.btnRunAll.TabIndex = 56;
             this.btnRunAll.Text = "Run All";
             this.btnRunAll.UseVisualStyleBackColor = true;
@@ -102,10 +151,9 @@
             // 
             this.btnGoGoal.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.btnGoGoal.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnGoGoal.Location = new System.Drawing.Point(565, 292);
-            this.btnGoGoal.Margin = new System.Windows.Forms.Padding(4);
+            this.btnGoGoal.Location = new System.Drawing.Point(424, 234);
             this.btnGoGoal.Name = "btnGoGoal";
-            this.btnGoGoal.Size = new System.Drawing.Size(160, 62);
+            this.btnGoGoal.Size = new System.Drawing.Size(120, 50);
             this.btnGoGoal.TabIndex = 55;
             this.btnGoGoal.Text = "Run";
             this.btnGoGoal.UseVisualStyleBackColor = true;
@@ -115,20 +163,18 @@
             // 
             this.label14.AutoSize = true;
             this.label14.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label14.Location = new System.Drawing.Point(496, 152);
-            this.label14.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label14.Location = new System.Drawing.Point(491, 32);
             this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(20, 22);
+            this.label14.Size = new System.Drawing.Size(17, 19);
             this.label14.TabIndex = 52;
             this.label14.Text = "θ";
             // 
             // txtAddPtheta
             // 
             this.txtAddPtheta.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.txtAddPtheta.Location = new System.Drawing.Point(461, 181);
-            this.txtAddPtheta.Margin = new System.Windows.Forms.Padding(4);
+            this.txtAddPtheta.Location = new System.Drawing.Point(465, 55);
             this.txtAddPtheta.Name = "txtAddPtheta";
-            this.txtAddPtheta.Size = new System.Drawing.Size(95, 34);
+            this.txtAddPtheta.Size = new System.Drawing.Size(72, 29);
             this.txtAddPtheta.TabIndex = 49;
             this.txtAddPtheta.Text = "0";
             this.txtAddPtheta.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
@@ -136,10 +182,9 @@
             // txtAddPy
             // 
             this.txtAddPy.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.txtAddPy.Location = new System.Drawing.Point(342, 181);
-            this.txtAddPy.Margin = new System.Windows.Forms.Padding(4);
+            this.txtAddPy.Location = new System.Drawing.Point(375, 55);
             this.txtAddPy.Name = "txtAddPy";
-            this.txtAddPy.Size = new System.Drawing.Size(95, 34);
+            this.txtAddPy.Size = new System.Drawing.Size(72, 29);
             this.txtAddPy.TabIndex = 50;
             this.txtAddPy.Text = "0";
             this.txtAddPy.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
@@ -147,10 +192,9 @@
             // txtAddPx
             // 
             this.txtAddPx.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.txtAddPx.Location = new System.Drawing.Point(224, 181);
-            this.txtAddPx.Margin = new System.Windows.Forms.Padding(4);
+            this.txtAddPx.Location = new System.Drawing.Point(287, 55);
             this.txtAddPx.Name = "txtAddPx";
-            this.txtAddPx.Size = new System.Drawing.Size(95, 34);
+            this.txtAddPx.Size = new System.Drawing.Size(72, 29);
             this.txtAddPx.TabIndex = 51;
             this.txtAddPx.Text = "0";
             this.txtAddPx.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
@@ -159,10 +203,9 @@
             // 
             this.label15.AutoSize = true;
             this.label15.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label15.Location = new System.Drawing.Point(381, 152);
-            this.label15.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label15.Location = new System.Drawing.Point(405, 32);
             this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(19, 22);
+            this.label15.Size = new System.Drawing.Size(16, 19);
             this.label15.TabIndex = 53;
             this.label15.Text = "y";
             // 
@@ -170,10 +213,9 @@
             // 
             this.label16.AutoSize = true;
             this.label16.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label16.Location = new System.Drawing.Point(262, 152);
-            this.label16.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label16.Location = new System.Drawing.Point(315, 32);
             this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(19, 22);
+            this.label16.Size = new System.Drawing.Size(17, 19);
             this.label16.TabIndex = 54;
             this.label16.Text = "x";
             // 
@@ -188,12 +230,11 @@
             this.cY,
             this.cTheta,
             this.cArrive});
-            this.dgvGoalPoint.Location = new System.Drawing.Point(25, 222);
-            this.dgvGoalPoint.Margin = new System.Windows.Forms.Padding(4);
+            this.dgvGoalPoint.Location = new System.Drawing.Point(19, 178);
             this.dgvGoalPoint.Name = "dgvGoalPoint";
             this.dgvGoalPoint.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToFirstHeader;
             this.dgvGoalPoint.RowTemplate.Height = 24;
-            this.dgvGoalPoint.Size = new System.Drawing.Size(532, 442);
+            this.dgvGoalPoint.Size = new System.Drawing.Size(399, 354);
             this.dgvGoalPoint.TabIndex = 45;
             // 
             // cSelect
@@ -242,10 +283,9 @@
             // btnNewPoint
             // 
             this.btnNewPoint.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.btnNewPoint.Location = new System.Drawing.Point(25, 153);
-            this.btnNewPoint.Margin = new System.Windows.Forms.Padding(4);
+            this.btnNewPoint.Location = new System.Drawing.Point(19, 122);
             this.btnNewPoint.Name = "btnNewPoint";
-            this.btnNewPoint.Size = new System.Drawing.Size(183, 62);
+            this.btnNewPoint.Size = new System.Drawing.Size(137, 50);
             this.btnNewPoint.TabIndex = 46;
             this.btnNewPoint.Text = "Add New Point";
             this.btnNewPoint.UseVisualStyleBackColor = true;
@@ -254,10 +294,9 @@
             // btnDeleteAll
             // 
             this.btnDeleteAll.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.btnDeleteAll.Location = new System.Drawing.Point(565, 502);
-            this.btnDeleteAll.Margin = new System.Windows.Forms.Padding(4);
+            this.btnDeleteAll.Location = new System.Drawing.Point(424, 402);
             this.btnDeleteAll.Name = "btnDeleteAll";
-            this.btnDeleteAll.Size = new System.Drawing.Size(160, 62);
+            this.btnDeleteAll.Size = new System.Drawing.Size(120, 50);
             this.btnDeleteAll.TabIndex = 47;
             this.btnDeleteAll.Text = "Delete All";
             this.btnDeleteAll.UseVisualStyleBackColor = true;
@@ -266,72 +305,31 @@
             // btnDelete
             // 
             this.btnDelete.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.btnDelete.Location = new System.Drawing.Point(565, 432);
-            this.btnDelete.Margin = new System.Windows.Forms.Padding(4);
+            this.btnDelete.Location = new System.Drawing.Point(424, 346);
             this.btnDelete.Name = "btnDelete";
-            this.btnDelete.Size = new System.Drawing.Size(160, 62);
+            this.btnDelete.Size = new System.Drawing.Size(120, 50);
             this.btnDelete.TabIndex = 48;
             this.btnDelete.Text = "Delete Selection";
             this.btnDelete.UseVisualStyleBackColor = true;
             this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
             // 
-            // grbMap
+            // btnCurrPos
             // 
-            this.grbMap.BorderColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.grbMap.Controls.Add(this.btnGetMap);
-            this.grbMap.Controls.Add(this.btnLoadMap);
-            this.grbMap.Controls.Add(this.btnSendMap);
-            this.grbMap.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.grbMap.Location = new System.Drawing.Point(25, 6);
-            this.grbMap.Name = "grbMap";
-            this.grbMap.Size = new System.Drawing.Size(323, 140);
-            this.grbMap.TabIndex = 63;
-            this.grbMap.TabStop = false;
-            this.grbMap.Text = "Map";
-            // 
-            // btnGetMap
-            // 
-            this.btnGetMap.Enabled = false;
-            this.btnGetMap.Font = new System.Drawing.Font("微軟正黑體", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.btnGetMap.Location = new System.Drawing.Point(115, 34);
-            this.btnGetMap.Margin = new System.Windows.Forms.Padding(4);
-            this.btnGetMap.Name = "btnGetMap";
-            this.btnGetMap.Size = new System.Drawing.Size(90, 85);
-            this.btnGetMap.TabIndex = 62;
-            this.btnGetMap.Text = "Get Map";
-            this.btnGetMap.UseVisualStyleBackColor = true;
-            this.btnGetMap.Click += new System.EventHandler(this.btnGetMap_Click);
-            // 
-            // btnLoadMap
-            // 
-            this.btnLoadMap.Font = new System.Drawing.Font("微軟正黑體", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.btnLoadMap.Location = new System.Drawing.Point(17, 34);
-            this.btnLoadMap.Margin = new System.Windows.Forms.Padding(4);
-            this.btnLoadMap.Name = "btnLoadMap";
-            this.btnLoadMap.Size = new System.Drawing.Size(90, 85);
-            this.btnLoadMap.TabIndex = 61;
-            this.btnLoadMap.Text = "Load Map";
-            this.btnLoadMap.UseVisualStyleBackColor = true;
-            this.btnLoadMap.Click += new System.EventHandler(this.btnLoadMap_Click);
-            // 
-            // btnSendMap
-            // 
-            this.btnSendMap.Font = new System.Drawing.Font("微軟正黑體", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.btnSendMap.Location = new System.Drawing.Point(213, 34);
-            this.btnSendMap.Margin = new System.Windows.Forms.Padding(4);
-            this.btnSendMap.Name = "btnSendMap";
-            this.btnSendMap.Size = new System.Drawing.Size(90, 85);
-            this.btnSendMap.TabIndex = 60;
-            this.btnSendMap.Text = "Send Map";
-            this.btnSendMap.UseVisualStyleBackColor = true;
-            this.btnSendMap.Click += new System.EventHandler(this.btnSendMap_Click);
+            this.btnCurrPos.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.btnCurrPos.Location = new System.Drawing.Point(162, 122);
+            this.btnCurrPos.Name = "btnCurrPos";
+            this.btnCurrPos.Size = new System.Drawing.Size(137, 50);
+            this.btnCurrPos.TabIndex = 46;
+            this.btnCurrPos.Text = "Add Current Point";
+            this.btnCurrPos.UseVisualStyleBackColor = true;
+            this.btnCurrPos.Click += new System.EventHandler(this.btnCurrPos_Click);
             // 
             // CtGoalSetting
             // 
             this.AutoHidePortion = 206D;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(752, 726);
+            this.ClientSize = new System.Drawing.Size(564, 581);
             this.Controls.Add(this.grbMap);
             this.Controls.Add(this.btnPath);
             this.Controls.Add(this.btnSaveGoal);
@@ -345,16 +343,18 @@
             this.Controls.Add(this.label15);
             this.Controls.Add(this.label16);
             this.Controls.Add(this.dgvGoalPoint);
+            this.Controls.Add(this.btnCurrPos);
             this.Controls.Add(this.btnNewPoint);
             this.Controls.Add(this.btnDeleteAll);
             this.Controls.Add(this.btnDelete);
             this.DockAreas = ((WeifenLuo.WinFormsUI.Docking.DockAreas)(((WeifenLuo.WinFormsUI.Docking.DockAreas.Float | WeifenLuo.WinFormsUI.Docking.DockAreas.DockLeft) 
             | WeifenLuo.WinFormsUI.Docking.DockAreas.DockRight)));
             this.Font = new System.Drawing.Font("新細明體", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "CtGoalSetting";
             this.Text = "GoalSetting";
-            ((System.ComponentModel.ISupportInitialize)(this.dgvGoalPoint)).EndInit();
             this.grbMap.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dgvGoalPoint)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -386,5 +386,6 @@
         private System.Windows.Forms.Button btnGetMap;
         private System.Windows.Forms.Button btnLoadMap;
         private System.Windows.Forms.Button btnSendMap;
+        private System.Windows.Forms.Button btnCurrPos;
     }
 }

@@ -19,6 +19,7 @@ namespace ClientUI {
     /// </summary>
     public interface IGoalSetting {
 
+        CarInfo Carinfo { get; }
         ///// <summary>
         ///// 是否與Server地圖同步
         ///// </summary>
@@ -211,6 +212,19 @@ namespace ClientUI {
             //rMain.AddGoalPos(AddPos);
         }
 
+        private void btnCurrPos_Click(object sender, EventArgs e) {
+            /*-- 將Goal點資訊加入DataGridView --*/
+            dgvGoalPoint.Rows.Add(new Object[] { new CheckBox().Checked = false,
+             rActFunc.Carinfo.X, rActFunc.Carinfo.Y, rActFunc.Carinfo.ThetaGyro, false});
+            dgvGoalPoint.Rows[dgvGoalPoint.Rows.Count - 1].HeaderCell.Value = string.Format("{0}", dgvGoalPoint.Rows.Count);
+
+            CtInvoke.ComboBoxAdd(cmbGoalList,$"{rActFunc.Carinfo.X},{rActFunc.Carinfo.Y},{rActFunc.Carinfo.ThetaGyro}");
+
+            /*-- 從底層觸發 --*/
+            rActFunc.AddGoalPos(new CarPos(rActFunc.Carinfo.X, rActFunc.Carinfo.Y, rActFunc.Carinfo.ThetaGyro));
+
+        }
+
         #endregion Button
 
         private void rActFunc_OnGoalSettingEvent(object sender, GoalSettingEventArgs e) {
@@ -381,6 +395,7 @@ namespace ClientUI {
         private void btnSendMap_Click(object sender, EventArgs e) {
             rActFunc.SendMap();
         }
+
     }
 
     /// <summary>
