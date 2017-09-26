@@ -35,7 +35,7 @@ namespace ClientUI {
         /// <summary>
         /// 車子資料
         /// </summary>
-        CarInfo CarInfo { get; }
+        CarInfo CarInfo { get; set; }
         
         /// <summary>
         /// 預設地圖檔資料夾路徑
@@ -431,7 +431,6 @@ namespace ClientUI {
             GLMode = mode;
             switch (mode) {
                 case GLMode.SetCar:
-
                     break;
                 case GLMode.Cursor:
                     glMap.GoalShape = Shape.Rectangle;

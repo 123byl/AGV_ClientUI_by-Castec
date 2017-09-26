@@ -72,6 +72,18 @@ namespace ClientUI {
         #region Function - Public Methods
 
         /// <summary>
+        /// 設定位置
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="theta"></param>
+        public void SetPosition(double x,double y,double theta) {
+            this.X = x;
+            this.Y = y;
+            this.ThetaGyro = theta;
+        }
+
+        /// <summary>
         /// 嘗試將字串轉換為<see cref="CarInfo"/>
         /// </summary>
         /// <param name="src">來源字串</param>
@@ -118,6 +130,17 @@ namespace ClientUI {
             this.Y = carPos.y;
             this.ThetaGyro = carPos.theta;
         }
+
+        /// <summary>
+        /// 設定點位
+        /// </summary>
+        /// <param name="carPos"></param>
+        public void SetPos(Pos carPos) {
+            this.X = carPos.x;
+            this.Y = carPos.y;
+            this.ThetaGyro = carPos.theta;
+        }
+
 
         #endregion Function - Public Methods
 
@@ -830,7 +853,7 @@ namespace ClientUI {
         /// <summary>
         /// 車子資訊
         /// </summary>
-        public CarInfo CarInfo { get; }
+        public CarInfo CarInfo { get { return mCarInfo; } set { mCarInfo = value; } }
 
         public List<CarPos> PtCar { get; set; } = new List<CarPos>();
 
