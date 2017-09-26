@@ -488,7 +488,7 @@ namespace ClientUI {
         ///         \ LoadMap後DataGridView補上編號
         ///         \ 將專案中所使用到的Dll加入專案當中
         /// </remarks>
-        public CtVersion Version { get { return new CtVersion( 0, 0, 9, "2017/09/25", "Jay Chang"); } }
+        public CtVersion Version { get { return new CtVersion( 0, 0, 10, "2017/09/26", "Jay Chang"); } }
 
         #endregion Version Information
 
