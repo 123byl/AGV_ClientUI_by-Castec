@@ -73,11 +73,6 @@ namespace ClientUI {
         private Size mFixedSize = new Size(0,0);
 
         /// <summary>
-        /// 主介面參考
-        /// </summary>
-        protected AgvClientUI rMain = null;
-
-        /// <summary>
         /// <see cref="DockPanel"/>參考
         /// </summary>
         protected DockPanel rDockPanel = null;
@@ -114,33 +109,16 @@ namespace ClientUI {
         #region Function - Constructors
 
         /// <summary>
-        /// 共用建構方法
-        /// </summary>
-        private CtDockContent() {
-            /*-- 表單關閉中事件訂閱 --*/
-            this.FormClosing += CtDockContent_FormClosing;
-            this.AutoScroll = true;
-        }
-
-        /// <summary>
         /// 具有預設DockState功能的建置方法
         /// </summary>
-        /// <param name="defState">預設的停靠狀態，不可為Unknown</param>
-        public CtDockContent(DockState defState):this() {
+        public CtDockContent(DockState defState) {
             if (defState == DockState.Unknown) {
                 throw new ArgumentException($"預設DockState不可為{defState}");
             }
             DefaultDockState = defState;
-        }
-
-        /// <summary>
-        /// 附加主介面參考
-        /// </summary>
-        /// <param name="actFunc"></param>
-        /// <param name="main"></param>
-        /// <param name="defState"></param>
-        public CtDockContent(AgvClientUI main ,DockState defState):this( defState) {
-            rMain = main;
+            /*-- 表單關閉中事件訂閱 --*/
+            this.FormClosing += CtDockContent_FormClosing;
+            this.AutoScroll = true;
         }
 
         #endregion Function - Constructors

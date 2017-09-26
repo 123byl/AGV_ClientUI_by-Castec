@@ -29,22 +29,10 @@ namespace ClientUI {
         /// <summary>
         /// 共用建構方法
         /// </summary>
-        /// <param name="testing">Testing方法實作物件參考</param>
-        /// <param name="main">主介面參考</param>
-        /// <param name="defState">預設停靠狀態，不可為Unknown</param>
         public CtTesting(DockState defState = DockState.Float)
-            :base(null,defState) {
+            :base(defState) {
             InitializeComponent();
-            FixedSize = new Size(718, 814);
-            //int velocity = 0;
-            //if (int.TryParse(txtVelocity.Text, out velocity) && rActFunc != null) {
-            //    rActFunc.Velocity = velocity;
-            //}
-
-            //rdbIdle.Tag = $"{CarMode.Idle}";
-            //rdbWork.Tag = $"{CarMode.Work}";
-            //rdbMap.Tag = $"{CarMode.Map}";
-            
+            FixedSize = new Size(718, 814);       
         }
 
         #endregion Function - Constructors
