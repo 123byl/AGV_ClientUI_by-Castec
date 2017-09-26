@@ -1,0 +1,133 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{9051904F-D391-4C48-B1E4-1112CB0AF23F}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>AGVMap</RootNamespace>
+    <AssemblyName>AGVMapUI</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>IDE0020 IDE1005</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="SharpGL, Version=2.3.0.1, Culture=neutral, PublicKeyToken=27fc851303210b27, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>DLL\SharpGL.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpGL.SceneGraph, Version=2.3.0.1, Culture=neutral, PublicKeyToken=27fc851303210b27, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>DLL\SharpGL.SceneGraph.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpGL.WinForms, Version=2.3.0.1, Culture=neutral, PublicKeyToken=27fc851303210b27, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>DLL\SharpGL.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="MapLib\Factory.cs" />
+    <Compile Include="MapLib\Ctrl\CtrlArea.cs" />
+    <Compile Include="MapLib\Attributes.cs" />
+    <Compile Include="MapLib\Ctrl\CtrlAGV.cs" />
+    <Compile Include="MapLib\Ctrl\Ctrlable.cs" />
+    <Compile Include="MapLib\Ctrl\CtrlMark.cs" />
+    <Compile Include="MapLib\Drag\DragPoint.cs" />
+    <Compile Include="MapLib\Drawable.cs" />
+    <Compile Include="MapLib\Geometry\Angle.cs" />
+    <Compile Include="MapLib\GM\CtrlTypeM.cs" />
+    <Compile Include="MapLib\Drag\DragManager.cs" />
+    <Compile Include="MapLib\Enmu.cs" />
+    <Compile Include="MapLib\Color.cs" />
+    <Compile Include="MapLib\Ctrl\CtrlLine.cs" />
+    <Compile Include="MapLib\GM\CtrlGM.cs" />
+    <Compile Include="MapLib\GM\DSetGM.cs" />
+    <Compile Include="MapLib\GM\GM.cs" />
+    <Compile Include="MapLib\Set\DSetImp.cs" />
+    <Compile Include="MapLib\GM\DTypeSetGM.cs" />
+    <Compile Include="MapLib\Geometry\Area.cs" />
+    <Compile Include="MapLib\MapCtrl.cs" />
+    <Compile Include="MapLib\Geometry\Line.cs" />
+    <Compile Include="MapLib\Geometry\Pair.cs" />
+    <Compile Include="MapLib\Safty.cs" />
+    <Compile Include="MapLib\Set\DSet.cs" />
+    <Compile Include="MapLib\Set\Set.cs" />
+    <Compile Include="MapLib\Geometry\ICCWVertex.cs" />
+    <Compile Include="MapLib\Geometry\Point.cs" />
+    <Compile Include="MapUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MapUI.Designer.cs">
+      <DependentUpon>MapUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="MapUI.resx">
+      <DependentUpon>MapUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <None Include="ClassDiagram1.cd" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="DLL\SharpGL.dll" />
+    <Content Include="DLL\SharpGL.SceneGraph.dll" />
+    <Content Include="DLL\SharpGL.WinForms.dll" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

@@ -1,0 +1,454 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="AGVMap.CtrlMarkProperty" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="27" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAAAEAgAAAAAAAAAAAAAAAAAAEAQAAgQAIAgA=</HashCode>
+      <FileName>MapLib\Attributes.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="AGVMap.CtrlAreaProperty" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="20" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAEAQAAgQAAAgA=</HashCode>
+      <FileName>MapLib\Attributes.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="AGVMap.CtrlLineProperty" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="23.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAgAAAAAABEAQAAgAABAgA=</HashCode>
+      <FileName>MapLib\Attributes.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="AGVMap.DDragMProperty" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="21.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAABAAAAAAAAgAAAAAAAEAAAAgAQAggA=</HashCode>
+      <FileName>MapLib\Attributes.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="AGVMap.Color" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="23.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAQAAAAAAAAgAAAAAAAAAAAAAAKAFAAQI=</HashCode>
+      <FileName>MapLib\Color.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="AGVMap.CtrlAGV" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="25.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAEAAAAEAgAAAAAEAAQAAAAAAAAIAAAAAQAAAAA=</HashCode>
+      <FileName>MapLib\Ctrl\CtrlAGV.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="AGVMap.CtrlArea" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="27" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAoAgAEAAAAEAgAAAAAEAAQAAQAEAAAIAAAACQAAAgI=</HashCode>
+      <FileName>MapLib\Ctrl\CtrlArea.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="AGVMap.CtrlLine" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="21.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAEAAAAEggAAAAAEAAQQAAAAAAAIAAAAAQAAAAA=</HashCode>
+      <FileName>MapLib\Ctrl\CtrlLine.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="AGVMap.CtrlMark" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="25.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgEAAAAEAgAAAAAEAAQAAAAAAAAIAAABAQAAAAA=</HashCode>
+      <FileName>MapLib\Ctrl\CtrlMark.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="AGVMap.DDragM" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="20" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAAAAgAkQAAAAAQACACEACEAAABAAAASAAAQA=</HashCode>
+      <FileName>MapLib\Drag\DragManager.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="AGVMap.DragPoint" Collapsed="true">
+    <Position X="23.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAAAAACAAAABAAAAAEAAAAAAAAAAAA=</HashCode>
+      <FileName>MapLib\Drag\DragPoint.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AGVMap.Factory" Collapsed="true">
+    <Position X="25.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>MapLib\Factory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AGVMap.Angle" Collapsed="true">
+    <Position X="20" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAgAEAAABAAAAAAAAAAAgAAgAAAAAAA=</HashCode>
+      <FileName>MapLib\Geometry\Angle.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AGVMap.Area" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="21.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAABAABAAAEAAAAAAAAAAAAAAAACAAAAAAAAA=</HashCode>
+      <FileName>MapLib\Geometry\Area.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="AGVMap.Line" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="27" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABIAAAAAAAAAACAAAAAAAAAAAAAAEAAAACAAAAAAAAA=</HashCode>
+      <FileName>MapLib\Geometry\Line.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="AGVMap.Pair" Collapsed="true">
+    <Position X="1" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAQAUAAABAAAAAAAAAAABAAAEAYAA=</HashCode>
+      <FileName>MapLib\Geometry\Pair.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="AGVMap.Point" Collapsed="true">
+    <Position X="1" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAA=</HashCode>
+      <FileName>MapLib\Geometry\Point.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="AGVMap.CtrlGM&lt;TKey, TValue&gt;" Collapsed="true">
+    <Position X="11.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAAAgAAAAAAAAAAAAAIAAACAAAAAABAAAA=</HashCode>
+      <FileName>MapLib\GM\CtrlGM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AGVMap.CtrlAGVGM&lt;TKey&gt;" Collapsed="true">
+    <Position X="10.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>MapLib\GM\CtrlTypeM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AGVMap.CtrlAreaGM&lt;TKey&gt;" Collapsed="true">
+    <Position X="13" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>MapLib\GM\CtrlTypeM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AGVMap.CtrlLineGM&lt;TKey&gt;" Collapsed="true">
+    <Position X="15.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>MapLib\GM\CtrlTypeM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AGVMap.CtrlMarkGM&lt;TKey&gt;" Collapsed="true">
+    <Position X="8.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>MapLib\GM\CtrlTypeM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AGVMap.DSetGM&lt;TKey, TValue&gt;" Collapsed="true">
+    <Position X="4" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIACAAAAABAAhAAAAAAAAAAAAAAAAAAIAAAAABEAAA=</HashCode>
+      <FileName>MapLib\GM\DSetGM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AGVMap.DPSetGM&lt;TKey&gt;" Collapsed="true">
+    <Position X="1.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>MapLib\GM\DTypeSetGM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AGVMap.DLSetGM&lt;TKey&gt;" Collapsed="true">
+    <Position X="4" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>MapLib\GM\DTypeSetGM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AGVMap.DASetGM&lt;TKey&gt;" Collapsed="true">
+    <Position X="6.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>MapLib\GM\DTypeSetGM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AGVMap.GM&lt;TKey, TValue&gt;" Collapsed="true">
+    <Position X="8.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAIAAAAAAAAEAgQAACAABAQAAQAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>MapLib\GM\GM.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="AGVMap.MapCtrl" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="21.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ICCBgBAAQAIAwgBkkkQIEIAChUAAAgJAGBEEAACCMAI=</HashCode>
+      <FileName>MapLib\MapCtrl.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="AGVMap.DSet&lt;T&gt;" Collapsed="true">
+    <Position X="3.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gEIACAAAEAAAAhwAAAARAAQAAICIAAIEIARAgABEAgA=</HashCode>
+      <FileName>MapLib\Set\DSet.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="AGVMap.DASet" Collapsed="true">
+    <Position X="1.25" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAA=</HashCode>
+      <FileName>MapLib\Set\DSetImp.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AGVMap.DLSet" Collapsed="true">
+    <Position X="3.5" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAABAAAAAAAA=</HashCode>
+      <FileName>MapLib\Set\DSetImp.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AGVMap.DPSet" Collapsed="true">
+    <Position X="5.75" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAQ=</HashCode>
+      <FileName>MapLib\Set\DSetImp.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AGVMap.ListSet&lt;T&gt;" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="20" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEIACAAQEAAAABQAAAAQAAQAAICIAAAAIAAAAABEAAA=</HashCode>
+      <FileName>MapLib\Set\Set.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="AGVMap.MapUI" Collapsed="true">
+    <Position X="23.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACBCBAACAAAAAAEACAAAAjmAABBAAAAgADAAAJAIA=</HashCode>
+      <FileName>MapUI.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AGVMapDemo.Program" Collapsed="true">
+    <Position X="25.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>Program.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AGVMap.Properties.Resources" Collapsed="true">
+    <Position X="27" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAABEAAAAQAAAAAAAAAAAAAAAIA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AGVMap.Properties.Settings" Collapsed="true">
+    <Position X="20" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAIAAAAAABAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="AGVMap.ICtrlMarkProperty" Collapsed="true">
+    <Position X="25.25" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAEAgAAAAAAAAAAAAAAAAAAEAQAAgQAIAAA=</HashCode>
+      <FileName>MapLib\Attributes.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="AGVMap.ICtrlAreaProperty" Collapsed="true">
+    <Position X="21.75" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAQAAgQAAAAA=</HashCode>
+      <FileName>MapLib\Attributes.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="AGVMap.ICtrlLineProperty" Collapsed="true">
+    <Position X="23.5" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAEAQAAgAABAAA=</HashCode>
+      <FileName>MapLib\Attributes.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="AGVMap.IDDragMProperty" Collapsed="true">
+    <Position X="27" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAABAAAAAAAAgAAAAAAAEAAAAgAQAAAA=</HashCode>
+      <FileName>MapLib\Attributes.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="AGVMap.IColor" Collapsed="true">
+    <Position X="20" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKAFAAQA=</HashCode>
+      <FileName>MapLib\Color.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="AGVMap.ICtrlable" Collapsed="true">
+    <Position X="3.5" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAEAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>MapLib\Ctrl\Ctrlable.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="AGVMap.INameable" Collapsed="true">
+    <Position X="0.5" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>MapLib\Ctrl\Ctrlable.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="AGVMap.IVisible" Collapsed="true">
+    <Position X="21.75" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAA=</HashCode>
+      <FileName>MapLib\Ctrl\Ctrlable.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="AGVMap.IDrawable" Collapsed="true">
+    <Position X="3.5" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>MapLib\Drawable.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="AGVMap.IArea" Collapsed="true">
+    <Position X="12.75" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAABAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>MapLib\Geometry\Area.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="AGVMap.ICCWVertex" Collapsed="true">
+    <Position X="11.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAA=</HashCode>
+      <FileName>MapLib\Geometry\ICCWVertex.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="AGVMap.ILine" Collapsed="true">
+    <Position X="15" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAA=</HashCode>
+      <FileName>MapLib\Geometry\Line.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="AGVMap.IPair" Collapsed="true">
+    <Position X="17.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAYAA=</HashCode>
+      <FileName>MapLib\Geometry\Pair.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="AGVMap.IPoint" Collapsed="true">
+    <Position X="9.5" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>MapLib\Geometry\Point.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="AGVMap.IGM&lt;TKey, TValue&gt;" Collapsed="true">
+    <Position X="0.5" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAIAAAAAAAAEAAAAACAABAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>MapLib\GM\GM.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="AGVMap.IMapCtrl" Collapsed="true">
+    <Position X="20" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACABAAAAQAIAwAAgkAAAEIACBAAAAAAAEAEEAACAAAA=</HashCode>
+      <FileName>MapLib\MapCtrl.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="AGVMap.ISafty" Collapsed="true">
+    <Position X="6.5" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>MapLib\Safty.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="AGVMap.IDSet&lt;T&gt;" Collapsed="true">
+    <Position X="3.5" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>MapLib\Set\DSet.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="AGVMap.IDSetProperty" Collapsed="true">
+    <Position X="8.75" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAgAAAAAA=</HashCode>
+      <FileName>MapLib\Set\DSet.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="AGVMap.ISet&lt;T&gt;" Collapsed="true">
+    <Position X="6.5" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEIACAAAEAAAABAAAAAQAAQAAICIAAAAIAAAAABEAAA=</HashCode>
+      <FileName>MapLib\Set\Set.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="AGVMap.EAreaType" Collapsed="true">
+    <Position X="20" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>MapLib\Enmu.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="AGVMap.ELayer" Collapsed="true">
+    <Position X="21.75" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CUAAAgAAAAAAAwAAAACAAAAABQAIAIABIAAIAAAABAI=</HashCode>
+      <FileName>MapLib\Enmu.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="AGVMap.EMarkType" Collapsed="true">
+    <Position X="23.5" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AUAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAA=</HashCode>
+      <FileName>MapLib\Enmu.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="AGVMap.EMouseType" Collapsed="true">
+    <Position X="25.25" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAABCAAAAAAAAAA=</HashCode>
+      <FileName>MapLib\Enmu.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="AGVMap.ESuperLineType" Collapsed="true">
+    <Position X="27" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAA=</HashCode>
+      <FileName>MapLib\Enmu.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Microsoft JhengHei UI" Size="9" />
+</ClassDiagram>
