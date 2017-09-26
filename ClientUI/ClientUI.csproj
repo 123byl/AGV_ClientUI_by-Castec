@@ -85,6 +85,7 @@
     <Compile Include="Development\CtTesting.Designer.cs">
       <DependentUpon>CtTesting.cs</DependentUpon>
     </Compile>
+    <Compile Include="Development\Events.cs" />
     <Compile Include="Development\SocketTest.cs">
       <SubType>Form</SubType>
     </Compile>

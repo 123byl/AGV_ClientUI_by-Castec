@@ -183,26 +183,6 @@ namespace ClientUI {
                 action();
             }
         }
-       
-        /// <summary>
-        /// 訂閱<see cref="rActFunc"/>事件
-        /// </summary>
-        /// <remarks>
-        /// 提供衍生類進行覆寫
-        /// </remarks>
-        protected virtual void AddEvent() {
-
-        }
-
-        /// <summary>
-        /// 取消訂閱<see cref="rActFunc"/>事件
-        /// </summary>
-        /// <remarks>
-        /// 提供衍生類進行覆寫
-        /// </remarks>
-        protected virtual void RemoveEvent() {
-
-        }
 
         /// <summary>
         /// 依照<see cref="FixedSize"/>與<see cref="mDefDockState"/>修正視窗尺寸
@@ -223,7 +203,6 @@ namespace ClientUI {
         protected override void Dispose(bool disposing) {
             if (disposing) {
                 this.FormClosing -= CtDockContent_FormClosing;
-                RemoveEvent();
             }
             base.Dispose(disposing);
         }
