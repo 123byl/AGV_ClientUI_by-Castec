@@ -7,54 +7,6 @@ using System.Drawing;
 using WeifenLuo.WinFormsUI.Docking;
 using System.Windows.Forms;
 namespace ClientUI {
-    
-    /// <summary>
-    /// DockContnet接口
-    /// </summary>
-    public interface ICtDockContent : IDisposable {
-
-        #region Properties
-
-        /// <summary>
-        /// 預設停靠狀態
-        /// </summary>
-        DockState DefaultDockState { get; set; }
-        
-        /// <summary>
-        /// 表單固定尺寸
-        /// </summary>
-        Size FixedSize { get; set; }
-
-        #endregion Properties
-
-        #region Methods
-
-        /// <summary>
-        /// 分配<see cref="DockPanel"/>物件參考
-        /// </summary>
-        /// <param name="dockPanel"></param>
-        void AssignmentDockPanel(DockPanel dockPanel);
-
-        /// <summary>
-        /// 隱藏視窗
-        /// </summary>
-        void HideWindow();
-
-        /// <summary>
-        /// 依照預設停靠狀態顯示
-        /// </summary>
-        void ShowWindow();
-
-        #endregion Methods
-
-        #region 原本就有實作的方法、屬性
-        DockState DockState { get; set; }
-        event EventHandler DockStateChanged;
-        string Text { get; set; }
-        #endregion 
-
-    }
-
     /// <summary>
     /// 基礎的DockContent類
     /// </summary>
@@ -120,6 +72,8 @@ namespace ClientUI {
             this.FormClosing += CtDockContent_FormClosing;
             this.AutoScroll = true;
         }
+
+        private CtDockContent() { }
 
         #endregion Function - Constructors
 
@@ -300,6 +254,55 @@ namespace ClientUI {
             }
         }
 
+
+    }
+
+
+    /// <summary>
+    /// DockContnet接口
+    /// </summary>
+    public interface ICtDockContent : IDisposable
+    {
+
+        #region Properties
+
+        /// <summary>
+        /// 預設停靠狀態
+        /// </summary>
+        DockState DefaultDockState { get; set; }
+
+        /// <summary>
+        /// 表單固定尺寸
+        /// </summary>
+        Size FixedSize { get; set; }
+
+        #endregion Properties
+
+        #region Methods
+
+        /// <summary>
+        /// 分配<see cref="DockPanel"/>物件參考
+        /// </summary>
+        /// <param name="dockPanel"></param>
+        void AssignmentDockPanel(DockPanel dockPanel);
+
+        /// <summary>
+        /// 隱藏視窗
+        /// </summary>
+        void HideWindow();
+
+        /// <summary>
+        /// 依照預設停靠狀態顯示
+        /// </summary>
+        void ShowWindow();
+
+        #endregion Methods
+
+        #region 原本就有實作的方法、屬性
+        DockState DockState { get; set; }
+        event EventHandler DockStateChanged;
+        string Text { get; set; }
+        #endregion 
 
     }
 }

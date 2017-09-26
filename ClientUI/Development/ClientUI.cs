@@ -16,19 +16,16 @@ using CtLib.Library;
 using CtLib.Module.Ultity;
 using static CtLib.Forms.CtLogin;
 using CtLib.Forms;
-namespace ClientUI {
-   
+namespace ClientUI
+{
+
     /// <summary>
     /// 客戶端介面
     /// </summary>
-    public partial class AgvClientUI : Form {
+    public partial class AgvClientUI : Form
+    {
 
         #region Declaration - Fields
-
-        /// <summary>
-        /// Agv Client端物件參考
-        /// </summary>
-        private AgvClient rAgvClient = null;
 
         /// <summary>
         /// ICtDockContent與MenuItem對照
@@ -57,16 +54,16 @@ namespace ClientUI {
         /// <summary>
         /// MapGL子視窗
         /// </summary>
-        protected CtMapGL MapGL {
+        private CtMapGL MapGL {
             get {
-                return  mDockContent.ContainsKey(miMapGL) ? mDockContent[miMapGL] as CtMapGL : null;                
+                return mDockContent.ContainsKey(miMapGL) ? mDockContent[miMapGL] as CtMapGL : null;
             }
         }
 
         /// <summary>
         /// Console子視窗
         /// </summary>
-        protected CtConsole Console {
+        private CtConsole Console {
             get {
                 return mDockContent.ContainsKey(miConsole) ? mDockContent[miConsole] as CtConsole : null;
             }
@@ -75,7 +72,7 @@ namespace ClientUI {
         /// <summary>
         /// 測試子視窗
         /// </summary>
-        protected CtTesting Testing {
+        private CtTesting Testing {
             get {
                 return mDockContent.ContainsKey(miTesting) ? mDockContent[miTesting] as CtTesting : null;
             }
@@ -84,12 +81,17 @@ namespace ClientUI {
         /// <summary>
         /// Goal點設定子視窗
         /// </summary>
-        protected CtGoalSetting GoalSetting {
+        private CtGoalSetting GoalSetting {
             get {
                 return mDockContent.ContainsKey(miGoalSetting) ? mDockContent[miGoalSetting] as CtGoalSetting : null;
             }
         }
-        
+        /// <summary>
+        /// Console子視窗
+        /// </summary>
+        private IIConsole IConsole { get { return Console; } }
+        private IIGoalSetting IGoalSetting { get { return GoalSetting; } }
+
         #endregion Declaration - Properties
 
         #region Functin - Constructors
@@ -97,19 +99,9 @@ namespace ClientUI {
         /// <summary>
         /// 共用建構方法
         /// </summary>
-        public AgvClientUI() {
+        public AgvClientUI()
+        {
             InitializeComponent();
-            
-        }
-
-        /// <summary>
-        /// 傳入<see cref="IAgvClient"/>參考進行建置
-        /// </summary>
-        /// <param name="agvClient"><see cref="IAgvClient"/>參考實例</param>
-        public AgvClientUI(AgvClient agvClient):this() {
-            rAgvClient = agvClient;
-            rAgvClient.AgvClientEventTrigger += rAgvClient_OnAgvClientEventTrigger; ;
-            
         }
 
         #endregion Function - Constructors
@@ -123,7 +115,8 @@ namespace ClientUI {
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ClientUI_Load(object sender, EventArgs e) {
+        private void ClientUI_Load(object sender, EventArgs e)
+        {
             /*-- 載入ICtDockContent物件 --*/
             LoadICtDockContent();
 
@@ -131,23 +124,23 @@ namespace ClientUI {
             LoadCtNotifyIcon();
 
             /*-- 依照使用者權限進行配置 --*/
-            UserChanged(rAgvClient.UserData);
+
 
             /*-- 檢查Bypass狀態 --*/
-            CtInvoke.ToolStripItemChecked(miBypassSocket, rAgvClient.IsBypassSocket);
-            CtInvoke.ToolStripItemChecked(miLoadFile, rAgvClient.IsBypassLoadFile);
+
 
             /*-- 檢查遠端設備IP --*/
             //tslbHostIP.Text = rAgvClient.HostIP;
-            
+
         }
-        
+
         /// <summary>
         /// 表單關閉中事件
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ClientUI_FormClosing(object sender, FormClosingEventArgs e) {
+        private void ClientUI_FormClosing(object sender, FormClosingEventArgs e)
+        {
             #region 取消程式關閉
             //由於CtDockContetn中在表單關閉中事件會把e.Cancel寫為true
             //為了確實關閉程式，需再把e.Cancl寫為false
@@ -161,7 +154,8 @@ namespace ClientUI {
         /// <summary>
         /// 將主介面縮小至系統列
         /// </summary>
-        private void HideWindow() {
+        private void HideWindow()
+        {
             this.Hide();
             mNotifyIcon.ShowIcon();
 
@@ -176,14 +170,19 @@ namespace ClientUI {
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void MenuDock_Click(object sender,EventArgs e) {
+        private void MenuDock_Click(object sender, EventArgs e)
+        {
             ToolStripMenuItem item = sender as ToolStripMenuItem;
             /*-- 確認是否有對應DockContent物件 --*/
-            if (mDockContent.ContainsKey(item)) {
-                
-                if (item.Checked) {
+            if (mDockContent.ContainsKey(item))
+            {
+
+                if (item.Checked)
+                {
                     (mDockContent[item] as DockContent).Hide();
-                }else {
+                }
+                else
+                {
                     mDockContent[item].ShowWindow();
                 }
             }
@@ -194,7 +193,8 @@ namespace ClientUI {
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void miExit_Click(object sender, EventArgs e) {
+        private void miExit_Click(object sender, EventArgs e)
+        {
             Exit();
         }
 
@@ -203,8 +203,9 @@ namespace ClientUI {
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void miAbout_Click(object sender, EventArgs e) {
-            rAgvClient.form_About();
+        private void miAbout_Click(object sender, EventArgs e)
+        {
+
         }
 
         /// <summary>
@@ -212,8 +213,9 @@ namespace ClientUI {
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void miLogin_Click(object sender, EventArgs e) {
-            rAgvClient.Login();
+        private void miLogin_Click(object sender, EventArgs e)
+        {
+
         }
 
         /// <summary>
@@ -221,8 +223,9 @@ namespace ClientUI {
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void miUserManager_Click(object sender, EventArgs e) {
-            rAgvClient.form_UserManager();
+        private void miUserManager_Click(object sender, EventArgs e)
+        {
+
         }
 
         #endregion MenuItem
@@ -234,7 +237,8 @@ namespace ClientUI {
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Value_DockStateChanged(object sender, EventArgs e) {
+        private void Value_DockStateChanged(object sender, EventArgs e)
+        {
 
             /*-- 取得發報的DockContent物件 --*/
             DockContent dockWnd = sender as DockContent;
@@ -255,8 +259,10 @@ namespace ClientUI {
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void rAgvClient_OnAgvClientEventTrigger(object sender, AgvClientEventArgs e) {
-            switch (e.Type) {
+        private void rAgvClient_OnAgvClientEventTrigger(object sender, AgvClientEventArgs e)
+        {
+            switch (e.Type)
+            {
                 case AgvClientEventType.CarInfoRefresh:
                     CarInfoRefresh((CarInfo)e.Value);
                     break;
@@ -270,7 +276,7 @@ namespace ClientUI {
                     ChangedMode((CarMode)e.Value);
                     break;
                 case AgvClientEventType.SendFile:
-                    SetBalloonTip("Send File", e.Value as string, ToolTipIcon.Info,10);
+                    SetBalloonTip("Send File", e.Value as string, ToolTipIcon.Info, 10);
                     break;
                 case AgvClientEventType.LoadFile:
                     SetBalloonTip($"Load { (FileType)e.Value}", $"The { (FileType)e.Value} is loaded", ToolTipIcon.Info, 10);
@@ -281,7 +287,7 @@ namespace ClientUI {
             }
         }
 
-        
+
         #endregion AgvClient
 
         #region NotityIcon
@@ -291,7 +297,8 @@ namespace ClientUI {
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void mNotifyIcon_OnMouseDoubleClick(object sender, MouseEventArgs e) {
+        private void mNotifyIcon_OnMouseDoubleClick(object sender, MouseEventArgs e)
+        {
             ShowWindow();
         }
 
@@ -300,7 +307,8 @@ namespace ClientUI {
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ShowWindow_OnClick(object sender,EventArgs e) {
+        private void ShowWindow_OnClick(object sender, EventArgs e)
+        {
             ShowWindow();
         }
 
@@ -311,31 +319,12 @@ namespace ClientUI {
         /// <param name="context">提示內容</param>
         /// <param name="icon">提示Icon</param>
         /// <param name="tmo">顯示時間</param>
-        public void SetBalloonTip(string title, string context, ToolTipIcon icon, int tmo) {
+        public void SetBalloonTip(string title, string context, ToolTipIcon icon, int tmo)
+        {
             mNotifyIcon.ShowBalloonTip(title, context, tmo, icon);
         }
 
         #endregion NotifyIcon
-
-        #region ToolStripMenuItem
-
-        private void miBypassSocket_Click(object sender, EventArgs e) {
-            bool isBypass = !miBypassSocket.Checked;
-            rAgvClient.IsBypassSocket = isBypass;
-            CtInvoke.ToolStripItemChecked(miBypassSocket, isBypass);
-        }
-
-        private void miLoadFile_Click(object sender, EventArgs e) {
-            bool isBypass = !miLoadFile.Checked;
-            rAgvClient.IsBypassLoadFile = isBypass;
-            CtInvoke.ToolStripItemChecked(miLoadFile, isBypass);
-        }
-
-        private void miServer_Click(object sender, EventArgs e) {
-        
-        }
-
-        #endregion ToolStripMenuItem
 
         #endregion Function - Events
 
@@ -344,7 +333,8 @@ namespace ClientUI {
         /// <summary>
         /// 清除所有Goal點
         /// </summary>
-        public void DeleteAllGoal() {
+        public void DeleteAllGoal()
+        {
             //MapGL?.DeleteAllGoal();
         }
 
@@ -352,24 +342,27 @@ namespace ClientUI {
         /// 增加Goal點
         /// </summary>
         /// <param name="goal">Goal點</param>
-        public void AddGoalPos(CarPos goal) {
+        public void AddGoalPos(CarPos goal)
+        {
             //MapGL?.AddGoalPos(goal);
         }
 
         /// <summary>
         /// 設定GL模式
         /// </summary>
-        public void SetGLMode(GLMode mode) {
+        public void SetGLMode(GLMode mode)
+        {
             //MapGL?.SetGLMode(mode);
         }
 
         /// <summary>
         /// 清除地圖
         /// </summary>
-        public void ClearMap() {
+        public void ClearMap()
+        {
             //MapGL?.ClearMap();
         }
-        
+
         #endregion Function - Public Methdos
 
         #region Function - Private Methods
@@ -378,14 +371,16 @@ namespace ClientUI {
         /// 車子模式切換時
         /// </summary>
         /// <param name="mode"></param>
-        private void ChangedMode(CarMode mode) {
+        private void ChangedMode(CarMode mode)
+        {
             tslbStatus.Text = $"{mode}";
         }
 
         /// <summary>
         /// 載入ICtDockContent物件
         /// </summary>
-        private void LoadICtDockContent() {
+        private void LoadICtDockContent()
+        {
             if (mDockContent != null) return;
             /*-- 載入DockContent --*/
             mDockContent = new Dictionary<ToolStripMenuItem, ICtDockContent>() {
@@ -394,15 +389,17 @@ namespace ClientUI {
                 { miTesting,new CtTesting(DockState.DockLeft)},
                 { miMapGL,new CtMapGL( DockState.Document)}
             };
-
+            SetEvents();
 
             /*-- 計算每個固定停靠區域所需的顯示大小 --*/
-            foreach (var area in Enum.GetValues(typeof(DockAreas))) {
+            foreach (var area in Enum.GetValues(typeof(DockAreas)))
+            {
                 CalculateFixedPortion(dockPanel, (DockAreas)area);
             }
 
             /*-- 遍歷所有DockContent與MenuItem物件 --*/
-            foreach (var kvp in mDockContent) {
+            foreach (var kvp in mDockContent)
+            {
                 ToolStripMenuItem item = kvp.Key;
                 ICtDockContent dokContent = kvp.Value as ICtDockContent;
 
@@ -420,20 +417,22 @@ namespace ClientUI {
 
                 /*-- MenuItem顯示DockContent標題文字(Text) --*/
                 item.Text = dokContent.Text;
-                
+
             }
         }
 
         /// <summary>
         /// 載入CtNotifyIcon物件
         /// </summary>
-        private void LoadCtNotifyIcon() {
-            if (mNotifyIcon == null) {
+        private void LoadCtNotifyIcon()
+        {
+            if (mNotifyIcon == null)
+            {
                 mNotifyIcon = new CtNotifyIcon(this, mNotifyCaption);
                 mNotifyIcon.OnMouseDoubleClick += mNotifyIcon_OnMouseDoubleClick;
                 mNotifyIcon.Visible = true;
                 mMenuItems = new MenuItems();
-                
+
                 mMenuItems.AddMenuItem(
                     "Show Window",
                     ShowWindow_OnClick
@@ -452,7 +451,8 @@ namespace ClientUI {
         /// </summary>
         /// <param name="panel">要設定的<see cref="DockPanel"/></param>控制項
         /// <param name="area">要統計的停靠區域</param>
-        private void CalculateFixedPortion(DockPanel panel, DockAreas area) {
+        private void CalculateFixedPortion(DockPanel panel, DockAreas area)
+        {
             /*-- 取得相同停靠區域的DockContent集合 --*/
             var dockContents = mDockContent.Where(kvp =>
                kvp.Value.DefaultDockState.ToAreas() == area
@@ -468,8 +468,10 @@ namespace ClientUI {
 
             /*-- 依照停靠區域計算所需顯示大小 --*/
             double portion = 0;
-            if (DockMth.CalculatePortion(area,dockSize,out portion)){
-                switch (area) {
+            if (DockMth.CalculatePortion(area, dockSize, out portion))
+            {
+                switch (area)
+                {
                     case DockAreas.DockBottom:
                         panel.DockBottomPortion = portion;
                         break;
@@ -489,7 +491,8 @@ namespace ClientUI {
         /// <summary>
         /// 顯示主介面
         /// </summary>
-        private void ShowWindow() {
+        private void ShowWindow()
+        {
             mNotifyIcon.HideIcon();
             this.Show();
             this.TopMost = true;
@@ -505,7 +508,8 @@ namespace ClientUI {
         /// <summary>
         /// 離開程式
         /// </summary>
-        private void Exit() {
+        private void Exit()
+        {
             this.Dispose();
         }
 
@@ -515,14 +519,21 @@ namespace ClientUI {
         /// <typeparam name="T"></typeparam>
         /// <param name="dockContent">CtDockContent物件</param>
         /// <param name="vis">可視狀態</param>
-        private void DockContentVisible(ICtDockContent dockContent,bool vis) {
-            try {
-                if (vis) {
+        private void DockContentVisible(ICtDockContent dockContent, bool vis)
+        {
+            try
+            {
+                if (vis)
+                {
                     dockContent.ShowWindow();
-                } else {
+                }
+                else
+                {
                     dockContent.HideWindow();
                 }
-            } catch(Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 string msg = ex.Message;
             }
 
@@ -535,8 +546,9 @@ namespace ClientUI {
         /// <param name="console"></param>
         /// <param name="testing"></param>
         /// <param name="goalSetting"></param>
-        private void DockContentEnable(bool mapGL,bool console,bool testing,bool goalSetting) {
-            CtInvoke.ToolStripItemEnable(miMapGL,mapGL);
+        private void DockContentEnable(bool mapGL, bool console, bool testing, bool goalSetting)
+        {
+            CtInvoke.ToolStripItemEnable(miMapGL, mapGL);
             CtInvoke.ToolStripItemEnable(miConsole, console);
             CtInvoke.ToolStripItemEnable(miTesting, testing);
             CtInvoke.ToolStripItemEnable(miGoalSetting, goalSetting);
@@ -552,8 +564,10 @@ namespace ClientUI {
         /// </summary>
         /// <param name="item">相關<see cref="ToolStripMenuItem"/>控制項</param>
         /// <param name="visible">是否可視</param>
-        private void DockContentVisible(ToolStripMenuItem item,bool visible) {
-            if (mDockContent.ContainsKey(item)) {
+        private void DockContentVisible(ToolStripMenuItem item, bool visible)
+        {
+            if (mDockContent.ContainsKey(item))
+            {
                 DockContentVisible(mDockContent[item], visible);
                 CtInvoke.ToolStripItemEnable(item, visible);
             }
@@ -563,7 +577,8 @@ namespace ClientUI {
         /// 車子資訊更新事件
         /// </summary>
         ///<param name="info">車子資訊</param>
-        private void CarInfoRefresh(CarInfo info) {
+        private void CarInfoRefresh(CarInfo info)
+        {
             int battery = info.PowerPercent;
             tsprgBattery.Value = battery;
             tslbBattery.Text = string.Format(tslbBattery.Tag.ToString(), battery);
@@ -574,14 +589,16 @@ namespace ClientUI {
         /// 依照使用者權限切換介面配置
         /// </summary>
         /// <param name="usrLv"></param>
-        private void UserChanged(UserData usrData) {
+        private void UserChanged(UserData usrData)
+        {
             AccessLevel usrLv = usrData.Level;
             string title = string.Empty;//工具列選項標題
             string usrName = string.Empty;//狀態列帳號名稱
             bool allowUsrMan = usrLv < AccessLevel.OPERATOR;
 
             /*-- 依照權限切換模組可視層級 --*/
-            switch (usrLv) {
+            switch (usrLv)
+            {
                 case AccessLevel.NONE:
                     DockContentVisible(miMapGL, false);
                     DockContentVisible(miConsole, true);
@@ -601,15 +618,18 @@ namespace ClientUI {
                     DockContentVisible(miGoalSetting, true);
                     DockContentVisible(miTesting, true);
                     miBypass.Visible = true;
-                        
+
                     break;
             }
 
             /*-- 顯示帳號相關資訊 --*/
-            if (usrLv == AccessLevel.NONE) {
+            if (usrLv == AccessLevel.NONE)
+            {
                 title = "Login";
                 usrName = "No account";
-            } else {
+            }
+            else
+            {
                 title = "Logout";
                 usrName = usrData.Account;
             }
@@ -621,13 +641,96 @@ namespace ClientUI {
 
 
         #endregion Function - Private Methods
-        SocketTest testFrom = null;
-        private void testToolStripMenuItem_Click(object sender, EventArgs e) {
-            if (!testFrom?.IsDisposed ?? true) {
-                testFrom = new SocketTest();
-                testFrom.Show();
-            }
+
+        /// <summary>
+        /// 設定事件連結
+        /// </summary>
+        private void SetEvents()
+        {
+            #region IGoalSetting 事件連結     
+            IGoalSetting.AddNewGoalEvent += IGoalSetting_AddNewGoalEvent;
+            IGoalSetting.ClearGoalsEvent += IGoalSetting_ClearGoalsEvent;
+            IGoalSetting.DeleteGoalsEvent += IGoalSetting_DeleteGoalsEvent;
+            IGoalSetting.FindPathEvent += IGoalSetting_FindPathEvent;
+            IGoalSetting.LoadMapEvent += IGoalSetting_LoadMapEvent;
+            IGoalSetting.LoadMapFromAGVEvent += IGoalSetting_LoadMapFromAGVEvent;
+            IGoalSetting.RunGoalEvent += IGoalSetting_RunGoalEvent;
+            IGoalSetting.RunLoopEvent += IGoalSetting_RunLoopEvent;
+            IGoalSetting.SaveGoalEvent += IGoalSetting_SaveGoalEvent;
+            IGoalSetting.SendMapToAGVEvent += IGoalSetting_SendMapToAGVEvent;
+            #endregion
         }
+        #region IGoalSetting 事件連結   
+        private void IGoalSetting_SendMapToAGVEvent()
+        {
+            IConsole.AddMsg("[Map Update...]");
+            IConsole.AddMsg("[Map Finished Update]");
+        }
+
+        private void IGoalSetting_SaveGoalEvent()
+        {
+            IConsole.AddMsg("[Save {0} Goals]", IGoalSetting.GoalCount);
+        }
+
+        private void IGoalSetting_RunLoopEvent(IEnumerable<Info> goal)
+        {
+            IConsole.AddMsg("[AGV Start Moving...]");
+            foreach (var item in goal)
+            {
+                IConsole.AddMsg("[AGV Move To] - {0}", item.ToString());
+                IConsole.AddMsg("[AGV Arrived] - {0}", item.ToString());
+            }
+            IConsole.AddMsg("[AGV Move Finished]");
+        }
+
+        private void IGoalSetting_RunGoalEvent(Info goal)
+        {
+            IConsole.AddMsg("[AGV Start Moving...]");
+            IConsole.AddMsg("[AGV Arrived] - {0}", goal.ToString());
+        }
+
+        private void IGoalSetting_LoadMapFromAGVEvent()
+        {
+            IConsole.AddMsg("[Map Loading... From Remote] - ");
+            IConsole.AddMsg("[Map Loaded]");
+        }
+
+        private void IGoalSetting_LoadMapEvent()
+        {
+            IConsole.AddMsg("[Map Loading...]");
+            IConsole.AddMsg("[Map Loaded]");
+        }
+
+        private void IGoalSetting_FindPathEvent(Info goal)
+        {
+            IConsole.AddMsg("[Find Path] - ", goal.ToString());
+            IConsole.AddMsg("[AGV Find A Path]");
+        }
+
+        private void IGoalSetting_DeleteGoalsEvent(IEnumerable<Info> goal)
+        {
+            IConsole.AddMsg("[Delete {0} Goals]", goal.Count());
+            List<int> ID = new List<int>();
+            foreach (var item in goal)
+            {
+                ID.Add(item.ID);
+                IConsole.AddMsg("[Delete Goal] - {0}", item.ToString());
+            }
+            IGoalSetting.DeleteGoals(ID);
+        }
+
+        private void IGoalSetting_ClearGoalsEvent()
+        {
+            IConsole.AddMsg("[Clear Goal]");
+            IGoalSetting.ClearGoal();
+        }
+
+        private void IGoalSetting_AddNewGoalEvent(Info goal)
+        {
+            IConsole.AddMsg("[Add Goal] - {0}", goal.ToString());
+            IGoalSetting.AddGoal(goal);
+        }
+        #endregion
     }
 
     #region Suppor - Class
@@ -635,7 +738,8 @@ namespace ClientUI {
     /// <summary>
     /// 系統列圖示類
     /// </summary>
-    public class CtNotifyIcon : IDisposable {
+    public class CtNotifyIcon : IDisposable
+    {
 
         #region Declaration - Field
 
@@ -720,9 +824,10 @@ namespace ClientUI {
         /// <param name="form">要隱藏的表單參考</param>
         /// <param name="caption">系統列圖示標題</param>
         /// <param name="icon">系統列圖示Icon</param>
-        public CtNotifyIcon(Form form, string caption = "NotifyIcon", Icon icon = null) {
+        public CtNotifyIcon(Form form, string caption = "NotifyIcon", Icon icon = null)
+        {
             rForm = form;
-            mNotifyIcon.Icon = icon  ?? rForm.Icon;
+            mNotifyIcon.Icon = icon ?? rForm.Icon;
             mNotifyIcon.Text = caption;
             mNotifyIcon.ContextMenu = mContextMenu;
         }
@@ -735,7 +840,8 @@ namespace ClientUI {
         /// 增加右鍵選項
         /// </summary>
         /// <param name="item"></param>
-        public void MenuItemAdd(MenuItem item) {
+        public void MenuItemAdd(MenuItem item)
+        {
             if (!mContextMenu.MenuItems.Contains(item)) mContextMenu.MenuItems.Add(item);
         }
 
@@ -743,21 +849,24 @@ namespace ClientUI {
         /// 移除右鍵選項
         /// </summary>
         /// <param name="item"></param>
-        public void MenuItemRemove(MenuItem item) {
+        public void MenuItemRemove(MenuItem item)
+        {
             if (mContextMenu.MenuItems.Contains(item)) mContextMenu.MenuItems.Remove(item);
         }
 
         /// <summary>
         /// 顯示系統列圖示
         /// </summary>
-        public void ShowIcon() {
+        public void ShowIcon()
+        {
             mNotifyIcon.Visible = true;
         }
 
         /// <summary>
         /// 隱藏系統列圖示
         /// </summary>
-        public void HideIcon() {
+        public void HideIcon()
+        {
             mNotifyIcon.Visible = false;
         }
 
@@ -768,14 +877,16 @@ namespace ClientUI {
         /// <param name="context"></param>
         /// <param name="tmo">多久以後關閉</param>
         /// <param name="icon">Icon類型</param>
-        public void ShowBalloonTip(string title, string context, int tmo = 15, ToolTipIcon icon = ToolTipIcon.Info) {
+        public void ShowBalloonTip(string title, string context, int tmo = 15, ToolTipIcon icon = ToolTipIcon.Info)
+        {
             mNotifyIcon.ShowBalloonTip(tmo, title, context, icon);
         }
 
         /// <summary>
         /// 顯示右鍵選單
         /// </summary>
-        public void ShowMenuItem() {
+        public void ShowMenuItem()
+        {
             /*-- 以反射方式執行ShowContextMenu方法顯示右鍵選單 --*/
             Type t = typeof(NotifyIcon);
             MethodInfo mi = t.GetMethod("ShowContextMenu", BindingFlags.NonPublic | BindingFlags.Instance);
@@ -787,9 +898,12 @@ namespace ClientUI {
         #region IDisposable Support
         private bool disposedValue = false; // 偵測多餘的呼叫
 
-        protected virtual void Dispose(bool disposing) {
-            if (!disposedValue) {
-                if (disposing) {
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
                     // TODO: 處置 Managed 狀態 (Managed 物件)。
 
                 }
@@ -819,7 +933,8 @@ namespace ClientUI {
         // }
 
         // 加入這個程式碼的目的在正確實作可處置的模式。
-        public void Dispose() {
+        public void Dispose()
+        {
             // 請勿變更這個程式碼。請將清除程式碼放入上方的 Dispose(bool disposing) 中。
             Dispose(true);
             // TODO: 如果上方的完成項已被覆寫，即取消下行的註解狀態。
@@ -836,7 +951,8 @@ namespace ClientUI {
     /// <remarks>
     /// 用於建立
     /// </remarks>
-    public class MenuItems : IDisposable {
+    public class MenuItems : IDisposable
+    {
 
         #region Declaration - Fields
 
@@ -874,7 +990,8 @@ namespace ClientUI {
         /// <param name="even">選單觸發時的處理方法</param>
         /// <param name="enable">是否可視</param>
         /// <returns>建構出的<see cref="MenuItem"/></returns>
-        public MenuItem AddMenuItem(string caption, Action<object, EventArgs> even = null, bool enable = true) {
+        public MenuItem AddMenuItem(string caption, Action<object, EventArgs> even = null, bool enable = true)
+        {
             MenuItem item = new MenuItem();
             item.Text = caption;
             item.Index = mMenuItems.Count;
@@ -892,7 +1009,8 @@ namespace ClientUI {
         /// 從右鍵選單集合中移除指定物件
         /// </summary>
         /// <param name="item">目標物件</param>
-        public void RemoveMenuItem(MenuItem item) {
+        public void RemoveMenuItem(MenuItem item)
+        {
             if (!mMenuItems.Contains(item)) return;
 
             int index = mMenuItems.IndexOf(item);
@@ -903,8 +1021,10 @@ namespace ClientUI {
         /// <summary>
         /// 清空右鍵選單集合
         /// </summary>
-        public void Clear() {
-            for (int i = 0; i < mMenuItems.Count; i++) {
+        public void Clear()
+        {
+            for (int i = 0; i < mMenuItems.Count; i++)
+            {
                 if (mClickEvents[i] != null) mMenuItems[i].Click -= mClickEvents[i];
                 mMenuItems[i].Dispose();
                 mMenuItems[i] = null;
@@ -921,9 +1041,12 @@ namespace ClientUI {
         #region IDisposable Support
         private bool disposedValue = false; // 偵測多餘的呼叫
 
-        protected virtual void Dispose(bool disposing) {
-            if (!disposedValue) {
-                if (disposing) {
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
                     // TODO: 處置 Managed 狀態 (Managed 物件)。
                     Clear();
                 }
@@ -942,7 +1065,8 @@ namespace ClientUI {
         // }
 
         // 加入這個程式碼的目的在正確實作可處置的模式。
-        public void Dispose() {
+        public void Dispose()
+        {
             // 請勿變更這個程式碼。請將清除程式碼放入上方的 Dispose(bool disposing) 中。
             Dispose(true);
             // TODO: 如果上方的完成項已被覆寫，即取消下行的註解狀態。
@@ -955,7 +1079,8 @@ namespace ClientUI {
     /// <summary>
     /// 提供框線顏色設定功能之GroupBox
     /// </summary>
-    public class CtGroupBox : GroupBox {
+    public class CtGroupBox : GroupBox
+    {
         private Color _BorderColor = Color.Red;
         [Description("設定或取得外框顏色")]
         public Color BorderColor {
@@ -963,7 +1088,8 @@ namespace ClientUI {
             set { _BorderColor = value; }
         }
 
-        protected override void OnPaint(PaintEventArgs e) {
+        protected override void OnPaint(PaintEventArgs e)
+        {
             //取得text字型大小
             Size FontSize = TextRenderer.MeasureText(this.Text,
                                                      this.Font);

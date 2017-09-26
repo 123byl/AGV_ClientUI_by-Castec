@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapProcessing", "MapInfo\Ma
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerOperation", "ServerOperation\ServerOperation.csproj", "{0B608AD1-FCE4-4D20-BD57-ADE3E8F48661}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AGVMapUI", "AGVMapUI\AGVMapUI.csproj", "{9051904F-D391-4C48-B1E4-1112CB0AF23F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -91,6 +93,14 @@ Global
 		{0B608AD1-FCE4-4D20-BD57-ADE3E8F48661}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0B608AD1-FCE4-4D20-BD57-ADE3E8F48661}.Release|x86.ActiveCfg = Release|Any CPU
 		{0B608AD1-FCE4-4D20-BD57-ADE3E8F48661}.Release|x86.Build.0 = Release|Any CPU
+		{9051904F-D391-4C48-B1E4-1112CB0AF23F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9051904F-D391-4C48-B1E4-1112CB0AF23F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9051904F-D391-4C48-B1E4-1112CB0AF23F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9051904F-D391-4C48-B1E4-1112CB0AF23F}.Debug|x86.Build.0 = Debug|Any CPU
+		{9051904F-D391-4C48-B1E4-1112CB0AF23F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9051904F-D391-4C48-B1E4-1112CB0AF23F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9051904F-D391-4C48-B1E4-1112CB0AF23F}.Release|x86.ActiveCfg = Release|Any CPU
+		{9051904F-D391-4C48-B1E4-1112CB0AF23F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

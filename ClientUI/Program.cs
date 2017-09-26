@@ -23,7 +23,7 @@ namespace ClientUI {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new AgvClientUI(new AgvClient()));
+            Application.Run(new AgvClientUI());
         }
 
         /// <summary>非 UI 執行緒錯誤的處理方法</summary>

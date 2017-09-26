@@ -30,9 +30,6 @@ namespace ClientUI {
                 mMenuItems?.Dispose();
                 mMenuItems = null;
 
-                rAgvClient.Dispose();
-                rAgvClient = null;
-
                 components.Dispose();
             }
             base.Dispose(disposing);
@@ -347,28 +344,24 @@ namespace ClientUI {
             this.miBypassSocket.Name = "miBypassSocket";
             this.miBypassSocket.Size = new System.Drawing.Size(143, 26);
             this.miBypassSocket.Text = "Socket";
-            this.miBypassSocket.Click += new System.EventHandler(this.miBypassSocket_Click);
             // 
             // miLoadFile
             // 
             this.miLoadFile.Name = "miLoadFile";
             this.miLoadFile.Size = new System.Drawing.Size(143, 26);
             this.miLoadFile.Text = "LoadFile";
-            this.miLoadFile.Click += new System.EventHandler(this.miLoadFile_Click);
             // 
             // miServer
             // 
             this.miServer.Name = "miServer";
             this.miServer.Size = new System.Drawing.Size(143, 26);
             this.miServer.Text = "Server";
-            this.miServer.Click += new System.EventHandler(this.miServer_Click);
             // 
             // testToolStripMenuItem
             // 
             this.testToolStripMenuItem.Name = "testToolStripMenuItem";
             this.testToolStripMenuItem.Size = new System.Drawing.Size(181, 26);
             this.testToolStripMenuItem.Text = "Test";
-            this.testToolStripMenuItem.Click += new System.EventHandler(this.testToolStripMenuItem_Click);
             // 
             // AgvClientUI
             // 

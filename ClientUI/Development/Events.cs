@@ -25,6 +25,11 @@ namespace ClientUI
         void AddMsg(string msg);
 
         /// <summary>
+        /// 換行並加入字串
+        /// </summary>
+        void AddMsg(string format, params object[] arg);
+
+        /// <summary>
         /// 清除顯示
         /// </summary>
         void ClearMsg();
@@ -39,6 +44,11 @@ namespace ClientUI
         /// 加入 Goal 點
         /// </summary>
         event DelAddNewGoal AddNewGoalEvent;
+
+        /// <summary>
+        /// 清除所有目標點
+        /// </summary>
+        event DelClearGoals ClearGoalsEvent;
 
         /// <summary>
         /// 刪除
@@ -80,11 +90,16 @@ namespace ClientUI
         /// </summary>
         event DelSendMapToAGV SendMapToAGVEvent;
 
-        /// <summary>
-        /// 更新 Goal 點
-        /// </summary>
-        event DelUpdateGoal UpdateGoalEvent;
 
+        /// <summary>
+        /// 當下車子的位置
+        /// </summary>
+        CarPos CurrentCar { get; set; }
+
+        /// <summary>
+        /// 目標點個數
+        /// </summary>
+        int GoalCount { get; }
 
         /// <summary>
         /// 加入 Goal 點
@@ -112,9 +127,9 @@ namespace ClientUI
         void DeleteGoals(IEnumerable<int> ID);
 
         /// <summary>
-        /// 獲得所有 Goal 點資訊
+        /// 用 ID 尋找 Goal 點所在的引索位置
         /// </summary>
-        List<Info> GetGoals();
+        int FindIndexByID(int ID);
 
         /// <summary>
         /// 根據 ID 查詢 Goal 點
@@ -127,9 +142,14 @@ namespace ClientUI
         Info GetGoalByIndex(int row);
 
         /// <summary>
-        /// 更新 Goal 點
+        /// 獲得所有 Goal 點資訊
         /// </summary>
-        void UpdateGoal(Info newGoal);
+        List<Info> GetGoals();
+
+        /// <summary>
+        /// 獲得所有被選取的 Goal 點資訊
+        /// </summary>
+        List<Info> GetSelectedGoals();
     }
 
     /// <summary>
@@ -170,6 +190,14 @@ namespace ClientUI
         /// Y 座標
         /// </summary>
         public int Y { get; set; }
+
+        /// <summary>
+        /// 顯示完整字串
+        /// </summary>
+        public override string ToString()
+        {
+            return string.Format("{0}:{1}({2},{3},{4:F2})", ID, Name, X, Y, Toward);
+        }
     }
 
     /// <summary>
@@ -202,6 +230,11 @@ namespace ClientUI
             /// 加入 Goal 點
             /// </summary>
             public delegate void DelAddNewGoal(Info goal);
+
+            /// <summary>
+            /// 清除所有目標點
+            /// </summary>
+            public delegate void DelClearGoals();
 
             /// <summary>
             /// 刪除
@@ -250,4 +283,3 @@ namespace ClientUI
         }
     }
 }
-

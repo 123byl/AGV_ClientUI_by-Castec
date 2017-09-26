@@ -56,9 +56,17 @@ namespace ClientUI
         {
             lock (mKey)
             {
-                txtMsg.InvokeIfNecessary(()=>txtMsg.Text += "\r\n" + msg);
+                txtMsg.InvokeIfNecessary(()=>txtMsg.Text += msg + "\r\n");
             }
             ConsoleAddedEvent?.Invoke(msg);
+        }
+
+        /// <summary>
+        /// 換行並加入字串
+        /// </summary>
+        public void AddMsg(string format, params object[] arg)
+        {
+            AddMsg(string.Format(format, arg));
         }
 
         /// <summary>
