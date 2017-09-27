@@ -324,14 +324,14 @@ namespace ClientUI {
             // miAbout
             // 
             this.miAbout.Name = "miAbout";
-            this.miAbout.Size = new System.Drawing.Size(126, 26);
+            this.miAbout.Size = new System.Drawing.Size(181, 26);
             this.miAbout.Text = "About";
             this.miAbout.Click += new System.EventHandler(this.miAbout_Click);
             // 
             // testToolStripMenuItem
             // 
             this.testToolStripMenuItem.Name = "testToolStripMenuItem";
-            this.testToolStripMenuItem.Size = new System.Drawing.Size(126, 26);
+            this.testToolStripMenuItem.Size = new System.Drawing.Size(181, 26);
             this.testToolStripMenuItem.Text = "Test";
             // 
             // miBypass

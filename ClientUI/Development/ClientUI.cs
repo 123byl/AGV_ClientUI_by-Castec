@@ -405,13 +405,14 @@ namespace ClientUI
             LoadCtNotifyIcon();
 
             /*-- 依照使用者權限進行配置 --*/
-
+            UserChanged(UserData);
 
             /*-- 檢查Bypass狀態 --*/
-
+            CtInvoke.ToolStripItemChecked(miBypassSocket, IsBypassSocket);
+            CtInvoke.ToolStripItemChecked(miLoadFile, IsBypassLoadFile);
 
             /*-- 檢查遠端設備IP --*/
-            //tslbHostIP.Text = rAgvClient.HostIP;
+            tslbHostIP.Text = HostIP;
 
         }
 
@@ -1306,6 +1307,16 @@ namespace ClientUI
             IMapCtrl.AddCtrlMark(Factory.CreatMark.Goal(goal.ID, goal.Name, goal.X, goal.Y));
         }
         #endregion
+
+        private void miBypassSocket_Click(object sender, EventArgs e) {
+            IsBypassSocket = !IsBypassSocket;
+            CtInvoke.ToolStripItemChecked(miBypassSocket, IsBypassSocket);
+        }
+
+        private void miLoadFile_Click(object sender, EventArgs e) {
+            IsBypassLoadFile = !IsBypassSocket;
+            CtInvoke.ToolStripItemChecked(miLoadFile, IsBypassSocket);
+        }
     }
 
     #region Suppor - Class
