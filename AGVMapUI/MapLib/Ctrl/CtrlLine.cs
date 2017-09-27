@@ -22,10 +22,17 @@ namespace AGVMap
         {
             Property.Line = new Line(p0, p1);
         }
+
         /// <summary>
-        /// 顯示/隱藏
+        /// 中心座標
         /// </summary>
-        public bool Visible { get; set; }
+        public IPair Center { get { return (new Pair(Property.Line.Begin) + new Pair(Property.Line.End)) / 2; } }
+
+        /// <summary>
+        /// 識別碼
+        /// </summary>
+        public int ID { get; internal set; }
+
         /// <summary>
         /// 物件名稱
         /// </summary>
@@ -37,11 +44,17 @@ namespace AGVMap
         public CtrlLineProperty Property { get; } = new CtrlLineProperty();
 
         /// <summary>
+        /// 顯示/隱藏
+        /// </summary>
+        public bool Visible { get; set; }
+
+        /// <summary>
         /// 繪圖
         /// </summary>
         public void Draw(OpenGL gl)
         {
             if (!Visible) return;
+            gl.PushText(Center, Name);
             gl.PushMatrix();
             {
                 gl.Color(Property.Color.ToArray);

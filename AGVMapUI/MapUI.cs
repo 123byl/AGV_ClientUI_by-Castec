@@ -10,20 +10,6 @@ namespace AGVMap
     public partial class MapUI : OpenGLControl
     {
         /// <summary>
-        /// 預設建構子
-        /// </summary>
-        public MapUI()
-        {
-            InitializeComponent();
-            MouseWheel += new MouseEventHandler(MapDisplayer_MouseWheel);
-        }
-
-        /// <summary>
-        /// 地圖控制器，所有使用者皆透過此介面對地圖操作
-        /// </summary>
-        public IMapCtrl Ctrl { get { return mCtrl; } }
-
-        /// <summary>
         /// X 軸顏色
         /// </summary>
         private readonly IColor AxisXColor = new Color(System.Drawing.Color.Red);
@@ -72,6 +58,20 @@ namespace AGVMap
         /// 提示工具
         /// </summary>
         private ToolTip mToolTip = new ToolTip();
+
+        /// <summary>
+        /// 預設建構子
+        /// </summary>
+        public MapUI()
+        {
+            InitializeComponent();
+            MouseWheel += new MouseEventHandler(MapDisplayer_MouseWheel);
+        }
+
+        /// <summary>
+        /// 地圖控制器，所有使用者皆透過此介面對地圖操作
+        /// </summary>
+        public IMapCtrl Ctrl { get { return mCtrl; } }
 
         /// <summary>
         /// 繪製選擇區域
@@ -159,6 +159,15 @@ namespace AGVMap
         }
 
         /// <summary>
+        /// 顯示文字
+        /// </summary>
+        private void DrawText()
+        {
+            OpenGL gl = OpenGL;
+            gl.DrawTextList(GL2Text2D);
+        }
+
+        /// <summary>
         /// 繪製 X、Y 軸
         /// </summary>
         private void DrawXY()
@@ -204,6 +213,26 @@ namespace AGVMap
             gl.PopMatrix();
         }
 
+
+
+        /// <summary>
+        /// GL 座標轉 2D 文字座標
+        /// </summary>
+        private IPair GL2Text2D(IPair gl)
+        {
+            return GL2Text2D(gl.X, gl.Y);
+        }
+
+        /// <summary>
+        /// GL 座標轉 2D 文字座標
+        /// </summary>
+        private IPair GL2Text2D(int glX, int glY)
+        {
+            double mX = (glX + mCtrl.Translate.X) / mCtrl.Zoom;
+            double mY = (glY + mCtrl.Translate.Y) / mCtrl.Zoom;
+            return new Pair((int)(mX + Width / 2), (int)(Height / 2 + mY));
+        }
+
         /// <summary>
         /// 初始化畫布
         /// </summary>
@@ -212,11 +241,13 @@ namespace AGVMap
             OpenGL gl = OpenGL;
             gl.ClearColor(BackgroundColor.R / 255.0f, BackgroundColor.G / 255.0f, BackgroundColor.B / 255.0f, BackgroundColor.A / 255.0f);
             gl.Clear(OpenGL.GL_COLOR_BUFFER_BIT | OpenGL.GL_DEPTH_BUFFER_BIT);
+            gl.ClearText();
             // 投影矩陣
             gl.MatrixMode(OpenGL.GL_PROJECTION);
             // MatrixMode 後要執行 LoadIdentity
             gl.LoadIdentity();
             // 畫布的大小（正交）
+
             gl.Ortho(-mCtrl.Zoom * Width / 2, mCtrl.Zoom * Width / 2, -mCtrl.Zoom * Height / 2, mCtrl.Zoom * Height / 2, -10, 1000);
             // 繪圖矩陣
             gl.MatrixMode(OpenGL.GL_MODELVIEW);
@@ -273,6 +304,7 @@ namespace AGVMap
             DrawXY();
             DrawChooseArea();
             DrawMap();
+            DrawText();
         }
 
         /// <summary>
@@ -282,6 +314,7 @@ namespace AGVMap
         {
             mMouseDownPos = new Pair(Mouse2GL(e.X, e.Y));
             mIsMousePress = true;
+            mCtrl.MouseDown(mMouseDownPos);
             mCtrl.DragMouseDown(mMouseDownPos);
         }
 
@@ -309,8 +342,10 @@ namespace AGVMap
             //拖曳
             if (mCtrl.MouseType == EMouseType.EditMode && mIsMousePress)
             {
-                mCtrl.DragMouseMoving(Mouse2GL(e.X, e.Y));
+                mMouseDownPos = new Pair(Mouse2GL(e.X, e.Y));
+                mCtrl.DragMouseMoving(mMouseDownPos);
             }
+            if (mIsMousePress) mCtrl.MouseDownMove(Mouse2GL(e.X, e.Y));
         }
 
         private void MapUI_MouseUp(object sender, MouseEventArgs e)
@@ -321,6 +356,7 @@ namespace AGVMap
                 mCtrl.DragMouseUp();
             }
             mIsMousePress = false;
+            mCtrl.MouseUp(Mouse2GL(e.X, e.Y));
         }
 
         /// <summary>
@@ -329,7 +365,7 @@ namespace AGVMap
         private IPair Mouse2GL(int mouseX, int mouseY)
         {
             double mX = (mouseX) - Width / 2;
-            double mY = (Height - mouseY) - Height / 2;
+            double mY = Height / 2 - mouseY;
             return new Pair((int)(mX * mCtrl.Zoom - mCtrl.Translate.X), (int)(mY * mCtrl.Zoom - mCtrl.Translate.Y));
         }
 

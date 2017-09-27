@@ -48,6 +48,10 @@
     /// </summary>
     public class CtrlMarkProperty : ICtrlMarkProperty
     {
+        private Pair mCenter = new Pair();
+
+        private Color mColor = new Color();
+
         /// <summary>
         /// 中心座標
         /// </summary>
@@ -82,9 +86,6 @@
         /// 種類
         /// </summary>
         public EMarkType Type { get; set; }
-
-        private Pair mCenter = new Pair();
-        private Color mColor = new Color();
     }
 
     #endregion - 可控的標示點屬性 -
@@ -122,6 +123,10 @@
     /// </summary>
     public class CtrlAreaProperty : ICtrlAreaProperty
     {
+        private Area mArea = new Area();
+
+        private Color mColor = new Color();
+
         /// <summary>
         /// 面
         /// </summary>
@@ -141,9 +146,6 @@
         /// 種類
         /// </summary>
         public EAreaType Type { get; set; }
-
-        private Area mArea = new Area();
-        private Color mColor = new Color();
     }
 
     #endregion - 可控的標示面屬性 -
@@ -177,7 +179,7 @@
         /// <summary>
         /// 種類
         /// </summary>
-        ESuperLineType Type { get; set; }
+        ELineType Type { get; set; }
     }
 
     /// <summary>
@@ -185,6 +187,10 @@
     /// </summary>
     public class CtrlLineProperty : ICtrlLineProperty
     {
+        private Color mColor = new Color();
+
+        private Line mLine = new Line();
+
         /// <summary>
         /// 顏色
         /// </summary>
@@ -208,11 +214,7 @@
         /// <summary>
         /// 種類
         /// </summary>
-        public ESuperLineType Type { get; set; }
-
-        private Color mColor = new Color();
-
-        private Line mLine = new Line();
+        public ELineType Type { get; set; }
     }
 
     #endregion - 可控的標示線屬性 -
@@ -252,6 +254,10 @@
 
     public class DDragMProperty : IDDragMProperty
     {
+        private Color mColor = new Color();
+
+        private Color mSColor = new Color();
+
         /// <summary>
         /// 顏色
         /// </summary>
@@ -276,9 +282,6 @@
         /// 被選擇時顏色
         /// </summary>
         public IColor SelectedColor { get { return mSColor; } set { mSColor = new Color(value); } }
-
-        private Color mColor = new Color();
-        private Color mSColor = new Color();
     }
 
     #endregion - 可繪滑鼠拖曳控制管理器屬性 -

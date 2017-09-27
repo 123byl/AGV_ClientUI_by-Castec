@@ -20,14 +20,17 @@
         /// <summary>底層</summary>
         Buttom = -100,
 
+        /// <summary>顯示文字</summary>
+        Text = -1,
+
         /// <summary>控制點</summary>
-        CtrlPoint = -1,
+        CtrlPoint = -2,
 
         /// <summary>選取</summary>
-        Selected = -2,
+        Selected = -3,
 
         /// <summary>AGV 車</summary>
-        AGV = -3,
+        AGV = -4,
 
         /// <summary>標示物預設</summary>
         MarkDefault = -10,
@@ -67,6 +70,15 @@
     }
 
     /// <summary>
+    /// 標示線類型
+    /// </summary>
+    public enum ELineType : int
+    {
+        /// <summary>禁止線</summary>
+        ForbiddenLine = ELayer.ForbiddenLine
+    }
+
+    /// <summary>
     /// 標示點類型
     /// </summary>
     public enum EMarkType : int
@@ -92,14 +104,5 @@
 
         /// <summary>編輯模式</summary>
         EditMode = 2,
-    }
-
-    /// <summary>
-    /// 標示線類型
-    /// </summary>
-    public enum ESuperLineType : int
-    {
-        /// <summary>禁止線</summary>
-        ForbiddenLine = ELayer.ForbiddenLine
     }
 }

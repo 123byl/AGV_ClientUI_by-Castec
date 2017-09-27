@@ -15,15 +15,15 @@ namespace AGVMap
             /// <summary>
             /// 建立可控的 AGV 車
             /// </summary>
-            public static CtrlAGV AGV(string name, int x, int y)
+            public static CtrlAGV AGV(int id, string name, int x, int y)
             {
-                return AGV(name, x, y, 0);
+                return AGV(id, name, x, y, 0);
             }
 
             /// <summary>
             /// 建立可控的 AGV 車
             /// </summary>
-            public static CtrlAGV AGV(string name, int x, int y, Angle toward)
+            public static CtrlAGV AGV(int id, string name, int x, int y, Angle toward)
             {
                 CtrlAGV res = new CtrlAGV(x, y, toward);
                 res.Property.Color = new Color(System.Drawing.Color.SkyBlue);
@@ -32,6 +32,7 @@ namespace AGVMap
                 res.Property.TowardLength = 460;
                 res.Property.Type = EMarkType.AGV;
                 res.Name = name;
+                res.Visible = true;
                 return res;
             }
         }
@@ -44,13 +45,15 @@ namespace AGVMap
             /// <summary>
             /// 建立可控的禁止區
             /// </summary>
-            public static CtrlArea ForbiddenArea(string name, int x0, int y0, int x1, int y1)
+            public static CtrlArea ForbiddenArea(int id, string name, int x0, int y0, int x1, int y1)
             {
                 CtrlArea res = new CtrlArea(x0, y0, x1, y1);
                 res.Property.Color = new Color(System.Drawing.Color.Goldenrod, 150);
                 res.Property.Layer = ELayer.ForbiddenArea;
                 res.Property.Type = EAreaType.ForbiddenArea;
                 res.Name = name;
+                res.Visible = true;
+                res.ID = id;
                 return res;
             }
         }
@@ -63,66 +66,16 @@ namespace AGVMap
             /// <summary>
             /// 建立可控的禁止線
             /// </summary>
-            public static CtrlLine ForbiddenLine(string name, int x0, int y0, int x1, int y1)
+            public static CtrlLine ForbiddenLine(int id, string name, int x0, int y0, int x1, int y1)
             {
                 CtrlLine res = new CtrlLine(x0, y0, x1, y1);
                 res.Property.Color = new Color(System.Drawing.Color.Goldenrod, 150);
                 res.Property.Layer = ELayer.ForbiddenLine;
                 res.Property.LineWidth = 3.0f;
-                res.Property.Type = ESuperLineType.ForbiddenLine;
+                res.Property.Type = ELineType.ForbiddenLine;
                 res.Name = name;
-                return res;
-            }
-        }
-
-        /// <summary>
-        /// 建立可控的標示點
-        /// </summary>
-        public static class CreatMark
-        {
-            /// <summary>
-            /// 建立可控的 Goal 點
-            /// </summary>
-            public static CtrlMark Goal(string name, int x, int y)
-            {
-                return Goal(name, x, y, 0);
-            }
-
-            /// <summary>
-            /// 建立可控的 Goal 點
-            /// </summary>
-            public static CtrlMark Goal(string name, int x, int y, Angle toward)
-            {
-                CtrlMark res = new CtrlMark(x, y, toward);
-                res.Property.Color = new Color(System.Drawing.Color.Green);
-                res.Property.Layer = ELayer.Goal;
-                res.Property.Size = 300;
-                res.Property.TowardLength = 150;
-                res.Property.Type = EMarkType.Goal;
-                res.Name = name;
-                return res;
-            }
-
-            /// <summary>
-            /// 建立可控的充電站
-            /// </summary>
-            public static CtrlMark Power(string name, int x, int y)
-            {
-                return Power(name, x, y, 0);
-            }
-
-            /// <summary>
-            /// 建立可控的充電站
-            /// </summary>
-            public static CtrlMark Power(string name, int x, int y, Angle toward)
-            {
-                CtrlMark res = new CtrlMark(x, y, toward);
-                res.Property.Color = new Color(System.Drawing.Color.Yellow);
-                res.Property.Layer = ELayer.Power;
-                res.Property.Size = 300;
-                res.Property.TowardLength = 1200;
-                res.Property.Type = EMarkType.Power;
-                res.Name = name;
+                res.Visible = true;
+                res.ID = id;
                 return res;
             }
         }
@@ -132,7 +85,18 @@ namespace AGVMap
         /// </summary>
         public static class CreatID
         {
+            /// <summary>
+            /// 執行緒鎖
+            /// </summary>
+            private static readonly object Key = new object();
+
             private static int mID = 0;
+
+            private static int mObstacleAreaID = 0;
+
+            private static int mObstacleLineID = 0;
+
+            private static int mObstaclePointID = 0;
 
             /// <summary>
             /// 產生唯一的引索值
@@ -148,49 +112,149 @@ namespace AGVMap
             }
 
             /// <summary>
-            /// 執行緒鎖
+            /// 障礙面識別碼
             /// </summary>
-            private static object Key { get; } = new object();
+            public static int ObstacleAreaID {
+                get {
+                    if (mObstacleAreaID == 0) mObstacleAreaID = Factory.CreatID.NewID;
+                    return mObstacleAreaID;
+                }
+            }
+
+            /// <summary>
+            /// 障礙線識別碼
+            /// </summary>
+            public static int ObstacleLineID {
+                get {
+                    if (mObstacleLineID == 0) mObstacleLineID = Factory.CreatID.NewID;
+                    return mObstacleLineID;
+                }
+            }
+
+            /// <summary>
+            /// 障礙點識別碼
+            /// </summary>
+            public static int ObstaclePointID {
+                get {
+                    if (mObstaclePointID == 0) mObstaclePointID = Factory.CreatID.NewID;
+                    return mObstaclePointID;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 建立可控的標示點
+        /// </summary>
+        public static class CreatMark
+        {
+            /// <summary>
+            /// 建立可控的 Goal 點
+            /// </summary>
+            public static CtrlMark Goal(int id, string name, int x, int y)
+            {
+                return Goal(id, name, x, y, 0);
+            }
+
+            /// <summary>
+            /// 建立可控的 Goal 點
+            /// </summary>
+            public static CtrlMark Goal(int id, string name, int x, int y, Angle toward)
+            {
+                CtrlMark res = new CtrlMark(x, y, toward);
+                res.Property.Color = new Color(System.Drawing.Color.Green);
+                res.Property.Layer = ELayer.Goal;
+                res.Property.Size = 300;
+                res.Property.TowardLength = 150;
+                res.Property.Type = EMarkType.Goal;
+                res.Name = name;
+                res.Visible = true;
+                res.ID = id;
+                return res;
+            }
+
+            /// <summary>
+            /// 建立可控的充電站
+            /// </summary>
+            public static CtrlMark Power(int id, string name, int x, int y)
+            {
+                return Power(id, name, x, y, 0);
+            }
+
+            /// <summary>
+            /// 建立可控的充電站
+            /// </summary>
+            public static CtrlMark Power(int id, string name, int x, int y, Angle toward)
+            {
+                CtrlMark res = new CtrlMark(x, y, toward);
+                res.Property.Color = new Color(System.Drawing.Color.Yellow);
+                res.Property.Layer = ELayer.Power;
+                res.Property.Size = 300;
+                res.Property.TowardLength = 1200;
+                res.Property.Type = EMarkType.Power;
+                res.Name = name;
+                res.Visible = true;
+                res.ID = id;
+                return res;
+            }
         }
 
         /// <summary>
         /// 建立可繪集合
         /// </summary>
-        public static class CreatObstacle
+        public static class CreatSet
         {
             /// <summary>
-            /// 建立可繪障礙面
+            /// 建立可繪面集合
             /// </summary>
-            public static DASet ObstacleArea(IEnumerable<IArea> data)
+            public static DASet ObstacleAreas(IEnumerable<IArea> data)
             {
                 DASet res = new DASet();
                 res.AddRange(data);
                 res.Color = new Color(System.Drawing.Color.Black);
                 res.Layer = ELayer.AreaSet;
+                res.ID = Factory.CreatID.ObstacleAreaID ;
                 return res;
             }
 
             /// <summary>
-            /// 建立可繪障礙線
+            /// 建立可繪線集合
             /// </summary>
-            public static DLSet ObstacleLine(IEnumerable<ILine> data)
+            public static DLSet ObstacleLines(IEnumerable<ILine> data)
             {
                 DLSet res = new DLSet();
+                res.LineWidth = 1;
                 res.AddRange(data);
                 res.Color = new Color(System.Drawing.Color.Black);
                 res.Layer = ELayer.LineSet;
+                res.ID = Factory.CreatID.ObstacleLineID;
                 return res;
             }
 
             /// <summary>
-            /// 建立可繪障礙點
+            /// 建立可繪點集合
             /// </summary>
-            public static DPSet ObstaclePoint(IEnumerable<IPoint> data)
+            public static DPSet ObstaclePoints(IEnumerable<IPoint> data)
             {
                 DPSet res = new DPSet();
+                res.PointSize = 1;
                 res.AddRange(data);
                 res.Color = new Color(System.Drawing.Color.Black);
                 res.Layer = ELayer.PointSet;
+                res.ID = Factory.CreatID.ObstaclePointID;
+                return res;
+            }
+
+            /// <summary>
+            /// 建立可繪點集合
+            /// </summary>
+            public static DPSet LaserPoints(int id,IEnumerable<IPoint> data)
+            {
+                DPSet res = new DPSet();
+                res.PointSize = 3;
+                res.AddRange(data);
+                res.Color = new Color(System.Drawing.Color.Red);
+                res.Layer = ELayer.PointSet;
+                res.ID = id;
                 return res;
             }
         }

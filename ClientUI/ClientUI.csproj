@@ -34,6 +34,15 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="SharpGL">
+      <HintPath>..\AGVMapUI\bin\Debug\SharpGL.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpGL.SceneGraph">
+      <HintPath>..\AGVMapUI\bin\Debug\SharpGL.SceneGraph.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpGL.WinForms">
+      <HintPath>..\AGVMapUI\bin\Debug\SharpGL.WinForms.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization.Formatters.Soap" />
@@ -52,6 +61,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Development\AgvClient.cs" />
+    <Compile Include="Development\AGVMapUI.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Development\AGVMapUI.Designer.cs">
+      <DependentUpon>AGVMapUI.cs</DependentUpon>
+    </Compile>
     <Compile Include="Development\ClientUI.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -73,12 +88,6 @@
     <Compile Include="Development\CtGoalSetting.Designer.cs">
       <DependentUpon>CtGoalSetting.cs</DependentUpon>
     </Compile>
-    <Compile Include="Development\CtMapGL.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Development\CtMapGL.Designer.cs">
-      <DependentUpon>CtMapGL.cs</DependentUpon>
-    </Compile>
     <Compile Include="Development\CtTesting.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -94,6 +103,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Development\AGVMapUI.resx">
+      <DependentUpon>AGVMapUI.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Development\ClientUI.resx">
       <DependentUpon>ClientUI.cs</DependentUpon>
     </EmbeddedResource>
@@ -102,9 +114,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Development\CtGoalSetting.resx">
       <DependentUpon>CtGoalSetting.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Development\CtMapGL.resx">
-      <DependentUpon>CtMapGL.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Development\CtTesting.resx">
       <DependentUpon>CtTesting.cs</DependentUpon>

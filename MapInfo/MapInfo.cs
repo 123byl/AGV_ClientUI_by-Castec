@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading;
 using AGVMathOperation;
 using KDTree;
+using AGVMap;
 
 namespace MapProcessing
 {
@@ -40,21 +41,21 @@ namespace MapProcessing
         /// <param name="str">Recording Information</param>
         /// <param name="filePath">File path</param>
         /// <returns>State</returns>
-        public static bool WriteCurrentScanningInfo(StringBuilder str,string filePath)
+        public static bool WriteCurrentScanningInfo(StringBuilder str, string filePath)
         {
             if (!File.Exists(filePath)) return false;
             using (StreamWriter sw = new StreamWriter(filePath, true))
             {
                 sw.WriteLine(str);
             }
-            
+
             return true;
         }
 
         /// <summary>
         /// Write the minimum and maximum position into file
         /// </summary>
-        public static bool WriteMinMaxInfo(int min_x,int min_y,int max_x,int max_y,string filePath)
+        public static bool WriteMinMaxInfo(int min_x, int min_y, int max_x, int max_y, string filePath)
         {
             if (!File.Exists(filePath)) return false;
             List<string> info = File.ReadAllLines(filePath).ToList();
@@ -65,7 +66,7 @@ namespace MapProcessing
             File.AppendAllLines(filePath, info);
             return true;
         }
-        
+
         /// <summary>
         /// Write the goal into file
         /// </summary>
@@ -80,24 +81,28 @@ namespace MapProcessing
                 info.Insert(startIndex, "GoalList");
             using (File.Create(filePath)) { }
             File.WriteAllLines(filePath, info);
-        
+
             return true;
         }
 
         /// <summary>
         /// Write the goal into file
         /// </summary>
-        public static bool OverWriteGoal(List<CartesianPos> goalList, string filePath) {
+        public static bool OverWriteGoal(List<CartesianPos> goalList, string filePath)
+        {
             if (!File.Exists(filePath)) return false;
             List<string> info = File.ReadAllLines(filePath).ToList();
             int startIndex = info.IndexOf("GoalList");
             int endIndex = info.IndexOf("Obstacle Lines");
-            if (startIndex != -1) {
+            if (startIndex != -1)
+            {
                 info.RemoveRange(startIndex, endIndex - startIndex);
                 endIndex = info.IndexOf("Obstacle Lines");
             }
-            if (goalList.Count > 0) {
-                for (int i = goalList.Count - 1; i >= 0; i--) {
+            if (goalList.Count > 0)
+            {
+                for (int i = goalList.Count - 1; i >= 0; i--)
+                {
                     info.Insert(endIndex, string.Format("{0},{1},{2}", goalList[i].x, goalList[i].y, goalList[i].theta));
                 }
                 info.Insert(endIndex, "GoalList");
@@ -158,7 +163,7 @@ namespace MapProcessing
             Dispose(true);
             GC.SuppressFinalize(this);
         }
-        
+
         /// <summary>
         /// Override method of base class
         /// </summary>
@@ -183,7 +188,7 @@ namespace MapProcessing
         /// <returns>Information length 0:Error Other:Read success</returns>
         public int OpenFile()
         {
-            if(!FileIsExist()) return 0;
+            if (!FileIsExist()) return 0;
             data = File.ReadAllLines(path).ToList();
             return data.Count;
         }
@@ -195,7 +200,7 @@ namespace MapProcessing
         /// <param name="carPos">Car Position</param>
         /// <param name="laserData">Laser Measurement Data</param>
         /// <returns>T:Read success F:File or data not exists</returns>
-        public bool ReadScanningInfo(int index,out CartesianPos carPos,out List<CartesianPos> laserData)
+        public bool ReadScanningInfo(int index, out CartesianPos carPos, out List<CartesianPos> laserData)
         {
             try
             {
@@ -210,7 +215,8 @@ namespace MapProcessing
                     laserData.Add(new CartesianPos(double.Parse(info[m]), double.Parse(info[m + 1])));
                 }
                 return true;
-            }catch(Exception error)
+            }
+            catch (Exception error)
             {
                 carPos = null;
                 laserData = null;
@@ -225,7 +231,7 @@ namespace MapProcessing
         /// <param name="filePath"></param>
         /// <param name="goalList"></param>
         /// <returns>T:Read success F:File or data not exists</returns>
-        public bool ReadMapBoundary(out CartesianPos minimumPos,out CartesianPos maximumPos)
+        public bool ReadMapBoundary(out CartesianPos minimumPos, out CartesianPos maximumPos)
         {
             minimumPos = new CartesianPos();
             maximumPos = new CartesianPos();
@@ -235,7 +241,7 @@ namespace MapProcessing
             if (split[0] != "Minimum Position")
                 return false;
             else
-                minimumPos.SetPosition(double.Parse(split[1]),double.Parse(split[2]),0);
+                minimumPos.SetPosition(double.Parse(split[1]), double.Parse(split[2]), 0);
 
             split = data[1].Split(splitChar);
             if (split[0] != "Maximum Position")
@@ -257,17 +263,17 @@ namespace MapProcessing
             goalList = new List<CartesianPos>();
 
             if (!FileIsExist()) return false;
-            int startIndex = data.IndexOf("GoalList") ;
+            int startIndex = data.IndexOf("GoalList");
             if (startIndex == -1)
                 return false;
             else
                 startIndex++;
 
             int endIndex = data.IndexOf("Obstacle Lines");
-            for(int i = startIndex;i < endIndex; i++)
+            for (int i = startIndex; i < endIndex; i++)
             {
                 string[] split = data[i].Split(splitChar);
-                goalList.Add(new CartesianPos(int.Parse(split[0]),int.Parse(split[1]),double.Parse(split[2])));
+                goalList.Add(new CartesianPos(int.Parse(split[0]), int.Parse(split[1]), double.Parse(split[2])));
             }
             return true;
         }
@@ -290,7 +296,7 @@ namespace MapProcessing
                 string[] split = data[i].Split(splitChar);
                 CartesianPos start = new CartesianPos(int.Parse(split[0]), int.Parse(split[1]));
                 CartesianPos end = new CartesianPos(int.Parse(split[2]), int.Parse(split[3]));
-                obstacleLine.Add(new MapLine(start,end));
+                obstacleLine.Add(new MapLine(start, end));
             }
             return true;
         }
@@ -363,7 +369,7 @@ namespace MapProcessing
         {
             mapLines.Clear();
 
-            if(map!=null)
+            if (map != null)
                 map.Clear();
         }
 
@@ -372,8 +378,8 @@ namespace MapProcessing
         /// </summary>
         /// <param name="noiseThreshold">Line segment minimum allowable length</param>
         /// <returns>Line segments of map information</returns>
-        public void ReadMapAllTransferToLine(List<CartesianPos> mapPoint,CartesianPos minimumPos,CartesianPos maximumPos
-            ,int segmentThreshold, int noiseThreshold,out List<Line> lines,out List<CartesianPos> points)
+        public void ReadMapAllTransferToLine(List<CartesianPos> mapPoint, CartesianPos minimumPos, CartesianPos maximumPos
+            , int segmentThreshold, int noiseThreshold, out List<Line> lines, out List<CartesianPos> points)
         {
 
             this.minimumPos = minimumPos;
@@ -391,7 +397,7 @@ namespace MapProcessing
             {
                 map.Add(new List<LineSegment>());
             }
-            
+
             //Assign obstacle point
             for (int i = 0; i < mapPoint.Count; i++)
             {
@@ -403,7 +409,7 @@ namespace MapProcessing
 
 
             //Remove line segment
-            if (noiseThreshold!= 0)
+            if (noiseThreshold != 0)
                 RemoveLineSegment(noiseThreshold);
 
             //Update file
@@ -423,7 +429,8 @@ namespace MapProcessing
                                 map[i][j].start + map[i][j].length + minX, i + minY));
                             sw.WriteLine(string.Format("{0},{1},{2},{3}", map[i][j].start + minX, i + minY,
                                 map[i][j].start + map[i][j].length + minX, i + minY));
-                        }else
+                        }
+                        else
                         {
                             points.Add(new CartesianPos(map[i][j].start + minX, i + minY));
                         }
@@ -450,11 +457,11 @@ namespace MapProcessing
         /// <param name="line">Line segment of current update</param>
         public void AddObstacle(int row, LineSegment line)
         {
-                if (map[row].Count == 0)
-                    map[row].Add(line);
-                else
-                    map[row].Insert(InsertIndex(map[row], line), line); //Insert data into specific index
-                line = null;
+            if (map[row].Count == 0)
+                map[row].Add(line);
+            else
+                map[row].Insert(InsertIndex(map[row], line), line); //Insert data into specific index
+            line = null;
         }
 
         /// <summary>
@@ -650,7 +657,7 @@ namespace MapProcessing
 
         public Dictionary<int, List<int>> mapPoint = new Dictionary<int, List<int>>();
         public List<CartesianPos> parseMap = new List<CartesianPos>();
-        public CartesianPos minimumPos = new CartesianPos(double.MaxValue,double.MaxValue,0);
+        public CartesianPos minimumPos = new CartesianPos(double.MaxValue, double.MaxValue, 0);
         public CartesianPos maximumPos = new CartesianPos(double.MinValue, double.MinValue, 0);
         private KDTree<CartesianPos> kdTree = new KDTree<CartesianPos>(2);
         private KDTree<CartesianPos> pairKDTree = new KDTree<CartesianPos>(2);
@@ -690,7 +697,7 @@ namespace MapProcessing
         /// <returns>State</returns>
         public void AddPoint(CartesianPos point)
         {
-            kdTree.AddPoint(new double[2] { point.x,point.y},point);
+            kdTree.AddPoint(new double[2] { point.x, point.y }, point);
         }
 
         /// <summary>
@@ -698,7 +705,7 @@ namespace MapProcessing
         /// </summary>
         /// <param name="point"></param>
         /// <returns></returns>
-        public bool PointIsExists(CartesianPos point,int searchRange)
+        public bool PointIsExists(CartesianPos point, int searchRange)
         {
             var pIter = kdTree.NearestNeighbors(new double[] { point.x, point.y }, 1, searchRange * searchRange);
             if (pIter.MoveNext())
@@ -741,7 +748,7 @@ namespace MapProcessing
                 //sws.Start();
                 //Find closet point of each new data points relative reference points
                 set1.Clear();
-                SearchNearestPoint(kdTree, set1, set2, searchDistance,rejectMode);
+                SearchNearestPoint(kdTree, set1, set2, searchDistance, rejectMode);
                 //sws.Stop();
                 //Console.WriteLine("[ICP Matching]Searching Time:{0:F4}", sws.Elapsed.TotalMilliseconds);
 
@@ -771,7 +778,7 @@ namespace MapProcessing
                 preError = gValue;
                 trans = null;
 
-                if(searchDistance > 100)
+                if (searchDistance > 100)
                     searchDistance /= 2;
             }
 
@@ -811,7 +818,7 @@ namespace MapProcessing
         /// <param name="set2">Current data set</param>
         /// <returns>Matching error</returns>
         public double FindClosetMatching(List<CartesianPos> data, int samplingSize, double mseThreshold, double convergenceThreshold, int iterativeCycle
-            , int searchDistance,bool rejectMode, CartesianPos transResult,out List<CartesianPos> modelSet)
+            , int searchDistance, bool rejectMode, CartesianPos transResult, out List<CartesianPos> modelSet)
         {
             List<CartesianPos> set1 = new List<CartesianPos>();
             List<CartesianPos> set2 = new List<CartesianPos>();
@@ -857,7 +864,7 @@ namespace MapProcessing
 
                 //Checking MSE and convergence state 
                 if (gValue <= mseThreshold) break;
-                if (Math.Abs(preError - gValue) <= convergenceThreshold)    break;
+                if (Math.Abs(preError - gValue) <= convergenceThreshold) break;
 
                 preError = gValue;
                 trans = null;
@@ -902,7 +909,7 @@ namespace MapProcessing
         /// <param name="set2">Current data set</param>
         /// <returns>Matching error</returns>
         public double PairwiseMatching(List<CartesianPos> model, List<CartesianPos> data, int samplingSize, double mseThreshold, double convergenceThreshold
-            , int iterativeCycle, double searchDistance,bool rejectMode, CartesianPos transResult)
+            , int iterativeCycle, double searchDistance, bool rejectMode, CartesianPos transResult)
         {
             List<CartesianPos> set1 = new List<CartesianPos>();
             List<CartesianPos> set2 = new List<CartesianPos>();
@@ -922,7 +929,7 @@ namespace MapProcessing
                 //sws.Start();
                 //Find closet point of each new data points relative reference points
                 set1.Clear();
-                SearchNearestPoint(pairKDTree, set1, set2, searchDistance,rejectMode);
+                SearchNearestPoint(pairKDTree, set1, set2, searchDistance, rejectMode);
                 //sws.Stop();
                 //Console.WriteLine("[ICP Matching]Searching Time:{0:F4}", sws.Elapsed.TotalMilliseconds);
 
@@ -976,7 +983,7 @@ namespace MapProcessing
         /// <returns></returns>
         public double SimilarityEvalute(List<CartesianPos> modelSet, List<CartesianPos> dataSet)
         {
-            double molecular =0;
+            double molecular = 0;
             double denominator1 = 0;
             double denominator2 = 0;
             for (int i = 0; i < modelSet.Count; i++)
@@ -1024,7 +1031,7 @@ namespace MapProcessing
         /// <param name="dataSet">Data set</param>
         /// <param name="searchDistance">Distance threshold</param>
         private void SearchNearestPoint(KDTree<CartesianPos> kdTree, List<CartesianPos> modelSet,
-            List<CartesianPos> dataSet, double searchDistance,bool rejectMode)
+            List<CartesianPos> dataSet, double searchDistance, bool rejectMode)
         {
             for (int i = 0; i < dataSet.Count; i++)
             {
@@ -1038,7 +1045,7 @@ namespace MapProcessing
                 if (minPos != null)
                 {
                     modelSet.Add(minPos);
-                    if(rejectMode)
+                    if (rejectMode)
                         addPair(minPos, dataSet[i]);
                 }
                 else
@@ -1173,11 +1180,11 @@ namespace MapProcessing
 
             foreach (KeyValuePair<CartesianPos, List<CartesianPos>> pairCount in removePair)
             {
-                    for (int i = 0; i < pairCount.Value.Count; i++)
-                    {
-                        modelSet.Remove(pairCount.Key);
-                        dataSet.Remove(pairCount.Value[i]);
-                    }
+                for (int i = 0; i < pairCount.Value.Count; i++)
+                {
+                    modelSet.Remove(pairCount.Key);
+                    dataSet.Remove(pairCount.Value[i]);
+                }
             }
             modelPointWRTdataPoint.Clear();
         }
@@ -1261,7 +1268,7 @@ namespace MapProcessing
                 parseMap.Add(new CartesianPos(x, y));
                 addedPoints.Add(new CartesianPos(x, y));
 
-                BoundaryUpdate(x,y);
+                BoundaryUpdate(x, y);
 
             }
             for (int i = 0; i < addedPoints.Count; i++)
@@ -1295,7 +1302,7 @@ namespace MapProcessing
                     continue;
                 }
                 newPoint.Add(new CartesianPos(x, y));
-                BoundaryUpdate(x,y);
+                BoundaryUpdate(x, y);
             }
 
             if (correspondNum >= correspondThreshold)
@@ -1316,7 +1323,7 @@ namespace MapProcessing
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
-        private void BoundaryUpdate(double x,double y)
+        private void BoundaryUpdate(double x, double y)
         {
 
             if (minimumPos.x > x)
@@ -2053,9 +2060,12 @@ namespace MapProcessing
 
     }
 
-    public class CartesianPos
+    public class CartesianPos : IPoint
     {
         #region - Member -
+        public int X { get { return (int)x; } set { x = value; } }
+        public int Y { get { return (int)y; } set { y = value; } }
+        public IPair[] VertexArray { get { return new IPair[] { new Pair(X, Y) }; } }
 
         public double x;
         public double y;
@@ -2087,7 +2097,7 @@ namespace MapProcessing
 
         #region - Method -
 
-        public void SetPosition(double x,double y,double theta)
+        public void SetPosition(double x, double y, double theta)
         {
             this.x = x;
             this.y = y;
@@ -2099,9 +2109,12 @@ namespace MapProcessing
 
     }
 
-    public class MapLine
+    public class MapLine : ILine
     {
         #region - Member -
+        public IPair Begin { get { return start; } set { start.x = value.X; start.y = value.Y; } }
+        public IPair End { get { return end; } set { end.x = value.X; end.y = value.Y; } }
+        public IPair[] VertexArray { get { return new IPair[] { Begin, end }; } }
 
         public CartesianPos start;
         public CartesianPos end;

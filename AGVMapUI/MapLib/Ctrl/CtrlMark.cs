@@ -27,6 +27,16 @@ namespace AGVMap
         }
 
         /// <summary>
+        /// 中心座標
+        /// </summary>
+        public IPair Center { get { return Property.Center; } }
+
+        /// <summary>
+        /// 識別碼
+        /// </summary>
+        public int ID { get; internal set; }
+
+        /// <summary>
         /// 物件名稱
         /// </summary>
         public string Name { get; set; }
@@ -47,10 +57,11 @@ namespace AGVMap
         public void Draw(OpenGL gl)
         {
             if (!Visible) return;
+            gl.PushText(Center, Name);
             gl.PushMatrix();
             {
                 gl.Color(Property.Color.ToArray);
-                gl.Translate(Property.Center.X, Property.Center.Y, 0);
+                gl.Translate(Center.X, Center.Y, 0);
                 gl.Begin(OpenGL.GL_POLYGON);
                 {
                     gl.Vertex(+Property.Size / 2, -Property.Size / 2, (int)Property.Layer);
