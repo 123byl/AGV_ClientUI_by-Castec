@@ -439,11 +439,10 @@ namespace ClientUI {
 
     #region Declaration - Core
 
-  //  /// <summary>
-  //  /// Agv功能類
-  //  /// </summary>
-  //  public class AgvClient : ICtVersion
-  //  {
+    /// <summary>
+    /// Agv功能類
+    /// </summary>
+  //  public class AgvClient : ICtVersion {
 
   //      #region Version Information
 
@@ -697,20 +696,16 @@ namespace ClientUI {
   //              return mCarMode;
   //          }
   //          set {
-  //              if (value == CarMode.Map)
-  //              {
+  //              if (value == CarMode.Map) {
   //                  string oriName = string.Empty;
   //                  CtInput txtBox = new CtInput();
   //                  if (Stat.SUCCESS == txtBox.Start(
   //                      CtInput.InputStyle.TEXT,
   //                      "Set Map File Name", "MAP Name",
   //                      out oriName,
-  //                      $"MAP{DateTime.Today:MMdd}"))
-  //                  {
+  //                      $"MAP{DateTime.Today:MMdd}")) {
   //                      SendMsg($"Set:OriName:{oriName}.Ori");
-  //                  }
-  //                  else
-  //                  {
+  //                  } else {
   //                      return;
   //                  }
   //              }
@@ -740,8 +735,7 @@ namespace ClientUI {
   //      /// <summary>
   //      /// 共用建構方法
   //      /// </summary>
-  //      public AgvClient()
-  //      {
+  //      public AgvClient() {
   //          RegisterVersion(this.GetType().Name, Version.FullString);
   //          StartUp();
   //      }
@@ -781,10 +775,8 @@ namespace ClientUI {
   //      /// <summary>
   //      /// 關於視窗
   //      /// </summary>
-  //      public void form_About()
-  //      {
-  //          using (CtAbout frm = new CtAbout())
-  //          {
+  //      public void form_About() {
+  //          using (CtAbout frm = new CtAbout()) {
 
   //              //新版本CtLib
   //              //frm.Start(Assembly.GetExecutingAssembly(), this, Version, module);
@@ -798,10 +790,8 @@ namespace ClientUI {
   //      /// </summary>
   //      /// <param name="modName">模組名稱</param>
   //      /// <param name="modVer">模組版本</param>
-  //      public void RegisterVersion(string modNmae, string modVer)
-  //      {
-  //          if (!mModuleVersions.ContainsKey(modNmae))
-  //          {
+  //      public void RegisterVersion(string modNmae, string modVer) {
+  //          if (!mModuleVersions.ContainsKey(modNmae)) {
   //              mModuleVersions.Add(modNmae, modVer);
   //          }
   //      }
@@ -809,18 +799,13 @@ namespace ClientUI {
   //      /// <summary>
   //      /// 依照當前權限決定登入或登出
   //      /// </summary>
-  //      public void Login()
-  //      {
+  //      public void Login() {
   //          Stat stt = Stat.SUCCESS;
-  //          if (mUser.Level == AccessLevel.NONE)
-  //          {
-  //              using (CtLogin frmLogin = new CtLogin())
-  //              {
+  //          if (mUser.Level == AccessLevel.NONE) {
+  //              using (CtLogin frmLogin = new CtLogin()) {
   //                  stt = frmLogin.Start(out mUser);
   //              }
-  //          }
-  //          else
-  //          {
+  //          } else {
   //              mUser = new UserData("N/A", "", AccessLevel.NONE);
   //          }
   //          RaiseUserChanged(mUser);
@@ -829,13 +814,11 @@ namespace ClientUI {
   //      /// <summary>
   //      /// 使用者管理視窗
   //      /// </summary>
-  //      public void form_UserManager()
-  //      {
+  //      public void form_UserManager() {
   //          //新版本CtLib
   //          //using (CtUserManager frmUsrMgr = new CtUserManager(mUser, mCulture)) {
   //          //當前版本CtLib
-  //          using (CtUserManager frmUsrMgr = new CtUserManager(mUser))
-  //          {
+  //          using (CtUserManager frmUsrMgr = new CtUserManager(mUser)) {
   //              frmUsrMgr.ShowDialog();
   //          }
   //      }
@@ -887,8 +870,7 @@ namespace ClientUI {
   //      /// <param name="x">X座標</param>
   //      /// <param name="y">Y座標</param>
   //      /// <param name="theta">夾角</param>
-  //      public void SetPosition(double x, double y, double theta)
-  //      {
+  //      public void SetPosition(double x, double y, double theta) {
   //          mCarInfo.X = x;
   //          mCarInfo.Y = y;
   //          mCarInfo.ThetaGyro = theta;
@@ -900,8 +882,7 @@ namespace ClientUI {
   //      /// </summary>
   //      /// <param name="x">X座標</param>
   //      /// <param name="y">Y座標</param>
-  //      public void SetAddPos(double x, double y)
-  //      {
+  //      public void SetAddPos(double x, double y) {
   //          AddPos.x = x;
   //          AddPos.y = y;
   //          RaiseGoalSettingEvent(GoalSettingEventType.RefreshAddPos, AddPos);
@@ -926,8 +907,7 @@ namespace ClientUI {
   //      /// </summary>
   //      /// <param name="type">事件類型</param>
   //      /// <param name="value">傳遞參數</param>
-  //      private void RaiseGoalSettingEvent(GoalSettingEventType type, object value = null)
-  //      {
+  //      private void RaiseGoalSettingEvent(GoalSettingEventType type, object value = null) {
   //          GoalSettingEvent?.BeginInvoke(this, new GoalSettingEventArgs(type, value), null, null);
   //      }
 
@@ -935,8 +915,7 @@ namespace ClientUI {
   //      /// 新增Goal點
   //      /// </summary>
   //      /// <param name="goal">Goal點</param>
-  //      public void AddGoalPos(CarPos goal)
-  //      {
+  //      public void AddGoalPos(CarPos goal) {
   //          Goals.Add(new CartesianPos(goal.x, goal.y, goal.theta));
   //          RaiseMapEvent(MapEventType.AddGoalPos, goal);
   //      }
@@ -945,8 +924,7 @@ namespace ClientUI {
   //      /// 移除指定索引Goal點
   //      /// </summary>
   //      /// <param name="index">要移除的Goal點索引</param>
-  //      public void DeleteGoal(int index)
-  //      {
+  //      public void DeleteGoal(int index) {
   //          Goals.RemoveAt(index);
   //      }
 
@@ -954,14 +932,12 @@ namespace ClientUI {
   //      /// 路徑規劃
   //      /// </summary>
   //      /// <param name="no">目標Goal點編號</param>
-  //      public void PathPlan(int numGoal)
-  //      {
+  //      public void PathPlan(int numGoal) {
   //          /*-- 若是路徑資料則開始接收資料 --*/
   //          string[] rtnMsg = SendMsg($"Set:PathPlan:{numGoal}");
   //          if ((rtnMsg?.Count() ?? 0) > 3 &&
   //              rtnMsg[1] == "PathPlan" &&
-  //              rtnMsg[2] == "True")
-  //          {
+  //              rtnMsg[2] == "True") {
   //              mSoxMonitorPath.Start();
   //          }
   //      }
@@ -970,14 +946,12 @@ namespace ClientUI {
   //      /// 前往目標Goal點
   //      /// </summary>
   //      /// <param name="numGoal">目標Goal點</param>
-  //      public void Run(int numGoal)
-  //      {
+  //      public void Run(int numGoal) {
   //          /*-- 若是路徑資料則開始接收資料 --*/
   //          string[] rtnMsg = SendMsg($"Set:Run:{numGoal}");
   //          if ((rtnMsg?.Length ?? 0) > 3 &&
   //              rtnMsg[1] == "Run" &&
-  //              rtnMsg[3] == "Done")
-  //          {
+  //              rtnMsg[3] == "Done") {
   //              mSoxMonitorPath.Start();
   //          }
   //      }
@@ -985,8 +959,7 @@ namespace ClientUI {
   //      /// <summary>
   //      /// 清除所有Goal點
   //      /// </summary>
-  //      public void DeleteAllGoal()
-  //      {
+  //      public void DeleteAllGoal() {
   //          Goals.Clear();
   //          RaiseMapEvent(MapEventType.DeleteAllGoal);
   //      }
@@ -994,8 +967,7 @@ namespace ClientUI {
   //      /// <summary>
   //      /// 儲存所有Goal點
   //      /// </summary>
-  //      public void SaveGoals()
-  //      {
+  //      public void SaveGoals() {
   //          MapRecording.OverWriteGoal(Goals, CurMapPath);
   //      }
 
@@ -1006,8 +978,7 @@ namespace ClientUI {
   //      /// <summary>
   //      /// 取得是否為停止模式
   //      /// </summary>
-  //      public bool GetStopMode()
-  //      {
+  //      public bool GetStopMode() {
   //          string[] rtnMsg = SendMsg("Get:StopMode");
   //          return bool.Parse(rtnMsg[2]);
   //      }
@@ -1016,8 +987,7 @@ namespace ClientUI {
   //      /// 取得伺服馬達激磁狀態
   //      /// </summary>
   //      /// <returns></returns>
-  //      public bool GetMotorStatus()
-  //      {
+  //      public bool GetMotorStatus() {
   //          string[] rtnMsg = SendMsg("Get:Info");
   //          return rtnMsg.Count() > 1 && rtnMsg[2] == "True";
   //      }
@@ -1026,8 +996,7 @@ namespace ClientUI {
   //      /// 設定車子移動速度
   //      /// </summary>
   //      /// <param name="velocity">移動速度</param>
-  //      public void SetVelocity(int velocity)
-  //      {
+  //      public void SetVelocity(int velocity) {
   //          mVelocity = velocity;
   //          SendMsg($"Set:WorkVelo:{velocity}:{Velocity}");
   //      }
@@ -1060,16 +1029,12 @@ namespace ClientUI {
   //      /// </summary>
   //      /// <param name="type">檔案類型</param>
   //      /// <remarks>modified by Jay 2017/09/20</remarks>
-  //      public bool GetFileList(FileType type, out string fileList)
-  //      {
+  //      public bool GetFileList(FileType type, out string fileList) {
   //          bool ret = true;
   //          fileList = string.Empty;
-  //          if (mBypassSocket)
-  //          {
+  //          if (mBypassSocket) {
   //              fileList = $"{type}1,{type}2,{type}3";
-  //          }
-  //          else
-  //          {
+  //          } else {
   //              string[] rtnMsg = SendMsg($"Get:{type}List");
   //              fileList = rtnMsg[3];
   //          }
@@ -1081,19 +1046,15 @@ namespace ClientUI {
   //      /// </summary>
   //      /// <param name="fileName"></param>
   //      /// <param name="type"></param>
-  //      public void FileDownload(string fileName, FileType type)
-  //      {
+  //      public void FileDownload(string fileName, FileType type) {
   //          /*-- 開啟執行緒準備接收檔案 --*/
   //          mSoxMonitorFile.Start();
 
   //          /*-- 向Server端發出檔案請求 --*/
   //          SendMsg($"Get:{type}:{fileName}");
-  //          if (type == FileType.Map)
-  //          {
+  //          if (type == FileType.Map) {
   //              RaiseGoalSettingEvent(GoalSettingEventType.CurMapPath, true);
-  //          }
-  //          else
-  //          {
+  //          } else {
   //              RaiseTestingEvent(TestingEventType.CurOriPath, true);
   //          }
   //          RaiseAgvClientEvent(AgvClientEventType.GetFile, type);
@@ -1102,10 +1063,8 @@ namespace ClientUI {
   //      /// <summary>
   //      /// 地圖簡化
   //      /// </summary>
-  //      public void SimplifyOri()
-  //      {
-  //          if (mBypassLoadFile)
-  //          {
+  //      public void SimplifyOri() {
+  //          if (mBypassLoadFile) {
   //              /*-- 空跑模擬SimplifyOri --*/
   //              SpinWait.SpinUntil(() => false, 1000);
   //              return;
@@ -1122,15 +1081,13 @@ namespace ClientUI {
   //          mapSimp.ReadMapAllTransferToLine(mMapMatch.parseMap, mMapMatch.minimumPos, mMapMatch.maximumPos
   //              , 100, 0, out resultlines, out resultPoints);
 
-  //          for (int i = 0; i < resultlines.Count; i++)
-  //          {
+  //          for (int i = 0; i < resultlines.Count; i++) {
   //              obstacleLines.Add(
   //                  new Line(resultlines[i].startX, resultlines[i].startY,
   //                  resultlines[i].endX, resultlines[i].endY)
   //              );
   //          }
-  //          for (int i = 0; i < resultPoints.Count; i++)
-  //          {
+  //          for (int i = 0; i < resultPoints.Count; i++) {
   //              obstaclePoints.Add(new Point((int)resultPoints[i].x, (int)resultPoints[i].y));
   //          }
   //          Dictionary<string, object> dic = new Dictionary<string, object>();
@@ -1148,37 +1105,27 @@ namespace ClientUI {
   //      /// <summary>
   //      /// 傳送檔案
   //      /// </summary>
-  //      public async void SendMap()
-  //      {
+  //      public async void SendMap() {
   //          string[] rtnMsg = SendMsg("Send:map");
-  //          if (rtnMsg.Count() > 2 && "True" == rtnMsg[2])
-  //          {
+  //          if (rtnMsg.Count() > 2 && "True" == rtnMsg[2]) {
   //              OpenFileDialog openMap = new OpenFileDialog();
   //              openMap.InitialDirectory = mDefMapDir;
   //              openMap.Filter = "MAP|*.ori;*.map";
-  //              if (openMap.ShowDialog() == DialogResult.OK)
-  //              {
+  //              if (openMap.ShowDialog() == DialogResult.OK) {
   //                  CtProgress prog = new CtProgress("Send Map", "The file are being transferred");
-  //                  try
-  //                  {
+  //                  try {
 
-  //                      await Task.Run(() =>
-  //                      {
+  //                      await Task.Run(() => {
   //                          string fileName = CtFile.GetFileName(openMap.FileName);
-  //                          if (!mBypassSocket)
-  //                          {
+  //                          if (!mBypassSocket) {
   //                              SendFile(mHostIP, mSendMapPort, fileName);
-  //                          }
-  //                          else
-  //                          {
+  //                          } else {
   //                              /*-- 空跑模擬檔案傳送中 --*/
   //                              SpinWait.SpinUntil(() => false, 1000);
   //                          }
   //                          RaiseAgvClientEvent(AgvClientEventType.SendFile, fileName);
   //                      });
-  //                  }
-  //                  finally
-  //                  {
+  //                  } finally {
   //                      prog?.Close();
   //                      prog = null;
   //                  }
@@ -1191,26 +1138,22 @@ namespace ClientUI {
   //      /// 設定GL模式
   //      /// </summary>
   //      /// <param name="mode">GL模式</param>
-  //      public void SetGLMode(GLMode mode)
-  //      {
+  //      public void SetGLMode(GLMode mode) {
   //          RaiseMapEvent(MapEventType.GLMode, mode);
   //      }
 
   //      /// <summary>
   //      /// 清除
   //      /// </summary>
-  //      public void Erase()
-  //      {
+  //      public void Erase() {
   //          RaiseMapEvent(MapEventType.GLMode, GLMode.Erase);
   //      }
 
   //      /// <summary>
   //      /// 車子位置確認
   //      /// </summary>
-  //      public void CarPosConfirm()
-  //      {
-  //          if (mBypassSocket)
-  //          {
+  //      public void CarPosConfirm() {
+  //          if (mBypassSocket) {
   //              /*-- 空跑模擬CarPosConfirm --*/
   //              SpinWait.SpinUntil(() => false, 1000);
   //              return;
@@ -1227,8 +1170,7 @@ namespace ClientUI {
   //          int[] obstaclePos = new int[2];
   //          //mAGV.GetPosition(out posX, out posY, out posT);
   //          int idx = 0;
-  //          foreach (int dist in mCarInfo.LaserData)
-  //          {
+  //          foreach (int dist in mCarInfo.LaserData) {
   //              obstaclePos = Transformation.LaserPoleToCartesian(dist, -135, 0.25, idx++, 43, 416.75, 43, mCarInfo.X, mCarInfo.Y, mCarInfo.ThetaGyro, out angle, out Laserangle);//, out dataAngle, out laserAngle);
 
   //              matchSet.Add(new CartesianPos(obstaclePos[0], obstaclePos[1]));
@@ -1247,8 +1189,7 @@ namespace ClientUI {
   //          //Display current scanning information
   //          //MapUI1.RemoveGroupPoint("LaserLength");
   //          scanPoint.Clear();
-  //          for (int m = 0; m < matchSet.Count; m++)
-  //          {
+  //          for (int m = 0; m < matchSet.Count; m++) {
   //              scanPoint.Add(new Point((int)matchSet[m].x, (int)matchSet[m].y));
   //          }
   //          //MapUI1.DrawPoints(scanPoint, Color.Red, "LaserLength", 1);
@@ -1282,14 +1223,11 @@ namespace ClientUI {
   //      /// <summary>
   //      /// 取得雷射
   //      /// </summary>
-  //      public void GetLaser()
-  //      {
+  //      public void GetLaser() {
   //          /*-- 若是雷射資料則更新資料 --*/
   //          string[] rtnMsg = SendMsg("Get:Laser");
-  //          if (rtnMsg.Length > 3)
-  //          {
-  //              if (rtnMsg[1] == "Laser")
-  //              {
+  //          if (rtnMsg.Length > 3) {
+  //              if (rtnMsg[1] == "Laser") {
   //                  string[] sreRemoteLaser = rtnMsg[3].Split(',');
   //                  mCarInfo.LaserData = sreRemoteLaser.Select(x => int.Parse(x));
   //                  RaiseMapEvent(MapEventType.GetLaser, mCarInfo);
@@ -1305,11 +1243,9 @@ namespace ClientUI {
   //      /// modify by Jay 2017/09/08
   //      /// </remarks>
   //      /// <returns>True:發送中/False:停止發送</returns>
-  //      public bool ChangeSendInfo()
-  //      {
+  //      public bool ChangeSendInfo() {
   //          IsGettingLaser = !IsGettingLaser;
-  //          if (IsGettingLaser)
-  //          {
+  //          if (IsGettingLaser) {
   //              /*-- 開啟車子資訊讀取執行緒 --*/
   //              mSoxMonitorCmd.Start();
 
@@ -1318,14 +1254,11 @@ namespace ClientUI {
   //              IsGettingLaser = rtnMsg.Count() > 2 && "True" == rtnMsg[2];
 
   //              /*-- 車子未發送資料則關閉Socket --*/
-  //              if (!IsGettingLaser)
-  //              {
+  //              if (!IsGettingLaser) {
   //                  mSoxMonitorCmd.Socket.Shutdown(SocketShutdown.Both);
   //                  mSoxMonitorCmd.Socket.Close();
   //              }
-  //          }
-  //          else
-  //          {
+  //          } else {
   //              SendMsg("Get:Car:False");
   //          }
   //          return IsGettingLaser;
@@ -1334,8 +1267,7 @@ namespace ClientUI {
   //      /// <summary>
   //      /// 地圖修正
   //      /// </summary>
-  //      public void CorrectOri()
-  //      {
+  //      public void CorrectOri() {
   //          RaiseMapEvent(MapEventType.ClearMapGL);
   //          tsk_FixOriginScanningFile();
   //          //CtThread.CreateThread(ref mTdMapOperation, "mLoadOriginScaning: ", tsk_FixOriginScanningFile);
@@ -1344,8 +1276,7 @@ namespace ClientUI {
   //      /// <summary>
   //      /// 清除Map
   //      /// </summary>
-  //      public void ClearMap()
-  //      {
+  //      public void ClearMap() {
   //          RaiseMapEvent(MapEventType.ClearMapGL);
   //      }
 
@@ -1353,18 +1284,14 @@ namespace ClientUI {
   //      /// 載入檔案
   //      /// </summary>
   //      /// <param name="type">載入檔案類型</param>
-  //      public async void LoadFile(FileType type)
-  //      {
+  //      public async void LoadFile(FileType type) {
   //          OpenFileDialog openMap = new OpenFileDialog();
   //          openMap.InitialDirectory = DefMapDir;
   //          openMap.Filter = $"MAP|*.{type.ToString().ToLower()}";
-  //          if (openMap.ShowDialog() == DialogResult.OK)
-  //          {
+  //          if (openMap.ShowDialog() == DialogResult.OK) {
   //              CtProgress prog = new CtProgress($"Load {type}", $"Loading {type}...");
-  //              try
-  //              {
-  //                  switch (type)
-  //                  {
+  //              try {
+  //                  switch (type) {
   //                      case FileType.Ori:
   //                          await Task.Run(() => LoadOri(openMap.FileName));
   //                          RaiseTestingEvent(TestingEventType.CurOriPath);
@@ -1376,14 +1303,10 @@ namespace ClientUI {
   //                          throw new ArgumentException($"無法載入未定義的檔案類型{type}");
   //                  }
   //                  RaiseAgvClientEvent(AgvClientEventType.LoadFile, type);
-  //              }
-  //              catch (Exception ex)
-  //              {
+  //              } catch (Exception ex) {
   //                  Console.WriteLine(ex.Message);
   //                  CtMsgBox.Show("Error", ex.Message);
-  //              }
-  //              finally
-  //              {
+  //              } finally {
   //                  prog?.Close();
   //                  prog = null;
   //              }
@@ -1395,15 +1318,11 @@ namespace ClientUI {
   //      /// 向AGV要求檔案
   //      /// </summary>
   //      /// <param name="type">檔案類型</param>
-  //      public void GetFile(FileType type)
-  //      {
+  //      public void GetFile(FileType type) {
   //          string fileList = string.Empty;
-  //          if (GetFileList(type, out fileList))
-  //          {
-  //              using (MapList f = new MapList(fileList))
-  //              {
-  //                  if (f.ShowDialog() == DialogResult.OK)
-  //                  {
+  //          if (GetFileList(type, out fileList)) {
+  //              using (MapList f = new MapList(fileList)) {
+  //                  if (f.ShowDialog() == DialogResult.OK) {
   //                      mProg = new CtProgress($"Get {type}", $"Donwloading {type} from AGV");
   //                      FileDownload(f.strMapList, type);
   //                  }
@@ -1417,22 +1336,18 @@ namespace ClientUI {
   //      /// </summary>
   //      /// <param name="oriPath"></param>
   //      /// <returns></returns>
-  //      private void LoadOri(string oriPath)
-  //      {
+  //      private void LoadOri(string oriPath) {
   //          CurOriPath = oriPath;
   //          RaiseMapEvent(MapEventType.ClearMapGL);
   //          MapReading MapReading = null;
-  //          if (!mBypassLoadFile)
-  //          {//無BypassLoadFile
+  //          if (!mBypassLoadFile) {//無BypassLoadFile
   //              MapReading = new MapReading(CurOriPath);
   //              CartesianPos carPos;
   //              List<CartesianPos> laserData;
   //              //List<Point> listMap = new List<Point>();
   //              int dataLength = MapReading.OpenFile();
-  //              if (dataLength != 0)
-  //              {
-  //                  for (int n = 0; n < dataLength; n++)
-  //                  {
+  //              if (dataLength != 0) {
+  //                  for (int n = 0; n < dataLength; n++) {
   //                      MapReading.ReadScanningInfo(n, out carPos, out laserData);
   //                      Dictionary<string, object> dic = new Dictionary<string, object>();
   //                      dic.Add(carPos.ToPos(), VarDef.PosCar);
@@ -1442,23 +1357,19 @@ namespace ClientUI {
   //                      laserData = null;
   //                  }
   //              }
-  //          }
-  //          else
-  //          {//Bypass LoadFile功能
+  //          } else {//Bypass LoadFile功能
   //              /*-- 空跑一秒，模擬檔案載入 --*/
   //              SpinWait.SpinUntil(() => false, 1000);
   //          }
   //          MapReading = null;
   //      }
 
-  //      public async void LoadOriAsync()
-  //      {
+  //      public async void LoadOriAsync() {
   //          OpenFileDialog openMap = new OpenFileDialog();
   //          openMap.InitialDirectory = mDefMapDir;
   //          openMap.Filter = "MAP|*.ori";
 
-  //          if (openMap.ShowDialog() == DialogResult.OK)
-  //          {
+  //          if (openMap.ShowDialog() == DialogResult.OK) {
   //              //mbLoadMap = true;
   //              //GetPointsFromFile(openMap.FileName);
   //              CurOriPath = openMap.FileName;
@@ -1474,24 +1385,18 @@ namespace ClientUI {
   //      /// </summary>
   //      /// <param name="direction">移動方向</param>
   //      /// <param name="velocity">移動速度</param>
-  //      public void MotionContorl(MotionDirection direction, int velocity = 0)
-  //      {
+  //      public void MotionContorl(MotionDirection direction, int velocity = 0) {
   //          string[] rtnMsg = SendMsg("Get:IsOpen");
 
 
-  //          if (rtnMsg.Count() > 2 && bool.Parse(rtnMsg[2]))
-  //          {
+  //          if (rtnMsg.Count() > 2 && bool.Parse(rtnMsg[2])) {
 
-  //              if (direction == MotionDirection.Stop)
-  //              {
+  //              if (direction == MotionDirection.Stop) {
   //                  SendMsg("Set:Stop");
-  //              }
-  //              else
-  //              {
+  //              } else {
 
   //                  string cmd = string.Empty;
-  //                  switch (direction)
-  //                  {
+  //                  switch (direction) {
   //                      case MotionDirection.Forward:
   //                          cmd = $"Set:DriveVelo:{mVelocity}:{mVelocity}";
   //                          break;
@@ -1515,8 +1420,7 @@ namespace ClientUI {
   //      /// 馬達Servo On/Off
   //      /// </summary>
   //      /// <param name="on">是否進行馬達ServerOn</param>
-  //      public void MotorServo(bool on)
-  //      {
+  //      public void MotorServo(bool on) {
   //          SendMsg($"Set:Servo{(on ? "On" : "Off")}");
   //      }
 
@@ -1524,8 +1428,7 @@ namespace ClientUI {
   //      /// 
   //      /// </summary>
   //      /// <param name="start"></param>
-  //      public void StartStop(bool start)
-  //      {
+  //      public void StartStop(bool start) {
   //          SendMsg($"Set:{(start ? "Start" : "Stop")}");
   //      }
 
@@ -1533,8 +1436,7 @@ namespace ClientUI {
   //      /// 載入地圖
   //      /// </summary>
   //      /// <param name="mapPath">Map檔路徑</param>
-  //      private void LoadMap(string mapPath)
-  //      {
+  //      private void LoadMap(string mapPath) {
   //          List<Line> dispLines = new List<Line>();
   //          List<Point> dispPoint = new List<Point>();
   //          List<CartesianPos> goalList = new List<CartesianPos>();
@@ -1544,13 +1446,10 @@ namespace ClientUI {
   //          string mPath = CtFile.GetFileName(mapPath);
   //          SendMsg($"Set:MapName:{mPath}");
 
-  //          if (mBypassLoadFile)
-  //          {
+  //          if (mBypassLoadFile) {
   //              /*-- 空跑1秒模擬載入Map檔 --*/
   //              SpinWait.SpinUntil(() => false, 1000);
-  //          }
-  //          else
-  //          {
+  //          } else {
 
   //              CartesianPos minimumPos;
   //              CartesianPos maximumPos;
@@ -1558,8 +1457,7 @@ namespace ClientUI {
   //              #region - Retrive information from .map file -
 
   //              Console.WriteLine(CurMapPath);
-  //              using (MapReading read = new MapReading(CurMapPath))
-  //              {
+  //              using (MapReading read = new MapReading(CurMapPath)) {
   //                  read.OpenFile();
   //                  read.ReadMapBoundary(out minimumPos, out maximumPos);
   //                  read.ReadMapGoalList(out goalList);
@@ -1571,35 +1469,30 @@ namespace ClientUI {
   //              Console.WriteLine($"obstaclePoint:{obstaclePoints}");
 
   //              mMapMatch.Reset();
-  //              for (int i = 0; i < obstacleLine.Count; i++)
-  //              {
+  //              for (int i = 0; i < obstacleLine.Count; i++) {
   //                  int start = (int)obstacleLine[i].start.x;
   //                  int end = (int)obstacleLine[i].end.x;
   //                  int y = (int)obstacleLine[i].start.y;
-  //                  for (int x = start; x < end; x++)
-  //                  {
+  //                  for (int x = start; x < end; x++) {
   //                      mMapMatch.AddPoint(new CartesianPos(x, y));
   //                  }
   //              }
 
-  //              for (int i = 0; i < obstaclePoints.Count; i++)
-  //              {
+  //              for (int i = 0; i < obstaclePoints.Count; i++) {
   //                  mMapMatch.AddPoint(obstaclePoints[i]);
   //              }
   //              #endregion
 
   //              #region  - Map information display -
 
-  //              for (int i = 0; i < obstacleLine.Count; i++)
-  //              {
+  //              for (int i = 0; i < obstacleLine.Count; i++) {
   //                  dispLines.Add(
   //                      new Line((int)obstacleLine[i].start.x, (int)obstacleLine[i].start.y,
   //                      (int)obstacleLine[i].end.x, (int)obstacleLine[i].end.y)
   //                  );
   //              }
 
-  //              for (int i = 0; i < obstaclePoints.Count; i++)
-  //              {
+  //              for (int i = 0; i < obstaclePoints.Count; i++) {
   //                  dispPoint.Add(new Point((int)obstaclePoints[i].x, (int)obstaclePoints[i].y));
   //              }
   //              minimumPos = null;
@@ -1631,29 +1524,19 @@ namespace ClientUI {
   //      /// 檢查Server是否在運作中
   //      /// </summary>
   //      /// <returns></returns>
-  //      public bool CheckIsServerAlive()
-  //      {
-  //          if (mBypassSocket)
-  //          {
+  //      public bool CheckIsServerAlive() {
+  //          if (mBypassSocket) {
   //              IsServerAlive = true;
   //              Thread.Sleep(1000);
-  //          }
-  //          else
-  //          {
+  //          } else {
   //              bool isAlive = false;
-  //              try
-  //              {
+  //              try {
   //                  string[] rtnMsg = SendMsg("Get:Hello", false);
   //                  isAlive = rtnMsg.Count() > 2 && rtnMsg[2] == "True";
-  //              }
-  //              catch (Exception ex)
-  //              {
+  //              } catch (Exception ex) {
   //                  Console.WriteLine($"[SocketException] : {ex.Message}");
-  //              }
-  //              finally
-  //              {
-  //                  if (!mBypassSocket && !isAlive)
-  //                  {
+  //              } finally {
+  //                  if (!mBypassSocket && !isAlive) {
   //                      CtMsgBox.Show("Failed", "Connect Failed!!", MsgBoxButton.OK, MsgBoxStyle.ERROR);
   //                  }
   //              }
@@ -1677,15 +1560,11 @@ namespace ClientUI {
   //      /// Bypass Server
   //      /// </summary>
   //      /// <param name="bypass">是否Bypass Server</param>
-  //      private void BypassServer(bool bypass)
-  //      {
-  //          if (bypass)
-  //          {
+  //      private void BypassServer(bool bypass) {
+  //          if (bypass) {
   //              CtAsyncSocket mCmdSer = new CtAsyncSocket(mRecvCmdPort);
   //              mCmdSer.ServerListen();
-  //          }
-  //          else
-  //          {
+  //          } else {
 
   //          }
   //      }
@@ -1693,19 +1572,15 @@ namespace ClientUI {
   //      /// <summary>
   //      /// 開啟常駐tsk
   //      /// </summary>
-  //      private void StartUp()
-  //      {
+  //      private void StartUp() {
   //          Stat stt = Stat.SUCCESS;
-  //          if (mOpcode != null)
-  //          {
+  //          if (mOpcode != null) {
   //              string opcPath = CtDefaultPath.GetPath(SystemPath.CONFIG) + FILENAME_OPCODE;
-  //              if (CtFile.IsFileExist(opcPath))
-  //              {
+  //              if (CtFile.IsFileExist(opcPath)) {
   //                  mOpcode.LoadOpcode(opcPath);
   //                  stt = AllocateOpcode(mOpcode.OpcodeCollection);
   //              }
-  //          }
-  //          else stt = Stat.ER_SYSTEM;
+  //          } else stt = Stat.ER_SYSTEM;
 
   //          /*-- 車子資訊接收 --*/
   //          mSoxMonitorCmd = new SocketMonitor(mCmdPort, tsk_RecvCmd).Listen();
@@ -1718,21 +1593,15 @@ namespace ClientUI {
   //      /// <summary>分配讀取進來的OpcodeList，依各Opcode範圍去跑相對應方法</summary>
 		///// <param name="opcs">Opcode Data Collection</param>
 		///// <returns>Status Code</returns>
-		//private Stat AllocateOpcode(List<CtOpcode.OpcodeData> opcs)
-  //      {
+		//private Stat AllocateOpcode(List<CtOpcode.OpcodeData> opcs) {
   //          Stat stt = Stat.SUCCESS;
-  //          try
-  //          {
-  //              foreach (CtOpcode.OpcodeData item in opcs)
-  //              {
-  //                  if ((int)OpcodeRange.CAMPRO_BASE <= item.Opcode && item.Opcode < (int)OpcodeRange.CAMPRO_RANGE)
-  //                  {
+  //          try {
+  //              foreach (CtOpcode.OpcodeData item in opcs) {
+  //                  if ((int)OpcodeRange.CAMPRO_BASE <= item.Opcode && item.Opcode < (int)OpcodeRange.CAMPRO_RANGE) {
   //                      AllocateCAMPro(item);
   //                  }
   //              }
-  //          }
-  //          catch
-  //          {
+  //          } catch {
   //              stt = Stat.ER_SYSTEM;
   //              //ExceptionLog(stt, ex);
   //          }
@@ -1742,10 +1611,8 @@ namespace ClientUI {
   //      /// <summary>依照Opcode分配CAMPro之設定</summary>
 		///// <param name="opc">Opcode Data</param>
 		///// <returns>Status Code</returns>
-		//private void AllocateCAMPro(CtOpcode.OpcodeData opc)
-  //      {
-  //          if (opc.Opcode == 1000)
-  //          {   /* 電腦 MAC 認證 */
+		//private void AllocateCAMPro(CtOpcode.OpcodeData opc) {
+  //          if (opc.Opcode == 1000) {   /* 電腦 MAC 認證 */
   //              /*-- 比對輸入的認證 --*/
   //              string strEncrypt;
   //              CtCrypto.Encrypt(CryptoMode.AES256, opc.Argument[0], out strEncrypt);
@@ -1775,49 +1642,27 @@ namespace ClientUI {
   //              //        throw (new InvalidOperationException("此電腦非 CASTEC 認證的電腦。 輸入授權: " + opc.Argument[0]));
   //              //    } else mFlag_PcVerified = true;
   //              //}
-  //          }
-  //          else if (opc.Opcode == 1001)
-  //          {    /* Show CAMPro Exception */
+  //          } else if (opc.Opcode == 1001) {    /* Show CAMPro Exception */
   //              //ShowSysException = CtConvert.CBool(opc.Argument[0]);
-  //          }
-  //          else if (opc.Opcode == 1002)
-  //          {    /* Buzzer Enabled */
+  //          } else if (opc.Opcode == 1002) {    /* Buzzer Enabled */
   //              //mFlag_BuzzerEnabled = CtConvert.CBool(opc.Argument[0]);
-  //          }
-  //          else if (opc.Opcode == 1003)
-  //          {    /*--Bypass Socket--*/
+  //          } else if (opc.Opcode == 1003) {    /*--Bypass Socket--*/
   //              mBypassSocket = CtConvert.CBool(opc.Argument[0]);
-  //          }
-  //          else if (opc.Opcode == 1004)
-  //          {     /*-- Bypass LoadFile --*/
+  //          } else if (opc.Opcode == 1004) {     /*-- Bypass LoadFile --*/
   //              mBypassLoadFile = CtConvert.CBool(opc.Argument[0]);
-  //          }
-  //          else if (opc.Opcode == 1050)
-  //          {    /* Host IP */
+  //          } else if (opc.Opcode == 1050) {    /* Host IP */
   //              mHostIP = opc.Argument[0];
-  //          }
-  //          else if (opc.Opcode == 1051)
-  //          {     /*-- FilePort --*/
+  //          } else if (opc.Opcode == 1051) {     /*-- FilePort --*/
   //              mFilePort = CtConvert.CInt(opc.Argument[0]);
-  //          }
-  //          else if (opc.Opcode == 1052)
-  //          {     /*-- RecvCmdPort --*/
+  //          } else if (opc.Opcode == 1052) {     /*-- RecvCmdPort --*/
   //              mRecvCmdPort = CtConvert.CInt(opc.Argument[0]);
-  //          }
-  //          else if (opc.Opcode == 1053)
-  //          {      /*-- CmdPort --*/
+  //          } else if (opc.Opcode == 1053) {      /*-- CmdPort --*/
   //              mCmdPort = CtConvert.CInt(opc.Argument[0]);
-  //          }
-  //          else if (opc.Opcode == 1054)
-  //          {      /*-- SendMapPort --*/
+  //          } else if (opc.Opcode == 1054) {      /*-- SendMapPort --*/
   //              mSendMapPort = CtConvert.CInt(opc.Argument[0]);
-  //          }
-  //          else if (opc.Opcode == 1055)
-  //          {       /*-- RecvPathPort --*/
+  //          } else if (opc.Opcode == 1055) {       /*-- RecvPathPort --*/
   //              mRecvPathPort = CtConvert.CInt(opc.Argument[0]);
-  //          }
-  //          else if (opc.Opcode == 1101)
-  //          {      /*-- Default Map Directory Path --*/
+  //          } else if (opc.Opcode == 1101) {      /*-- Default Map Directory Path --*/
   //              mDefMapDir = opc.Argument[0];
   //          }
 
@@ -1829,15 +1674,11 @@ namespace ClientUI {
   //      /// <param name="sendMseeage">傳送訊息內容</param>
   //      /// <param name="passChkConn">是否略過檢查連線狀態</param>
   //      /// <returns>Server端回應</returns>
-  //      private string[] SendMsg(string sendMseeage, bool passChkConn = true)
-  //      {
-  //          if (mBypassSocket)
-  //          {
+  //      private string[] SendMsg(string sendMseeage, bool passChkConn = true) {
+  //          if (mBypassSocket) {
   //              /*-- Bypass略過不傳 --*/
   //              return new string[] { "True" };
-  //          }
-  //          else if (passChkConn && !IsServerAlive)
-  //          {
+  //          } else if (passChkConn && !IsServerAlive) {
   //              /*-- 略過連線檢查且Server端未運作 --*/
   //              return new string[] { "False" };
   //          }
@@ -1863,8 +1704,7 @@ namespace ClientUI {
   //      /// <param name="requerPort">通訊埠號</param>
   //      /// <param name="sendMseeage">傳送訊息內容</param>
   //      /// <returns>Server端回應</returns>
-  //      private string SendStrMsg(string serverIP, int requerPort, string sendMseeage)
-  //      {
+  //      private string SendStrMsg(string serverIP, int requerPort, string sendMseeage) {
 
   //          //可以在字串編碼上做文章，可以傳送各種資訊內容，目前主要有三種編碼方式：
   //          //1.自訂連接字串編碼－－微量
@@ -1878,8 +1718,7 @@ namespace ClientUI {
   //          Socket answerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
   //          answerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, 5000);//設置接收資料超時
   //          answerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.SendTimeout, timeout);
-  //          try
-  //          {
+  //          try {
 
   //              answerSocket.Connect(ipEndPoint);//建立Socket連接
   //              byte[] sendContents = Encoding.UTF8.GetBytes(sendMseeage);
@@ -1890,25 +1729,17 @@ namespace ClientUI {
   //              sendContents = null;
   //              return strRecvCmd;
 
-  //          }
-  //          catch (SocketException se)
-  //          {
+  //          } catch (SocketException se) {
   //              Console.WriteLine("SocketException : {0}", se.ToString());
   //              //MessageBox.Show("目標拒絕連線!!");
   //              return "False";
-  //          }
-  //          catch (ArgumentNullException ane)
-  //          {
+  //          } catch (ArgumentNullException ane) {
   //              Console.WriteLine("ArgumentNullException : {0}", ane.ToString());
   //              return "False";
-  //          }
-  //          catch (Exception ex)
-  //          {
+  //          } catch (Exception ex) {
   //              Console.Write(ex.Message);
   //              return "False";
-  //          }
-  //          finally
-  //          {
+  //          } finally {
   //              ipEndPoint = null;
   //              recvBytes = null;
   //              // answerSocket.Shutdown(SocketShutdown.Both);
@@ -1928,11 +1759,9 @@ namespace ClientUI {
   //      /// <param name="clientPort">Communication port</param>
   //      /// <param name="fileName">File name</param>
   //      /// 
-  //      public void SendFile(string clientIP, int clientPort, string fileName)
-  //      {
+  //      public void SendFile(string clientIP, int clientPort, string fileName) {
   //          string curMsg = "";
-  //          try
-  //          {
+  //          try {
   //              IPAddress[] ipAddress = Dns.GetHostAddresses(clientIP);
   //              IPEndPoint ipEnd = new IPEndPoint(ipAddress[0], clientPort);
   //              /* Make IP end point same as Server. */
@@ -1941,14 +1770,12 @@ namespace ClientUI {
   //              string filePath = "D:\\MapInfo\\";
   //              /* File reading operation. */
   //              fileName = fileName.Replace("\\", "/");
-  //              while (fileName.IndexOf("/") > -1)
-  //              {
+  //              while (fileName.IndexOf("/") > -1) {
   //                  filePath += fileName.Substring(0, fileName.IndexOf("/") + 1);
   //                  fileName = fileName.Substring(fileName.IndexOf("/") + 1);
   //              }
   //              byte[] fileNameByte = Encoding.ASCII.GetBytes(fileName);
-  //              if (fileNameByte.Length > 1024 * 1024 * 5)
-  //              {
+  //              if (fileNameByte.Length > 1024 * 1024 * 5) {
   //                  curMsg = "File size is more than 850kb, please try with small file.";
   //                  return;
   //              }
@@ -1978,9 +1805,7 @@ namespace ClientUI {
   //              fileNameLen = null;
   //              /* Data send complete now close socket. */
   //              curMsg = "File transferred.";
-  //          }
-  //          catch (Exception ex)
-  //          {
+  //          } catch (Exception ex) {
   //              if (ex.Message == "No connection could be made because the target machine actively refused it")
   //                  curMsg = "File Sending fail. Because server not running.";
   //              else
@@ -1992,12 +1817,10 @@ namespace ClientUI {
   //      /// 將路徑封包拆解重新包裝
   //      /// </summary>
   //      /// <param name="pack">路徑封包</param>
-  //      private List<Line> PathEncoder(string pack)
-  //      {
+  //      private List<Line> PathEncoder(string pack) {
   //          string[] pathArray = pack.Split(',');
   //          List<Line> rtnLine = new List<Line>();
-  //          for (int i = 0; i < pathArray.Length - 5; i += 2)
-  //          {
+  //          for (int i = 0; i < pathArray.Length - 5; i += 2) {
   //              rtnLine.Add(new Line(
   //                  int.Parse(pathArray[i]),
   //                  int.Parse(pathArray[i + 1]),
@@ -2022,12 +1845,9 @@ namespace ClientUI {
   //      /// <remarks>
   //      /// Modified by Jay 2017/09/13
   //      /// </remarks>
-  //      private void tsk_FixOriginScanningFile()
-  //      {
-  //          try
-  //          {
-  //              if (mBypassLoadFile)
-  //              {
+  //      private void tsk_FixOriginScanningFile() {
+  //          try {
+  //              if (mBypassLoadFile) {
   //                  SpinWait.SpinUntil(() => false, 1000);
   //                  return;
   //              }
@@ -2065,8 +1885,7 @@ namespace ClientUI {
 
   //              #endregion
 
-  //              for (int n = 1; n < dataLength; n++)
-  //              {
+  //              for (int n = 1; n < dataLength; n++) {
   //                  #region 2.Read car position and laser scanning 
 
   //                  List<CartesianPos> addedSet = new List<CartesianPos>();
@@ -2108,21 +1927,17 @@ namespace ClientUI {
   //                  #region 6.Inspect odometry variation is not too large.Switch to pose tracking mode if too large.
 
   //                  sw.Restart();
-  //                  if (Math.Abs(diffOdometry.x) >= 400 || Math.Abs(diffOdometry.y) >= 400 || Math.Abs(diffOdometry.theta) >= 30)
-  //                  {
+  //                  if (Math.Abs(diffOdometry.x) >= 400 || Math.Abs(diffOdometry.y) >= 400 || Math.Abs(diffOdometry.theta) >= 30) {
   //                      mode = 1;
   //                      gValue = mMapMatch.PairwiseMatching(predataSet, matchSet, 4, 1.5, 0.01, 20, 300, false, transResult);
-  //                  }
-  //                  else
-  //                  {
+  //                  } else {
   //                      mode = 0;
   //                      gValue = mMapMatch.FindClosetMatching(matchSet, 4, 1.5, 0.01, 20, 300, false, transResult);
   //                      diffLaser.SetPosition(transResult.x, transResult.y, transResult.theta);
   //                  }
 
   //                  //If corresponding is too less,truct the odomery variation this time
-  //                  if (mMapMatch.EstimateCorresponingPoints(matchSet, 10, 10, out corrNum, out addedSet))
-  //                  {
+  //                  if (mMapMatch.EstimateCorresponingPoints(matchSet, 10, 10, out corrNum, out addedSet)) {
   //                      mMapMatch.NewPosTransformation(nowOdometry, transResult.x, transResult.y, transResult.theta);
   //                      accumError.SetPosition(accumError.x + transResult.x, accumError.y + transResult.y, accumError.theta + transResult.theta);
   //                  }
@@ -2155,21 +1970,16 @@ namespace ClientUI {
   //                  RaiseMapEventSync(MapEventType.RefreshPosCar, nowOdometry.ToPos());
   //              }
   //              RaiseMapEvent(MapEventType.CorrectOriComplete);
-  //          }
-  //          catch
-  //          {
+  //          } catch {
 
-  //          }
-  //          finally
-  //          {
+  //          } finally {
   //          }
   //      }
 
   //      /// <summary>
   //      /// 路徑接收執行緒
   //      /// </summary>
-  //      private void tsk_RecvPath(object obj)
-  //      {
+  //      private void tsk_RecvPath(object obj) {
   //          SocketMonitor soxMonitor = obj as SocketMonitor;
   //          //Socket sRecvCmdTemp = sRecvCmd.Accept();//Accept 以同步方式從偵聽通訊端的連接請求佇列中提取第一個掛起的連接請求，然後創建並返回新的 Socket
   //          Socket sRecvCmdTemp = serverComm.ClientAccept(soxMonitor.Socket);
@@ -2178,8 +1988,7 @@ namespace ClientUI {
   //          //sRecvCmdTemp.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.SendBuffer, 1024); //設置發送緩衝區大小 1K
   //          //sRecvCmdTemp.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveBuffer, 9000);//設置接收緩衝區大小1K
 
-  //          try
-  //          {
+  //          try {
   //              sRecvCmdTemp.Send(Encoding.UTF8.GetBytes("Path:Require"));
   //              byte[] recvBytes = new byte[1024 * 500];//開啟一個緩衝區，存儲接收到的資訊
   //              sRecvCmdTemp.Receive(recvBytes); //將讀得的內容放在recvBytes中
@@ -2193,8 +2002,7 @@ namespace ClientUI {
 
   //              string[] strArray = strRecvCmd.Split(':');
   //              recvBytes = null;
-  //              if (strArray[0] == "Path" && !string.IsNullOrEmpty(strArray[1]))
-  //              {
+  //              if (strArray[0] == "Path" && !string.IsNullOrEmpty(strArray[1])) {
   //                  RaiseMapEvent(MapEventType.DrawPath, PathEncoder(strArray[1]));
   //              }
   //              //else
@@ -2204,19 +2012,13 @@ namespace ClientUI {
   //              strArray = null;
   //              sRecvCmdTemp.Close();
 
-  //          }
-  //          catch (SocketException se)
-  //          {
+  //          } catch (SocketException se) {
   //              Console.WriteLine("[Status Recv] : " + se.ToString());
   //              MessageBox.Show("目標拒絕連線");
-  //          }
-  //          catch (Exception ex)
-  //          {
+  //          } catch (Exception ex) {
   //              Console.Write(ex.Message);
   //              //throw ex;
-  //          }
-  //          finally
-  //          {
+  //          } finally {
   //              sRecvCmdTemp.Close();
   //              sRecvCmdTemp = null;
   //          }
@@ -2226,8 +2028,7 @@ namespace ClientUI {
   //      /// 檔案接收執行緒 20170911
   //      /// </summary>
   //      /// <param name="obj"></param>
-  //      private void RecvFiles(object obj)
-  //      {
+  //      private void RecvFiles(object obj) {
 
   //          int fileNameLen = 0;
   //          int recieve_data_size = 0;
@@ -2240,10 +2041,8 @@ namespace ClientUI {
   //          //MemoryStream ms = null;
   //          string curMsg = "Stopped";
   //          string fileName = "";
-  //          try
-  //          {
-  //              if (!mBypassSocket)
-  //              {
+  //          try {
+  //              if (!mBypassSocket) {
   //                  clientSock = serverComm.ClientAccept(soxMonitor.Socket);
   //                  curMsg = "Running and waiting to receive file.";
 
@@ -2254,24 +2053,20 @@ namespace ClientUI {
   //                  /* When request comes from client that accept it and return 
   //                  new socket object for handle that client. */
   //                  byte[] clientData = new byte[1024 * 10000];
-  //                  do
-  //                  {
+  //                  do {
   //                      receivedBytesLen = clientSock.Receive(clientData);
   //                      curMsg = "Receiving data...";
-  //                      if (first == 1)
-  //                      {
+  //                      if (first == 1) {
   //                          fileNameLen = BitConverter.ToInt32(clientData, 0);
   //                          /* I've sent byte array data from client in that format like 
   //                          [file name length in byte][file name] [file data], so need to know 
   //                          first how long the file name is. */
   //                          fileName = Encoding.ASCII.GetString(clientData, 4, fileNameLen);
   //                          /* Read file name */
-  //                          if (!Directory.Exists(mDefMapDir))
-  //                          {
+  //                          if (!Directory.Exists(mDefMapDir)) {
   //                              Directory.CreateDirectory(mDefMapDir);
   //                          }
-  //                          if (File.Exists(mDefMapDir + "/" + fileName))
-  //                          {
+  //                          if (File.Exists(mDefMapDir + "/" + fileName)) {
   //                              File.Delete(mDefMapDir + "/" + fileName);
   //                          }
   //                          bWrite = new BinaryWriter(File.Open(mDefMapDir + "/" + fileName, FileMode.OpenOrCreate));
@@ -2286,9 +2081,8 @@ namespace ClientUI {
   //                          curMsg = "Saving file...";
   //                          /* Close binary writer and client socket */
   //                          curMsg = "Received & Saved file; Server Stopped.";
-  //                      }
-  //                      else //第二筆接收為資料  
-  //                      {
+  //                      } else //第二筆接收為資料  
+  //                        {
   //                          //-----------  
   //                          fileName = Encoding.ASCII.GetString(clientData, 0,
   //                          receivedBytesLen);
@@ -2310,28 +2104,20 @@ namespace ClientUI {
 
   //                  } while (clientSock.Available != 0);
   //                  clientData = null;
-  //              }
-  //              else
-  //              {
+  //              } else {
   //                  SpinWait.SpinUntil(() => false, 1000);
   //                  fileName = "FileName";
   //              }
 
 
-  //          }
-  //          catch (SocketException se)
-  //          {
+  //          } catch (SocketException se) {
   //              Console.WriteLine("SocketException : {0}", se.ToString());
   //              MessageBox.Show("檔案傳輸失敗!");
   //              curMsg = "File Receiving error.";
-  //          }
-  //          catch (Exception ex)
-  //          {
+  //          } catch (Exception ex) {
   //              Console.WriteLine("[RecvFiles]" + ex.ToString());
   //              curMsg = "File Receiving error.";
-  //          }
-  //          finally
-  //          {
+  //          } finally {
   //              bWrite?.Close();
   //              clientSock?.Shutdown(SocketShutdown.Both);
   //              clientSock?.Close();
@@ -2343,8 +2129,7 @@ namespace ClientUI {
   //      /// <summary>
   //      /// 檔案接收執行緒
   //      /// </summary>
-  //      private void tsk_RecvFile(object obj)
-  //      {
+  //      private void tsk_RecvFile(object obj) {
   //          int recieve_data_size = 0;
   //          int first = 1;
   //          SocketMonitor soxMonitor = obj as SocketMonitor;
@@ -2352,8 +2137,7 @@ namespace ClientUI {
   //          BinaryWriter bWrite = null;
   //          //MemoryStream ms = null;
   //          string curMsg = "Stopped";
-  //          try
-  //          {
+  //          try {
   //              string fileName = string.Empty;
   //              curMsg = "Running and waiting to receive file.";
   //              //Socket clientSock = serverComm.ClientAccept(sRecvFile);
@@ -2364,24 +2148,20 @@ namespace ClientUI {
   //              /* When request comes from client that accept it and return 
   //              new socket object for handle that client. */
   //              byte[] clientData = new byte[1024 * 10000];
-  //              do
-  //              {
+  //              do {
   //                  int receivedBytesLen = clientSock.Receive(clientData);
   //                  curMsg = "Receiving data...";
-  //                  if (first == 1)
-  //                  {
+  //                  if (first == 1) {
   //                      int fileNameLen = BitConverter.ToInt32(clientData, 0);
   //                      /* I've sent byte array data from client in that format like 
   //                      [file name length in byte][file name] [file data], so need to know 
   //                      first how long the file name is. */
   //                      fileName = Encoding.ASCII.GetString(clientData, 4, fileNameLen);
   //                      /* Read file name */
-  //                      if (!Directory.Exists(mDefMapDir))
-  //                      {
+  //                      if (!Directory.Exists(mDefMapDir)) {
   //                          Directory.CreateDirectory(mDefMapDir);
   //                      }
-  //                      if (File.Exists(mDefMapDir + "/" + fileName))
-  //                      {
+  //                      if (File.Exists(mDefMapDir + "/" + fileName)) {
   //                          File.Delete(mDefMapDir + "/" + fileName);
   //                      }
   //                      bWrite = new BinaryWriter(File.Open(mDefMapDir + "/" + fileName, FileMode.OpenOrCreate));
@@ -2396,9 +2176,8 @@ namespace ClientUI {
   //                      curMsg = "Saving file...";
   //                      /* Close binary writer and client socket */
   //                      curMsg = "Received & Saved file; Server Stopped.";
-  //                  }
-  //                  else //第二筆接收為資料  
-  //                  {
+  //                  } else //第二筆接收為資料  
+  //                    {
   //                      //-----------  
   //                      fileName = Encoding.ASCII.GetString(clientData, 0,
   //                      receivedBytesLen);
@@ -2421,20 +2200,14 @@ namespace ClientUI {
   //              } while (clientSock.Available != 0);
   //              clientData = null;
 
-  //          }
-  //          catch (SocketException se)
-  //          {
+  //          } catch (SocketException se) {
   //              Console.WriteLine("SocketException : {0}", se.ToString());
   //              MessageBox.Show("檔案傳輸失敗!");
   //              curMsg = "File Receiving error.";
-  //          }
-  //          catch (Exception ex)
-  //          {
+  //          } catch (Exception ex) {
   //              Console.WriteLine("[RecvFiles]" + ex.ToString());
   //              curMsg = "File Receiving error.";
-  //          }
-  //          finally
-  //          {
+  //          } finally {
   //              bWrite.Close();
   //              clientSock.Shutdown(SocketShutdown.Both);
   //              clientSock.Close();
@@ -2445,8 +2218,7 @@ namespace ClientUI {
   //      /// <summary>
   //      /// 車子資訊接收執行緒
   //      /// </summary>
-  //      public void tsk_RecvCmd(object obj)
-  //      {
+  //      public void tsk_RecvCmd(object obj) {
   //          SocketMonitor soxMonitor = obj as SocketMonitor;
   //          Socket sRecvCmdTemp = null;
 
@@ -2456,10 +2228,8 @@ namespace ClientUI {
   //          //sRecvCmdTemp.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.SendBuffer, 1024); //設置發送緩衝區大小 1K
   //          //sRecvCmdTemp.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveBuffer, 9000);//設置接收緩衝區大小1K
   //          sRecvCmdTemp = serverComm.ClientAccept(soxMonitor.Socket);
-  //          try
-  //          {
-  //              while (IsGettingLaser)
-  //              {
+  //          try {
+  //              while (IsGettingLaser) {
 
   //                  SpinWait.SpinUntil(() => false, 1);//每個執行緒內部的閉環裡面都要加個「短時間」睡眠，使得執行緒佔用資源得到及時釋放
   //                                                     //Thread.Sleep(1);
@@ -2476,54 +2246,40 @@ namespace ClientUI {
 
   //                  string[] strArray = strRecvCmd.Split(':');
   //                  recvBytes = null;
-  //                  if (CarInfo.TryParse(strRecvCmd, out mCarInfo))
-  //                  {
+  //                  if (CarInfo.TryParse(strRecvCmd, out mCarInfo)) {
   //                      RaiseCarInfoRefresh(mCarInfo);
   //                      sRecvCmdTemp.Send(Encoding.UTF8.GetBytes("Get:Car:True"));
-  //                  }
-  //                  else
-  //                  {
+  //                  } else {
   //                      sRecvCmdTemp.Send(Encoding.UTF8.GetBytes("Get:Car:False"));
   //                  }
 
   //                  strRecvCmd = null;
   //                  strArray = null;
   //              }
-  //          }
-  //          catch (SocketException se)
-  //          {
+  //          } catch (SocketException se) {
   //              Console.WriteLine("[Status Recv] : " + se.ToString());
   //              MessageBox.Show("目標拒絕連線");
-  //          }
-  //          catch (Exception ex)
-  //          {
+  //          } catch (Exception ex) {
   //              Console.Write(ex.Message);
   //              //throw ex;
-  //          }
-  //          finally
-  //          {
+  //          } finally {
   //              sRecvCmdTemp?.Close();
   //              sRecvCmdTemp = null;
   //          }
   //      }
 
-  //      public void ReadOriginScanningFileAsync()
-  //      {
+  //      public void ReadOriginScanningFileAsync() {
   //          CtProgress prog = new CtProgress("LoadOri", "Loading Ori...");
-  //          try
-  //          {
+  //          try {
   //              MapReading MapReading = null;
-  //              if (!mBypassLoadFile)
-  //              {//無BypassLoadFile
+  //              if (!mBypassLoadFile) {//無BypassLoadFile
   //                  MapReading = new MapReading(CurOriPath);
   //                  CartesianPos carPos;
   //                  List<CartesianPos> laserData;
   //                  //List<Point> listMap = new List<Point>();
   //                  int dataLength = MapReading.OpenFile();
-  //                  if (dataLength != 0)
-  //                  {
-  //                      for (int n = 0; n < dataLength; n++)
-  //                      {
+  //                  if (dataLength != 0) {
+  //                      for (int n = 0; n < dataLength; n++) {
   //                          MapReading.ReadScanningInfo(n, out carPos, out laserData);
   //                          Dictionary<string, object> dic = new Dictionary<string, object>();
   //                          dic.Add(carPos, VarDef.PosCar);
@@ -2534,21 +2290,15 @@ namespace ClientUI {
   //                          laserData = null;
   //                      }
   //                  }
-  //              }
-  //              else
-  //              {//Bypass LoadFile功能
+  //              } else {//Bypass LoadFile功能
   //                  /*-- 空跑一秒，模擬檔案載入 --*/
   //                  //SpinWait.SpinUntil(() => false, 1000);
   //                  Thread.Sleep(1000);
   //              }
   //              RaiseMapEvent(MapEventType.LoadComplete);
   //              MapReading = null;
-  //          }
-  //          catch (Exception ex)
-  //          {
-  //          }
-  //          finally
-  //          {
+  //          } catch (Exception ex) {
+  //          } finally {
   //              prog?.Close();
   //              prog = null;
   //          }
@@ -2558,20 +2308,16 @@ namespace ClientUI {
   //      /// LoadOri執行緒
   //      /// </summary>
   //      /// <param name="obj">請輸入string類型地圖路徑</param>
-  //      public void tsk_ReadOriginScanningFile()
-  //      {
+  //      public void tsk_ReadOriginScanningFile() {
   //          MapReading MapReading = null;
-  //          if (!mBypassLoadFile)
-  //          {//無BypassLoadFile
+  //          if (!mBypassLoadFile) {//無BypassLoadFile
   //              MapReading = new MapReading(CurOriPath);
   //              CartesianPos carPos;
   //              List<CartesianPos> laserData;
   //              //List<Point> listMap = new List<Point>();
   //              int dataLength = MapReading.OpenFile();
-  //              if (dataLength != 0)
-  //              {
-  //                  for (int n = 0; n < dataLength; n++)
-  //                  {
+  //              if (dataLength != 0) {
+  //                  for (int n = 0; n < dataLength; n++) {
   //                      MapReading.ReadScanningInfo(n, out carPos, out laserData);
   //                      Dictionary<string, object> dic = new Dictionary<string, object>();
   //                      dic.Add(carPos, VarDef.PosCar);
@@ -2582,9 +2328,7 @@ namespace ClientUI {
   //                      laserData = null;
   //                  }
   //              }
-  //          }
-  //          else
-  //          {//Bypass LoadFile功能
+  //          } else {//Bypass LoadFile功能
   //              /*-- 空跑一秒，模擬檔案載入 --*/
   //              //SpinWait.SpinUntil(() => false, 1000);
   //              Thread.Sleep(1000);
@@ -2597,14 +2341,11 @@ namespace ClientUI {
   //      /// <summary>
   //      /// Map檔載入執行緒
   //      /// </summary>
-  //      private void tsk_ReadMapFile()
-  //      {
+  //      private void tsk_ReadMapFile() {
   //          CtProgress prog = new CtProgress("Load Map", "Loading Map...");
 
-  //          try
-  //          {
-  //              if (mBypassLoadFile)
-  //              {
+  //          try {
+  //              if (mBypassLoadFile) {
   //                  /*-- 空跑1秒模擬載入Map檔 --*/
   //                  SpinWait.SpinUntil(() => false, 1000);
   //                  return;
@@ -2619,8 +2360,7 @@ namespace ClientUI {
 
   //              #region - Retrive information from .map file -
 
-  //              using (MapReading read = new MapReading(CurMapPath))
-  //              {
+  //              using (MapReading read = new MapReading(CurMapPath)) {
   //                  read.OpenFile();
   //                  read.ReadMapBoundary(out minimumPos, out maximumPos);
   //                  read.ReadMapGoalList(out goalList);
@@ -2629,35 +2369,30 @@ namespace ClientUI {
   //              }
 
   //              mMapMatch.Reset();
-  //              for (int i = 0; i < obstacleLine.Count; i++)
-  //              {
+  //              for (int i = 0; i < obstacleLine.Count; i++) {
   //                  int start = (int)obstacleLine[i].start.x;
   //                  int end = (int)obstacleLine[i].end.x;
   //                  int y = (int)obstacleLine[i].start.y;
-  //                  for (int x = start; x < end; x++)
-  //                  {
+  //                  for (int x = start; x < end; x++) {
   //                      mMapMatch.AddPoint(new CartesianPos(x, y));
   //                  }
   //              }
 
-  //              for (int i = 0; i < obstaclePoints.Count; i++)
-  //              {
+  //              for (int i = 0; i < obstaclePoints.Count; i++) {
   //                  mMapMatch.AddPoint(obstaclePoints[i]);
   //              }
   //              #endregion
 
   //              #region  - Map information display -
 
-  //              for (int i = 0; i < obstacleLine.Count; i++)
-  //              {
+  //              for (int i = 0; i < obstacleLine.Count; i++) {
   //                  dispLines.Add(
   //                      new Line((int)obstacleLine[i].start.x, (int)obstacleLine[i].start.y,
   //                      (int)obstacleLine[i].end.x, (int)obstacleLine[i].end.y)
   //                  );
   //              }
 
-  //              for (int i = 0; i < obstaclePoints.Count; i++)
-  //              {
+  //              for (int i = 0; i < obstaclePoints.Count; i++) {
   //                  dispPoint.Add(new Point((int)obstaclePoints[i].x, (int)obstaclePoints[i].y));
   //              }
   //              Dictionary<string, object> dic = new Dictionary<string, object>();
@@ -2676,13 +2411,9 @@ namespace ClientUI {
   //              maximumPos = null;
   //              dispLines = null;
   //              dispPoint = null;
-  //          }
-  //          catch
-  //          {
+  //          } catch {
 
-  //          }
-  //          finally
-  //          {
+  //          } finally {
   //              prog?.Close();
   //              prog = null;
   //          }
@@ -2698,8 +2429,7 @@ namespace ClientUI {
   //      /// </summary>
   //      /// <param name="type"></param>
   //      /// <param name="value"></param>
-  //      private void RaiseMapEventSync(MapEventType type, object value = null)
-  //      {
+  //      private void RaiseMapEventSync(MapEventType type, object value = null) {
   //          MapEventTrigger?.Invoke(this, new MapEventArgs(type, value));
   //      }
 
@@ -2708,8 +2438,7 @@ namespace ClientUI {
   //      /// </summary>
   //      /// <param name="type">事件類型</param>
   //      /// <param name="value">傳遞參數</param>
-  //      private void RaiseMapEvent(MapEventType type, object value = null)
-  //      {
+  //      private void RaiseMapEvent(MapEventType type, object value = null) {
   //          MapEventTrigger?.BeginInvoke(this, new MapEventArgs(type, value), null, null);
   //      }
 
@@ -2718,8 +2447,7 @@ namespace ClientUI {
   //      /// </summary>
   //      /// <param name="type"></param>
   //      /// <param name="value"></param>
-  //      private void RaiseTestingEvent(TestingEventType type, object value = null)
-  //      {
+  //      private void RaiseTestingEvent(TestingEventType type, object value = null) {
   //          TestingEventTrigger?.BeginInvoke(this, new TestingEventArgs(type, value), null, null);
   //      }
 
@@ -2728,8 +2456,7 @@ namespace ClientUI {
   //      /// </summary>
   //      /// <param name="type">事件類型</param>
   //      /// <param name="value">傳遞參數</param>
-  //      private void RaiseAgvClientEvent(AgvClientEventType type, object value = null)
-  //      {
+  //      private void RaiseAgvClientEvent(AgvClientEventType type, object value = null) {
   //          AgvClientEventTrigger?.BeginInvoke(this, new AgvClientEventArgs(type, value), null, null);
   //      }
 
@@ -2737,16 +2464,14 @@ namespace ClientUI {
   //      /// 訊息傳輸發報
   //      /// </summary>
   //      /// <param name="msg">傳輸訊息內容</param>
-  //      private void RaiseMsgTrans(string msg)
-  //      {
+  //      private void RaiseMsgTrans(string msg) {
   //      }
 
   //      /// <summary>
   //      /// 車子資訊發報
   //      /// </summary>
   //      /// <param name="e">車子資訊參數</param>
-  //      private void RaiseCarInfoRefresh(CarInfo info)
-  //      {
+  //      private void RaiseCarInfoRefresh(CarInfo info) {
   //          RaiseAgvClientEvent(AgvClientEventType.CarInfoRefresh, info);
   //          RaiseMapEvent(MapEventType.CarInfoRefresh, info);
   //      }
@@ -2755,8 +2480,7 @@ namespace ClientUI {
   //      /// 使用者變更發報
   //      /// </summary>
   //      /// <param name="user">使用者資料</param>
-  //      private void RaiseUserChanged(UserData user)
-  //      {
+  //      private void RaiseUserChanged(UserData user) {
   //          RaiseAgvClientEvent(AgvClientEventType.UserChanged, user);
   //      }
 
@@ -2764,12 +2488,9 @@ namespace ClientUI {
 
   //      #region IDisposable Support
 
-  //      protected virtual void Dispose(bool disposing)
-  //      {
-  //          if (!disposedValue)
-  //          {
-  //              if (disposing)
-  //              {
+  //      protected virtual void Dispose(bool disposing) {
+  //          if (!disposedValue) {
+  //              if (disposing) {
   //                  // TODO: 處置 Managed 狀態 (Managed 物件)。
   //              }
 
@@ -2783,8 +2504,7 @@ namespace ClientUI {
   //      /// <summary>
   //      /// 
   //      /// </summary>
-  //      public void Dispose()
-  //      {
+  //      public void Dispose() {
   //          // 請勿變更這個程式碼。請將清除程式碼放入上方的 Dispose(bool disposing) 中。
   //          Dispose(true);
   //          // TODO: 如果上方的完成項已被覆寫，即取消下行的註解狀態。
