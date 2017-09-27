@@ -1,10 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using System.Threading;
 
@@ -17,20 +11,23 @@ namespace CtLib.Forms {
     /// <para>因如果直接ShowDialog，將導致顯示會頓頓的，已新增CtProgress.cs改善</para>
     /// <para>建議可以使用CtProgress取代直接呼叫CtProgress_Ctrl</para>
     /// </summary>
-    internal partial class CtProgress_Ctrl : Form {
+    internal partial class CtProgress_Ctrl : Form, ICtVersion {
 
         #region Version
 
         /// <summary>CtProgress 版本訊息</summary>
-        /// <remarks><code>
+        /// <remarks><code language="C#">
         /// 1.0.0  Ahern [2014/09/12]
         ///     + 建立基礎模組
         ///     
-        /// 1.0.1  Ahern [201410/28]
+        /// 1.0.1  Ahern [2014/10/28]
         ///     + Logo
         ///     \ 統一Enumeration大小寫
+        /// 
+        /// 1.1.0  Ahern [2015/08/05]
+        ///     \ Close 順序，盡量避免崩潰
         /// </code></remarks>
-        public static readonly CtVersion @Version = new CtVersion(1, 0, 1, "2014/1/28", "Ahern Kuo");
+        public CtVersion Version { get { return new CtVersion(1, 1, 0, "2015/08/05", "Ahern Kuo"); } }
 
         #endregion
 
@@ -39,11 +36,11 @@ namespace CtLib.Forms {
         /// <summary>樣式選項</summary>
         public enum Style : byte {
             /// <summary>百分比模式</summary>
-            PERCENT = 0,
+            Percent = 0,
             /// <summary>倒數模式，設定好秒數後將自動往下倒數</summary>
-            COUNTDOWN = 1,
+            Countdown = 1,
             /// <summary>等待載入，進度條將無限循環</summary>
-            LOADING = 2
+            Loading = 2
         }
 
         #endregion
@@ -58,10 +55,10 @@ namespace CtLib.Forms {
 
         #endregion
 
-        #region Declaration - Members
+        #region Declaration - Fields
 
         /// <summary>紀錄當前樣式</summary>
-        private Style mStyle = Style.LOADING;
+        private Style mStyle = Style.Loading;
         /// <summary>百分比進度之當前進度</summary>
         private float mCurrStep = 0;
         /// <summary>百分比進度之最大進度</summary>
@@ -80,7 +77,7 @@ namespace CtLib.Forms {
             try {
                 sngTemp = (mCurrStep / mMaxStep) * 100F;
             } catch (Exception ex) {
-                CtStatus.Report(Stat.ER_SYSTEM, "CalcPercent", ex.Message);
+                CtStatus.Report(Stat.ER_SYSTEM, ex);
             }
             return sngTemp;
         }
@@ -92,12 +89,12 @@ namespace CtLib.Forms {
                 mCurrStep -= 0.01F;
                 if (mCurrStep <= 0F) {
                     IsFinished = true;
-                    this.DialogResult = System.Windows.Forms.DialogResult.Abort;
+                    DialogResult = DialogResult.Abort;
                     CtInvoke.FormClose(this);
                     mCdTmr.Dispose();
                 } else UpdateState();
             } catch (Exception ex) {
-                CtStatus.Report(Stat.ER_SYSTEM, "tmrCallback", ex.Message);
+                CtStatus.Report(Stat.ER_SYSTEM, ex);
             }
         }
 
@@ -117,21 +114,21 @@ namespace CtLib.Forms {
             CtInvoke.LabelText(lbCaption, caption);
 
             switch (sty) {
-                case Style.PERCENT:
+                case Style.Percent:
                     mCurrStep = 0F;
                     mMaxStep = maxValue;
-                    CtInvoke.LabelText(lbPercent,"0.00%");
+                    CtInvoke.LabelText(lbPercent, "0.00%");
                     CtInvoke.ProgressBarRange(progProcess, 0, 100);
                     CtInvoke.ProgressBarStyle(progProcess, ProgressBarStyle.Continuous);
                     break;
-                case Style.COUNTDOWN:
+                case Style.Countdown:
                     mMaxStep = maxValue;
                     mCurrStep = maxValue;
                     CtInvoke.LabelText(lbPercent, mMaxStep.ToString("##0.0s"));
                     CtInvoke.ProgressBarRange(progProcess, 0, 100);
                     CtInvoke.ProgressBarStyle(progProcess, ProgressBarStyle.Continuous);
                     break;
-                case Style.LOADING:
+                case Style.Loading:
                     CtInvoke.LabelVisible(lbPercent, false);
                     CtInvoke.ProgressBarStyle(progProcess, ProgressBarStyle.Marquee);
                     break;
@@ -149,13 +146,14 @@ namespace CtLib.Forms {
             Stat stt = Stat.SUCCESS;
             try {
                 IsFinished = false;
-                if (mStyle == Style.COUNTDOWN) {
+                if (mStyle == Style.Countdown) {
                     mCdTmr = new System.Threading.Timer(new TimerCallback(tmrCallback), "CtProg_Countdown", 10, 10);
                 }
-                this.Show();
+                Show();
+
             } catch (Exception ex) {
                 stt = Stat.ER_SYSTEM;
-                CtStatus.Report(stt, "Start", ex.Message);
+                CtStatus.Report(stt, ex);
             }
             return stt;
         }
@@ -163,17 +161,17 @@ namespace CtLib.Forms {
         /// <summary>更新進度</summary>
         private void UpdateState() {
             try {
-                if (mStyle == Style.COUNTDOWN) {
+                if (mStyle == Style.Countdown) {
                     CtInvoke.LabelText(lbPercent, mCurrStep.ToString("##0.0") + "s");
-                    CtInvoke.ProgressBarValue(progProcess, (int) CalcPercent());
-                } else if (mStyle == Style.PERCENT) {
+                    CtInvoke.ProgressBarValue(progProcess, (int)CalcPercent());
+                } else if (mStyle == Style.Percent) {
                     float sngCurVal = CalcPercent();
                     CtInvoke.LabelText(lbPercent, sngCurVal.ToString("##0.00") + "%");
-                    CtInvoke.ProgressBarValue(progProcess, (int) sngCurVal);
+                    CtInvoke.ProgressBarValue(progProcess, (int)sngCurVal);
                 }
                 Application.DoEvents();
             } catch (Exception ex) {
-                CtStatus.Report(Stat.ER_SYSTEM, "UpdateState", ex.Message);
+                CtStatus.Report(Stat.ER_SYSTEM, ex);
             }
         }
 
@@ -187,7 +185,7 @@ namespace CtLib.Forms {
                 UpdateState();
             } catch (Exception ex) {
                 stt = Stat.ER_SYSTEM;
-                CtStatus.Report(stt, "UpdateStep", ex.Message);
+                CtStatus.Report(stt, ex);
             }
             return stt;
         }
@@ -204,7 +202,7 @@ namespace CtLib.Forms {
                 UpdateState();
             } catch (Exception ex) {
                 stt = Stat.ER_SYSTEM;
-                CtStatus.Report(stt, "UpdateStep_cap", ex.Message);
+                CtStatus.Report(stt, ex);
             }
             return stt;
         }
@@ -223,7 +221,7 @@ namespace CtLib.Forms {
                 UpdateState();
             } catch (Exception ex) {
                 stt = Stat.ER_SYSTEM;
-                CtStatus.Report(stt, "UpdateStep_tit", ex.Message);
+                CtStatus.Report(stt, ex);
             }
             return stt;
         }
@@ -232,11 +230,11 @@ namespace CtLib.Forms {
         public void Terminate() {
             try {
                 IsFinished = true;
-                this.DialogResult = System.Windows.Forms.DialogResult.Abort;
-                this.Close();
+                DialogResult = DialogResult.Abort;
+                CtInvoke.FormClose(this);
                 if (mCdTmr != null) mCdTmr.Dispose();
             } catch (Exception ex) {
-                CtStatus.Report(Stat.ER_SYSTEM, "Terminate", ex.Message);
+                CtStatus.Report(Stat.ER_SYSTEM, ex);
             }
         }
 
