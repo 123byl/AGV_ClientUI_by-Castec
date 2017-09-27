@@ -111,6 +111,16 @@ namespace AGVMap
         void HideCtrlMark(int key);
 
         /// <summary>
+        /// 建立新地圖(刪除所有資料)
+        /// </summary>
+        void NewMap();
+
+        /// <summary>
+        /// 建立新地圖(刪除所有資料)
+        /// </summary>
+        void NewMap(IEnumerable<IPoint> obstaclePoints, IEnumerable<ILine> obstacleLines);
+
+        /// <summary>
         /// 移除面集合
         /// </summary>
         void RemoveAreasSet(int id);
@@ -535,6 +545,31 @@ namespace AGVMap
         {
             mDragManager.SetCtrlObj(null);
             mMarks.Edit((item) => { if (item.Key == key) item.Value.Visible = false; });
+        }
+
+        /// <summary>
+        /// 建立新地圖(刪除所有資料)
+        /// </summary>
+        public void NewMap(IEnumerable<IPoint> obstaclePoints, IEnumerable<ILine> obstacleLines)
+        {
+            NewMap();
+            if (obstaclePoints != null) AddPointsSet(Factory.CreatSet.ObstaclePoints( obstaclePoints));
+            if (obstacleLines != null) AddLinesSet(Factory.CreatSet.ObstacleLines(obstacleLines));
+        }
+
+        /// <summary>
+        /// 建立新地圖(刪除所有資料)
+        /// </summary>
+        public void NewMap()
+        {
+            mAGVs.Clear();
+            mMarks.Clear();
+            mLines.Clear();
+            mAreas.Clear();
+
+            mPointSets.Clear();
+            mLineSets.Clear();
+            mAreas.Clear();
         }
 
         /// <summary>

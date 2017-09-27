@@ -394,11 +394,13 @@ namespace ClientUI
                     CtInvoke.ComboBoxAdd(cmbGoalList, goal.ToStr());
                     DataGridViewRow row = new DataGridViewRow();
                     row.CreateCells(dgvGoalPoint);
-                    row.Cells[0].Value = new CheckBox().Checked = false;
-                    row.Cells[1].Value = goal.x;
-                    row.Cells[2].Value = goal.y;
-                    row.Cells[3].Value = goal.theta;
-                    row.Cells[4].Value = false;
+                    row.Cells[SelectColumn].Value = new CheckBox().Checked = false;
+                    row.Cells[IDColumn].Value = 0;
+                    row.Cells[NameColumn].Value = "GoalXXX";
+                    row.Cells[XColumn].Value = goal.x;
+                    row.Cells[YColumn].Value = goal.y;
+                    row.Cells[TowardColumn].Value = goal.theta;
+                    row.Cells[NoteColumn].Value = "";
                     row.HeaderCell.Value = idx++.ToString();
                     dgvGoalPoint.InvokeIfNecessary(() => {
                         dgvGoalPoint.Rows.Add(row);

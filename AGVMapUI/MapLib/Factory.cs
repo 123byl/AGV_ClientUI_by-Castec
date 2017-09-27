@@ -206,37 +206,53 @@ namespace AGVMap
             /// <summary>
             /// 建立可繪面集合
             /// </summary>
-            public static DASet AreasSet(int id, IEnumerable<IArea> data)
+            public static DASet ObstacleAreas(IEnumerable<IArea> data)
             {
                 DASet res = new DASet();
                 res.AddRange(data);
                 res.Color = new Color(System.Drawing.Color.Black);
                 res.Layer = ELayer.AreaSet;
-                res.ID = id;
+                res.ID = Factory.CreatID.ObstacleAreaID ;
                 return res;
             }
 
             /// <summary>
             /// 建立可繪線集合
             /// </summary>
-            public static DLSet LinesSet(int id, IEnumerable<ILine> data)
+            public static DLSet ObstacleLines(IEnumerable<ILine> data)
             {
                 DLSet res = new DLSet();
+                res.LineWidth = 1;
                 res.AddRange(data);
                 res.Color = new Color(System.Drawing.Color.Black);
                 res.Layer = ELayer.LineSet;
-                res.ID = id;
+                res.ID = Factory.CreatID.ObstacleLineID;
                 return res;
             }
 
             /// <summary>
             /// 建立可繪點集合
             /// </summary>
-            public static DPSet PointsSet(int id, IEnumerable<IPoint> data)
+            public static DPSet ObstaclePoints(IEnumerable<IPoint> data)
             {
                 DPSet res = new DPSet();
+                res.PointSize = 1;
                 res.AddRange(data);
                 res.Color = new Color(System.Drawing.Color.Black);
+                res.Layer = ELayer.PointSet;
+                res.ID = Factory.CreatID.ObstaclePointID;
+                return res;
+            }
+
+            /// <summary>
+            /// 建立可繪點集合
+            /// </summary>
+            public static DPSet LaserPoints(int id,IEnumerable<IPoint> data)
+            {
+                DPSet res = new DPSet();
+                res.PointSize = 3;
+                res.AddRange(data);
+                res.Color = new Color(System.Drawing.Color.Red);
                 res.Layer = ELayer.PointSet;
                 res.ID = id;
                 return res;

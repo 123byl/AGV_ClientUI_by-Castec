@@ -22,6 +22,8 @@ using ServerOperation;
 using static MapGL.CastecMapUI;
 using System.Net;
 using System.Net.Sockets;
+using ClientUI.Development;
+using AGVMap;
 
 namespace ClientUI
 {
@@ -238,11 +240,6 @@ namespace ClientUI
         }
 
         /// <summary>
-        /// GL模式
-        /// </summary>
-        public GLMode GLMode { get; set; }
-
-        /// <summary>
         /// Ori檔路徑
         /// </summary>
         public string CurOriPath { get; set; } = string.Empty;
@@ -337,9 +334,9 @@ namespace ClientUI
         /// <summary>
         /// MapGL子視窗
         /// </summary>
-        private CtMapGL MapGL {
+        private AGVMapUI MapGL {
             get {
-                return mDockContent.ContainsKey(miMapGL) ? mDockContent[miMapGL] as CtMapGL : null;
+                return mDockContent.ContainsKey(miMapGL) ? mDockContent[miMapGL] as AGVMapUI : null;
             }
         }
 
@@ -369,13 +366,13 @@ namespace ClientUI
                 return mDockContent.ContainsKey(miGoalSetting) ? mDockContent[miGoalSetting] as CtGoalSetting : null;
             }
         }
-        
+
         /// <summary>
         /// Console子視窗
         /// </summary>
         private IIConsole IConsole { get { return Console; } }
         private IIGoalSetting IGoalSetting { get { return GoalSetting; } }
-        private IIMapGL IMapGL { get { return MapGL; } }
+        private IMapCtrl IMapCtrl { get { return MapGL != null ? MapGL.Ctrl : null; } }
         #endregion Declaration - Properties
 
         #region Functin - Constructors
@@ -632,14 +629,6 @@ namespace ClientUI
         }
 
         /// <summary>
-        /// 設定GL模式
-        /// </summary>
-        public void SetGLMode(GLMode mode)
-        {
-            //MapGL?.SetGLMode(mode);
-        }
-
-        /// <summary>
         /// 清除地圖
         /// </summary>
         public void ClearMap()
@@ -655,12 +644,14 @@ namespace ClientUI
         /// 前往目標Goal點
         /// </summary>
         /// <param name="numGoal">目標Goal點</param>
-        public void Run(int numGoal) {
+        public void Run(int numGoal)
+        {
             /*-- 若是路徑資料則開始接收資料 --*/
             string[] rtnMsg = SendMsg($"Set:Run:{numGoal}");
             if ((rtnMsg?.Length ?? 0) > 3 &&
                 rtnMsg[1] == "Run" &&
-                rtnMsg[3] == "Done") {
+                rtnMsg[3] == "Done")
+            {
                 mSoxMonitorPath.Start();
             }
         }
@@ -669,12 +660,14 @@ namespace ClientUI
         /// 路徑規劃
         /// </summary>
         /// <param name="no">目標Goal點編號</param>
-        public void PathPlan(int numGoal) {
+        public void PathPlan(int numGoal)
+        {
             /*-- 若是路徑資料則開始接收資料 --*/
             string[] rtnMsg = SendMsg($"Set:PathPlan:{numGoal}");
             if ((rtnMsg?.Count() ?? 0) > 3 &&
                 rtnMsg[1] == "PathPlan" &&
-                rtnMsg[2] == "True") {
+                rtnMsg[2] == "True")
+            {
                 mSoxMonitorPath.Start();
             }
         }
@@ -685,11 +678,15 @@ namespace ClientUI
         /// <param name="sendMseeage">傳送訊息內容</param>
         /// <param name="passChkConn">是否略過檢查連線狀態</param>
         /// <returns>Server端回應</returns>
-        private string[] SendMsg(string sendMseeage, bool passChkConn = true) {
-            if (mBypassSocket) {
+        private string[] SendMsg(string sendMseeage, bool passChkConn = true)
+        {
+            if (mBypassSocket)
+            {
                 /*-- Bypass略過不傳 --*/
                 return new string[] { "True" };
-            } else if (passChkConn && !IsServerAlive) {
+            }
+            else if (passChkConn && !IsServerAlive)
+            {
                 /*-- 略過連線檢查且Server端未運作 --*/
                 return new string[] { "False" };
             }
@@ -715,7 +712,8 @@ namespace ClientUI
         /// <param name="requerPort">通訊埠號</param>
         /// <param name="sendMseeage">傳送訊息內容</param>
         /// <returns>Server端回應</returns>
-        private string SendStrMsg(string serverIP, int requerPort, string sendMseeage) {
+        private string SendStrMsg(string serverIP, int requerPort, string sendMseeage)
+        {
 
             //可以在字串編碼上做文章，可以傳送各種資訊內容，目前主要有三種編碼方式：
             //1.自訂連接字串編碼－－微量
@@ -729,7 +727,8 @@ namespace ClientUI
             Socket answerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             answerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, 5000);//設置接收資料超時
             answerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.SendTimeout, timeout);
-            try {
+            try
+            {
 
                 answerSocket.Connect(ipEndPoint);//建立Socket連接
                 byte[] sendContents = Encoding.UTF8.GetBytes(sendMseeage);
@@ -740,17 +739,25 @@ namespace ClientUI
                 sendContents = null;
                 return strRecvCmd;
 
-            } catch (SocketException se) {
+            }
+            catch (SocketException se)
+            {
                 //Console.WriteLine("SocketException : {0}", se.ToString());
                 //MessageBox.Show("目標拒絕連線!!");
                 return "False";
-            } catch (ArgumentNullException ane) {
+            }
+            catch (ArgumentNullException ane)
+            {
                 //Console.WriteLine("ArgumentNullException : {0}", ane.ToString());
                 return "False";
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 //Console.Write(ex.Message);
                 return "False";
-            } finally {
+            }
+            finally
+            {
                 ipEndPoint = null;
                 recvBytes = null;
                 // answerSocket.Shutdown(SocketShutdown.Both);
@@ -762,14 +769,13 @@ namespace ClientUI
             }
 
         }
-        
+
         /// <summary>
         /// 載入地圖
         /// </summary>
         /// <param name="mapPath">Map檔路徑</param>
-        private void LoadMap(string mapPath) {
-            List<Line> dispLines = new List<Line>();
-            List<Point> dispPoint = new List<Point>();
+        private void LoadMap(string mapPath)
+        {
             List<CartesianPos> goalList = new List<CartesianPos>();
             List<CartesianPos> obstaclePoints = new List<CartesianPos>();
             List<MapLine> obstacleLine = new List<MapLine>();
@@ -777,17 +783,21 @@ namespace ClientUI
             string mPath = CtFile.GetFileName(mapPath);
             SendMsg($"Set:MapName:{mPath}");
 
-            if (mBypassLoadFile) {
+            if (mBypassLoadFile)
+            {
                 /*-- 空跑1秒模擬載入Map檔 --*/
                 SpinWait.SpinUntil(() => false, 1000);
-            } else {
+            }
+            else
+            {
 
                 CartesianPos minimumPos;
                 CartesianPos maximumPos;
 
                 #region - Retrive information from .map file -
-                
-                using (MapReading read = new MapReading(mCurMapPath)) {
+
+                using (MapReading read = new MapReading(mCurMapPath))
+                {
                     read.OpenFile();
                     read.ReadMapBoundary(out minimumPos, out maximumPos);
                     read.ReadMapGoalList(out goalList);
@@ -797,91 +807,99 @@ namespace ClientUI
                 Goals = goalList;
 
                 mMapMatch.Reset();
-                for (int i = 0; i < obstacleLine.Count; i++) {
+                for (int i = 0; i < obstacleLine.Count; i++)
+                {
                     int start = (int)obstacleLine[i].start.x;
                     int end = (int)obstacleLine[i].end.x;
                     int y = (int)obstacleLine[i].start.y;
-                    for (int x = start; x < end; x++) {
+                    for (int x = start; x < end; x++)
+                    {
                         mMapMatch.AddPoint(new CartesianPos(x, y));
                     }
                 }
 
-                for (int i = 0; i < obstaclePoints.Count; i++) {
+                for (int i = 0; i < obstaclePoints.Count; i++)
+                {
                     mMapMatch.AddPoint(obstaclePoints[i]);
                 }
                 #endregion
 
                 #region  - Map information display -
 
-                for (int i = 0; i < obstacleLine.Count; i++) {
-                    dispLines.Add(
-                        new Line((int)obstacleLine[i].start.x, (int)obstacleLine[i].start.y,
-                        (int)obstacleLine[i].end.x, (int)obstacleLine[i].end.y)
-                    );
-                }
-
-                for (int i = 0; i < obstaclePoints.Count; i++) {
-                    dispPoint.Add(new Point((int)obstaclePoints[i].x, (int)obstaclePoints[i].y));
-                }
                 minimumPos = null;
                 maximumPos = null;
                 #endregion
 
             }
+            IMapCtrl.NewMap(obstaclePoints, obstacleLine);
+            foreach (var goal in goalList)
+            {
+                int id = Factory.CreatID.NewID;
+                IMapCtrl.AddCtrlMark(Factory.CreatMark.Goal(id, "Goal" + id, (int)goal.x, (int)goal.y, goal.theta));
+            }
 
-            MapGL.LoadMap(dispLines, dispPoint, goalList);
             GoalSetting.LoadGoals(goalList);
-            
+
             goalList = null;
             obstaclePoints = null;
             obstacleLine = null;
-
-            dispLines = null;
-            dispPoint = null;
         }
-        
+
         /// <summary>
         /// 載入Ori檔
         /// </summary>
         /// <param name="oriPath"></param>
         /// <returns></returns>
-        private void LoadOri(string oriPath) {
+        private void LoadOri(string oriPath)
+        {
             CurOriPath = oriPath;
-            MapGL.ClearMap();
+            IMapCtrl.NewMap();
             MapReading MapReading = null;
-            if (!mBypassLoadFile) {//無BypassLoadFile
+            if (!mBypassLoadFile)
+            {//無BypassLoadFile
                 MapReading = new MapReading(CurOriPath);
                 CartesianPos carPos;
                 List<CartesianPos> laserData;
                 //List<Point> listMap = new List<Point>();
                 int dataLength = MapReading.OpenFile();
-                if (dataLength != 0) {
-                    for (int n = 0; n < dataLength; n++) {
+                int agvID = Factory.CreatID.NewID;
+                int laserID = Factory.CreatID.NewID;
+                if (dataLength != 0)
+                {
+                    for (int n = 0; n < dataLength; n++)
+                    {
                         MapReading.ReadScanningInfo(n, out carPos, out laserData);
-                        MapGL.LoadOri(carPos.ToPos(), laserData);
+                        IMapCtrl.AddAGV(Factory.CreatAGV.AGV(agvID, "AGV", carPos.X, carPos.Y));
+                        IMapCtrl.AddPointsSet(Factory.CreatSet.LaserPoints(laserID, laserData));
                         carPos = null;
                         laserData = null;
                     }
                 }
-            } else {//Bypass LoadFile功能
-                /*-- 空跑一秒，模擬檔案載入 --*/
+            }
+            else
+            {//Bypass LoadFile功能
+             /*-- 空跑一秒，模擬檔案載入 --*/
                 SpinWait.SpinUntil(() => false, 1000);
             }
             MapReading = null;
         }
-        
+
         /// <summary>
         /// 載入檔案
         /// </summary>
         /// <param name="type">載入檔案類型</param>
-        public async void LoadFile(FileType type) {
+        public async void LoadFile(FileType type)
+        {
             OpenFileDialog openMap = new OpenFileDialog();
             openMap.InitialDirectory = mDefMapDir;
             openMap.Filter = $"MAP|*.{type.ToString().ToLower()}";
-            if (openMap.ShowDialog() == DialogResult.OK) {
+            if (openMap.ShowDialog() == DialogResult.OK)
+            {
                 CtProgress prog = new CtProgress($"Load {type}", $"Loading {type}...");
-                try {
-                    switch (type) {
+                try
+                {
+                    switch (type)
+                    {
                         case FileType.Ori:
                             await Task.Run(() => LoadOri(openMap.FileName));
                             //RaiseTestingEvent(TestingEventType.CurOriPath);
@@ -893,9 +911,13 @@ namespace ClientUI
                             throw new ArgumentException($"無法載入未定義的檔案類型{type}");
                     }
                     SetBalloonTip($"Load { type}", $"The { type} is loaded", ToolTipIcon.Info, 10);
-                } catch (Exception ex) {
+                }
+                catch (Exception ex)
+                {
                     CtMsgBox.Show("Error", ex.Message);
-                } finally {
+                }
+                finally
+                {
                     prog?.Close();
                     prog = null;
                 }
@@ -923,8 +945,9 @@ namespace ClientUI
                 { miConsole,new CtConsole(DockState.DockBottomAutoHide)},
                 { miGoalSetting,new CtGoalSetting(DockState.DockLeft)},
                 { miTesting,new CtTesting(DockState.DockLeft)},
-                { miMapGL,new CtMapGL( DockState.Document)}
+                { miMapGL,new AGVMapUI( DockState.Document)}
             };
+            IMapCtrl.MouseType = EMouseType.EditMode;
             SetEvents();
 
             /*-- 計算每個固定停靠區域所需的顯示大小 --*/
@@ -1174,7 +1197,7 @@ namespace ClientUI
             tslbAccessLv.Text = usrLv.ToString();
             tslbUserName.Text = usrName;
         }
-        
+
         #endregion Function - Private Methods
 
         /// <summary>
@@ -1195,24 +1218,12 @@ namespace ClientUI
             IGoalSetting.SendMapToAGVEvent += IGoalSetting_SendMapToAGVEvent;
             #endregion
             #region IMapGL 事件連結
-            IMapGL.MouseClickRealPos += IMapGL_MouseClickRealPos;
-            IMapGL.MouseSelectObj += IMapGL_MouseSelectObj;
-            IMapGL.MouseSelectRange += IMapGL_MouseSelectRange;
+
             #endregion 
         }
 
         #region IMapGL事件連結
-        private void IMapGL_MouseSelectRange(int beginX, int beginY, int endX, int endY) {
-            throw new NotImplementedException();
-        }
 
-        private void IMapGL_MouseSelectObj(string name, double x, double y) {
-            throw new NotImplementedException();
-        }
-
-        private void IMapGL_MouseClickRealPos(double posX, double posY) {
-            
-        }
 
         #endregion IMapGL 事件連結
 
@@ -1243,7 +1254,7 @@ namespace ClientUI
             IConsole.AddMsg("[AGV Move Finished]");
         }
 
-        private void IGoalSetting_RunGoalEvent(Info goal,int idxGoal)
+        private void IGoalSetting_RunGoalEvent(Info goal, int idxGoal)
         {
             Run(idxGoal);
             IConsole.AddMsg("[AGV Start Moving...]");
@@ -1263,7 +1274,7 @@ namespace ClientUI
             LoadFile(FileType.Map);
         }
 
-        private void IGoalSetting_FindPathEvent(Info goal,int idxGoal)
+        private void IGoalSetting_FindPathEvent(Info goal, int idxGoal)
         {
             IConsole.AddMsg("[Find Path] - ", goal.ToString());
             IConsole.AddMsg("[AGV Find A Path]");
@@ -1292,7 +1303,7 @@ namespace ClientUI
         {
             IConsole.AddMsg("[Add Goal] - {0}", goal.ToString());
             IGoalSetting.AddGoal(goal);
-            MapGL.AddGoalPos(goal);
+            IMapCtrl.AddCtrlMark(Factory.CreatMark.Goal(goal.ID, goal.Name, goal.X, goal.Y));
         }
         #endregion
     }

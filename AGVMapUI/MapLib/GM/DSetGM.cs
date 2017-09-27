@@ -89,14 +89,11 @@ namespace AGVMap
         /// <summary>
         /// 清除資料
         /// </summary>
-        public void Clear(TKey key)
+        public void Clear()
         {
             lock (Key)
             {
-                if (mDic.ContainsKey(key))
-                {
-                    mDic[key].Clear();
-                }
+                mDic.Clear();
             }
         }
 
