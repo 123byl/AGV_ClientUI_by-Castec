@@ -2115,6 +2115,10 @@ namespace MapProcessing
 
         }
 
+        public MapLine(double x1,double y1,double x2,double y2):this(new CartesianPos(x1,y1),new CartesianPos(x2,y2)) {
+
+        }
+
         public MapLine(CartesianPos start, CartesianPos end)
         {
             this.start = start;
@@ -2123,8 +2127,6 @@ namespace MapProcessing
 
 
         #endregion
-
-
-
+        
     }
 }

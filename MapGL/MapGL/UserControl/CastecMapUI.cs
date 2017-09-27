@@ -104,7 +104,7 @@ namespace MapGL
         }
 
         /// <summary> 線段型態 </summary>
-        public class Line
+        public class MapLIne
         {
             /// <summary> 直線的起始點位 </summary>
             public int x1 { get; set; }
@@ -114,9 +114,9 @@ namespace MapGL
             public int x2 { get; set; }
             public int y2 { get; set; }
 
-            public Line() : this(0, 0, 0, 0) { }
+            public MapLIne() : this(0, 0, 0, 0) { }
 
-            public Line(int xStart, int yStart, int xEnd, int yEnd)
+            public MapLIne(int xStart, int yStart, int xEnd, int yEnd)
             {
                 x1 = xStart;
                 y1 = yStart;
@@ -222,7 +222,7 @@ namespace MapGL
         public class LineGroup
         {
             private string mName = "";
-            private List<Line> mDataList = new List<Line>();
+            private List<MapLIne> mDataList = new List<MapLIne>();
             private Color mColor = Color.Black;
             private float mBorderSize = 1;
             private int mLayer = (int)ItemLayout.Point;
@@ -246,7 +246,7 @@ namespace MapGL
             }
 
             /// <summary> 線段集合 </summary>
-            public List<Line> DataList
+            public List<MapLIne> DataList
             {
                 set
                 {
@@ -1438,7 +1438,7 @@ namespace MapGL
                         break;
                     }
                 }
-                if (bGroupExist) mLinesSet[i].DataList.Add(new Line(xStart, yStart, xEnd, yEnd));
+                if (bGroupExist) mLinesSet[i].DataList.Add(new MapLIne(xStart, yStart, xEnd, yEnd));
                 else
                 {
                     LineGroup line = new LineGroup();
@@ -1446,7 +1446,7 @@ namespace MapGL
                     line.Color = color;
                     line.BorderSize = borderSize;
                     line.Layer = layer;
-                    line.DataList.Add(new Line(xStart, yStart, xEnd, yEnd));                    
+                    line.DataList.Add(new MapLIne(xStart, yStart, xEnd, yEnd));                    
                     mLinesSet.Add(line);
                     line = null;
                 }
@@ -1462,7 +1462,7 @@ namespace MapGL
         /// <param name="enableSampling">是否由元件自行取樣</param>
         /// <param name="borderSize">所有線段粗度</param>
         /// <param name="layer">自訂群組線段的顯示圖層</param>
-        public void DrawLines(List<Line> lines, Color color, string nameGroup, bool enableSampling = false, float borderSize = 1.0f, int layer = (int)ItemLayout.Line)
+        public void DrawLines(List<MapLIne> lines, Color color, string nameGroup, bool enableSampling = false, float borderSize = 1.0f, int layer = (int)ItemLayout.Line)
         {
             int i = 0;
             bool bGroupExist = false;
@@ -1572,7 +1572,7 @@ namespace MapGL
         /// <param name="lines">線條集合（List<Line>）</param>
         /// <param name="lineColor">線條顏色</param>
         /// <param name="borderSize">線條粗度</param>
-        private void DrawLines(OpenGL gl, List<Line> lines, Color lineColor, float borderSize = 5, int layer = 0, bool enableSampling = false)
+        private void DrawLines(OpenGL gl, List<MapLIne> lines, Color lineColor, float borderSize = 5, int layer = 0, bool enableSampling = false)
         {
             int dist = (enableSampling && ((int)Zoom / 10 > 1)) ? (int)Zoom / 10 : 1;
 
@@ -1601,7 +1601,7 @@ namespace MapGL
         /// <param name="lines">線條集合（List<Line>）</param>
         /// <param name="lineColor">線條顏色</param>
         /// <param name="borderSize">線條粗度</param>
-        private void DrawLines(OpenGL gl, List<Line> lines, int scale, Color lineColor, float borderSize = 5, int layer = 0)
+        private void DrawLines(OpenGL gl, List<MapLIne> lines, int scale, Color lineColor, float borderSize = 5, int layer = 0)
         {
             int dist = ((int)Zoom / 10 > 1) ? (int)Zoom / 10 : 1;
 
@@ -1674,16 +1674,16 @@ namespace MapGL
         /// <param name="layer">於第幾圖層繪出</param>
         private void DrawLineArrow1(OpenGL gl, Point start, Point end, Color lineColor, float borderSize = 5, double arrawSize = 200, int layer = 0)
         {
-            List<Line> lines = new List<Line>();
+            List<MapLIne> lines = new List<MapLIne>();
             double aS, aD, a0, a1 = 25;
 
             a0 = Math.Atan2(end.Y - start.Y, end.X - start.X);
             aS = a0 + (a1 * Math.PI / 180);
             aD = a0 - (a1 * Math.PI / 180);
 
-            lines.Add(new Line(start.X, start.Y, end.X, end.Y));
-            lines.Add(new Line(end.X, end.Y, end.X - (int)(arrawSize * Math.Cos(aS)), end.Y - (int)(arrawSize * Math.Sin(aS))));
-            lines.Add(new Line(end.X, end.Y, end.X - (int)(arrawSize * Math.Cos(aD)), end.Y - (int)(arrawSize * Math.Sin(aD))));
+            lines.Add(new MapLIne(start.X, start.Y, end.X, end.Y));
+            lines.Add(new MapLIne(end.X, end.Y, end.X - (int)(arrawSize * Math.Cos(aS)), end.Y - (int)(arrawSize * Math.Sin(aS))));
+            lines.Add(new MapLIne(end.X, end.Y, end.X - (int)(arrawSize * Math.Cos(aD)), end.Y - (int)(arrawSize * Math.Sin(aD))));
 
             DrawLines(gl, lines, lineColor, borderSize, layer);
         }
@@ -2619,7 +2619,7 @@ namespace MapGL
 
         private void MapDisplayer_MouseMove(object sender, MouseEventArgs e)
         {
-            List<Line> frame = new List<Line>();
+            List<MapLIne> frame = new List<MapLIne>();
             Point MouseMove = new Point();
 
             if (mIsMoseDown)
@@ -2634,10 +2634,10 @@ namespace MapGL
                 else if (e.Button == MouseButtons.Left)
                 {
                     MouseMove = MouseToGL();
-                    frame.Add(new Line(mMouseDownPoint.X, mMouseDownPoint.Y, MouseMove.X, mMouseDownPoint.Y));
-                    frame.Add(new Line(MouseMove.X, mMouseDownPoint.Y, MouseMove.X, MouseMove.Y));
-                    frame.Add(new Line(MouseMove.X, MouseMove.Y, mMouseDownPoint.X, MouseMove.Y));
-                    frame.Add(new Line(mMouseDownPoint.X, MouseMove.Y, mMouseDownPoint.X, mMouseDownPoint.Y));
+                    frame.Add(new MapLIne(mMouseDownPoint.X, mMouseDownPoint.Y, MouseMove.X, mMouseDownPoint.Y));
+                    frame.Add(new MapLIne(MouseMove.X, mMouseDownPoint.Y, MouseMove.X, MouseMove.Y));
+                    frame.Add(new MapLIne(MouseMove.X, MouseMove.Y, mMouseDownPoint.X, MouseMove.Y));
+                    frame.Add(new MapLIne(mMouseDownPoint.X, MouseMove.Y, mMouseDownPoint.X, mMouseDownPoint.Y));
                     RemoveGroupLine("drag");
                     DrawLines(frame, Color.Plum, "drag", false, 1.0f, (int)ItemLayout.Top);
                 }
@@ -2646,7 +2646,7 @@ namespace MapGL
 
         private void MapDisplayer_MouseUp(object sender, MouseEventArgs e)
         {
-            List<Line> line = new List<Line>();
+            List<MapLIne> line = new List<MapLIne>();
             mIsMoseDown = false;
             RemoveGroupLine("drag");
             RemoveGroupLine("select");
@@ -2655,10 +2655,10 @@ namespace MapGL
             {
                 mMouseUpPoint = MouseToGL();
                 mMouseSelectRange(mMouseDownPoint.X, mMouseDownPoint.Y, mMouseUpPoint.X, mMouseUpPoint.Y);
-                line.Add(new Line(mMouseDownPoint.X, mMouseDownPoint.Y, mMouseUpPoint.X, mMouseDownPoint.Y));
-                line.Add(new Line(mMouseUpPoint.X, mMouseDownPoint.Y, mMouseUpPoint.X, mMouseUpPoint.Y));
-                line.Add(new Line(mMouseUpPoint.X, mMouseUpPoint.Y, mMouseDownPoint.X, mMouseUpPoint.Y));
-                line.Add(new Line(mMouseDownPoint.X, mMouseUpPoint.Y, mMouseDownPoint.X, mMouseDownPoint.Y));
+                line.Add(new MapLIne(mMouseDownPoint.X, mMouseDownPoint.Y, mMouseUpPoint.X, mMouseDownPoint.Y));
+                line.Add(new MapLIne(mMouseUpPoint.X, mMouseDownPoint.Y, mMouseUpPoint.X, mMouseUpPoint.Y));
+                line.Add(new MapLIne(mMouseUpPoint.X, mMouseUpPoint.Y, mMouseDownPoint.X, mMouseUpPoint.Y));
+                line.Add(new MapLIne(mMouseDownPoint.X, mMouseUpPoint.Y, mMouseDownPoint.X, mMouseDownPoint.Y));
                 DrawLines(line, Color.HotPink, "select", false, 1.0f, (int)ItemLayout.Top);
             }
         }

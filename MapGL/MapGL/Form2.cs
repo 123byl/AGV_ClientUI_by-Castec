@@ -34,7 +34,7 @@ namespace MapGL
         private EventSample sample;
 
         private List<Point> ObstaclePoint = new List<Point>();
-        private List<CastecMapUI.Line> ObstacleLine = new List<CastecMapUI.Line>();
+        private List<CastecMapUI.MapLIne> ObstacleLine = new List<CastecMapUI.MapLIne>();
 
         private List<Node> posN = new List<Node>();
 
@@ -134,7 +134,7 @@ namespace MapGL
                     }
                     else if (pointArr[0] == "Obstacle Lines") { }
                     else
-                        ObstacleLine.Add(new CastecMapUI.Line(int.Parse(pointArr[0]) * castecMapUI1.Resolution, int.Parse(pointArr[1]) * castecMapUI1.Resolution, int.Parse(pointArr[2]) * castecMapUI1.Resolution, int.Parse(pointArr[3]) * castecMapUI1.Resolution));
+                        ObstacleLine.Add(new CastecMapUI.MapLIne(int.Parse(pointArr[0]) * castecMapUI1.Resolution, int.Parse(pointArr[1]) * castecMapUI1.Resolution, int.Parse(pointArr[2]) * castecMapUI1.Resolution, int.Parse(pointArr[3]) * castecMapUI1.Resolution));
                 }
 
                 castecMapUI1.DrawLines(ObstacleLine, Color.Maroon, "Map", true, 2);

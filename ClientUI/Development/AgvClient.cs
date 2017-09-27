@@ -125,10 +125,8 @@ namespace ClientUI {
         /// 設定點位
         /// </summary>
         /// <param name="carPos"></param>
-        public void SetPos(CartesianPos carPos) {
-            this.X = carPos.x;
-            this.Y = carPos.y;
-            this.ThetaGyro = carPos.theta;
+        public void SetPosition(CartesianPos carPos) {
+            SetPosition(carPos.x, carPos.y, carPos.theta);
         }
 
         /// <summary>
@@ -136,11 +134,8 @@ namespace ClientUI {
         /// </summary>
         /// <param name="carPos"></param>
         public void SetPos(Pos carPos) {
-            this.X = carPos.x;
-            this.Y = carPos.y;
-            this.ThetaGyro = carPos.theta;
+            SetPosition(carPos.x, carPos.y, carPos.theta);
         }
-
 
         #endregion Function - Public Methods
 
@@ -247,6 +242,10 @@ namespace ClientUI {
     /// </summary>
     internal static class AgvExtenstion {
 
+        public static CartesianPos ToCartesianPos(this CarInfo info) {
+            return new CartesianPos(info.X, info.Y, info.ThetaGyro);
+        }
+
         /// <summary>擴充 <see cref="Control"/>，使用 <seealso cref="Control.Invoke(Delegate)"/> 方法執行不具任何簽章之委派</summary>
         /// <param name="ctrl">欲調用的控制項</param>
         /// <param name="action">欲執行的方法</param>
@@ -302,12 +301,12 @@ namespace ClientUI {
         }
 
         /// <summary>
-        /// 取得<see cref="Line"/>副本
+        /// 取得<see cref="MapLIne"/>副本
         /// </summary>
         /// <param name="line"></param>
         /// <returns></returns>
-        public static Line ToLine(this MapLine line) {
-            return new Line((int)line.start.x,(int)line.start.y,(int)line.end.x,(int)line.end.y);
+        public static MapLIne ToLine(this MapLine line) {
+            return new MapLIne((int)line.start.x,(int)line.start.y,(int)line.end.x,(int)line.end.y);
         }
 
         /// <summary>
@@ -3062,7 +3061,7 @@ namespace ClientUI {
         /// </summary>
         internal static readonly Dictionary<string, Type> NameTypeMap = new Dictionary<string, Type>() {
             { CarInfo,typeof(CarInfo) },
-            { ObstacleLines,typeof(List<Line>)},
+            { ObstacleLines,typeof(List<MapLIne>)},
             { ObstaclePoints,typeof(List<Point>)},
             { PosCar,typeof(Pos)},
             { ScanPoint,typeof(List<CartesianPos>) },
@@ -3077,7 +3076,7 @@ namespace ClientUI {
             { typeof(List<CartesianPos>),obj => obj is List<CartesianPos>},
             { typeof(List<Point>),obj => obj is List<Point>},
             { typeof(Pos),obj => obj is Pos},
-            { typeof(List<Line>),obj => obj is List<Line>}
+            { typeof(List<MapLIne>),obj => obj is List<MapLIne>}
         };
         
         #endregion Declaration - Fields

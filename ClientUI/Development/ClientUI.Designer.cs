@@ -81,11 +81,11 @@ namespace ClientUI {
             this.miConsole = new System.Windows.Forms.ToolStripMenuItem();
             this.miHelp = new System.Windows.Forms.ToolStripMenuItem();
             this.miAbout = new System.Windows.Forms.ToolStripMenuItem();
+            this.testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.miBypass = new System.Windows.Forms.ToolStripMenuItem();
             this.miBypassSocket = new System.Windows.Forms.ToolStripMenuItem();
             this.miLoadFile = new System.Windows.Forms.ToolStripMenuItem();
             this.miServer = new System.Windows.Forms.ToolStripMenuItem();
-            this.testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -324,9 +324,15 @@ namespace ClientUI {
             // miAbout
             // 
             this.miAbout.Name = "miAbout";
-            this.miAbout.Size = new System.Drawing.Size(181, 26);
+            this.miAbout.Size = new System.Drawing.Size(126, 26);
             this.miAbout.Text = "About";
             this.miAbout.Click += new System.EventHandler(this.miAbout_Click);
+            // 
+            // testToolStripMenuItem
+            // 
+            this.testToolStripMenuItem.Name = "testToolStripMenuItem";
+            this.testToolStripMenuItem.Size = new System.Drawing.Size(126, 26);
+            this.testToolStripMenuItem.Text = "Test";
             // 
             // miBypass
             // 
@@ -342,26 +348,22 @@ namespace ClientUI {
             // miBypassSocket
             // 
             this.miBypassSocket.Name = "miBypassSocket";
-            this.miBypassSocket.Size = new System.Drawing.Size(143, 26);
+            this.miBypassSocket.Size = new System.Drawing.Size(181, 26);
             this.miBypassSocket.Text = "Socket";
+            this.miBypassSocket.Click += new System.EventHandler(this.miBypassSocket_Click);
             // 
             // miLoadFile
             // 
             this.miLoadFile.Name = "miLoadFile";
-            this.miLoadFile.Size = new System.Drawing.Size(143, 26);
+            this.miLoadFile.Size = new System.Drawing.Size(181, 26);
             this.miLoadFile.Text = "LoadFile";
+            this.miLoadFile.Click += new System.EventHandler(this.miLoadFile_Click);
             // 
             // miServer
             // 
             this.miServer.Name = "miServer";
-            this.miServer.Size = new System.Drawing.Size(143, 26);
+            this.miServer.Size = new System.Drawing.Size(181, 26);
             this.miServer.Text = "Server";
-            // 
-            // testToolStripMenuItem
-            // 
-            this.testToolStripMenuItem.Name = "testToolStripMenuItem";
-            this.testToolStripMenuItem.Size = new System.Drawing.Size(181, 26);
-            this.testToolStripMenuItem.Text = "Test";
             // 
             // AgvClientUI
             // 

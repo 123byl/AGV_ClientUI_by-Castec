@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using static ClientUI.Events.ConsoleEvents;
 using static ClientUI.Events.GoalSettingEvents;
+using static ClientUI.Events.TestingEvents;
 using static MapGL.CastecMapUI;
 
 namespace ClientUI
@@ -64,7 +65,7 @@ namespace ClientUI
         /// <summary>
         /// 載入地圖
         /// </summary>
-        event DelLoadMap LoadMapEvent;
+        event Events.GoalSettingEvents.DelLoadMap LoadMapEvent;
 
         /// <summary>
         /// 從 AGV 下載地圖
@@ -157,11 +158,28 @@ namespace ClientUI
     /// MapGL視窗公開操作方法
     /// </summary>
     public interface IIMapGL {
-        event DelMouseClickRealPos MouseClickRealPos;
+    }
 
-        event DelMouseSelectObj MouseSelectObj;
+    public interface IITesting {
+        event DelMotion_Down Motion_Down;
+        event DelMotion_Up Motion_Up;
+        event DelLoadMap LoadMap;
+        event DelLoadOri LoadOri;
+        event DelGetOri GetOri;
+        event DelGetMap GetMap;
+        event DelGetLaser GetLaser;
+        event DelGetCar GetCar;
+        event DelSendMap SendMap;
+        event DelSetCarMode SetCarMode;
+        event DelCorrectOri CorrectOri;
+        event DelSimplifyOri SimplifyOri;
+        event DelSetVelocity SetVelocity;
+        event DelConnect Connect;
+        event DelMotorServoOn MotorServoOn;
 
-        event DelMouseSelectRange MouseSelectRange;
+        void SetLaserStt(bool isGettingLaser);
+        void SetServerStt(bool isConnect);
+        void ChangedMotorStt(bool servoOn);
     }
 
     /// <summary>
@@ -295,10 +313,24 @@ namespace ClientUI
         }
 
         /// <summary>
-        /// MapGL控制事件集合
+        /// Testing控制事件集合
         /// </summary>
-        public static class MapGLEvents {
-            public delegate void MouseClickRealPos(double posX, double posY);
+        public static class TestingEvents {
+            public delegate void DelMotion_Down(MotionDirection direction,int velocity = 0);
+            public delegate void DelMotion_Up();
+            public delegate void DelLoadOri();
+            public delegate void DelCorrectOri();
+            public delegate void DelSimplifyOri();
+            public delegate void DelGetOri();
+            public delegate void DelGetMap();
+            public delegate void DelGetLaser();
+            public delegate void DelGetCar();
+            public delegate void DelSendMap();
+            public delegate void DelSetCarMode(CarMode mode);
+            public delegate void DelSetVelocity(int velocity);
+            public delegate void DelConnect(bool cnn);
+            public delegate void DelMotorServoOn(bool servoOn);
         }
+        
     }
 }

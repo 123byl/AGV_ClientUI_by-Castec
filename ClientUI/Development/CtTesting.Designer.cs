@@ -100,7 +100,6 @@
             this.btnScan.TabIndex = 61;
             this.btnScan.Text = "Scan";
             this.btnScan.UseVisualStyleBackColor = true;
-            //this.btnScan.Click += new System.EventHandler(this.btnScan_Click);
             // 
             // btnCursorMode
             // 
@@ -112,7 +111,6 @@
             this.btnCursorMode.TabIndex = 56;
             this.btnCursorMode.Text = "Cursor Mode";
             this.btnCursorMode.UseVisualStyleBackColor = true;
-            //this.btnCursorMode.Click += new System.EventHandler(this.btnCursorMode_Click);
             // 
             // btnPower
             // 
@@ -124,7 +122,6 @@
             this.btnPower.TabIndex = 55;
             this.btnPower.Text = "Power Area";
             this.btnPower.UseVisualStyleBackColor = true;
-            //this.btnPower.Click += new System.EventHandler(this.btnPower_Click);
             // 
             // btnStop
             // 
@@ -136,7 +133,6 @@
             this.btnStop.TabIndex = 54;
             this.btnStop.Text = "Stop Area";
             this.btnStop.UseVisualStyleBackColor = true;
-            //this.btnStop.Click += new System.EventHandler(this.btnStop_Click);
             // 
             // btnErase
             // 
@@ -148,7 +144,6 @@
             this.btnErase.TabIndex = 53;
             this.btnErase.Text = "Erase Tool";
             this.btnErase.UseVisualStyleBackColor = true;
-            //this.btnErase.Click += new System.EventHandler(this.btnErase_Click);
             // 
             // btnPosConfirm
             // 
@@ -161,7 +156,7 @@
             this.btnPosConfirm.TabIndex = 49;
             this.btnPosConfirm.Text = "confirm car";
             this.btnPosConfirm.UseVisualStyleBackColor = true;
-            //this.btnPosConfirm.Click += new System.EventHandler(this.btnPosConfirm_Click);
+            this.btnPosConfirm.Click += new System.EventHandler(this.btnPosConfirm_Click);
             // 
             // btnSetCar
             // 
@@ -173,7 +168,6 @@
             this.btnSetCar.TabIndex = 48;
             this.btnSetCar.Text = "Set Car";
             this.btnSetCar.UseVisualStyleBackColor = true;
-            //this.btnSetCar.Click += new System.EventHandler(this.btnSetCar_Click);
             // 
             // btnSimplyOri
             // 
@@ -186,7 +180,7 @@
             this.btnSimplyOri.TabIndex = 47;
             this.btnSimplyOri.Text = "Simplify Ori";
             this.btnSimplyOri.UseVisualStyleBackColor = true;
-            //this.btnSimplyOri.Click += new System.EventHandler(this.btnSimplifyOri_Click);
+            this.btnSimplyOri.Click += new System.EventHandler(this.btnSimplyOri_Click);
             // 
             // btnCorrectOri
             // 
@@ -199,7 +193,7 @@
             this.btnCorrectOri.TabIndex = 46;
             this.btnCorrectOri.Text = "Correct Ori";
             this.btnCorrectOri.UseVisualStyleBackColor = true;
-            //this.btnCorrectOri.Click += new System.EventHandler(this.btnCorrectOri_Click);
+            this.btnCorrectOri.Click += new System.EventHandler(this.btnCorrectOri_Click);
             // 
             // btnConnect
             // 
@@ -214,7 +208,7 @@
             this.btnConnect.Text = "Connect AGV";
             this.btnConnect.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.btnConnect.UseVisualStyleBackColor = true;
-            //this.btnConnect.Click += new System.EventHandler(this.btnConnect_Click);
+            this.btnConnect.Click += new System.EventHandler(this.btnConnect_Click);
             // 
             // btnGetOri
             // 
@@ -227,7 +221,7 @@
             this.btnGetOri.TabIndex = 43;
             this.btnGetOri.Text = "Get Ori";
             this.btnGetOri.UseVisualStyleBackColor = true;
-            //this.btnGetOri.Click += new System.EventHandler(this.btnGetOri_Click);
+            this.btnGetOri.Click += new System.EventHandler(this.btnGetOri_Click);
             // 
             // btnLoadOri
             // 
@@ -239,7 +233,7 @@
             this.btnLoadOri.TabIndex = 44;
             this.btnLoadOri.Text = "Load Ori";
             this.btnLoadOri.UseVisualStyleBackColor = true;
-            //this.btnLoadOri.Click += new System.EventHandler(this.btnLoadOri_Click);
+            this.btnLoadOri.Click += new System.EventHandler(this.btnLoadOri_Click);
             // 
             // btnClrMap
             // 
@@ -251,7 +245,6 @@
             this.btnClrMap.TabIndex = 41;
             this.btnClrMap.Text = "Clear Map";
             this.btnClrMap.UseVisualStyleBackColor = true;
-            //this.btnClrMap.Click += new System.EventHandler(this.btnClrMap_Click);
             // 
             // grbMap
             // 
@@ -278,7 +271,7 @@
             this.btnGetMap.TabIndex = 62;
             this.btnGetMap.Text = "Get Map";
             this.btnGetMap.UseVisualStyleBackColor = true;
-            //this.btnGetMap.Click += new System.EventHandler(this.btnGetMap_Click);
+            this.btnGetMap.Click += new System.EventHandler(this.btnGetMap_Click);
             // 
             // btnLoadMap
             // 
@@ -290,7 +283,7 @@
             this.btnLoadMap.TabIndex = 61;
             this.btnLoadMap.Text = "Load Map";
             this.btnLoadMap.UseVisualStyleBackColor = true;
-            //this.btnLoadMap.Click += new System.EventHandler(this.btnLoadMap_Click);
+            this.btnLoadMap.Click += new System.EventHandler(this.btnLoadMap_Click);
             // 
             // btnSendMap
             // 
@@ -303,7 +296,7 @@
             this.btnSendMap.TabIndex = 60;
             this.btnSendMap.Text = "Send Map";
             this.btnSendMap.UseVisualStyleBackColor = true;
-            //this.btnSendMap.Click += new System.EventHandler(this.btnSendMap_Click);
+            this.btnSendMap.Click += new System.EventHandler(this.btnSendMap_Click);
             // 
             // grbInfo
             // 
@@ -329,7 +322,7 @@
             this.btnGetLaser.TabIndex = 43;
             this.btnGetLaser.Text = "Get Laser";
             this.btnGetLaser.UseVisualStyleBackColor = true;
-            //this.btnGetLaser.Click += new System.EventHandler(this.btnGetLaser_Click);
+            this.btnGetLaser.Click += new System.EventHandler(this.btnGetLaser_Click);
             // 
             // btnGetCarStatus
             // 
@@ -342,7 +335,7 @@
             this.btnGetCarStatus.TabIndex = 44;
             this.btnGetCarStatus.Text = "Car";
             this.btnGetCarStatus.UseVisualStyleBackColor = true;
-            //this.btnGetCarStatus.Click += new System.EventHandler(this.btnGetCarStatus_Click);
+            this.btnGetCarStatus.Click += new System.EventHandler(this.btnGetCarStatus_Click);
             // 
             // grbMode
             // 
@@ -372,6 +365,7 @@
             this.btnIdleMode.TabIndex = 55;
             this.btnIdleMode.Text = "Idle Mode";
             this.btnIdleMode.UseVisualStyleBackColor = true;
+            this.btnIdleMode.Click += new System.EventHandler(this.btnIdleMode_Click);
             // 
             // btnWorkMode
             // 
@@ -384,6 +378,7 @@
             this.btnWorkMode.TabIndex = 54;
             this.btnWorkMode.Text = "Work Mode";
             this.btnWorkMode.UseVisualStyleBackColor = true;
+            this.btnWorkMode.Click += new System.EventHandler(this.btnWorkMode_Click);
             // 
             // btnMapMode
             // 
@@ -396,6 +391,7 @@
             this.btnMapMode.TabIndex = 53;
             this.btnMapMode.Text = "Map Mode";
             this.btnMapMode.UseVisualStyleBackColor = true;
+            this.btnMapMode.Click += new System.EventHandler(this.btnMapMode_Click);
             // 
             // rdbMap
             // 
@@ -407,7 +403,6 @@
             this.rdbMap.Tag = "2";
             this.rdbMap.Text = "Map";
             this.rdbMap.UseVisualStyleBackColor = true;
-            //this.rdbMap.CheckedChanged += new System.EventHandler(this.rdbMode_OnCheckedChanged);
             // 
             // rdbWork
             // 
@@ -419,7 +414,6 @@
             this.rdbWork.Tag = "1";
             this.rdbWork.Text = "Work";
             this.rdbWork.UseVisualStyleBackColor = true;
-            //this.rdbWork.CheckedChanged += new System.EventHandler(this.rdbMode_OnCheckedChanged);
             // 
             // rdbIdle
             // 
@@ -433,7 +427,6 @@
             this.rdbIdle.Tag = "0";
             this.rdbIdle.Text = "Idle";
             this.rdbIdle.UseVisualStyleBackColor = true;
-            //this.rdbIdle.CheckedChanged += new System.EventHandler(this.rdbMode_OnCheckedChanged);
             // 
             // gpbShift
             // 
@@ -467,7 +460,7 @@
             this.btnSetVelo.TabIndex = 11;
             this.btnSetVelo.Text = "Set";
             this.btnSetVelo.UseVisualStyleBackColor = true;
-            //this.btnSetVelo.Click += new System.EventHandler(this.btnSetVelo_Click);
+            this.btnSetVelo.Click += new System.EventHandler(this.btnSetVelo_Click);
             // 
             // btnStartStop
             // 
@@ -482,7 +475,6 @@
             this.btnStartStop.TabIndex = 10;
             this.btnStartStop.Tag = "Stop";
             this.btnStartStop.UseVisualStyleBackColor = false;
-            //this.btnStartStop.Click += new System.EventHandler(this.btnStartStop_Click);
             // 
             // lbVelocity
             // 
@@ -510,7 +502,7 @@
             // 
             // btnServoOnOff
             // 
-            this.btnServoOnOff.BackColor = System.Drawing.Color.Green;
+            this.btnServoOnOff.BackColor = System.Drawing.Color.Red;
             this.btnServoOnOff.Enabled = false;
             this.btnServoOnOff.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnServoOnOff.ForeColor = System.Drawing.Color.White;
@@ -519,9 +511,9 @@
             this.btnServoOnOff.Name = "btnServoOnOff";
             this.btnServoOnOff.Size = new System.Drawing.Size(67, 62);
             this.btnServoOnOff.TabIndex = 1;
-            this.btnServoOnOff.Text = "ON";
+            this.btnServoOnOff.Text = "OFF";
             this.btnServoOnOff.UseVisualStyleBackColor = false;
-            //this.btnServoOnOff.Click += new System.EventHandler(this.btnServoOnOff_Click);
+            this.btnServoOnOff.Click += new System.EventHandler(this.btnServoOnOff_Click);
             // 
             // btnUp
             // 
@@ -536,8 +528,8 @@
             this.btnUp.TabIndex = 1;
             this.btnUp.Tag = "0";
             this.btnUp.UseVisualStyleBackColor = true;
-            //this.btnUp.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Motion_MouseDown);
-            //this.btnUp.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Motion_MouseUp);
+            this.btnUp.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Motion_MouseDown);
+            this.btnUp.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Motion_MouseUp);
             // 
             // btnRight
             // 
@@ -551,8 +543,8 @@
             this.btnRight.TabIndex = 1;
             this.btnRight.Tag = "2";
             this.btnRight.UseVisualStyleBackColor = true;
-            //this.btnRight.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Motion_MouseDown);
-            //this.btnRight.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Motion_MouseUp);
+            this.btnRight.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Motion_MouseDown);
+            this.btnRight.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Motion_MouseUp);
             // 
             // btnLeft
             // 
@@ -566,8 +558,8 @@
             this.btnLeft.TabIndex = 1;
             this.btnLeft.Tag = "3";
             this.btnLeft.UseVisualStyleBackColor = true;
-            //this.btnLeft.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Motion_MouseDown);
-            //this.btnLeft.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Motion_MouseUp);
+            this.btnLeft.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Motion_MouseDown);
+            this.btnLeft.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Motion_MouseUp);
             // 
             // btnDown
             // 
@@ -581,8 +573,8 @@
             this.btnDown.TabIndex = 1;
             this.btnDown.Tag = "1";
             this.btnDown.UseVisualStyleBackColor = true;
-            //this.btnDown.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Motion_MouseDown);
-            //this.btnDown.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Motion_MouseUp);
+            this.btnDown.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Motion_MouseDown);
+            this.btnDown.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Motion_MouseUp);
             // 
             // button1
             // 

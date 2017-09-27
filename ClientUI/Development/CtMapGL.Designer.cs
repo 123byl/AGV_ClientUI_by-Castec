@@ -70,9 +70,7 @@
             this.glMap.SizeGrid = 1000;
             this.glMap.TabIndex = 6;
             this.glMap.Zoom = 6.25D;
-            this.glMap.MouseSelectObj += new MapGL.CastecMapUI.DelMouseSelectObj(this.glMap_MouseSelectObj);
-            this.glMap.MouseClickRealPos += new MapGL.CastecMapUI.DelMouseClickRealPos(this.glMap_MouseClickRealPos);
-            this.glMap.MouseSelectRange += new MapGL.CastecMapUI.DelMouseSelectRange(this.glMap_MouseSelectRange);
+           
             // 
             // CtMapGL
             // 

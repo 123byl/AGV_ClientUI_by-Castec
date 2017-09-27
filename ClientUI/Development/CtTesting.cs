@@ -22,10 +22,11 @@ namespace ClientUI {
     /// <summary>
     /// 測試功能介面
     /// </summary>
-    public partial class CtTesting : CtDockContent {
-        
+    public partial class CtTesting : CtDockContent ,IITesting{
+        private readonly object mKey = new object();
+
         #region Function - Construcotrs
-        
+
         /// <summary>
         /// 共用建構方法
         /// </summary>
@@ -34,481 +35,223 @@ namespace ClientUI {
             InitializeComponent();
             FixedSize = new Size(718, 814);       
         }
+        
+        
 
+        public event Events.GoalSettingEvents.DelLoadMap LoadMap;
+        public event Events.TestingEvents.DelLoadOri LoadOri;
+        public event Events.TestingEvents.DelMotion_Down Motion_Down;
+        public event Events.TestingEvents.DelMotion_Up Motion_Up;
+        public event Events.TestingEvents.DelGetOri GetOri;
+        public event Events.TestingEvents.DelGetMap GetMap;
+        public event Events.TestingEvents.DelGetLaser GetLaser;
+        public event Events.TestingEvents.DelGetCar GetCar;
+        public event Events.TestingEvents.DelSendMap SendMap;
+        public event Events.TestingEvents.DelSetCarMode SetCarMode;
+        public event Events.TestingEvents.DelCorrectOri CorrectOri;
+        public event Events.TestingEvents.DelSimplifyOri SimplifyOri;
+        public event Events.TestingEvents.DelSetVelocity SetVelocity;
+        public event Events.TestingEvents.DelConnect Connect;
+        public event Events.TestingEvents.DelMotorServoOn MotorServoOn; 
+
+        private void btnConnect_Click(object sender, EventArgs e) {
+            if (btnConnect.Tag == null || (btnConnect.Tag is bool && !(bool)btnConnect.Tag)) {
+                Connect.Invoke(true);
+            } else {
+                Connect.Invoke(false);
+            }
+        }
+        
+        /// <summary>
+        /// 移動控制按下
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Motion_MouseDown(object sender, MouseEventArgs e) {
+            string sDirection = (sender as Control)?.Tag?.ToString();
+            int iDirection = 0;
+            int velocity = 0;
+            if (int.TryParse(sDirection, out iDirection) &&
+                Enum.IsDefined(typeof(MotionDirection), iDirection) &&
+                int.TryParse(txtVelocity.Text,out velocity)) {
+                Motion_Down?.Invoke((MotionDirection)iDirection,velocity);
+            }
+        }
+
+        /// <summary>
+        /// 移動控制放開
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Motion_MouseUp(object sender, MouseEventArgs e) {
+            Motion_Up?.Invoke();
+        }
+        
         #endregion Function - Constructors
 
-        //#region Function - Events
+        private void btnLoadOri_Click(object sender, EventArgs e) {
+            LoadOri?.Invoke();
+        }
 
-        //#region rActFunc
+        private void btnCorrectOri_Click(object sender, EventArgs e) {
+            CorrectOri?.Invoke();
+        }
 
-        //private void rActFunc_OnTestingEventTrigger(object sender, TestingEventArgs e) {
-        //    switch (e.Type) {
-        //        case TestingEventType.CurOriPath:
-        //            ChangedOriPath();
-        //            break;
-        //        case TestingEventType.GetFile:
-        //            mProg?.Close();
-        //            mProg = null;
-        //            break;
-        //    }
-        //}
+        private void btnGetMap_Click(object sender, EventArgs e) {
+            GetMap?.Invoke();
+        }
 
-        //#endregion rActFunc
+        private void btnLoadMap_Click(object sender, EventArgs e) {
+            LoadMap?.Invoke();
+        }
 
-        //#region Button
+        private void btnGetOri_Click(object sender, EventArgs e) {
+            GetOri?.Invoke();
+        }
 
-        //private void btnScan_Click(object sender, EventArgs e) {
-        //    if (CarMode != CarMode.Map) {
-        //        CarMode = CarMode.Map;
-        //    } else {
-        //        CarMode = CarMode.Idle;
-        //    }
+        private void btnGetLaser_Click(object sender, EventArgs e) {
+            GetLaser?.Invoke();
+        }
 
-        //}
+        private void btnGetCarStatus_Click(object sender, EventArgs e) {
+            GetCar?.Invoke();
+        }
 
-        //private void btnPower_Click(object sender, EventArgs e) {
-        //    /*-- 從底層觸發 --*/
-        //    //rActFunc.SetGLMode(GLMode.Power);
-        //    /*-- 從介面直接調用 --*/
-        //    rMain.SetGLMode(GLMode.Power);
-        //}
+        public void SetLaserStt(bool isGettingLaser) {
+            CtInvoke.ButtonBackColor(btnGetCarStatus, isGettingLaser ? Color.Green : Color.Transparent);
+        }
 
-        //private void btnCursorMode_Click(object sender, EventArgs e) {
-        //    /*-- 從底層觸發 --*/
-        //    //rActFunc.SetGLMode(GLMode.Cursor);
+        private void btnSendMap_Click(object sender, EventArgs e) {
+            SendMap?.Invoke();
+        }
 
-        //    /*-- 從介面直接調用 --*/
-        //    rMain.SetGLMode(GLMode.Cursor);
-        //}
+        private void btnMapMode_Click(object sender, EventArgs e) {
+            SetCarMode?.Invoke(CarMode.Map);
+        }
 
-        ///// <summary>
-        ///// 傳送地圖
-        ///// </summary>
-        ///// <param name="sender"></param>
-        ///// <param name="e"></param>
-        //private  void btnSendMap_Click(object sender, EventArgs e) {
-        //    rActFunc.SendMap();
-        //}
+        private void btnWorkMode_Click(object sender, EventArgs e) {
+            SetCarMode?.Invoke(CarMode.Work);
+        }
 
-        ///// <summary>
-        ///// 地圖化簡
-        ///// </summary>
-        ///// <param name="sender"></param>
-        ///// <param name="e"></param>
-        //private async void btnSimplifyOri_Click(object sender, EventArgs e) {
-        //    CtProgress prog = new CtProgress("SimplifyOri","SimplifyOri");
-        //    try {
-        //        /*-- 從底層觸發 --*/
-        //        await Task.Run(() => rActFunc.SimplifyOri());
-        //    } catch {
+        private void btnIdleMode_Click(object sender, EventArgs e) {
+            SetCarMode?.Invoke(CarMode.Idle);
+        }
 
-        //    } finally {
-        //        prog?.Close();
-        //        prog = null;
-        //    }
-        //}
+        private void btnSimplyOri_Click(object sender, EventArgs e) {
+            SimplifyOri?.Invoke();
+        }
 
-        ///// <summary>
-        ///// 載入地圖
-        ///// </summary>
-        ///// <param name="sender"></param>
-        ///// <param name="e"></param>
-        //private void btnLoadMap_Click(object sender, EventArgs e) {
-        //    rActFunc.LoadFile(FileType.Map);
-        //}
+        private void btnSetVelo_Click(object sender, EventArgs e) {
+            int velocity = 0;
+            if (int.TryParse(txtVelocity.Text, out velocity)){
+                SetVelocity?.Invoke(velocity);
+            }
+        }
 
-        ///// <summary>
-        ///// 取得地圖檔
-        ///// </summary>
-        ///// <param name="sender"></param>
-        ///// <param name="e"></param>
-        //private void btnGetMap_Click(object sender, EventArgs e) {
-        //    GetFile(FileType.Map);
-        //}
+        public void SetServerStt(bool isConnect) {
+            string btnTxt = "Connect AGV";
+            Bitmap btnImg = Properties.Resources.Disconnect;
+            if (isConnect) {
+                btnImg = Properties.Resources.Connect;
+                btnTxt = "AGV Connected";
+            }
+            CtInvoke.ButtonTag(btnConnect, isConnect);
+            CtInvoke.ButtonText(btnConnect, btnTxt);
+            CtInvoke.ButtonImage(btnConnect, btnImg);
+            CtInvoke.ButtonEnable(btnGetLaser, isConnect);
+            CtInvoke.ButtonEnable(btnGetOri, isConnect);
+            CtInvoke.ButtonEnable(btnIdleMode, isConnect);
+            CtInvoke.ButtonEnable(btnWorkMode, isConnect);
+            CtInvoke.ButtonEnable(btnMapMode, isConnect);
+            CtInvoke.ButtonEnable(btnGetCarStatus, isConnect);
+            CtInvoke.ButtonEnable(btnPosConfirm, isConnect);
+            CtInvoke.ButtonEnable(btnServoOnOff, isConnect);
 
-        ///// <summary>
-        ///// 移動控制按下
-        ///// </summary>
-        ///// <param name="sender"></param>
-        ///// <param name="e"></param>
-        //private void Motion_MouseDown(object sender,MouseEventArgs e) {
-        //    string sDirection = (sender as Control)?.Tag?.ToString();
-        //    int iDirection = 0;
-        //    if (int.TryParse(sDirection,out iDirection) && 
-        //        Enum.IsDefined(typeof(MotionDirection), iDirection)){
-        //        rActFunc.MotionContorl((MotionDirection)iDirection,Velocity);
-        //        if (CarMode != CarMode.Map) CarMode = CarMode.Work;
-        //    }
-        //}
+            CtInvoke.ButtonEnable(btnSetVelo, isConnect);
+            CtInvoke.ButtonEnable(btnGetMap, isConnect);
+            CtInvoke.ButtonEnable(btnSendMap, isConnect);
+            CtInvoke.TextBoxEnable(txtVelocity, isConnect);
 
-        ///// <summary>
-        ///// 移動控制放開
-        ///// </summary>
-        ///// <param name="sender"></param>
-        ///// <param name="e"></param>
-        //private void Motion_MouseUp(object sender,MouseEventArgs e) {
-        //    rActFunc.MotionContorl(MotionDirection.Stop);
-        //    if (CarMode != CarMode.Map) CarMode = CarMode.Idle;
-        //}
+            if (!isConnect) {
+                //CarMode = CarMode.OffLine;
+                CtInvoke.ButtonEnable(btnUp, false);
+                CtInvoke.ButtonEnable(btnStartStop, false);
+                CtInvoke.ButtonEnable(btnLeft, false);
+                CtInvoke.ButtonEnable(btnRight, false);
+                CtInvoke.ButtonEnable(btnDown, false);
+            //} else if (CarMode == CarMode.OffLine) {
+            //    CarMode = CarMode.Idle;
+            }
+        }
 
-        ///// <summary>
-        ///// 取得雷射
-        ///// </summary>
-        ///// <param name="sender"></param>
-        ///// <param name="e"></param>
-        //private void btnGetLaser_Click(object sender, EventArgs e) {
-        //    rActFunc.GetLaser();
-        //}
+        /// <summary>
+        /// 依照連線狀態切換介面控制項致能
+        /// </summary>
+        /// <param name="isConnected"></param>
+        private void ChangedConnectStt(bool isConnected) {
+            CtInvoke.ButtonEnable(btnGetLaser, isConnected);
+            CtInvoke.ButtonEnable(btnGetOri, isConnected);
+            CtInvoke.ButtonEnable(btnIdleMode, isConnected);
+            CtInvoke.ButtonEnable(btnWorkMode, isConnected);
+            CtInvoke.ButtonEnable(btnMapMode, isConnected);
+            CtInvoke.ButtonEnable(btnGetCarStatus, isConnected);
+            CtInvoke.ButtonEnable(btnPosConfirm, isConnected);
+            CtInvoke.ButtonEnable(btnServoOnOff, isConnected);
 
-        ///// <summary>
-        ///// 車子資訊回傳開關
-        ///// </summary>
-        ///// <param name="sender"></param>
-        ///// <param name="e"></param>
-        //private void btnGetCarStatus_Click(object sender, EventArgs e) {
-        //    bool isOn =  rActFunc.ChangeSendInfo();
-        //    CtInvoke.ButtonBackColor(btnGetCarStatus, isOn ? Color.Green : Color.Transparent);
-        //}
+            CtInvoke.ButtonEnable(btnSetVelo, isConnected);
+            CtInvoke.ButtonEnable(btnGetMap, isConnected);
+            CtInvoke.ButtonEnable(btnSendMap, isConnected);
+            CtInvoke.TextBoxEnable(txtVelocity, isConnected);
 
-        ///// <summary>
-        ///// 清除地圖
-        ///// </summary>
-        ///// <param name="sender"></param>
-        ///// <param name="e"></param>
-        //private void btnClrMap_Click(object sender, EventArgs e) {
-        //    ClearMap();
-        //}
+            if (!isConnected) {
+                CtInvoke.ButtonEnable(btnUp, false);
+                CtInvoke.ButtonEnable(btnStartStop, false);
+                CtInvoke.ButtonEnable(btnLeft, false);
+                CtInvoke.ButtonEnable(btnRight, false);
+                CtInvoke.ButtonEnable(btnDown, false);
+            }
+        }
 
-        ///// <summary>
-        ///// 下載地圖
-        ///// </summary>
-        ///// <param name="sender"></param>
-        ///// <param name="e"></param>
-        //private void btnGetOri_Click(object sender, EventArgs e) {
-        //    GetFile(FileType.Ori);
-        //}
+        /// <summary>
+        /// 是否解鎖Ori檔操作
+        /// </summary>
+        /// <param name="isUnLock"></param>
+        public void UnLockOriOperator(bool isUnLock) {
+            CtInvoke.ButtonEnable(btnCorrectOri, isUnLock);
+            CtInvoke.ButtonEnable(btnSimplyOri, isUnLock);
+        }
 
-        //private void GetFile(FileType type) {
-        //    string fileList = string.Empty;
-        //    if (rActFunc.GetFileList(type, out fileList)) {
-        //        using (MapList f = new MapList(fileList)) {
-        //            if (f.ShowDialog() == DialogResult.OK) {
-        //                mProg = new CtProgress($"Get {type}", $"Donwloading {type} from AGV");
-        //                rActFunc.FileDownload(f.strMapList, type);
-        //            }
-        //        }
-        //    }
-        //}
-
-        ///// <summary>
-        ///// 載入地圖
-        ///// </summary>
-        ///// <param name="sender"></param>
-        ///// <param name="e"></param>
-        //private void btnLoadOri_Click(object sender, EventArgs e) {
-        //    rActFunc.LoadFile(FileType.Ori);
-        //}
-
-        ///// <summary>
-        ///// 設定移動速度
-        ///// </summary>
-        ///// <param name="sender"></param>
-        ///// <param name="e"></param>
-        //private void btnSetVelo_Click(object sender, EventArgs e) {
-        //    rActFunc.MotionContorl(MotionDirection.Forward, Velocity);
-        //}
-
-        ///// <summary>
-        ///// 馬達ServoOn控制
-        ///// </summary>
-        ///// <param name="sender"></param>
-        ///// <param name="e"></param>
-        //private void btnServoOnOff_Click(object sender, EventArgs e) {
-        //    Color btnColor = Color.Empty;
-        //    bool on = btnServoOnOff.Text != "OFF";
-        //    string text = string.Empty;
-        //    if (!on) {
-        //        btnColor = Color.Green;
-        //        text = "ON";
-        //    } else {
-        //        btnColor = Color.Red;
-        //        text = "OFF";
-        //    }
-        //    CtInvoke.ButtonBackColor(btnServoOnOff, btnColor);
-        //    CtInvoke.ButtonText(btnServoOnOff, text);
-            
-        //    rActFunc.MotorServo(on);
-        //    ChangedServoStt(on);
-        //}
-
-        ///// <summary>
-        ///// 持續移動開關
-        ///// </summary>
-        ///// <param name="sender"></param>
-        ///// <param name="e"></param>
-        //private void btnStartStop_Click(object sender, EventArgs e) {
-        //    bool start = btnStartStop.Tag?.ToString() == "Stop";
-        //    string tag = string.Empty;
-        //    Bitmap img = null;
-        //    if (start) {
-        //        tag = "Start";
-        //        img =  Properties.Resources.Stop;
-        //    } else {
-        //        tag = "Stop";
-        //        img = Properties.Resources.play;
-        //    }
-        //    CtInvoke.ButtonTag(btnStartStop, tag);
-        //    CtInvoke.ButtonImage(btnStartStop, img);
-        //    rActFunc.StartStop(start);
-        //}
-
-        ///// <summary>
-        ///// 與Server連線
-        ///// </summary>
-        ///// <param name="sender"></param>
-        ///// <param name="e"></param>
-        //private async void btnConnect_Click(object sender, EventArgs e) {
-        //    string btnTxt = "Connect AGV";
-        //    Bitmap btnImg = Properties.Resources.Disconnect;
-
-        //    CtInvoke.ButtonEnable(btnConnect, false);
-        //    bool isConnect = false;
-
-        //    if (btnConnect.Text == "Connect AGV") {
-        //        CtProgress prog = new CtProgress("Connect", "Connecting...");
-        //        try {
-        //            isConnect = await Task<bool>.Run(() => rActFunc.CheckIsServerAlive());
-        //            if (isConnect) {
-        //                btnImg = Properties.Resources.Connect;
-        //                btnTxt = "AGV Connected";
-        //            }
-        //        } finally {
-        //            prog?.Close();
-        //            prog = null;
-        //        }
-        //    }
-        //    ChangedConnectStt(isConnect);
-        //    CtInvoke.ButtonText(btnConnect, btnTxt);
-        //    CtInvoke.ButtonImage(btnConnect, btnImg);
-        //    CtInvoke.ButtonEnable(btnConnect, true);
-        //    rActFunc.IsConnected = isConnect;
-        //}
-
-        ///// <summary>
-        ///// 地圖修正
-        ///// </summary>
-        ///// <param name="sender"></param>
-        ///// <param name="e"></param>
-        //private async void btnCorrectOri_Click(object sender, EventArgs e) {
-        //    CtProgress prog = new CtProgress("CorrectOri", "Correcting Ori...");
-        //    try {
-        //        /*-- 底層觸發事件 --*/
-        //        await Task.Run(() => rActFunc.CorrectOri());
-        //    } catch {
-        //    } finally {
-        //        prog?.Close();
-        //        prog = null;
-        //    }
-        //}
-
-        ///// <summary>
-        ///// 
-        ///// </summary>
-        ///// <param name="sender"></param>
-        ///// <param name="e"></param>
-        //private void btnSetCar_Click(object sender, EventArgs e) {
-        //    /*-- 介面直接調用 --*/
-        //    rMain.SetGLMode(GLMode.SetCar);
-            
-        //    rActFunc.GetLaser();
-        //}
-
-        ///// <summary>
-        ///// 確認車子位置
-        ///// </summary>
-        ///// <param name="sender"></param>
-        ///// <param name="e"></param>
-        //private async void btnPosConfirm_Click(object sender, EventArgs e) {
-        //    CtProgress prog = new CtProgress("Car position Confirm", "Car position Confirm");
-        //    try {
-        //        /*-- 從底層觸發 --*/
-        //        await Task.Run(() => rActFunc.CarPosConfirm());
-        //    } catch {
-
-        //    } finally {
-        //        prog?.Close();
-        //        prog = null;
-        //    }
-
-        //}
+        private void btnServoOnOff_Click(object sender, EventArgs e) {
+            if (btnServoOnOff.Tag == null || (btnServoOnOff.Tag is bool && !(bool)btnServoOnOff.Tag)) {
+                MotorServoOn.Invoke(true);
+            } else {
+                MotorServoOn.Invoke(false);
+            }
+        }
         
-        ///// <summary>
-        ///// 切換為掃圖模式
-        ///// </summary>
-        ///// <param name="sender"></param>
-        ///// <param name="e"></param>
-        //private void btnMapMode_Click(object sender, EventArgs e) {
-        //    CarMode = CarMode.Map;
-        //}
+        public void ChangedMotorStt(bool isOn) {
+            Color color = Color.Empty;
+            string content = string.Empty;
+            if (isOn) {
+                color = Color.Green;
+                content = "ON";
+            } else {
+                color = Color.Red;
+                content = "OFF";
+            }
+            CtInvoke.ButtonTag(btnServoOnOff, isOn);
+            CtInvoke.ButtonEnable(btnUp, isOn);
+            CtInvoke.ButtonEnable(btnDown, isOn);
+            CtInvoke.ButtonEnable(btnLeft, isOn);
+            CtInvoke.ButtonEnable(btnRight, isOn);
+            CtInvoke.ButtonEnable(btnStartStop, isOn);
+            CtInvoke.ButtonBackColor(btnServoOnOff, color);
+            CtInvoke.ButtonText(btnServoOnOff, content);
+        }
 
-        //private void btnWorkMode_Click(object sender, EventArgs e) {
-        //    CarMode = CarMode.Work;
-        //}
+        private void btnPosConfirm_Click(object sender, EventArgs e) {
 
-        //private void btnIdleMode_Click(object sender, EventArgs e) {
-        //    CarMode = CarMode.Idle;
-        //}
-
-        //private void btnErase_Click(object sender, EventArgs e) {
-        //    /*-- 從底層觸發 --*/
-        //    //rActFunc.SetGLMode(GLMode.Erase);
-
-        //    /*-- 從主介面直接調用 --*/
-        //    rMain.SetGLMode(GLMode.Erase);
-        //}
-
-        //private void btnStop_Click(object sender, EventArgs e) {
-        //    /*-- 從底層觸發 --*/
-        //    //rActFunc.SetGLMode(GLMode.Stop);
-
-        //    /*從主介面直接調用*/
-        //    rMain.SetGLMode(GLMode.Stop);
-        //}
-
-        //#endregion Button
-
-        //#region RadioButton
-
-        ///// <summary>
-        ///// 車子模式切換
-        ///// </summary>
-        ///// <param name="sender"></param>
-        ///// <param name="e"></param>
-        //private void rdbMode_OnCheckedChanged(object sender,EventArgs e) {
-        //    RadioButton rdbMode = (sender as RadioButton);
-        //    CarMode mode = CarMode.OffLine;
-
-        //    if ((!rdbMode?.Checked ?? false) ||//沒有選取 
-        //        !(rdbMode?.Tag is string) ||//Tag不為字串
-        //        !Enum.TryParse(rdbMode.Tag.ToString(), out mode)) {//無法轉換為CarMode
-        //        return;
-        //    }
-
-        //    if (CarMode != mode) {
-        //        CarMode = mode;
-        //        SetBtnModeEnable(CarMode, false);
-        //    }
-        //}
-
-        //#endregion RadioButton
-
-        //#endregion Funciton - Events
-
-        //#region Function - Public Methods
-
-        //#endregion Function - Public Methods
-
-        //#region Function - Private Methdos
-
-        ///// <summary>
-        ///// 分配方法物件
-        ///// </summary>
-        ///// <param name="actFunc">方法物件</param>
-        //protected override void AssignmentActFunc(ITesting actFunc) {
-        //    base.AssignmentActFunc(actFunc);
-        //    if (actFunc != null) {
-        //        CtInvoke.ComboBoxAdd(cboHostIP, rActFunc.HostIP);
-        //        CtInvoke.ComboBoxText(cboHostIP, rActFunc.HostIP);
-        //    }
-        //}
-
-        ///// <summary>
-        ///// Ori載入完畢
-        ///// </summary>
-        //private void ChangedOriPath() {
-        //    CtInvoke.ButtonEnable(btnCorrectOri, true);
-        //    CtInvoke.ButtonEnable(btnSimplyOri, true);
-        //}
-
-        ///// <summary>
-        ///// 清除Map
-        ///// </summary>
-        //private void ClearMap() {
-        //    /*-- 呼叫底層觸發MapGL模組清除Map --*/
-        //    rActFunc.ClearMap();
-
-        //    /*-- 從主介面參考方法調用MapGL模組清除Map --*/
-        //    rMain.ClearMap();
-        //}
-        
-        ///// <summary>
-        ///// 訂閱事件
-        ///// </summary>
-        //protected override void AddEvent() {
-        //    /*-- 自動產生LostFoucs與KeyPress處理方法進行訂閱 --*/
-        //    TextChecker.Add(txtVelocity,str => Velocity = int.Parse(str));
-        //    if (rActFunc != null) {
-        //        rActFunc.TestingEventTrigger += rActFunc_OnTestingEventTrigger;
-        //    }
-        //}
-
-        ///// <summary>
-        ///// 取消訂閱事件
-        ///// </summary>
-        //protected override void RemoveEvent() {
-        //    TextChecker.Remove(txtVelocity);
-        //    if (rActFunc != null) {
-        //        rActFunc.TestingEventTrigger -= rActFunc_OnTestingEventTrigger;
-        //    }
-        //}
-
-        ///// <summary>
-        ///// 依照馬達狀態切換介面控制項致能
-        ///// </summary>
-        ///// <param name="isOn">是否ServoOn</param>
-        //private void ChangedServoStt(bool isOn) {
-        //    CtInvoke.ButtonEnable(btnUp, isOn);
-        //    CtInvoke.ButtonEnable(btnDown, isOn);
-        //    CtInvoke.ButtonEnable(btnLeft, isOn);
-        //    CtInvoke.ButtonEnable(btnRight, isOn);
-        //    CtInvoke.ButtonEnable(btnStartStop, isOn);
-        //}
-
-        ///// <summary>
-        ///// 依照連線狀態切換介面控制項致能
-        ///// </summary>
-        ///// <param name="isConnected"></param>
-        //private void ChangedConnectStt(bool isConnected) {
-        //    CtInvoke.ButtonEnable(btnGetLaser, isConnected);
-        //    CtInvoke.ButtonEnable(btnGetOri, isConnected);
-        //    CtInvoke.ButtonEnable(btnIdleMode, isConnected);
-        //    CtInvoke.ButtonEnable(btnWorkMode, isConnected);
-        //    CtInvoke.ButtonEnable(btnMapMode, isConnected);
-        //    CtInvoke.ButtonEnable(btnGetCarStatus, isConnected);
-        //    CtInvoke.ButtonEnable(btnPosConfirm, isConnected);
-        //    CtInvoke.ButtonEnable(btnServoOnOff, isConnected);
-           
-        //    CtInvoke.ButtonEnable(btnSetVelo, isConnected);
-        //    CtInvoke.ButtonEnable(btnGetMap, isConnected);
-        //    CtInvoke.ButtonEnable(btnSendMap, isConnected);
-        //    CtInvoke.TextBoxEnable(txtVelocity, isConnected);
-            
-        //    if (!isConnected) {
-        //        CarMode = CarMode.OffLine;
-        //        CtInvoke.ButtonEnable(btnUp, false);
-        //        CtInvoke.ButtonEnable(btnStartStop, false);
-        //        CtInvoke.ButtonEnable(btnLeft, false);
-        //        CtInvoke.ButtonEnable(btnRight, false);
-        //        CtInvoke.ButtonEnable(btnDown, false);
-        //    } else if (CarMode == CarMode.OffLine) {
-        //        CarMode = CarMode.Idle;
-        //    }
-        //}
-
-        //#endregion Function - Private Methods
-
-
-
+        }
     }
 
     /// <summary>
