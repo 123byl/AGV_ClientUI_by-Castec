@@ -35,8 +35,13 @@ namespace AGVMap
     /// <summary>
     /// 提供執行緒安全的可繪集合，並以 gl.CallList 加速繪圖
     /// </summary>
-    public abstract class DSet<T> : IDSet<T> where T : ICCWVertex
+    public abstract class DSet<T> : IDSet<T>,IID where T : ICCWVertex
     {
+        /// <summary>
+        /// 識別碼
+        /// </summary>
+        public int ID { get; internal set; }
+
         #region - 顏色 -
 
         /// <summary>

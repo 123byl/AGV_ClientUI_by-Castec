@@ -1,9 +1,20 @@
 ﻿namespace AGVMap
 {
     /// <summary>
+    /// 幾何中心座標
+    /// </summary>
+    public interface ICenter
+    {
+        /// <summary>
+        /// 中心座標
+        /// </summary>
+        IPair Center { get; }
+    }
+
+    /// <summary>
     /// 可控的
     /// </summary>
-    public interface ICtrlable : IDrawable, INameable
+    public interface ICtrlable : IDrawable, INameable, IVisible, IID, ICenter
     {
         /// <summary>
         /// 獲得滑鼠拖曳點陣列
@@ -14,6 +25,17 @@
         /// 現實座標 p 是否在圖形上
         /// </summary>
         bool Intersect(IPair p);
+    }
+
+    /// <summary>
+    /// 具有識別碼的
+    /// </summary>
+    public interface IID
+    {
+        /// <summary>
+        /// 識別碼
+        /// </summary>
+        int ID { get; }
     }
 
     /// <summary>

@@ -1,13 +1,14 @@
 ﻿using SharpGL;
 using System;
 using System.Collections.Generic;
+using static AGVMap.Events;
 
 namespace AGVMap
 {
     /// <summary>
     /// 地圖控制器，所有使用者皆透過此介面對地圖操作
     /// </summary>
-    public interface IMapCtrl
+    public interface IMapCtrl : IMapEvents
     {
         /// <summary>
         /// 是否顯示網格
@@ -37,37 +38,52 @@ namespace AGVMap
         /// <summary>
         /// 加入 AGV 車
         /// </summary>
-        void AddAGV(int key, CtrlAGV agv);
+        void AddAGV(CtrlAGV agv);
+
+        /// <summary>
+        /// 加入面集合
+        /// </summary>
+        void AddAreasSet(DASet areas);
 
         /// <summary>
         /// 加入可控制區域
         /// </summary>
-        void AddCtrlArea(int key, CtrlArea area);
+        void AddCtrlArea(CtrlArea area);
 
         /// <summary>
         /// 加入可控制點
         /// </summary>
-        void AddCtrlLine(int key, CtrlLine line);
+        void AddCtrlLine(CtrlLine line);
 
         /// <summary>
         /// 加入可控制點
         /// </summary>
-        void AddCtrlMark(int key, CtrlMark mark);
+        void AddCtrlMark(CtrlMark mark);
 
         /// <summary>
-        /// 加入障礙線
+        /// 加入線集合
         /// </summary>
-        void AddObstacleLine(IEnumerable<ILine> lines);
+        void AddLinesSet(DLSet lines);
 
         /// <summary>
-        /// 加入障礙點
+        /// 加入點集合
         /// </summary>
-        void AddObstaclePoint(IEnumerable<IPoint> points);
+        void AddPointsSet(DPSet points);
+
+        /// <summary>
+        /// 設定地圖顯示中心
+        /// </summary>
+        void Focus(IPair focus, double zoom);
 
         /// <summary>
         /// 設定地圖顯示中心
         /// </summary>
         void Focus(IPair focus);
+
+        /// <summary>
+        /// 獲得控制項的簡易資訊
+        /// </summary>
+        List<SimpleInfo> GetCtrlSimpleInfo();
 
         /// <summary>
         /// 隱藏 AGV 車
@@ -95,14 +111,119 @@ namespace AGVMap
         void HideCtrlMark(int key);
 
         /// <summary>
-        /// 移除障礙線
+        /// 移除面集合
         /// </summary>
-        void RemoveObstacleLine();
+        void RemoveAreasSet(int id);
 
         /// <summary>
-        /// 移除障礙點
+        /// 移除線集合
         /// </summary>
-        void RemoveObstaclePoint();
+        void RemoveLinesSet(int id);
+
+        /// <summary>
+        /// 移除點集合
+        /// </summary>
+        void RemovePointsSet(int id);
+    }
+
+    /// <summary>
+    /// 地圖控制器 - 地圖事件
+    /// </summary>
+    public interface IMapEvents
+    {
+        /// <summary>
+        /// 滑鼠拖動標示面
+        /// </summary>
+        event DelAreaDraged AreaDragedEvent;
+
+        /// <summary>
+        /// 滑鼠拖動標示線
+        /// </summary>
+        event DelLineDraged LineDragedEvent;
+
+        /// <summary>
+        /// 滑鼠拖動標示物
+        /// </summary>
+        event DelMarkDraged MarkDragedEvent;
+
+        /// <summary>
+        /// 滑鼠按下位置
+        /// </summary>
+        event DelMouseDown MouseDownEvent;
+
+        /// <summary>
+        /// 滑鼠按下移動位置
+        /// </summary>
+        event DelMouseDownMove MouseDownMoveEvent;
+
+        /// <summary>
+        /// 滑鼠放開位置
+        /// </summary>
+        event DelMouseUp MouseUpEvent;
+    }
+
+    /// <summary>
+    /// 簡易資訊結構
+    /// </summary>
+    public struct SimpleInfo
+    {
+        public SimpleInfo(int id, string name, IPair pos)
+        {
+            ID = id;
+            Name = name;
+            Center = pos;
+        }
+
+        /// <summary>
+        /// 中心位置
+        /// </summary>
+        public IPair Center { get; }
+
+        /// <summary>
+        /// 識別碼
+        /// </summary>
+        public int ID { get; }
+
+        /// <summary>
+        /// 顯示名稱
+        /// </summary>
+        public string Name { get; }
+    }
+
+    /// <summary>
+    /// 事件集合
+    /// </summary>
+    public static class Events
+    {
+        /// <summary>
+        /// 滑鼠拖動標示面
+        /// </summary>
+        public delegate void DelAreaDraged(EAreaType type, int id, IArea area);
+
+        /// <summary>
+        /// 滑鼠拖動標示線
+        /// </summary>
+        public delegate void DelLineDraged(ELineType type, int id, ILine line);
+
+        /// <summary>
+        /// 滑鼠拖動標示物
+        /// </summary>
+        public delegate void DelMarkDraged(EMarkType type, int id, IPair center, Angle toward);
+
+        /// <summary>
+        /// 滑鼠按下位置
+        /// </summary>
+        public delegate void DelMouseDown(IPair realPos);
+
+        /// <summary>
+        /// 滑鼠按下移動位置
+        /// </summary>
+        public delegate void DelMouseDownMove(IPair realPos);
+
+        /// <summary>
+        /// 滑鼠放開位置
+        /// </summary>
+        public delegate void DelMouseUp(IPair realPos);
     }
 
     /// <summary>
@@ -111,19 +232,19 @@ namespace AGVMap
     internal class MapCtrl : IMapCtrl, IDrawable
     {
         /// <summary>
-        /// 最大放大倍率 = ZoomStep^0
+        /// 最大放大倍率
         /// </summary>
         public const double ZoomMax = 1;
 
         /// <summary>
-        /// 最小縮小倍率 = ZoomStep^6
+        /// 最小縮小倍率
         /// </summary>
-        public const double ZoomMin = 34.012224;
+        public const double ZoomMin = 64;
 
         /// <summary>
         /// 縮放倍率
         /// </summary>
-        public const double ZoomStep = 1.8;
+        public const double ZoomStep = 1.1;
 
         /// <summary>
         /// AGV 車管理器
@@ -134,6 +255,11 @@ namespace AGVMap
         /// 標示面管理器
         /// </summary>
         private CtrlAreaGM<int> mAreas = new CtrlAreaGM<int>();
+
+        /// <summary>
+        /// 面集合管理器
+        /// </summary>
+        private DASetGM<int> mAreaSet = new DASetGM<int>();
 
         /// <summary>
         /// 拖曳管理器
@@ -176,6 +302,36 @@ namespace AGVMap
         private double mZoom = Math.Pow(ZoomStep, 4);
 
         /// <summary>
+        /// 滑鼠拖動標示面
+        /// </summary>
+        public event DelAreaDraged AreaDragedEvent;
+
+        /// <summary>
+        /// 滑鼠拖動標示線
+        /// </summary>
+        public event DelLineDraged LineDragedEvent;
+
+        /// <summary>
+        /// 滑鼠拖動標示物
+        /// </summary>
+        public event DelMarkDraged MarkDragedEvent;
+
+        /// <summary>
+        /// 滑鼠按下位置
+        /// </summary>
+        public event DelMouseDown MouseDownEvent;
+
+        /// <summary>
+        /// 滑鼠按下移動位置
+        /// </summary>
+        public event DelMouseDownMove MouseDownMoveEvent;
+
+        /// <summary>
+        /// 滑鼠放開位置
+        /// </summary>
+        public event DelMouseUp MouseUpEvent;
+
+        /// <summary>
         /// 是否顯示網格
         /// </summary>
         public bool EnableGrid { get; set; } = true;
@@ -189,16 +345,6 @@ namespace AGVMap
         /// 滑鼠類型
         /// </summary>
         public EMouseType MouseType { get; set; } = EMouseType.TranslationMode;
-
-        /// <summary>
-        /// 障礙線預設引索
-        /// </summary>
-        public int ObstacleLineIndex { get; } = Factory.CreatID.NewID;
-
-        /// <summary>
-        /// 障礙點預設引索
-        /// </summary>
-        public int ObstaclePointIndex { get; } = Factory.CreatID.NewID;
 
         /// <summary>
         /// 平移設定
@@ -226,71 +372,78 @@ namespace AGVMap
         /// <summary>
         /// 加入 AGV 車
         /// </summary>
-        public void AddAGV(int key, CtrlAGV agv)
+        public void AddAGV(CtrlAGV agv)
         {
-            AddCtrl(mAGVs, key, agv);
+            AddCtrl(mAGVs, agv.ID, agv);
+        }
+
+        /// <summary>
+        /// 加入面集合
+        /// </summary>
+        public void AddAreasSet(DASet areas)
+        {
+            if (mAreaSet.ContainsKey(areas.ID))
+            {
+                mAreaSet.AddRange(areas.ID, areas.AsReadOnly());
+            }
+            else
+            {
+                mAreaSet.Add(areas.ID, areas);
+            }
         }
 
         /// <summary>
         /// 加入可控制區域
         /// </summary>
-        public void AddCtrlArea(int key, CtrlArea area)
+        public void AddCtrlArea(CtrlArea area)
         {
-            AddCtrl(mAreas, key, area);
+            AddCtrl(mAreas, area.ID, area);
         }
 
         /// <summary>
         /// 加入可控制點
         /// </summary>
-        public void AddCtrlLine(int key, CtrlLine line)
+        public void AddCtrlLine(CtrlLine line)
         {
-            AddCtrl(mLines, key, line);
+            AddCtrl(mLines, line.ID, line);
         }
 
         /// <summary>
         /// 加入可控制點
         /// </summary>
-        public void AddCtrlMark(int key, CtrlMark mark)
+        public void AddCtrlMark(CtrlMark mark)
         {
-            AddCtrl(mMarks, key, mark);
+            AddCtrl(mMarks, mark.ID, mark);
         }
 
         /// <summary>
-        /// 加入障礙線
+        /// 加入線集合
         /// </summary>
-        public void AddObstacleLine(IEnumerable<ILine> lines)
+        public void AddLinesSet(DLSet lines)
         {
-            if (mLineSets.ContainsKey(ObstacleLineIndex))
+            if (mLineSets.ContainsKey(lines.ID))
             {
-                mLineSets.AddRange(ObstacleLineIndex, lines);
+                mLineSets.AddRange(lines.ID, lines.AsReadOnly());
             }
             else
             {
-                mLineSets.Add(ObstacleLineIndex, Factory.CreatObstacle.ObstacleLine(lines));
+                mLineSets.Add(lines.ID, lines);
             }
         }
 
         /// <summary>
-        /// 加入障礙點
+        /// 加入點集合
         /// </summary>
-        public void AddObstaclePoint(IEnumerable<IPoint> points)
+        public void AddPointsSet(DPSet points)
         {
-            if (mPointSets.ContainsKey(ObstaclePointIndex))
+            if (mPointSets.ContainsKey(points.ID))
             {
-                mPointSets.AddRange(ObstaclePointIndex, points);
+                mPointSets.AddRange(points.ID, points.AsReadOnly());
             }
             else
             {
-                mPointSets.Add(ObstaclePointIndex, Factory.CreatObstacle.ObstaclePoint(points));
+                mPointSets.Add(points.ID, points);
             }
-        }
-
-        /// <summary>
-        /// 獲得受控對象的名稱
-        /// </summary>
-        public string CurrentCtrlObjName()
-        {
-            return mDragManager.CurrentCtrlObjName;
         }
 
         /// <summary>
@@ -311,6 +464,15 @@ namespace AGVMap
         /// <summary>
         /// 設定地圖顯示中心
         /// </summary>
+        public void Focus(IPair focus, double zoom)
+        {
+            Focus(focus);
+            Zoom = zoom;
+        }
+
+        /// <summary>
+        /// 設定地圖顯示中心
+        /// </summary>
         public void Focus(IPair focus)
         {
             Translate.X = -focus.X;
@@ -318,10 +480,24 @@ namespace AGVMap
         }
 
         /// <summary>
+        /// 獲得控制項的簡易資訊
+        /// </summary>
+        public List<SimpleInfo> GetCtrlSimpleInfo()
+        {
+            List<SimpleInfo> res = new List<SimpleInfo>();
+            res.AddRange(GetCtrlSimpleInfo(mAGVs));
+            res.AddRange(GetCtrlSimpleInfo(mMarks));
+            res.AddRange(GetCtrlSimpleInfo(mLines));
+            res.AddRange(GetCtrlSimpleInfo(mAreas));
+            return res;
+        }
+
+        /// <summary>
         /// 隱藏 AGV 車
         /// </summary>
         public void HideAGV(int key)
         {
+            mDragManager.SetCtrlObj(null);
             mAGVs.Edit((item) => { if (item.Key == key) item.Value.Visible = false; });
         }
 
@@ -330,6 +506,7 @@ namespace AGVMap
         /// </summary>
         public void HideAllGoals()
         {
+            mDragManager.SetCtrlObj(null);
             mMarks.Edit((item) => { if (item.Value.Property.Type == EMarkType.Goal) item.Value.Visible = false; });
         }
 
@@ -338,6 +515,7 @@ namespace AGVMap
         /// </summary>
         public void HideCtrlArea(int key)
         {
+            mDragManager.SetCtrlObj(null);
             mAreas.Edit((item) => { if (item.Key == key) item.Value.Visible = false; });
         }
 
@@ -346,6 +524,7 @@ namespace AGVMap
         /// </summary>
         public void HideCtrlLine(int key)
         {
+            mDragManager.SetCtrlObj(null);
             mLines.Edit((item) => { if (item.Key == key) item.Value.Visible = false; });
         }
 
@@ -354,23 +533,40 @@ namespace AGVMap
         /// </summary>
         public void HideCtrlMark(int key)
         {
+            mDragManager.SetCtrlObj(null);
             mMarks.Edit((item) => { if (item.Key == key) item.Value.Visible = false; });
         }
 
         /// <summary>
-        /// 移除障礙線
+        /// 移除面集合
         /// </summary>
-        public void RemoveObstacleLine()
+        public void RemoveAreasSet(int id)
         {
-            mLineSets.Remove(ObstacleLineIndex);
+            mAreaSet.Remove(id);
         }
 
         /// <summary>
-        /// 移除障礙點
+        /// 移除線集合
         /// </summary>
-        public void RemoveObstaclePoint()
+        public void RemoveLinesSet(int id)
         {
-            mPointSets.Remove(ObstaclePointIndex);
+            mLineSets.Remove(id);
+        }
+
+        /// <summary>
+        /// 移除點集合
+        /// </summary>
+        public void RemovePointsSet(int id)
+        {
+            mPointSets.Remove(id);
+        }
+
+        /// <summary>
+        /// 獲得受控對象的名稱
+        /// </summary>
+        internal string CurrentCtrlObjName()
+        {
+            return mDragManager.CurrentCtrlObjName;
         }
 
         /// <summary>
@@ -395,6 +591,24 @@ namespace AGVMap
         internal void DragMouseMoving(IPair mousePos)
         {
             mDragManager.MouseMoving(mousePos);
+            if (mDragManager.CtrlObject != null)
+            {
+                if (mDragManager.CtrlObject is CtrlMark)
+                {
+                    CtrlMark mark = (CtrlMark)mDragManager.CtrlObject;
+                    MarkDragedEvent?.Invoke(mark.Property.Type, mark.ID, mark.Property.Center, mark.Property.Toward);
+                }
+                else if (mDragManager.CtrlObject is CtrlLine)
+                {
+                    CtrlLine line = (CtrlLine)mDragManager.CtrlObject;
+                    LineDragedEvent?.Invoke(line.Property.Type, line.ID, line.Property.Line);
+                }
+                else if (mDragManager.CtrlObject is CtrlArea)
+                {
+                    CtrlArea area = (CtrlArea)mDragManager.CtrlObject;
+                    AreaDragedEvent?.Invoke(area.Property.Type, area.ID, area.Property.Area);
+                }
+            }
         }
 
         /// <summary>
@@ -434,11 +648,50 @@ namespace AGVMap
         }
 
         /// <summary>
+        /// 獲得控制項的簡易資訊
+        /// </summary>
+        internal List<SimpleInfo> GetCtrlSimpleInfo<TValue>(CtrlGM<int, TValue> gm) where TValue : ICtrlable
+        {
+            List<SimpleInfo> res = new List<SimpleInfo>();
+            gm.Edit((item) =>
+            {
+                SimpleInfo info = new SimpleInfo(item.Value.ID, item.Value.Name, item.Value.Center);
+                res.Add(info);
+            });
+            return res;
+        }
+
+        /// <summary>
+        /// 滑鼠按下位置
+        /// </summary>
+        internal void MouseDown(IPair realPos)
+        {
+            MouseDownEvent?.Invoke(realPos);
+        }
+
+        /// <summary>
+        /// 滑鼠按下移動位置
+        /// </summary>
+        internal void MouseDownMove(IPair realPos)
+        {
+            MouseDownMoveEvent?.Invoke(realPos);
+        }
+
+        /// <summary>
+        /// 滑鼠放開位置
+        /// </summary>
+        internal void MouseUp(IPair realPos)
+        {
+            MouseUpEvent?.Invoke(realPos);
+        }
+
+        /// <summary>
         /// 加入可控元件
         /// </summary>
         private void AddCtrl<TValue>(CtrlGM<int, TValue> gm, int key, TValue obj) where TValue : ICtrlable
         {
             if (obj == null) return;
+            mDragManager.SetCtrlObj(null);
             gm.Add(key, obj);
             TValue find = default(TValue);
             bool res = gm.Find((item) => { return item.Key == key; }, ref find);

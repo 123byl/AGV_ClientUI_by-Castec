@@ -16,10 +16,7 @@ namespace AGVMap
             Property.Center = new Pair(center);
             Property.Toward = toward;
         }
-        /// <summary>
-        /// 顯示/隱藏
-        /// </summary>
-        public bool Visible { get; set; }
+
         /// <summary>
         /// AGV 車建構子
         /// </summary>
@@ -28,6 +25,16 @@ namespace AGVMap
             Property.Center = new Pair(x, y);
             Property.Toward = toward;
         }
+
+        /// <summary>
+        /// 中心座標
+        /// </summary>
+        public IPair Center { get { return Property.Center; } }
+
+        /// <summary>
+        /// 識別碼
+        /// </summary>
+        public int ID { get; internal set; }
 
         /// <summary>
         /// 物件名稱
@@ -40,11 +47,17 @@ namespace AGVMap
         public CtrlMarkProperty Property { get; } = new CtrlMarkProperty();
 
         /// <summary>
+        /// 顯示/隱藏
+        /// </summary>
+        public bool Visible { get; set; }
+
+        /// <summary>
         /// 繪圖
         /// </summary>
         public void Draw(OpenGL gl)
         {
             if (!Visible) return;
+            gl.PushText(Center, Name);
             gl.PushMatrix();
             {
                 gl.Translate(Property.Center.X, Property.Center.Y, 0);

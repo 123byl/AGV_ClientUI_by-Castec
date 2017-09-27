@@ -16,6 +16,9 @@ using CtLib.Library;
 using CtLib.Module.Ultity;
 using static CtLib.Forms.CtLogin;
 using CtLib.Forms;
+using AGVMap;
+using ClientUI.Development;
+
 namespace ClientUI
 {
 
@@ -54,9 +57,9 @@ namespace ClientUI
         /// <summary>
         /// MapGL子視窗
         /// </summary>
-        private CtMapGL MapGL {
+        private AGVMapUI MapGL {
             get {
-                return mDockContent.ContainsKey(miMapGL) ? mDockContent[miMapGL] as CtMapGL : null;
+                return mDockContent.ContainsKey(miMapGL) ? mDockContent[miMapGL] as AGVMapUI : null;
             }
         }
 
@@ -91,7 +94,7 @@ namespace ClientUI
         /// </summary>
         private IIConsole IConsole { get { return Console; } }
         private IIGoalSetting IGoalSetting { get { return GoalSetting; } }
-
+        private IMapCtrl IMapCtrl { get { return MapGL != null ? MapGL.Ctrl : null; } }
         #endregion Declaration - Properties
 
         #region Functin - Constructors
@@ -348,14 +351,6 @@ namespace ClientUI
         }
 
         /// <summary>
-        /// 設定GL模式
-        /// </summary>
-        public void SetGLMode(GLMode mode)
-        {
-            //MapGL?.SetGLMode(mode);
-        }
-
-        /// <summary>
         /// 清除地圖
         /// </summary>
         public void ClearMap()
@@ -387,8 +382,9 @@ namespace ClientUI
                 { miConsole,new CtConsole(DockState.DockBottomAutoHide)},
                 { miGoalSetting,new CtGoalSetting(DockState.DockLeft)},
                 { miTesting,new CtTesting(DockState.DockLeft)},
-                { miMapGL,new CtMapGL( DockState.Document)}
+                { miMapGL,new AGVMapUI( DockState.Document)}
             };
+            IMapCtrl.MouseType = EMouseType.EditMode;
             SetEvents();
 
             /*-- 計算每個固定停靠區域所需的顯示大小 --*/
@@ -659,7 +655,23 @@ namespace ClientUI
             IGoalSetting.SaveGoalEvent += IGoalSetting_SaveGoalEvent;
             IGoalSetting.SendMapToAGVEvent += IGoalSetting_SendMapToAGVEvent;
             #endregion
+            #region IMapCtrl 事件連結
+            IMapCtrl.MarkDragedEvent += IMapCtrl_MarkDragedEvent;
+            #endregion
         }
+        #region IMapCtrl 事件連結
+        private void IMapCtrl_MarkDragedEvent(EMarkType type, int id, IPair center, Angle toward)
+        {
+            Info goal = IGoalSetting.GetGoalByID(id);
+            if (goal.ID == id)
+            {
+                goal.X = center.X;
+                goal.Y = center.Y;
+                goal.Toward = toward;
+                IGoalSetting.AddGoal(goal);
+            }
+        }
+        #endregion
         #region IGoalSetting 事件連結   
         private void IGoalSetting_SendMapToAGVEvent()
         {
@@ -715,6 +727,7 @@ namespace ClientUI
             {
                 ID.Add(item.ID);
                 IConsole.AddMsg("[Delete Goal] - {0}", item.ToString());
+                IMapCtrl.HideCtrlMark(item.ID);
             }
             IGoalSetting.DeleteGoals(ID);
         }
@@ -723,12 +736,15 @@ namespace ClientUI
         {
             IConsole.AddMsg("[Clear Goal]");
             IGoalSetting.ClearGoal();
+            IMapCtrl.HideAllGoals();
         }
 
         private void IGoalSetting_AddNewGoalEvent(Info goal)
         {
             IConsole.AddMsg("[Add Goal] - {0}", goal.ToString());
             IGoalSetting.AddGoal(goal);
+            IMapCtrl.AddCtrlMark(Factory.CreatMark.Goal(goal.ID, goal.Name, goal.X, goal.Y, goal.Toward));
+            IMapCtrl.Focus(new Pair(goal.X, goal.Y), 5.0);
         }
         #endregion
     }
@@ -1081,9 +1097,9 @@ namespace ClientUI
     /// </summary>
     public class CtGroupBox : GroupBox
     {
-        private Color _BorderColor = Color.Red;
+        private System.Drawing.Color _BorderColor = System.Drawing.Color.Red;
         [Description("設定或取得外框顏色")]
-        public Color BorderColor {
+        public System.Drawing.Color BorderColor {
             get { return _BorderColor; }
             set { _BorderColor = value; }
         }

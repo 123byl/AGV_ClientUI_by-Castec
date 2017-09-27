@@ -27,14 +27,26 @@ namespace AGVMap
         {
             Property.Area = new Area(p0, p1);
         }
+
         /// <summary>
-        /// 顯示/隱藏
+        /// 中心座標
         /// </summary>
-        public bool Visible { get; set; }
+        public IPair Center { get { return (new Pair(Property.Area.Max) + new Pair(Property.Area.Min)) / 2; } }
+
+        /// <summary>
+        /// 識別碼
+        /// </summary>
+        public int ID { get; internal set; }
+
         /// <summary>
         /// 物件名稱
         /// </summary>
         public string Name { get; set; }
+
+        /// <summary>
+        /// 顯示/隱藏
+        /// </summary>
+        public bool Visible { get; set; }
 
         /// <summary>
         /// 繪圖
@@ -42,6 +54,7 @@ namespace AGVMap
         public void Draw(OpenGL gl)
         {
             if (!Visible) return;
+            gl.PushText(Center, Name);
             gl.PushMatrix();
             {
                 gl.Color(Property.Color.ToArray);
