@@ -35,8 +35,24 @@ namespace ClientUI
     /// <summary>
     /// 客戶端介面
     /// </summary>
-    public partial class AgvClientUI : Form
+    public partial class AgvClientUI : Form,ICtVersion
     {
+
+        #region Version - Information
+
+        /// <summary>
+        /// AgvClientUI版本資訊
+        /// </summary>
+        /// <remarks>
+        ///     0.0.0   Jay [2017/09/28]
+        ///         + 整合AgvClient
+        ///         + 加上使用者登入/登出
+        ///         + 加上使用者管理
+        ///         + 加入版本號
+        /// </remarks>
+        public CtVersion Version { get { return new CtVersion(0, 0, 0, "2017/09/28", "Jay Chang"); } }
+
+        #endregion Version - Information
 
         #region Declaration - Fields
 
@@ -50,11 +66,6 @@ namespace ClientUI
         /// 是否已建立連線
         /// </summary>
         private bool mIsConnected = false;
-
-        /// <summary>
-        /// 進度條物件
-        /// </summary>
-        private CtProgress mProg = null;
 
         /// <summary>Opcode 檔案名稱</summary>
         private static readonly string FILENAME_OPCODE = "D1703.opc";
@@ -116,21 +127,6 @@ namespace ClientUI
         /// 路徑規劃接收物件
         /// </summary>
         private SocketMonitor mSoxMonitorPath = null;
-
-        /// <summary>
-        /// 地圖操作執行緒
-        /// </summary>
-        private Thread mTdMapOperation = null;
-
-        /// <summary>
-        /// Map檔載入執行緒
-        /// </summary>
-        private Thread mTdLoadMap = null;
-
-        /// <summary>
-        /// 地圖載入執行緒
-        /// </summary>
-        private Thread mLoadOriginScanning = null;
 
         /// <summary>
         /// 偵測多餘的呼叫
@@ -198,13 +194,7 @@ namespace ClientUI
         /// 是否Bypass LoadFile功能
         /// </summary>
         private bool mBypassLoadFile = false;
-
-        /// <summary>
-        /// 是否Bypass Server
-        /// </summary>
-        private bool mByPassServer = false;
-
-
+        
         /// <summary>
         /// ICtDockContent與MenuItem對照
         /// </summary>
@@ -395,6 +385,8 @@ namespace ClientUI
         private IIGoalSetting IGoalSetting { get { return GoalSetting; } }
         private IMapCtrl IMapCtrl { get { return MapGL != null ? MapGL.Ctrl : null; } }
         private IITesting ITest { get { return Testing; } }
+
+
         #endregion Declaration - Properties
 
         #region Functin - Constructors
@@ -509,7 +501,12 @@ namespace ClientUI
         /// <param name="e"></param>
         private void miAbout_Click(object sender, EventArgs e)
         {
-
+            using (CtAbout frm = new CtAbout()) {
+                //新版本CtLib
+                //frm.Start(Assembly.GetExecutingAssembly(), this, Version, module);
+                //當前版本CtLib
+                frm.Start(Version, mModuleVersions);
+            }
         }
 
         /// <summary>
@@ -519,7 +516,15 @@ namespace ClientUI
         /// <param name="e"></param>
         private void miLogin_Click(object sender, EventArgs e)
         {
-
+            Stat stt = Stat.SUCCESS;
+            if (mUser.Level == AccessLevel.NONE) {
+                using (CtLogin frmLogin = new CtLogin()) {
+                    stt = frmLogin.Start(out mUser);
+                }
+            } else {
+                mUser = new UserData("N/A", "", AccessLevel.NONE);
+            }
+            UserChanged(mUser);
         }
 
         /// <summary>
@@ -529,7 +534,9 @@ namespace ClientUI
         /// <param name="e"></param>
         private void miUserManager_Click(object sender, EventArgs e)
         {
-
+            using (CtUserManager frmUsrMgr = new CtUserManager(mUser)) {
+                frmUsrMgr.ShowDialog();
+            }
         }
 
         #endregion MenuItem
