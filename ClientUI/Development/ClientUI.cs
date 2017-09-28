@@ -1079,7 +1079,7 @@ namespace ClientUI
             }
 
         }
-
+        
         /// <summary>
         /// 載入地圖
         /// </summary>
@@ -1092,7 +1092,9 @@ namespace ClientUI
             mCurMapPath = mapPath;
             string mPath = CtFile.GetFileName(mapPath);
             SendMsg($"Set:MapName:{mPath}");
-
+            Stopwatch sw = new Stopwatch();
+            CtProgress prog = null;
+            int nowProg = 0;
             if (mBypassLoadFile)
             {
                 /*-- 空跑1秒模擬載入Map檔 --*/
@@ -1105,7 +1107,7 @@ namespace ClientUI
                 CartesianPos maximumPos;
 
                 #region - Retrive information from .map file -
-
+                sw.Start();
                 using (MapReading read = new MapReading(mCurMapPath))
                 {
                     read.OpenFile();
@@ -1114,6 +1116,12 @@ namespace ClientUI
                     read.ReadMapObstacleLines(out obstacleLine);
                     read.ReadMapObstaclePoints(out obstaclePoints);
                 }
+                int total = obstacleLine.Count + 2;
+                
+                prog = new CtProgress(ProgBarStyle.Percent, "Load Map", $"Loading {mapPath}", total);
+                System.Console.WriteLine($"Read:{sw.ElapsedMilliseconds}ms");
+                sw.Restart();
+
                 Goals = goalList;
 
                 mMapMatch.Reset();
@@ -1126,12 +1134,22 @@ namespace ClientUI
                     {
                         mMapMatch.AddPoint(new CartesianPos(x, y));
                     }
+                    prog.UpdateStep(nowProg++);
                 }
+
+                System.Console.WriteLine($"Read Line:{sw.ElapsedMilliseconds}ms");
+                sw.Restart();
+
 
                 for (int i = 0; i < obstaclePoints.Count; i++)
                 {
                     mMapMatch.AddPoint(obstaclePoints[i]);
                 }
+                prog.UpdateStep(nowProg++);
+
+                System.Console.WriteLine($"Read Point:{sw.ElapsedMilliseconds}ms");
+                sw.Restart();
+
                 #endregion
 
                 #region  - Map information display -
@@ -1142,12 +1160,21 @@ namespace ClientUI
 
             }
             IMapCtrl.NewMap(obstaclePoints, obstacleLine);
+            System.Console.WriteLine($"Draw:{sw.ElapsedMilliseconds}ms");
+            sw.Restart();
+
             foreach (var goal in goalList)
             {
                 int id = Factory.CreatID.NewID;
                 IMapCtrl.AddCtrlMark(Factory.CreatMark.Goal(id, "Goal" + id, (int)goal.x, (int)goal.y, goal.theta));
             }
+            prog.UpdateStep(nowProg++);
 
+            System.Console.WriteLine($"GoalList:{sw.ElapsedMilliseconds}ms");
+            sw.Restart();
+
+            prog.Close();
+            prog = null;
             GoalSetting.LoadGoals(goalList);
 
             goalList = null;
@@ -1173,15 +1200,25 @@ namespace ClientUI
                 int dataLength = MapReading.OpenFile();
                 if (dataLength != 0)
                 {
-                    for (int n = 0; n < dataLength; n++)
-                    {
-                        MapReading.ReadScanningInfo(n, out carPos, out laserData);
-                        IMapCtrl.AddAGV(Factory.CreatAGV.AGV(AGVID, "AGV", carPos.X, carPos.Y, carPos.theta));
-                        IMapCtrl.AddPointsSet(Factory.CreatSet.LaserPoints(LaserID, laserData));
-                        carPos = null;
-                        laserData = null;
-                        Thread.Sleep(10);
+                    CtProgress prog = new CtProgress(ProgBarStyle.Percent, $"Load Ori", $"Loading {oriPath}...",dataLength-1);
+                    try {
+                        for (int n = 0; n < dataLength; n++) {
+                            MapReading.ReadScanningInfo(n, out carPos, out laserData);
+                            IMapCtrl.AddAGV(Factory.CreatAGV.AGV(AGVID, "AGV", carPos.X, carPos.Y, carPos.theta));
+                            IMapCtrl.AddPointsSet(Factory.CreatSet.LaserPoints(LaserID, laserData));
+                            carPos = null;
+                            laserData = null;
+                            Thread.Sleep(10);
+                            System.Console.WriteLine(n);
+                            prog.UpdateStep(n);
+                        }
+                    }catch(Exception ex) {
+                        System.Console.WriteLine(ex.Message);
+                    } finally {
+                        prog?.Close();
+                        prog = null;
                     }
+
                 }
             }
             else
@@ -1203,7 +1240,6 @@ namespace ClientUI
             openMap.Filter = $"MAP|*.{type.ToString().ToLower()}";
             if (openMap.ShowDialog() == DialogResult.OK)
             {
-                CtProgress prog = new CtProgress($"Load {type}", $"Loading {type}...");
                 try
                 {
                     switch (type)
@@ -1223,11 +1259,6 @@ namespace ClientUI
                 catch (Exception ex)
                 {
                     CtMsgBox.Show("Error", ex.Message);
-                }
-                finally
-                {
-                    prog?.Close();
-                    prog = null;
                 }
             }
             openMap = null;
