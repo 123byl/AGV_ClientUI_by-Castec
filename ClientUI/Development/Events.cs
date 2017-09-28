@@ -180,6 +180,7 @@ namespace ClientUI
         void SetLaserStt(bool isGettingLaser);
         void SetServerStt(bool isConnect);
         void ChangedMotorStt(bool servoOn);
+        void UnLockOriOperator(bool v);
     }
 
     /// <summary>

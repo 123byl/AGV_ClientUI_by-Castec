@@ -32,8 +32,27 @@ namespace ClientUI
     /// <summary>
     /// 客戶端介面
     /// </summary>
-    public partial class AgvClientUI : Form
+    public partial class AgvClientUI : Form,ICtVersion
     {
+
+        #region Version - Information
+
+        /// <summary>
+        /// AgvClientUI版本資訊
+        /// </summary>
+        /// <remarks>
+        ///     0.0.0   Jay [2017/09/28]
+        ///         + 整合AgvClient
+        ///         + 加上使用者登入/登出
+        ///         + 加上使用者管理
+        ///         + 加入版本號
+        ///         \ 修改Load File進度條為百分比
+        ///         \ 取得Ori檔後解鎖Ori檔操作
+        ///         \ 補上SimplfyOri功能
+        /// </remarks>
+        public CtVersion Version { get { return new CtVersion(0, 0, 0, "2017/09/28", "Jay Chang"); } }
+
+        #endregion Version - Information
 
         #region Declaration - Fields
 
@@ -47,11 +66,6 @@ namespace ClientUI
         /// 是否已建立連線
         /// </summary>
         private bool mIsConnected = false;
-
-        /// <summary>
-        /// 進度條物件
-        /// </summary>
-        private CtProgress mProg = null;
 
         /// <summary>Opcode 檔案名稱</summary>
         private static readonly string FILENAME_OPCODE = "D1703.opc";
@@ -113,21 +127,6 @@ namespace ClientUI
         /// 路徑規劃接收物件
         /// </summary>
         private SocketMonitor mSoxMonitorPath = null;
-
-        /// <summary>
-        /// 地圖操作執行緒
-        /// </summary>
-        private Thread mTdMapOperation = null;
-
-        /// <summary>
-        /// Map檔載入執行緒
-        /// </summary>
-        private Thread mTdLoadMap = null;
-
-        /// <summary>
-        /// 地圖載入執行緒
-        /// </summary>
-        private Thread mLoadOriginScanning = null;
 
         /// <summary>
         /// 偵測多餘的呼叫
@@ -195,13 +194,7 @@ namespace ClientUI
         /// 是否Bypass LoadFile功能
         /// </summary>
         private bool mBypassLoadFile = false;
-
-        /// <summary>
-        /// 是否Bypass Server
-        /// </summary>
-        private bool mByPassServer = false;
-
-
+        
         /// <summary>
         /// ICtDockContent與MenuItem對照
         /// </summary>
@@ -392,6 +385,8 @@ namespace ClientUI
         private IIGoalSetting IGoalSetting { get { return GoalSetting; } }
         private IMapCtrl IMapCtrl { get { return MapGL != null ? MapGL.Ctrl : null; } }
         private IITesting ITest { get { return Testing; } }
+
+
         #endregion Declaration - Properties
 
         #region Functin - Constructors
@@ -506,7 +501,12 @@ namespace ClientUI
         /// <param name="e"></param>
         private void miAbout_Click(object sender, EventArgs e)
         {
-
+            using (CtAbout frm = new CtAbout()) {
+                //新版本CtLib
+                //frm.Start(Assembly.GetExecutingAssembly(), this, Version, module);
+                //當前版本CtLib
+                frm.Start(Version, mModuleVersions);
+            }
         }
 
         /// <summary>
@@ -516,7 +516,15 @@ namespace ClientUI
         /// <param name="e"></param>
         private void miLogin_Click(object sender, EventArgs e)
         {
-
+            Stat stt = Stat.SUCCESS;
+            if (mUser.Level == AccessLevel.NONE) {
+                using (CtLogin frmLogin = new CtLogin()) {
+                    stt = frmLogin.Start(out mUser);
+                }
+            } else {
+                mUser = new UserData("N/A", "", AccessLevel.NONE);
+            }
+            UserChanged(mUser);
         }
 
         /// <summary>
@@ -526,7 +534,9 @@ namespace ClientUI
         /// <param name="e"></param>
         private void miUserManager_Click(object sender, EventArgs e)
         {
-
+            using (CtUserManager frmUsrMgr = new CtUserManager(mUser)) {
+                frmUsrMgr.ShowDialog();
+            }
         }
 
         #endregion MenuItem
@@ -1069,7 +1079,7 @@ namespace ClientUI
             }
 
         }
-
+        
         /// <summary>
         /// 載入地圖
         /// </summary>
@@ -1082,7 +1092,9 @@ namespace ClientUI
             mCurMapPath = mapPath;
             string mPath = CtFile.GetFileName(mapPath);
             SendMsg($"Set:MapName:{mPath}");
-
+            Stopwatch sw = new Stopwatch();
+            CtProgress prog = null;
+            int nowProg = 0;
             if (mBypassLoadFile)
             {
                 /*-- 空跑1秒模擬載入Map檔 --*/
@@ -1095,7 +1107,7 @@ namespace ClientUI
                 CartesianPos maximumPos;
 
                 #region - Retrive information from .map file -
-
+                sw.Start();
                 using (MapReading read = new MapReading(mCurMapPath))
                 {
                     read.OpenFile();
@@ -1104,6 +1116,12 @@ namespace ClientUI
                     read.ReadMapObstacleLines(out obstacleLine);
                     read.ReadMapObstaclePoints(out obstaclePoints);
                 }
+                int total = obstacleLine.Count + 2;
+                
+                prog = new CtProgress(ProgBarStyle.Percent, "Load Map", $"Loading {mapPath}", total);
+                System.Console.WriteLine($"Read:{sw.ElapsedMilliseconds}ms");
+                sw.Restart();
+
                 Goals = goalList;
 
                 mMapMatch.Reset();
@@ -1116,12 +1134,22 @@ namespace ClientUI
                     {
                         mMapMatch.AddPoint(new CartesianPos(x, y));
                     }
+                    prog.UpdateStep(nowProg++);
                 }
+
+                System.Console.WriteLine($"Read Line:{sw.ElapsedMilliseconds}ms");
+                sw.Restart();
+
 
                 for (int i = 0; i < obstaclePoints.Count; i++)
                 {
                     mMapMatch.AddPoint(obstaclePoints[i]);
                 }
+                prog.UpdateStep(nowProg++);
+
+                System.Console.WriteLine($"Read Point:{sw.ElapsedMilliseconds}ms");
+                sw.Restart();
+
                 #endregion
 
                 #region  - Map information display -
@@ -1132,12 +1160,21 @@ namespace ClientUI
 
             }
             IMapCtrl.NewMap(obstaclePoints, obstacleLine);
+            System.Console.WriteLine($"Draw:{sw.ElapsedMilliseconds}ms");
+            sw.Restart();
+
             foreach (var goal in goalList)
             {
                 int id = Factory.CreatID.NewID;
                 IMapCtrl.AddCtrlMark(Factory.CreatMark.Goal(id, "Goal" + id, (int)goal.x, (int)goal.y, goal.theta));
             }
+            prog.UpdateStep(nowProg++);
 
+            System.Console.WriteLine($"GoalList:{sw.ElapsedMilliseconds}ms");
+            sw.Restart();
+
+            prog.Close();
+            prog = null;
             GoalSetting.LoadGoals(goalList);
 
             goalList = null;
@@ -1163,15 +1200,25 @@ namespace ClientUI
                 int dataLength = MapReading.OpenFile();
                 if (dataLength != 0)
                 {
-                    for (int n = 0; n < dataLength; n++)
-                    {
-                        MapReading.ReadScanningInfo(n, out carPos, out laserData);
-                        IMapCtrl.AddAGV(Factory.CreatAGV.AGV(AGVID, "AGV", carPos.X, carPos.Y, carPos.theta));
-                        IMapCtrl.AddPointsSet(Factory.CreatSet.LaserPoints(LaserID, laserData));
-                        carPos = null;
-                        laserData = null;
-                        Thread.Sleep(10);
+                    CtProgress prog = new CtProgress(ProgBarStyle.Percent, $"Load Ori", $"Loading {oriPath}...",dataLength-1);
+                    try {
+                        for (int n = 0; n < dataLength; n++) {
+                            MapReading.ReadScanningInfo(n, out carPos, out laserData);
+                            IMapCtrl.AddAGV(Factory.CreatAGV.AGV(AGVID, "AGV", carPos.X, carPos.Y, carPos.theta));
+                            IMapCtrl.AddPointsSet(Factory.CreatSet.LaserPoints(LaserID, laserData));
+                            carPos = null;
+                            laserData = null;
+                            Thread.Sleep(10);
+                            System.Console.WriteLine(n);
+                            prog.UpdateStep(n);
+                        }
+                    }catch(Exception ex) {
+                        System.Console.WriteLine(ex.Message);
+                    } finally {
+                        prog?.Close();
+                        prog = null;
                     }
+
                 }
             }
             else
@@ -1193,13 +1240,13 @@ namespace ClientUI
             openMap.Filter = $"MAP|*.{type.ToString().ToLower()}";
             if (openMap.ShowDialog() == DialogResult.OK)
             {
-                CtProgress prog = new CtProgress($"Load {type}", $"Loading {type}...");
                 try
                 {
                     switch (type)
                     {
                         case FileType.Ori:
                             await Task.Run(() => LoadOri(openMap.FileName));
+                            ITest.UnLockOriOperator(true);
                             //RaiseTestingEvent(TestingEventType.CurOriPath);
                             break;
                         case FileType.Map:
@@ -1213,11 +1260,6 @@ namespace ClientUI
                 catch (Exception ex)
                 {
                     CtMsgBox.Show("Error", ex.Message);
-                }
-                finally
-                {
-                    prog?.Close();
-                    prog = null;
                 }
             }
             openMap = null;
@@ -1534,7 +1576,48 @@ namespace ClientUI
             ITest.SetVelocity += ITest_SetVelocity;
             ITest.Connect += ITest_CheckIsServerAlive;
             ITest.MotorServoOn += ITest_MotorServoOn;
+            ITest.SimplifyOri += ITest_SimplifyOri;
             #endregion 
+        }
+
+        private void ITest_SimplifyOri() {
+            if (mBypassLoadFile) {
+                /*-- 空跑模擬SimplifyOri --*/
+                SpinWait.SpinUntil(() => false, 1000);
+                return;
+            }
+
+            string[] tmpPath = CurOriPath.Split('.');
+            CurMapPath = tmpPath[0] + ".map";
+            MapSimplication mapSimp = new MapSimplication(CurMapPath);
+            mapSimp.Reset();
+            List<Line> obstacleLines = new List<Line>();
+            List<AGVMap.Point> obstaclePoints = new List<AGVMap.Point>();
+            List<CartesianPos> resultPoints;
+            List<MapSimplication.Line> resultlines;
+            mapSimp.ReadMapAllTransferToLine(mMapMatch.parseMap, mMapMatch.minimumPos, mMapMatch.maximumPos
+                , 100, 0, out resultlines, out resultPoints);
+            try {
+                for (int i = 0; i < resultlines.Count; i++) {
+                    obstacleLines.Add(
+                        new Line(resultlines[i].startX, resultlines[i].startY,
+                        resultlines[i].endX, resultlines[i].endY)
+                    );
+                }
+                for (int i = 0; i < resultPoints.Count; i++) {
+                    obstaclePoints.Add(new AGVMap.Point((int)resultPoints[i].x, (int)resultPoints[i].y));
+                }
+
+                IMapCtrl.NewMap(obstaclePoints, obstacleLines);
+            } catch(Exception ex) {
+                System.Console.WriteLine(ex.Message);
+            }
+
+
+            obstacleLines = null;
+            obstaclePoints = null;
+            resultPoints = null;
+            resultlines = null;
         }
 
         #region ITest 事件連結
