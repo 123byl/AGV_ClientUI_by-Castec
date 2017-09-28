@@ -11,229 +11,16 @@ using System.Drawing;
 using CtLib.Library;
 
 using MapProcessing;
-using static MapGL.CastecMapUI;
+using AGVMap;
+
 namespace ClientUI
 {
-
-    #region Declaration - Variable Type
-
-    /// <summary>
-    /// 車子資訊結構
-    /// </summary>
-    public struct CarInfo {
-
-        #region Declaration - Fields
-
-        public string ID;
-
-        /// <summary>
-        /// X座標
-        /// </summary>
-        public double X;
-
-        /// <summary>
-        /// Y座標
-        /// </summary>
-        public double Y;
-
-        /// <summary>
-        /// 陀螺儀角度
-        /// </summary>
-        public double ThetaGyro;
-
-        /// <summary>
-        /// 電池電量百分比
-        /// </summary>
-        public int PowerPercent;
-
-        /// <summary>
-        /// 雷射掃描資料
-        /// </summary>
-        public IEnumerable<int> LaserData;
-
-        /// <summary>
-        /// 當前訊息
-        /// </summary>
-        public string Status;
-        
-        #endregion Declaration - Fields
-
-        #region Function - Public Methods
-
-        /// <summary>
-        /// 設定位置
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="theta"></param>
-        public void SetPosition(double x,double y,double theta) {
-            this.X = x;
-            this.Y = y;
-            this.ThetaGyro = theta;
-        }
-
-        /// <summary>
-        /// 嘗試將字串轉換為<see cref="CarInfo"/>
-        /// </summary>
-        /// <param name="src">來源字串</param>
-        /// <param name="info">轉換後的<see cref="CarInfo"/></param>
-        /// <returns>是否轉換成功</returns>
-        public static bool TryParse(string src,out CarInfo info) {
-            IEnumerable<int> laserData = null;
-            return TryParse(src, out info, out laserData);
-        }
-
-        /// <summary>
-        /// 嘗試將字串轉換為<see cref="CarInfo"/>
-        /// </summary>
-        /// <param name="src">來源字串</param>
-        /// <param name="info">轉換後的<see cref="CarInfo"/></param>
-        /// <param name="laserData">雷射資料</param>
-        /// <returns>是否轉換成功</returns>
-        public static bool TryParse(string src,out CarInfo info ,out IEnumerable<int> laserData) {
-            info = new CarInfo();
-            string[] strArray = src.Split(':');
-            laserData = null;
-            if (strArray[0] != "Get") return false;
-            if (strArray[1] != "Car" || strArray.Length != 9) return false;
-
-            info.ID = strArray[2];
-            double.TryParse(strArray[3], out info.X);
-            double.TryParse(strArray[4], out info.Y);
-            double.TryParse(strArray[5], out info.ThetaGyro);
-            int.TryParse(strArray[6], out info.PowerPercent);
-            string[] sreRemoteLaser = strArray[7].Split(',');
-            info.LaserData = sreRemoteLaser.Select(x => int.Parse(x));
-            info.Status = strArray[8];
-            laserData = info.LaserData;
-
-            return true;
-        }
-
-        /// <summary>
-        /// 設定點位
-        /// </summary>
-        /// <param name="carPos"></param>
-        public void SetPosition(CartesianPos carPos) {
-            SetPosition(carPos.x, carPos.y, carPos.theta);
-        }
-
-        /// <summary>
-        /// 設定點位
-        /// </summary>
-        /// <param name="carPos"></param>
-        public void SetPos(Pos carPos) {
-            SetPosition(carPos.x, carPos.y, carPos.theta);
-        }
-
-        #endregion Function - Public Methods
-
-    }
-
-    /// <summary>
-    /// 增加比較是否相等的方法
-    /// </summary>
-    public class CarPos : CartesianPos {
-
-        #region Function - Constructors
-
-        /// <summary>
-        /// 空白建構方法
-        /// </summary>
-        public CarPos() {
-
-        }
-
-        /// <summary>
-        /// X,Y建構方法
-        /// </summary>
-        /// <param name="x">X座標</param>
-        /// <param name="y">Y座標</param>
-        public CarPos(double x,double y):base(x,y) {
-
-        }
-
-        /// <summary>
-        /// X,Y,Theta建構方法
-        /// </summary>
-        /// <param name="x">X座標</param>
-        /// <param name="y">Y座標</param>
-        /// <param name="theta">角度</param>
-        public CarPos(double x, double y,double theta) : base(x, y, theta) {
-
-        }
-
-        #endregion Function - Constructors
-
-        #region Function - Public Methods
-
-        /// <summary>
-        /// 回傳兩個<see cref="CarPos"/>是否相等
-        /// </summary>
-        /// <param name="p1"></param>
-        /// <param name="p2"></param>
-        /// <returns></returns>
-        public static bool operator ==(CarPos p1,CarPos p2) {
-            return p1.x == p2.x && p1.y == p2.y && p1.theta == p2.theta;
-        }
-
-        /// <summary>
-        /// 回傳兩個<see cref="CarPos"/>是否不相等
-        /// </summary>
-        /// <param name="p1"></param>
-        /// <param name="p2"></param>
-        /// <returns></returns>
-        public static bool operator !=(CarPos p1,CarPos p2) {
-            return !(p1 == p2);
-        }
-        
-        /// <summary>
-        /// 以<see cref="Point"/>類型回傳
-        /// </summary>
-        /// <returns></returns>
-        public Point ToPoint() {
-            return new Point((int)x,(int)y);
-        }
-
-        /// <summary>
-        /// 以<see cref="PointF"/>類型回傳
-        /// </summary>
-        /// <returns></returns>
-        public PointF ToPointF() {
-            return new PointF((float)x, (float)y);
-        }
-
-        /// <summary>
-        /// 以<see cref="Pos"/>類型回傳
-        /// </summary>
-        /// <returns></returns>
-        public Pos ToPos() {
-            return new Pos(x, y, theta);
-        }
-
-        public override bool Equals(object obj) {
-            return this == (obj as CarPos);
-        }
-
-        public override int GetHashCode() {
-            return x.GetHashCode() ^ y.GetHashCode() ^ theta.GetHashCode();
-        }
-
-        #endregion Function - Public Methods
-    }
-
-    #endregion Declaration - Variable Type
-
     #region Declaration Extenstion
 
     /// <summary>
     /// 擴充方法定義
     /// </summary>
     internal static class AgvExtenstion {
-
-        public static CartesianPos ToCartesianPos(this CarInfo info) {
-            return new CartesianPos(info.X, info.Y, info.ThetaGyro);
-        }
 
         /// <summary>擴充 <see cref="Control"/>，使用 <seealso cref="Control.Invoke(Delegate)"/> 方法執行不具任何簽章之委派</summary>
         /// <param name="ctrl">欲調用的控制項</param>
@@ -243,32 +30,10 @@ namespace ClientUI
             else action();
         }
 
-        internal static  Pos ToPos(this CarInfo info) {
-            return new Pos(info.X, info.Y, info.ThetaGyro);
-        }
-
         internal static IEnumerable<IEnumerable<T>> ChunkBy<T>(this IEnumerable<T> src,int size) {
             return src.Select((x, i) => new { Index = i,value = x }).
                 GroupBy(x => x.Index / size).
                 Select(x => x.Select(v => v.value));
-        }
-
-        /// <summary>
-        /// 將<see cref="List{CartesianPos}<>"/>轉換為<see cref="List{Point}<>"/>
-        /// </summary>
-        /// <param name="points"></param>
-        /// <returns></returns>
-        internal static List<Point> ToPoints(this List<CartesianPos> points) {
-            return points.ConvertAll(p => new Point((int)p.x, (int)p.y));
-        }
-
-        /// <summary>
-        /// <see cref="CarPos"/>轉換為<see cref="CartesianPos"/>
-        /// </summary>
-        /// <param name="points"></param>
-        /// <returns></returns>
-        public static List<CartesianPos> ToCartesianPos(this List<CarPos> points) {
-            return points.Cast<CartesianPos>().ToList();
         }
 
         /// <summary>
@@ -280,43 +45,6 @@ namespace ClientUI
             return $"{point.x:F0},{point.y:F0},{point.theta:F0}";
         }
 
-        /// <summary>
-        /// 取得<see cref="Point"/>類型資料
-        /// </summary>
-        /// <param name="p"></param>
-        /// <returns></returns>
-        public static Point ToPoint(this CartesianPos p) {
-            return new Point((int)p.x, (int)p.y);
-        }
-
-        /// <summary>
-        /// 取得<see cref="MapLIne"/>副本
-        /// </summary>
-        /// <param name="line"></param>
-        /// <returns></returns>
-        public static MapLIne ToLine(this MapLine line) {
-            return new MapLIne((int)line.start.x,(int)line.start.y,(int)line.end.x,(int)line.end.y);
-        }
-
-        /// <summary>
-        /// 取得<see cref="Pos"/>類型資料
-        /// </summary>
-        /// <param name="point"></param>
-        /// <returns></returns>
-        public static Pos ToPos(this CartesianPos point) {
-            return new Pos(point.x, point.y,point.theta);
-        }
-
-        /// <summary>
-        /// 新增多個Goal點
-        /// </summary>
-        /// <param name="glMap">要新的的<see cref="MapGL.CastecMapUI"/>控制項</param>
-        /// <param name="goals">Goal點集合</param>
-        public static void AddPositionGoals(this MapGL.CastecMapUI glMap,List<CartesianPos> goals) {
-            foreach(CartesianPos goal in goals) {
-                glMap.AddPositonGoal(goal.ToPos());
-            }
-        }
     }
 
     #endregion Declaration  - Extenstion
@@ -3050,9 +2778,9 @@ namespace ClientUI
         /// </summary>
         internal static readonly Dictionary<string, Type> NameTypeMap = new Dictionary<string, Type>() {
             { CarInfo,typeof(CarInfo) },
-            { ObstacleLines,typeof(List<MapLIne>)},
+            { ObstacleLines,typeof(List<AGVMap.Line>)},
             { ObstaclePoints,typeof(List<Point>)},
-            { PosCar,typeof(Pos)},
+            { PosCar,typeof(TowardPos)},
             { ScanPoint,typeof(List<CartesianPos>) },
             { Goals,typeof(List<CartesianPos>)}
         };
@@ -3064,8 +2792,8 @@ namespace ClientUI
             { typeof(CarInfo),obj => obj is CarInfo},
             { typeof(List<CartesianPos>),obj => obj is List<CartesianPos>},
             { typeof(List<Point>),obj => obj is List<Point>},
-            { typeof(Pos),obj => obj is Pos},
-            { typeof(List<MapLIne>),obj => obj is List<MapLIne>}
+            { typeof(TowardPos),obj => obj is TowardPos},
+            { typeof(List<AGVMap.Line>),obj => obj is List<AGVMap.Line>}
         };
         
         #endregion Declaration - Fields

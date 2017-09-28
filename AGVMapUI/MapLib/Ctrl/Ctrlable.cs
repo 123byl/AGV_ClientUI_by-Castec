@@ -59,4 +59,20 @@
         /// </summary>
         bool Visible { get; set; }
     }
+
+    /// <summary>
+    /// ID 產生器
+    /// </summary>
+    public class IDCreater
+    {
+        /// <summary>
+        /// ID
+        /// </summary>
+        public int ID { get; } = Factory.CreatID.NewID;
+
+        public static implicit operator int(IDCreater creater)
+        {
+            return creater.ID;
+        }
+    }
 }

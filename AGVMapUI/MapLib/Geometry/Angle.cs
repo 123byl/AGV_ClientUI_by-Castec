@@ -33,7 +33,13 @@
         {
             Value = ang;
         }
-
+        /// <summary>
+        /// 回傳兩位小數的數值
+        /// </summary>
+        public string ToStr()
+        { 
+            return Value.ToString("F2");
+        }
         /// <summary>
         /// 介於 [0,360) 之間的角度
         /// </summary>
@@ -71,6 +77,7 @@
         #region 運算子
         public override bool Equals(object obj)
         {
+            if (obj == null || !(obj is Angle)) return false;
             return this == (obj as Angle);
         }
         public static bool operator ==(Angle lhs, Angle rhs)

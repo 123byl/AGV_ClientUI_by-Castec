@@ -14,6 +14,8 @@ using System.Threading;
 using CtLib.Library;
 using CtLib.Forms;
 using ServerOperation;
+using AGVMap;
+
 namespace ClientUI
 {
 
@@ -87,7 +89,7 @@ namespace ClientUI
             mIsServoOn = !mIsServoOn;
             mCliect.ServoOn(mIsServoOn);
             btnServoOnOff.Text = mIsServoOn ? "ON" : "OFF";
-            btnServoOnOff.BackColor = mIsServoOn ? Color.Green : Color.Red;
+            btnServoOnOff.BackColor = mIsServoOn ? System.Drawing. Color.Green : System.Drawing.Color.Red;
         }
 
         private void btnUp_Click(object sender, EventArgs e) {
@@ -157,7 +159,7 @@ namespace ClientUI
         private void btnGetCarStatus_Click(object sender, EventArgs e) {
             mIsGetCar = !mIsGetCar;
             mCliect.GetCar(mIsGetCar);
-            btnGetCarStatus.BackColor = mIsGetCar ? Color.Green : Color.Red;
+            btnGetCarStatus.BackColor = mIsGetCar ? System.Drawing.Color.Green : System.Drawing.Color.Red;
         }
 
         private void btnPosConfirm_Click(object sender, EventArgs e) {
@@ -234,7 +236,7 @@ namespace ClientUI
                     bool isServoOn = mCliect.GetMotorStatus();
                     if (servo != null) {
                         CtInvoke.ButtonText(btnServoOnOff, isServoOn ? "ON" : "OFF");
-                        CtInvoke.ButtonBackColor(btnServoOnOff, isServoOn ? Color.Green : Color.Red);
+                        CtInvoke.ButtonBackColor(btnServoOnOff, isServoOn ? System.Drawing.Color.Green : System.Drawing.Color.Red);
                     }
                 }
             } catch (Exception ex) {

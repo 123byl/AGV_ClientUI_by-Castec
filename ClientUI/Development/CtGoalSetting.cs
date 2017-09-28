@@ -17,7 +17,6 @@ namespace ClientUI
     {
         public const int IDColumn = 1;
         public const int NameColumn = 2;
-        public const int NoteColumn = 6;
         public const int SelectColumn = 0;
         public const int TowardColumn = 5;
         public const int XColumn = 3;
@@ -40,13 +39,51 @@ namespace ClientUI
         }
 
         #endregion Funciton - Construcotrs
-
+        /// <summary>
+        /// 設定表單選擇項目
+        /// </summary>
+        public void SetSelectItem(int id)
+        {
+            lock (mKey)
+            {
+                dgvGoalPoint.InvokeIfNecessary(() =>
+                {
+                    for (int row = 0; row < dgvGoalPoint.RowCount; row++)
+                    {
+                        if ((int)dgvGoalPoint[IDColumn, row].Value == id)
+                        {
+                            dgvGoalPoint.Rows[row].Selected = true;
+                        }
+                        else
+                        {
+                            dgvGoalPoint.Rows[row].Selected = false;
+                        }
+                    }
+                });
+            }
+        }
         #region IIGoalSetting
-
+        /// <summary>
+        /// 設定真實座標
+        /// </summary>
+        public void SetCurrentRealPos(IPair realPos)
+        {
+            lock (mKey)
+            {
+                txtAddPx.InvokeIfNecessary(() =>
+                {
+                    if (txtAddPx.Text != realPos.X.ToString()) txtAddPx.Text = realPos.X.ToString();
+                });
+                txtAddPy.InvokeIfNecessary(() =>
+                {
+                    if (txtAddPy.Text != realPos.Y.ToString()) txtAddPy.Text = realPos.Y.ToString();
+                });
+            }
+        }
         /// <summary>
         /// 當下車子的位置
         /// </summary>
-        private CarPos mCurrentCar = new CarPos();
+        private TowardPos mCurrentCar = new TowardPos();
 
         /// <summary>
         /// 加入 Goal 點
@@ -96,7 +133,7 @@ namespace ClientUI
         /// <summary>
         /// 當下車子的位置
         /// </summary>
-        public CarPos CurrentCar { get { return mCurrentCar; } set { if (value != null) mCurrentCar = value; } }
+        public TowardPos CurrentCar { get { return mCurrentCar; } set { if (value != null) mCurrentCar = value; } }
 
         /// <summary>
         /// 目標點個數
@@ -114,7 +151,7 @@ namespace ClientUI
                 if (index == -1)
                 {
                     dgvGoalPoint.InvokeIfNecessary(
-                        () => dgvGoalPoint.Rows.Add(new object[] { new CheckBox().Checked = false, goal.ID, goal.Name, goal.X, goal.Y, goal.Toward }));
+                        () => dgvGoalPoint.Rows.Add(new object[] { new CheckBox().Checked = false, goal.ID, goal.Name, goal.X, goal.Y, goal.Toward.ToStr() }));
                 }
                 else
                 {
@@ -125,7 +162,7 @@ namespace ClientUI
                             if ((string)dgvGoalPoint[NameColumn, index].Value != goal.Name) dgvGoalPoint[NameColumn, index].Value = goal.Name;
                             if ((int)dgvGoalPoint[XColumn, index].Value != goal.X) dgvGoalPoint[XColumn, index].Value = goal.X;
                             if ((int)dgvGoalPoint[YColumn, index].Value != goal.Y) dgvGoalPoint[YColumn, index].Value = goal.Y;
-                            if ((double)dgvGoalPoint[TowardColumn, index].Value != goal.Toward) dgvGoalPoint[TowardColumn, index].Value = goal.Toward;
+                            if ((string)dgvGoalPoint[TowardColumn, index].Value != goal.Toward.ToStr()) dgvGoalPoint[TowardColumn, index].Value = goal.Toward.ToStr();
                         });
                 }
             }
@@ -287,7 +324,7 @@ namespace ClientUI
                             name = (string)dgvGoalPoint[NameColumn, row].Value;
                             x = (int)dgvGoalPoint[XColumn, row].Value;
                             y = (int)dgvGoalPoint[YColumn, row].Value;
-                            toward = (double)dgvGoalPoint[TowardColumn, row].Value;
+                            toward = double.Parse((string)dgvGoalPoint[TowardColumn, row].Value);
                         }
                     });
                     if (id != 0) list.Add(new Info(id, name, x, y, toward));
@@ -307,8 +344,7 @@ namespace ClientUI
         private void btnCurrPos_Click(object sender, EventArgs e)
         {
             int id = Factory.CreatID.NewID;
-            CarPos car = CurrentCar;
-            Info goal = new Info(id, "Goal" + id, (int)car.x, (int)car.y, car.theta);
+            Info goal = new Info(id, "Goal" + id, CurrentCar);
             AddNewGoalEvent?.Invoke(goal);
         }
 
@@ -336,7 +372,7 @@ namespace ClientUI
         {
 
             Info goal = GetGoalByIndex(cmbGoalList.SelectedIndex);
-            if (goal.ID != 0) FindPathEvent?.Invoke(goal,cmbGoalList.SelectedIndex);
+            if (goal.ID != 0) FindPathEvent?.Invoke(goal, cmbGoalList.SelectedIndex);
         }
 
         private void btnSendMap_Click(object sender, EventArgs e)
@@ -351,7 +387,7 @@ namespace ClientUI
             {
                 goal = GetGoalByIndex(cmbGoalList.SelectedIndex);
             }
-            if (goal.ID != 0) RunGoalEvent?.Invoke(goal,cmbGoalList.SelectedIndex);
+            if (goal.ID != 0) RunGoalEvent?.Invoke(goal, cmbGoalList.SelectedIndex);
         }
         private void btnRunAll_Click(object sender, EventArgs e)
         {
@@ -385,28 +421,15 @@ namespace ClientUI
         /// 地圖載入
         /// </summary>
         /// <param name="goals"></param>
-        public void LoadGoals(List<CartesianPos> goals) {
-            CtInvoke.DataGridViewClear(dgvGoalPoint);
-            CtInvoke.ComboBoxClear(cmbGoalList);
-            if (goals.Count > 0) {
-                int idx = 1;
-                foreach (CartesianPos goal in goals) {
-                    CtInvoke.ComboBoxAdd(cmbGoalList, goal.ToStr());
-                    DataGridViewRow row = new DataGridViewRow();
-                    row.CreateCells(dgvGoalPoint);
-                    row.Cells[SelectColumn].Value = new CheckBox().Checked = false;
-                    row.Cells[IDColumn].Value = 0;
-                    row.Cells[NameColumn].Value = "GoalXXX";
-                    row.Cells[XColumn].Value = goal.x;
-                    row.Cells[YColumn].Value = goal.y;
-                    row.Cells[TowardColumn].Value = goal.theta;
-                    row.Cells[NoteColumn].Value = "";
-                    row.HeaderCell.Value = idx++.ToString();
-                    dgvGoalPoint.InvokeIfNecessary(() => {
-                        dgvGoalPoint.Rows.Add(row);
-                    });
+        public void LoadGoals(List<Info> goals)
+        {
+            lock (mKey)
+            {
+                ClearGoal();
+                foreach (var item in goals)
+                {
+                    AddGoal(item);
                 }
-                CtInvoke.ComboBoxSelectedIndex(cmbGoalList, 0);
             }
         }
         #endregion UI Event

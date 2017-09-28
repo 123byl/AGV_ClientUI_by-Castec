@@ -74,13 +74,25 @@ namespace AGVMap
         }
     }
 
+    public interface IInfo: IToward, IPair, INameable, IID
+    {
+
+    }
+
     /// <summary>
     /// 點狀態資訊
     /// </summary>
-    public class Info : TowardPos, INameable, IID
+    public class Info : TowardPos, IInfo
     {
         public Info()
         {
+            ID = Factory.CreatID.NewID;
+        }
+
+        public Info(int id, string name, TowardPos towardPos) : base(towardPos)
+        {
+            ID = id;
+            Name = name;
         }
 
         public Info(int id, string name, int x, int y, Angle toward) : base(x, y, toward)
@@ -115,6 +127,13 @@ namespace AGVMap
     {
         public TowardPos()
         {
+        }
+
+        public TowardPos(TowardPos towardPos)
+        {
+            X = towardPos.X;
+            Y = towardPos.Y;
+            Toward = towardPos.Toward;
         }
 
         public TowardPos(int x, int y, Angle toward)
@@ -187,6 +206,7 @@ namespace AGVMap
 
         public override bool Equals(object obj)
         {
+            if (obj == null || !(obj is TowardPos)) return false;
             return this == (obj as TowardPos);
         }
 

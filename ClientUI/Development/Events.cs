@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using AGVMap;
+using System.Collections.Generic;
 using static ClientUI.Events.ConsoleEvents;
 using static ClientUI.Events.GoalSettingEvents;
 using static ClientUI.Events.TestingEvents;
-using static MapGL.CastecMapUI;
 
 namespace ClientUI
 {
@@ -92,11 +92,10 @@ namespace ClientUI
         /// </summary>
         event DelSendMapToAGV SendMapToAGVEvent;
 
-
         /// <summary>
         /// 當下車子的位置
         /// </summary>
-        CarPos CurrentCar { get; set; }
+        TowardPos CurrentCar { get; set; }
 
         /// <summary>
         /// 目標點個數
@@ -152,83 +151,64 @@ namespace ClientUI
         /// 獲得所有被選取的 Goal 點資訊
         /// </summary>
         List<Info> GetSelectedGoals();
+
+        /// <summary>
+        /// 設定真實座標
+        /// </summary>
+        void SetCurrentRealPos(IPair realPos);
+
+        /// <summary>
+        /// 設定表單選擇項目
+        /// </summary>
+        void SetSelectItem(int id);
     }
 
     /// <summary>
     /// MapGL視窗公開操作方法
     /// </summary>
-    public interface IIMapGL {
+    public interface IIMapGL
+    {
     }
 
-    public interface IITesting {
-        event DelMotion_Down Motion_Down;
-        event DelMotion_Up Motion_Up;
-        event DelLoadMap LoadMap;
-        event DelLoadOri LoadOri;
-        event DelGetOri GetOri;
-        event DelGetMap GetMap;
-        event DelGetLaser GetLaser;
-        event DelGetCar GetCar;
-        event DelSendMap SendMap;
-        event DelSetCarMode SetCarMode;
-        event DelCorrectOri CorrectOri;
-        event DelSimplifyOri SimplifyOri;
-        event DelSetVelocity SetVelocity;
+    public interface IITesting
+    {
         event DelConnect Connect;
+
+        event DelCorrectOri CorrectOri;
+
+        event DelGetCar GetCar;
+
+        event DelGetLaser GetLaser;
+
+        event DelGetMap GetMap;
+
+        event DelGetOri GetOri;
+
+        event DelLoadMap LoadMap;
+
+        event DelLoadOri LoadOri;
+
+        event DelMotion_Down Motion_Down;
+
+        event DelMotion_Up Motion_Up;
+
         event DelMotorServoOn MotorServoOn;
 
-        void SetLaserStt(bool isGettingLaser);
-        void SetServerStt(bool isConnect);
+        event DelSendMap SendMap;
+
+        event DelSetCarMode SetCarMode;
+
+        event DelSetVelocity SetVelocity;
+
+        event DelSimplifyOri SimplifyOri;
+
         void ChangedMotorStt(bool servoOn);
+
+        void SetLaserStt(bool isGettingLaser);
+
+        void SetServerStt(bool isConnect);
+
         void UnLockOriOperator(bool v);
-    }
-
-    /// <summary>
-    /// 點狀態資訊
-    /// </summary>
-    public struct Info
-    {
-        public Info(int id, string name, int x, int y, double toward)
-        {
-            ID = id;
-            Name = name;
-            X = x;
-            Y = y;
-            Toward = toward;
-        }
-
-        /// <summary>
-        /// 唯一識別碼
-        /// </summary>
-        public int ID { get; set; }
-
-        /// <summary>
-        /// 名稱
-        /// </summary>
-        public string Name { get; set; }
-
-        /// <summary>
-        /// 方向
-        /// </summary>
-        public double Toward { get; set; }
-
-        /// <summary>
-        /// X 座標
-        /// </summary>
-        public int X { get; set; }
-
-        /// <summary>
-        /// Y 座標
-        /// </summary>
-        public int Y { get; set; }
-
-        /// <summary>
-        /// 顯示完整字串
-        /// </summary>
-        public override string ToString()
-        {
-            return string.Format("{0}:{1}({2},{3},{4:F2})", ID, Name, X, Y, Toward);
-        }
     }
 
     /// <summary>
@@ -275,7 +255,7 @@ namespace ClientUI
             /// <summary>
             /// 尋找路徑
             /// </summary>
-            public delegate void DelFindPath(Info goal,int idxGoal);
+            public delegate void DelFindPath(Info goal, int idxGoal);
 
             /// <summary>
             /// 載入地圖
@@ -290,7 +270,7 @@ namespace ClientUI
             /// <summary>
             /// 移動
             /// </summary>
-            public delegate void DelRunGoal(Info goal,int idxGoal);
+            public delegate void DelRunGoal(Info goal, int idxGoal);
 
             /// <summary>
             /// 按照順序移動全部
@@ -316,22 +296,35 @@ namespace ClientUI
         /// <summary>
         /// Testing控制事件集合
         /// </summary>
-        public static class TestingEvents {
-            public delegate void DelMotion_Down(MotionDirection direction,int velocity = 0);
-            public delegate void DelMotion_Up();
-            public delegate void DelLoadOri();
-            public delegate void DelCorrectOri();
-            public delegate void DelSimplifyOri();
-            public delegate void DelGetOri();
-            public delegate void DelGetMap();
-            public delegate void DelGetLaser();
-            public delegate void DelGetCar();
-            public delegate void DelSendMap();
-            public delegate void DelSetCarMode(CarMode mode);
-            public delegate void DelSetVelocity(int velocity);
+        public static class TestingEvents
+        {
             public delegate void DelConnect(bool cnn);
+
+            public delegate void DelCorrectOri();
+
+            public delegate void DelGetCar();
+
+            public delegate void DelGetLaser();
+
+            public delegate void DelGetMap();
+
+            public delegate void DelGetOri();
+
+            public delegate void DelLoadOri();
+
+            public delegate void DelMotion_Down(MotionDirection direction, int velocity = 0);
+
+            public delegate void DelMotion_Up();
+
             public delegate void DelMotorServoOn(bool servoOn);
+
+            public delegate void DelSendMap();
+
+            public delegate void DelSetCarMode(CarMode mode);
+
+            public delegate void DelSetVelocity(int velocity);
+
+            public delegate void DelSimplifyOri();
         }
-        
     }
 }

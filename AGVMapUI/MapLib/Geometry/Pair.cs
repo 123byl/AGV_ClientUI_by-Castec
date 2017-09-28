@@ -140,6 +140,7 @@ namespace AGVMap
 
         public override bool Equals(object obj)
         {
+            if (obj == null || !(obj is Pair)) return false;
             return this == (obj as Pair);
         }
 

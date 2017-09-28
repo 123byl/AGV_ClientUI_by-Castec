@@ -142,9 +142,19 @@ namespace AGVMap
     public interface IMapEvents
     {
         /// <summary>
+        /// 滑鼠選擇 AGV
+        /// </summary>
+        event DelAGVSelected AGVSelectedEvent;
+
+        /// <summary>
         /// 滑鼠拖動標示面
         /// </summary>
         event DelAreaDraged AreaDragedEvent;
+
+        /// <summary>
+        /// 滑鼠選擇標示面
+        /// </summary>
+        event DelAreaSelected AreaSelectedEvent;
 
         /// <summary>
         /// 滑鼠拖動標示線
@@ -152,9 +162,19 @@ namespace AGVMap
         event DelLineDraged LineDragedEvent;
 
         /// <summary>
+        /// 滑鼠選擇標示線
+        /// </summary>
+        event DelLineSelected LineSelectedEvent;
+
+        /// <summary>
         /// 滑鼠拖動標示物
         /// </summary>
         event DelMarkDraged MarkDragedEvent;
+
+        /// <summary>
+        /// 滑鼠選擇標示點
+        /// </summary>
+        event DelMarkSelected MarkSelectedEvent;
 
         /// <summary>
         /// 滑鼠按下位置
@@ -206,19 +226,39 @@ namespace AGVMap
     public static class Events
     {
         /// <summary>
+        /// 滑鼠選擇 AGV
+        /// </summary>
+        public delegate void DelAGVSelected(string name, int id, IPair center, Angle toward);
+
+        /// <summary>
         /// 滑鼠拖動標示面
         /// </summary>
-        public delegate void DelAreaDraged(EAreaType type, int id, IArea area);
+        public delegate void DelAreaDraged(EAreaType type, string name, int id, IArea area);
+
+        /// <summary>
+        /// 滑鼠選擇標示面
+        /// </summary>
+        public delegate void DelAreaSelected(EAreaType type, string name, int id, IArea area);
 
         /// <summary>
         /// 滑鼠拖動標示線
         /// </summary>
-        public delegate void DelLineDraged(ELineType type, int id, ILine line);
+        public delegate void DelLineDraged(ELineType type, string name, int id, ILine line);
+
+        /// <summary>
+        /// 滑鼠選擇標示線
+        /// </summary>
+        public delegate void DelLineSelected(ELineType type, string name, int id, ILine line);
 
         /// <summary>
         /// 滑鼠拖動標示物
         /// </summary>
-        public delegate void DelMarkDraged(EMarkType type, int id, IPair center, Angle toward);
+        public delegate void DelMarkDraged(EMarkType type, string name, int id, IPair center, Angle toward);
+
+        /// <summary>
+        /// 滑鼠選擇標示點
+        /// </summary>
+        public delegate void DelMarkSelected(EMarkType type, string name, int id, IPair center, Angle toward);
 
         /// <summary>
         /// 滑鼠按下位置
@@ -312,9 +352,19 @@ namespace AGVMap
         private double mZoom = Math.Pow(ZoomStep, 4);
 
         /// <summary>
+        /// 滑鼠選擇 AGV
+        /// </summary>
+        public event DelAGVSelected AGVSelectedEvent;
+
+        /// <summary>
         /// 滑鼠拖動標示面
         /// </summary>
         public event DelAreaDraged AreaDragedEvent;
+
+        /// <summary>
+        /// 滑鼠選擇標示面
+        /// </summary>
+        public event DelAreaSelected AreaSelectedEvent;
 
         /// <summary>
         /// 滑鼠拖動標示線
@@ -322,9 +372,19 @@ namespace AGVMap
         public event DelLineDraged LineDragedEvent;
 
         /// <summary>
+        /// 滑鼠選擇標示線
+        /// </summary>
+        public event DelLineSelected LineSelectedEvent;
+
+        /// <summary>
         /// 滑鼠拖動標示物
         /// </summary>
         public event DelMarkDraged MarkDragedEvent;
+
+        /// <summary>
+        /// 滑鼠選擇標示點
+        /// </summary>
+        public event DelMarkSelected MarkSelectedEvent;
 
         /// <summary>
         /// 滑鼠按下位置
@@ -553,7 +613,7 @@ namespace AGVMap
         public void NewMap(IEnumerable<IPair> obstaclePoints, IEnumerable<ILine> obstacleLines)
         {
             NewMap();
-            if (obstaclePoints != null) AddPointsSet(Factory.CreatSet.ObstaclePoints( obstaclePoints));
+            if (obstaclePoints != null) AddPointsSet(Factory.CreatSet.ObstaclePoints(obstaclePoints));
             if (obstacleLines != null) AddLinesSet(Factory.CreatSet.ObstacleLines(obstacleLines));
         }
 
@@ -631,17 +691,17 @@ namespace AGVMap
                 if (mDragManager.CtrlObject is CtrlMark)
                 {
                     CtrlMark mark = (CtrlMark)mDragManager.CtrlObject;
-                    MarkDragedEvent?.Invoke(mark.Property.Type, mark.ID, mark.Property.Center, mark.Property.Toward);
+                    MarkDragedEvent?.Invoke(mark.Property.Type,mark.Name, mark.ID, mark.Center, mark.Property.Toward);
                 }
                 else if (mDragManager.CtrlObject is CtrlLine)
                 {
                     CtrlLine line = (CtrlLine)mDragManager.CtrlObject;
-                    LineDragedEvent?.Invoke(line.Property.Type, line.ID, line.Property.Line);
+                    LineDragedEvent?.Invoke(line.Property.Type,line.Name, line.ID, line.Property.Line);
                 }
                 else if (mDragManager.CtrlObject is CtrlArea)
                 {
                     CtrlArea area = (CtrlArea)mDragManager.CtrlObject;
-                    AreaDragedEvent?.Invoke(area.Property.Type, area.ID, area.Property.Area);
+                    AreaDragedEvent?.Invoke(area.Property.Type,area.Name, area.ID, area.Property.Area);
                 }
             }
         }
@@ -660,6 +720,29 @@ namespace AGVMap
         internal void DragSetCtrlObj(ICtrlable obj)
         {
             mDragManager.SetCtrlObj(obj);
+            if (mDragManager.CtrlObject != null)
+            {
+                if (mDragManager.CtrlObject is CtrlAGV)
+                {
+                    CtrlAGV agv = (CtrlAGV)mDragManager.CtrlObject;
+                    AGVSelectedEvent?.Invoke(agv.Name, agv.ID, agv.Center, agv.Property.Toward);
+                }
+                else if (mDragManager.CtrlObject is CtrlMark)
+                {
+                    CtrlMark mark = (CtrlMark)mDragManager.CtrlObject;
+                    MarkSelectedEvent?.Invoke(mark.Property.Type,mark.Name, mark.ID, mark.Center, mark.Property.Toward);
+                }
+                else if (mDragManager.CtrlObject is CtrlLine)
+                {
+                    CtrlLine line = (CtrlLine)mDragManager.CtrlObject;
+                    LineSelectedEvent?.Invoke(line.Property.Type,line.Name, line.ID, line.Property.Line);
+                }
+                else if (mDragManager.CtrlObject is CtrlArea)
+                {
+                    CtrlArea area = (CtrlArea)mDragManager.CtrlObject;
+                    AreaSelectedEvent?.Invoke(area.Property.Type,area.Name, area.ID, area.Property.Area);
+                }
+            }
         }
 
         /// <summary>

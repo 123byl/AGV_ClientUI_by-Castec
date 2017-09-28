@@ -49,7 +49,6 @@
             this.cX = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.cY = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.cToward = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.cArrive = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.grbMap.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvGoalPoint)).BeginInit();
             this.SuspendLayout();
@@ -75,7 +74,7 @@
             this.btnGetMap.Enabled = false;
             this.btnGetMap.Font = new System.Drawing.Font("微軟正黑體", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.btnGetMap.Location = new System.Drawing.Point(115, 34);
-            this.btnGetMap.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnGetMap.Margin = new System.Windows.Forms.Padding(4);
             this.btnGetMap.Name = "btnGetMap";
             this.btnGetMap.Size = new System.Drawing.Size(91, 85);
             this.btnGetMap.TabIndex = 62;
@@ -87,7 +86,7 @@
             // 
             this.btnLoadMap.Font = new System.Drawing.Font("微軟正黑體", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.btnLoadMap.Location = new System.Drawing.Point(17, 34);
-            this.btnLoadMap.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnLoadMap.Margin = new System.Windows.Forms.Padding(4);
             this.btnLoadMap.Name = "btnLoadMap";
             this.btnLoadMap.Size = new System.Drawing.Size(91, 85);
             this.btnLoadMap.TabIndex = 61;
@@ -99,7 +98,7 @@
             // 
             this.btnSendMap.Font = new System.Drawing.Font("微軟正黑體", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.btnSendMap.Location = new System.Drawing.Point(213, 34);
-            this.btnSendMap.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnSendMap.Margin = new System.Windows.Forms.Padding(4);
             this.btnSendMap.Name = "btnSendMap";
             this.btnSendMap.Size = new System.Drawing.Size(91, 85);
             this.btnSendMap.TabIndex = 60;
@@ -112,7 +111,7 @@
             this.btnPath.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.btnPath.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnPath.Location = new System.Drawing.Point(565, 222);
-            this.btnPath.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnPath.Margin = new System.Windows.Forms.Padding(4);
             this.btnPath.Name = "btnPath";
             this.btnPath.Size = new System.Drawing.Size(160, 62);
             this.btnPath.TabIndex = 59;
@@ -125,7 +124,7 @@
             this.btnSaveGoal.Enabled = false;
             this.btnSaveGoal.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.btnSaveGoal.Location = new System.Drawing.Point(565, 572);
-            this.btnSaveGoal.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnSaveGoal.Margin = new System.Windows.Forms.Padding(4);
             this.btnSaveGoal.Name = "btnSaveGoal";
             this.btnSaveGoal.Size = new System.Drawing.Size(160, 62);
             this.btnSaveGoal.TabIndex = 58;
@@ -148,7 +147,7 @@
             this.btnRunAll.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.btnRunAll.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnRunAll.Location = new System.Drawing.Point(565, 362);
-            this.btnRunAll.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnRunAll.Margin = new System.Windows.Forms.Padding(4);
             this.btnRunAll.Name = "btnRunAll";
             this.btnRunAll.Size = new System.Drawing.Size(160, 62);
             this.btnRunAll.TabIndex = 56;
@@ -161,7 +160,7 @@
             this.btnGoGoal.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.btnGoGoal.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnGoGoal.Location = new System.Drawing.Point(565, 292);
-            this.btnGoGoal.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnGoGoal.Margin = new System.Windows.Forms.Padding(4);
             this.btnGoGoal.Name = "btnGoGoal";
             this.btnGoGoal.Size = new System.Drawing.Size(160, 62);
             this.btnGoGoal.TabIndex = 55;
@@ -184,7 +183,7 @@
             // 
             this.txtAddPtheta.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.txtAddPtheta.Location = new System.Drawing.Point(620, 69);
-            this.txtAddPtheta.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtAddPtheta.Margin = new System.Windows.Forms.Padding(4);
             this.txtAddPtheta.Name = "txtAddPtheta";
             this.txtAddPtheta.Size = new System.Drawing.Size(95, 34);
             this.txtAddPtheta.TabIndex = 49;
@@ -195,7 +194,7 @@
             // 
             this.txtAddPy.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.txtAddPy.Location = new System.Drawing.Point(500, 69);
-            this.txtAddPy.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtAddPy.Margin = new System.Windows.Forms.Padding(4);
             this.txtAddPy.Name = "txtAddPy";
             this.txtAddPy.Size = new System.Drawing.Size(95, 34);
             this.txtAddPy.TabIndex = 50;
@@ -206,7 +205,7 @@
             // 
             this.txtAddPx.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.txtAddPx.Location = new System.Drawing.Point(383, 69);
-            this.txtAddPx.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtAddPx.Margin = new System.Windows.Forms.Padding(4);
             this.txtAddPx.Name = "txtAddPx";
             this.txtAddPx.Size = new System.Drawing.Size(95, 34);
             this.txtAddPx.TabIndex = 51;
@@ -239,6 +238,7 @@
             // 
             this.dgvGoalPoint.AllowUserToAddRows = false;
             this.dgvGoalPoint.AllowUserToResizeRows = false;
+            this.dgvGoalPoint.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.ColumnHeader;
             this.dgvGoalPoint.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvGoalPoint.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.cSelect,
@@ -246,10 +246,9 @@
             this.cName,
             this.cX,
             this.cY,
-            this.cToward,
-            this.cArrive});
+            this.cToward});
             this.dgvGoalPoint.Location = new System.Drawing.Point(25, 222);
-            this.dgvGoalPoint.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.dgvGoalPoint.Margin = new System.Windows.Forms.Padding(4);
             this.dgvGoalPoint.Name = "dgvGoalPoint";
             this.dgvGoalPoint.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToFirstHeader;
             this.dgvGoalPoint.RowTemplate.Height = 24;
@@ -260,7 +259,7 @@
             // 
             this.btnNewPoint.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.btnNewPoint.Location = new System.Drawing.Point(25, 152);
-            this.btnNewPoint.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnNewPoint.Margin = new System.Windows.Forms.Padding(4);
             this.btnNewPoint.Name = "btnNewPoint";
             this.btnNewPoint.Size = new System.Drawing.Size(183, 62);
             this.btnNewPoint.TabIndex = 46;
@@ -272,7 +271,7 @@
             // 
             this.btnDeleteAll.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.btnDeleteAll.Location = new System.Drawing.Point(565, 502);
-            this.btnDeleteAll.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnDeleteAll.Margin = new System.Windows.Forms.Padding(4);
             this.btnDeleteAll.Name = "btnDeleteAll";
             this.btnDeleteAll.Size = new System.Drawing.Size(160, 62);
             this.btnDeleteAll.TabIndex = 47;
@@ -284,7 +283,7 @@
             // 
             this.btnDelete.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.btnDelete.Location = new System.Drawing.Point(565, 432);
-            this.btnDelete.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnDelete.Margin = new System.Windows.Forms.Padding(4);
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(160, 62);
             this.btnDelete.TabIndex = 48;
@@ -296,7 +295,7 @@
             // 
             this.btnCurrPos.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.btnCurrPos.Location = new System.Drawing.Point(216, 152);
-            this.btnCurrPos.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnCurrPos.Margin = new System.Windows.Forms.Padding(4);
             this.btnCurrPos.Name = "btnCurrPos";
             this.btnCurrPos.Size = new System.Drawing.Size(183, 62);
             this.btnCurrPos.TabIndex = 46;
@@ -306,26 +305,29 @@
             // 
             // cSelect
             // 
-            this.cSelect.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.cSelect.FillWeight = 80F;
+            this.cSelect.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
             this.cSelect.HeaderText = "Select";
             this.cSelect.Name = "cSelect";
+            this.cSelect.Width = 47;
             // 
             // cID
             // 
+            this.cID.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
             this.cID.HeaderText = "ID";
             this.cID.Name = "cID";
+            this.cID.Width = 51;
             // 
             // cName
             // 
+            this.cName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
             this.cName.HeaderText = "Name";
             this.cName.Name = "cName";
+            this.cName.Width = 69;
             // 
             // cX
             // 
             this.cX.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.cX.DataPropertyName = "double";
-            this.cX.FillWeight = 80F;
             this.cX.HeaderText = "X";
             this.cX.Name = "cX";
             this.cX.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
@@ -334,7 +336,6 @@
             // 
             this.cY.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.cY.DataPropertyName = "double";
-            this.cY.FillWeight = 80F;
             this.cY.HeaderText = "Y";
             this.cY.Name = "cY";
             this.cY.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
@@ -343,19 +344,9 @@
             // 
             this.cToward.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.cToward.DataPropertyName = "double";
-            this.cToward.FillWeight = 80F;
             this.cToward.HeaderText = "Toward";
             this.cToward.Name = "cToward";
             this.cToward.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            // 
-            // cArrive
-            // 
-            this.cArrive.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.cArrive.FillWeight = 80F;
-            this.cArrive.HeaderText = "Note";
-            this.cArrive.Name = "cArrive";
-            this.cArrive.ReadOnly = true;
-            this.cArrive.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             // 
             // CtGoalSetting
             // 
@@ -421,6 +412,5 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn cX;
         private System.Windows.Forms.DataGridViewTextBoxColumn cY;
         private System.Windows.Forms.DataGridViewTextBoxColumn cToward;
-        private System.Windows.Forms.DataGridViewTextBoxColumn cArrive;
     }
 }

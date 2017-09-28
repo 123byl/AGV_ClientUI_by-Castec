@@ -451,10 +451,6 @@
       <Project>{33a00a90-c02e-474b-a8c0-3b0559873ea0}</Project>
       <Name>KDTree</Name>
     </ProjectReference>
-    <ProjectReference Include="..\MapGL\MapGL\MapGL.csproj">
-      <Project>{0bfa090d-32e9-4afb-a4a0-7a5d24095d10}</Project>
-      <Name>MapGL</Name>
-    </ProjectReference>
     <ProjectReference Include="..\MapInfo\MapProcessing.csproj">
       <Project>{c33505bd-7481-44d1-9cfc-193bb3f9d92f}</Project>
       <Name>MapProcessing</Name>

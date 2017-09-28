@@ -33,7 +33,7 @@ namespace ClientUI
     /// <summary>
     /// 客戶端介面
     /// </summary>
-    public partial class AgvClientUI : Form,ICtVersion
+    public partial class AgvClientUI : Form, ICtVersion
     {
 
         #region Version - Information
@@ -160,19 +160,12 @@ namespace ClientUI
         /// <summary>
         /// Laser ID
         /// </summary>
-        private int LaserID { get { if (mLaserID == 0) mLaserID = Factory.CreatID.NewID; return mLaserID; } }
-        /// <summary>
-        /// Laser ID
-        /// </summary>
-        private int mLaserID = 0;
+        private IDCreater LaserID { get; } = new IDCreater();
+
         /// <summary>
         /// AGV ID
         /// </summary>
-        private int AGVID { get { if (mAGVID == 0) mAGVID = Factory.CreatID.NewID; return mAGVID; } }
-        /// <summary>
-        /// AGV ID
-        /// </summary>
-        private int mAGVID = 0;
+        private IDCreater AGVID { get; } = new IDCreater();
 
         /// <summary>
         /// 車子資訊
@@ -195,7 +188,7 @@ namespace ClientUI
         /// 是否Bypass LoadFile功能
         /// </summary>
         private bool mBypassLoadFile = false;
-        
+
         /// <summary>
         /// ICtDockContent與MenuItem對照
         /// </summary>
@@ -215,7 +208,7 @@ namespace ClientUI
         /// 系統列圖示標題
         /// </summary>
         protected string mNotifyCaption = "AGV Client";
-        private List<CartesianPos> Goals;
+        private List<Info> Goals;
 
         #endregion Declaration - Fields
 
@@ -273,10 +266,6 @@ namespace ClientUI
         /// 車子資訊
         /// </summary>
         public CarInfo CarInfo { get; }
-
-        public List<CarPos> PtCar { get; set; } = new List<CarPos>();
-
-        public List<string> StrCar { get; set; } = new List<string>();
 
         /// <summary>
         /// 使用者資料
@@ -502,7 +491,8 @@ namespace ClientUI
         /// <param name="e"></param>
         private void miAbout_Click(object sender, EventArgs e)
         {
-            using (CtAbout frm = new CtAbout()) {
+            using (CtAbout frm = new CtAbout())
+            {
                 //新版本CtLib
                 //frm.Start(Assembly.GetExecutingAssembly(), this, Version, module);
                 //當前版本CtLib
@@ -518,11 +508,15 @@ namespace ClientUI
         private void miLogin_Click(object sender, EventArgs e)
         {
             Stat stt = Stat.SUCCESS;
-            if (mUser.Level == AccessLevel.NONE) {
-                using (CtLogin frmLogin = new CtLogin()) {
+            if (mUser.Level == AccessLevel.NONE)
+            {
+                using (CtLogin frmLogin = new CtLogin())
+                {
                     stt = frmLogin.Start(out mUser);
                 }
-            } else {
+            }
+            else
+            {
                 mUser = new UserData("N/A", "", AccessLevel.NONE);
             }
             UserChanged(mUser);
@@ -535,7 +529,8 @@ namespace ClientUI
         /// <param name="e"></param>
         private void miUserManager_Click(object sender, EventArgs e)
         {
-            using (CtUserManager frmUsrMgr = new CtUserManager(mUser)) {
+            using (CtUserManager frmUsrMgr = new CtUserManager(mUser))
+            {
                 frmUsrMgr.ShowDialog();
             }
         }
@@ -641,31 +636,6 @@ namespace ClientUI
         #endregion Function - Events
 
         #region Functoin - Public Methods
-
-        /// <summary>
-        /// 清除所有Goal點
-        /// </summary>
-        public void DeleteAllGoal()
-        {
-            //MapGL?.DeleteAllGoal();
-        }
-
-        /// <summary>
-        /// 增加Goal點
-        /// </summary>
-        /// <param name="goal">Goal點</param>
-        public void AddGoalPos(CarPos goal)
-        {
-            //MapGL?.AddGoalPos(goal);
-        }
-
-        /// <summary>
-        /// 清除地圖
-        /// </summary>
-        public void ClearMap()
-        {
-            //MapGL?.ClearMap();
-        }
 
         #endregion Function - Public Methdos
 
@@ -841,7 +811,7 @@ namespace ClientUI
             {
                 if (dist >= 30 && dist < 15000)
                 {
-                    int[] pos = Transformation.LaserPoleToCartesian(dist, -135, 0.25, idx++, 43, 416.75, 43, info.X, info.Y, info.ThetaGyro, out angle, out Laserangle);//, out dataAngle, out laserAngle);
+                    int[] pos = Transformation.LaserPoleToCartesian(dist, -135, 0.25, idx++, 43, 416.75, 43, info.X, info.Y, info.Toward, out angle, out Laserangle);//, out dataAngle, out laserAngle);
                     ObstaclePoint.Add(new AGVMap.Pair(pos[0], pos[1]));
                     pos = null;
                 }
@@ -1080,16 +1050,16 @@ namespace ClientUI
             }
 
         }
-        
+
         /// <summary>
         /// 載入地圖
         /// </summary>
         /// <param name="mapPath">Map檔路徑</param>
         private void LoadMap(string mapPath)
         {
-            List<CartesianPos> goalList = new List<CartesianPos>();
-            List<CartesianPos> obstaclePoints = new List<CartesianPos>();
-            List<MapLine> obstacleLine = new List<MapLine>();
+            List<Info> goalList = new List<Info>();
+            List<Pair> obstaclePoints = new List<Pair>();
+            List<Line> obstacleLine = new List<Line>();
             mCurMapPath = mapPath;
             string mPath = CtFile.GetFileName(mapPath);
             SendMsg($"Set:MapName:{mPath}");
@@ -1103,22 +1073,17 @@ namespace ClientUI
             }
             else
             {
-
-                CartesianPos minimumPos;
-                CartesianPos maximumPos;
-
                 #region - Retrive information from .map file -
                 sw.Start();
                 using (MapReading read = new MapReading(mCurMapPath))
                 {
                     read.OpenFile();
-                    read.ReadMapBoundary(out minimumPos, out maximumPos);
-                    read.ReadMapGoalList(out goalList);
-                    read.ReadMapObstacleLines(out obstacleLine);
-                    read.ReadMapObstaclePoints(out obstaclePoints);
+                    read.ReadMapGoalList(ref goalList);
+                    read.ReadMapObstacleLines(ref obstacleLine);
+                    read.ReadMapObstaclePoints(ref obstaclePoints);
                 }
                 int total = obstacleLine.Count + 2;
-                
+
                 prog = new CtProgress(ProgBarStyle.Percent, "Load Map", $"Loading {mapPath}", total);
                 System.Console.WriteLine($"Read:{sw.ElapsedMilliseconds}ms");
                 sw.Restart();
@@ -1126,48 +1091,33 @@ namespace ClientUI
                 Goals = goalList;
 
                 mMapMatch.Reset();
-                for (int i = 0; i < obstacleLine.Count; i++)
+
+                foreach (var line in obstacleLine)
                 {
-                    int start = (int)obstacleLine[i].start.x;
-                    int end = (int)obstacleLine[i].end.x;
-                    int y = (int)obstacleLine[i].start.y;
-                    for (int x = start; x < end; x++)
-                    {
-                        mMapMatch.AddPoint(new CartesianPos(x, y));
-                    }
+                    mMapMatch.AddLine(line);
                     prog.UpdateStep(nowProg++);
                 }
 
                 System.Console.WriteLine($"Read Line:{sw.ElapsedMilliseconds}ms");
                 sw.Restart();
 
+                mMapMatch.AddPoint(obstaclePoints);
 
-                for (int i = 0; i < obstaclePoints.Count; i++)
-                {
-                    mMapMatch.AddPoint(obstaclePoints[i]);
-                }
                 prog.UpdateStep(nowProg++);
 
                 System.Console.WriteLine($"Read Point:{sw.ElapsedMilliseconds}ms");
                 sw.Restart();
 
                 #endregion
-
-                #region  - Map information display -
-
-                minimumPos = null;
-                maximumPos = null;
-                #endregion
-
             }
+
             IMapCtrl.NewMap(obstaclePoints, obstacleLine);
             System.Console.WriteLine($"Draw:{sw.ElapsedMilliseconds}ms");
             sw.Restart();
 
             foreach (var goal in goalList)
             {
-                int id = Factory.CreatID.NewID;
-                IMapCtrl.AddCtrlMark(Factory.CreatMark.Goal(id, "Goal" + id, (int)goal.x, (int)goal.y, goal.theta));
+                IMapCtrl.AddCtrlMark(Factory.CreatMark.Goal(goal.ID, goal.Name, (int)goal.X, (int)goal.Y, goal.Toward));
             }
             prog.UpdateStep(nowProg++);
 
@@ -1195,27 +1145,33 @@ namespace ClientUI
             if (!mBypassLoadFile)
             {//無BypassLoadFile
                 MapReading = new MapReading(CurOriPath);
-                CartesianPos carPos;
-                List<CartesianPos> laserData;
+                TowardPos carPos = new TowardPos();
+                List<Pair> laserData = new List<Pair>();
                 //List<Point> listMap = new List<Point>();
                 int dataLength = MapReading.OpenFile();
                 if (dataLength != 0)
                 {
-                    CtProgress prog = new CtProgress(ProgBarStyle.Percent, $"Load Ori", $"Loading {oriPath}...",dataLength-1);
-                    try {
-                        for (int n = 0; n < dataLength; n++) {
-                            MapReading.ReadScanningInfo(n, out carPos, out laserData);
-                            IMapCtrl.AddAGV(Factory.CreatAGV.AGV(AGVID, "AGV", carPos.X, carPos.Y, carPos.theta));
+                    CtProgress prog = new CtProgress(ProgBarStyle.Percent, $"Load Ori", $"Loading {oriPath}...", dataLength - 1);
+                    try
+                    {
+                        IMapCtrl.Zoom = 1000;
+                        for (int n = 0; n < dataLength; n++)
+                        {
+                            MapReading.ReadScanningInfo(n, ref carPos, ref laserData);
+                            IMapCtrl.AddAGV(Factory.CreatAGV.AGV(AGVID, "AGV", carPos.X, carPos.Y, carPos.Toward));
                             IMapCtrl.AddPointsSet(Factory.CreatSet.LaserPoints(LaserID, laserData));
-                            carPos = null;
-                            laserData = null;
+                            IMapCtrl.Focus(carPos);
                             Thread.Sleep(10);
                             System.Console.WriteLine(n);
                             prog.UpdateStep(n);
                         }
-                    }catch(Exception ex) {
+                    }
+                    catch (Exception ex)
+                    {
                         System.Console.WriteLine(ex.Message);
-                    } finally {
+                    }
+                    finally
+                    {
                         prog?.Close();
                         prog = null;
                     }
@@ -1558,8 +1514,11 @@ namespace ClientUI
             IGoalSetting.SaveGoalEvent += IGoalSetting_SaveGoalEvent;
             IGoalSetting.SendMapToAGVEvent += IGoalSetting_SendMapToAGVEvent;
             #endregion
-            #region IMapGL 事件連結
 
+            #region IMapGL 事件連結
+            IMapCtrl.MouseDownEvent += IMapCtrl_MouseDownEvent;
+            IMapCtrl.MarkDragedEvent += IMapCtrl_MarkDragedEvent;
+            IMapCtrl.MarkSelectedEvent += IMapCtrl_MarkSelectedEvent;
             #endregion
 
             #region ITesting 事件連結
@@ -1581,8 +1540,12 @@ namespace ClientUI
             #endregion 
         }
 
-        private void ITest_SimplifyOri() {
-            if (mBypassLoadFile) {
+
+
+        private void ITest_SimplifyOri()
+        {
+            if (mBypassLoadFile)
+            {
                 /*-- 空跑模擬SimplifyOri --*/
                 SpinWait.SpinUntil(() => false, 1000);
                 return;
@@ -1598,19 +1561,24 @@ namespace ClientUI
             List<MapSimplication.Line> resultlines;
             mapSimp.ReadMapAllTransferToLine(mMapMatch.parseMap, mMapMatch.minimumPos, mMapMatch.maximumPos
                 , 100, 0, out resultlines, out resultPoints);
-            try {
-                for (int i = 0; i < resultlines.Count; i++) {
+            try
+            {
+                for (int i = 0; i < resultlines.Count; i++)
+                {
                     obstacleLines.Add(
                         new Line(resultlines[i].startX, resultlines[i].startY,
                         resultlines[i].endX, resultlines[i].endY)
                     );
                 }
-                for (int i = 0; i < resultPoints.Count; i++) {
+                for (int i = 0; i < resultPoints.Count; i++)
+                {
                     obstaclePoints.Add(new AGVMap.Pair((int)resultPoints[i].x, (int)resultPoints[i].y));
                 }
 
                 IMapCtrl.NewMap(obstaclePoints, obstacleLines);
-            } catch(Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 System.Console.WriteLine(ex.Message);
             }
 
@@ -1650,145 +1618,145 @@ namespace ClientUI
         /// </remarks>
         private void tsk_FixOriginScanningFile()
         {
-            try
-            {
-                if (mBypassLoadFile)
-                {
-                    SpinWait.SpinUntil(() => false, 1000);
-                    return;
-                }
-                MapReading MapReading = new MapReading(CurOriPath);
-                CartesianPos carPos;
-                List<CartesianPos> laserData;
-                List<CartesianPos> filterData = new List<CartesianPos>();
-                int dataLength = MapReading.OpenFile();
-                if (dataLength == 0) return;
+            //try
+            //{
+            //    if (mBypassLoadFile)
+            //    {
+            //        SpinWait.SpinUntil(() => false, 1000);
+            //        return;
+            //    }
+            //    MapReading MapReading = new MapReading(CurOriPath);
+            //    TowardPos carPos = new TowardPos();
+            //    List<Pair> laserData = new List<Pair>();
+            //    List<CartesianPos> filterData = new List<CartesianPos>();
+            //    int dataLength = MapReading.OpenFile();
+            //    if (dataLength == 0) return;
 
-                List<CartesianPos> dataSet = new List<CartesianPos>();
-                List<CartesianPos> predataSet = new List<CartesianPos>();
-                List<CartesianPos> matchSet = new List<CartesianPos>();
-                CartesianPos transResult = new CartesianPos();
-                CartesianPos nowOdometry = new CartesianPos();
-                CartesianPos preOdometry = new CartesianPos();
-                CartesianPos accumError = new CartesianPos();
-                CartesianPos diffOdometry = new CartesianPos();
-                CartesianPos diffLaser = new CartesianPos();
-                Stopwatch sw = new Stopwatch();
-                double gValue = 0;
-                int mode = 0;
-                int corrNum = 0;
+            //    List<Pair> dataSet = new List<Pair>();
+            //    List<Pair> predataSet = new List<Pair>();
+            //    List<Pair> matchSet = new List<Pair>();
+            //    TowardPos transResult = new TowardPos();
+            //    TowardPos nowOdometry = new TowardPos();
+            //    TowardPos preOdometry = new TowardPos();
+            //    TowardPos accumError = new TowardPos();
+            //    TowardPos diffOdometry = new TowardPos();
+            //    TowardPos diffLaser = new TowardPos();
+            //    Stopwatch sw = new Stopwatch();
+            //    double gValue = 0;
+            //    int mode = 0;
+            //    int corrNum = 0;
 
-                mMapMatch.Reset();
-                #region  1.Read car position and first laser scanning
+            //    mMapMatch.Reset();
+            //    #region  1.Read car position and first laser scanning
 
-                MapReading.ReadScanningInfo(0, out carPos, out laserData);
-                mCarInfo.SetPosition(carPos);
-                IMapCtrl.AddAGV(Factory.CreatAGV.AGV(AGVID, "AGV", carPos.X, carPos.Y, carPos.theta));
-                matchSet.AddRange(laserData);
-                predataSet.AddRange(laserData);
-                mMapMatch.GlobalMapUpdate(matchSet);                            //Initial environment model
-                preOdometry.SetPosition(carPos.x, carPos.y, carPos.theta);
+            //    MapReading.ReadScanningInfo(0, ref carPos, ref laserData);
+            //    mCarInfo.SetPosAndToward(carPos);
+            //    IMapCtrl.AddAGV(Factory.CreatAGV.AGV(AGVID, "AGV", carPos.X, carPos.Y, carPos.Toward));
+            //    matchSet.AddRange(laserData);
+            //    predataSet.AddRange(laserData);
+            //    mMapMatch.GlobalMapUpdate(matchSet.ToCartesianPos());                            //Initial environment model
+            //    preOdometry = new TowardPos(carPos);
 
-                #endregion
+            //    #endregion
 
-                for (int n = 1; n < dataLength; n++)
-                {
-                    #region 2.Read car position and laser scanning 
+            //    for (int n = 1; n < dataLength; n++)
+            //    {
+            //        #region 2.Read car position and laser scanning 
 
-                    List<CartesianPos> addedSet = new List<CartesianPos>();
-                    transResult.SetPosition(0, 0, 0);
-                    carPos = null;
-                    laserData = null;
-                    MapReading.ReadScanningInfo(n, out carPos, out laserData);
-                    nowOdometry.SetPosition(carPos.x, carPos.y, carPos.theta);
+            //        List<TowardPos> addedSet = new List<TowardPos>();
+            //        transResult.SetPosition(0, 0, 0);
+            //        carPos = null;
+            //        laserData = null;
+            //        MapReading.ReadScanningInfo(n, ref carPos, ref laserData);
+            //        nowOdometry = new TowardPos(carPos);
 
-                    #endregion
+            //        #endregion
 
-                    #region 3.Correct accumulate error of odometry so far
+            //        #region 3.Correct accumulate error of odometry so far
 
-                    mMapMatch.NewPosTransformation(nowOdometry, accumError.x, accumError.y, accumError.theta);
-                    mMapMatch.NewPosTransformation(laserData, accumError.x, accumError.y, accumError.theta);
-                    matchSet.Clear();
-                    matchSet.AddRange(laserData);
+            //        mMapMatch.NewPosTransformation(nowOdometry.ToCartesianPos(), accumError.X, accumError.Y, accumError.Toward);
+            //        mMapMatch.NewPosTransformation(laserData.ToCartesianPos(), accumError.Y, accumError.Y, accumError.Toward);
+            //        matchSet.Clear();
+            //        matchSet.AddRange(laserData);
 
-                    #endregion
+            //        #endregion
 
-                    #region 4.Compute movement from last time to current time;
+            //        #region 4.Compute movement from last time to current time;
 
-                    if (nowOdometry.theta - preOdometry.theta < -200)
-                        diffOdometry.SetPosition(nowOdometry.x - preOdometry.x, nowOdometry.y - preOdometry.y, nowOdometry.theta + 360 - preOdometry.theta);
-                    else if (nowOdometry.theta - preOdometry.theta > 200)
-                        diffOdometry.SetPosition(nowOdometry.x - preOdometry.x, nowOdometry.y - preOdometry.y, -(preOdometry.theta + 360 - nowOdometry.theta));
-                    else
-                        diffOdometry.SetPosition(nowOdometry.x - preOdometry.x, nowOdometry.y - preOdometry.y, nowOdometry.theta - preOdometry.theta);
-                    //Console.WriteLine("Odometry varition:{0:F3} {1:F3} {2:F3}", diffOdometry.x, diffOdometry.y, diffOdometry.theta);
+            //        if (nowOdometry.Toward - preOdometry.Toward < -200)
+            //            diffOdometry.SetPosition(nowOdometry.x - preOdometry.x, nowOdometry.y - preOdometry.y, nowOdometry.theta + 360 - preOdometry.theta);
+            //        else if (nowOdometry.theta - preOdometry.theta > 200)
+            //            diffOdometry.SetPosition(nowOdometry.x - preOdometry.x, nowOdometry.y - preOdometry.y, -(preOdometry.theta + 360 - nowOdometry.theta));
+            //        else
+            //            diffOdometry.SetPosition(nowOdometry.x - preOdometry.x, nowOdometry.y - preOdometry.y, nowOdometry.theta - preOdometry.theta);
+            //        //Console.WriteLine("Odometry varition:{0:F3} {1:F3} {2:F3}", diffOdometry.x, diffOdometry.y, diffOdometry.theta);
 
-                    #endregion
+            //        #endregion
 
-                    #region 5.Display current scanning information
+            //        #region 5.Display current scanning information
 
-                    IMapCtrl.AddPointsSet(Factory.CreatSet.LaserPoints(LaserID, matchSet));
+            //        IMapCtrl.AddPointsSet(Factory.CreatSet.LaserPoints(LaserID, matchSet));
 
-                    #endregion
+            //        #endregion
 
-                    #region 6.Inspect odometry variation is not too large.Switch to pose tracking mode if too large.
+            //        #region 6.Inspect odometry variation is not too large.Switch to pose tracking mode if too large.
 
-                    sw.Restart();
-                    if (Math.Abs(diffOdometry.x) >= 400 || Math.Abs(diffOdometry.y) >= 400 || Math.Abs(diffOdometry.theta) >= 30)
-                    {
-                        mode = 1;
-                        gValue = mMapMatch.PairwiseMatching(predataSet, matchSet, 4, 1.5, 0.01, 20, 300, false, transResult);
-                    }
-                    else
-                    {
-                        mode = 0;
-                        gValue = mMapMatch.FindClosetMatching(matchSet, 4, 1.5, 0.01, 20, 300, false, transResult);
-                        diffLaser.SetPosition(transResult.x, transResult.y, transResult.theta);
-                    }
+            //        sw.Restart();
+            //        if (Math.Abs(diffOdometry.x) >= 400 || Math.Abs(diffOdometry.y) >= 400 || Math.Abs(diffOdometry.theta) >= 30)
+            //        {
+            //            mode = 1;
+            //            gValue = mMapMatch.PairwiseMatching(predataSet, matchSet, 4, 1.5, 0.01, 20, 300, false, transResult);
+            //        }
+            //        else
+            //        {
+            //            mode = 0;
+            //            gValue = mMapMatch.FindClosetMatching(matchSet, 4, 1.5, 0.01, 20, 300, false, transResult);
+            //            diffLaser.SetPosition(transResult.x, transResult.y, transResult.theta);
+            //        }
 
-                    //If corresponding is too less,truct the odomery variation this time
-                    if (mMapMatch.EstimateCorresponingPoints(matchSet, 10, 10, out corrNum, out addedSet))
-                    {
-                        mMapMatch.NewPosTransformation(nowOdometry, transResult.x, transResult.y, transResult.theta);
-                        accumError.SetPosition(accumError.x + transResult.x, accumError.y + transResult.y, accumError.theta + transResult.theta);
-                    }
-                    sw.Stop();
+            //        //If corresponding is too less,truct the odomery variation this time
+            //        if (mMapMatch.EstimateCorresponingPoints(matchSet, 10, 10, out corrNum, out addedSet))
+            //        {
+            //            mMapMatch.NewPosTransformation(nowOdometry, transResult.x, transResult.y, transResult.theta);
+            //            accumError.SetPosition(accumError.x + transResult.x, accumError.y + transResult.y, accumError.theta + transResult.theta);
+            //        }
+            //        sw.Stop();
 
-                    //if (mode == 0)
-                    //    Console.WriteLine("[SLAM-Matching Mode]Corresponding Points:{0} Map Size:{1} Matching Time:{2:F3} Error{3:F3}",
-                    //         corrNum, mMapMatch.parseMap.Count, sw.Elapsed.TotalMilliseconds, gValue);
-                    //else
-                    //    Console.WriteLine("[SLAM-Tracking Mode]Matching Time:{0:F3} Error{1:F3}", sw.Elapsed.TotalMilliseconds, gValue);
+            //        //if (mode == 0)
+            //        //    Console.WriteLine("[SLAM-Matching Mode]Corresponding Points:{0} Map Size:{1} Matching Time:{2:F3} Error{3:F3}",
+            //        //         corrNum, mMapMatch.parseMap.Count, sw.Elapsed.TotalMilliseconds, gValue);
+            //        //else
+            //        //    Console.WriteLine("[SLAM-Tracking Mode]Matching Time:{0:F3} Error{1:F3}", sw.Elapsed.TotalMilliseconds, gValue);
 
-                    #endregion
+            //        #endregion
 
-                    #region 7.Update variation
+            //        #region 7.Update variation
 
-                    //Pairwise update
-                    predataSet.Clear();
-                    predataSet.AddRange(laserData);
+            //        //Pairwise update
+            //        predataSet.Clear();
+            //        predataSet.AddRange(laserData);
 
-                    //Update previous variable
-                    preOdometry.SetPosition(nowOdometry.x, nowOdometry.y, nowOdometry.theta);
-                    mCarInfo.SetPosition(nowOdometry);
+            //        //Update previous variable
+            //        preOdometry.SetPosition(nowOdometry.x, nowOdometry.y, nowOdometry.theta);
+            //        mCarInfo.SetPosAndToward(nowOdometry.ToTowardPos());
 
-                    #endregion
+            //        #endregion
 
-                    //Display added new points    
-                    IMapCtrl.AddPointsSet(Factory.CreatSet.LaserPoints(LaserID, addedSet));
+            //        //Display added new points    
+            //        IMapCtrl.AddPointsSet(Factory.CreatSet.LaserPoints(LaserID, addedSet));
 
-                    //Display car position
-                    IMapCtrl.AddAGV(Factory.CreatAGV.AGV(AGVID, "AGV", nowOdometry.X, nowOdometry.Y, nowOdometry.theta));
-                }
-                SetBalloonTip("Correct Map", "Correct Complete!!", ToolTipIcon.Info, 10);
-            }
-            catch
-            {
+            //        //Display car position
+            //        IMapCtrl.AddAGV(Factory.CreatAGV.AGV(AGVID, "AGV", nowOdometry.X, nowOdometry.Y, nowOdometry.theta));
+            //    }
+            //    SetBalloonTip("Correct Map", "Correct Complete!!", ToolTipIcon.Info, 10);
+            //}
+            //catch
+            //{
 
-            }
-            finally
-            {
-            }
+            //}
+            //finally
+            //{
+            //}
         }
 
         private async void ITest_CheckIsServerAlive(bool cnn)
@@ -1969,6 +1937,28 @@ namespace ClientUI
 
         #region IMapGL事件連結
 
+        private void IMapCtrl_MouseDownEvent(IPair realPos)
+        {
+            IGoalSetting.SetCurrentRealPos(realPos);
+        }
+
+        private void IMapCtrl_MarkSelectedEvent(EMarkType type, string name, int id, IPair center, Angle toward)
+        {
+            if (type == EMarkType.Goal)
+            {
+                IGoalSetting.SetSelectItem(id);
+            }
+        }
+
+        private void IMapCtrl_MarkDragedEvent(EMarkType type,string name, int id, IPair center, Angle toward)
+        {
+            if (type == EMarkType.Goal)
+            {
+                Info goal = new Info(id, name, center.X, center.Y, toward);
+                IGoalSetting.AddGoal(goal);
+            }
+        }
+
 
         #endregion IMapGL 事件連結
 
@@ -2033,6 +2023,7 @@ namespace ClientUI
             foreach (var item in goal)
             {
                 ID.Add(item.ID);
+                IMapCtrl.HideCtrlMark(item.ID);
                 IConsole.AddMsg("[Delete Goal] - {0}", item.ToString());
             }
             IGoalSetting.DeleteGoals(ID);
@@ -2041,6 +2032,7 @@ namespace ClientUI
         private void IGoalSetting_ClearGoalsEvent()
         {
             IConsole.AddMsg("[Clear Goal]");
+            IMapCtrl.HideAllGoals();
             IGoalSetting.ClearGoal();
         }
 

@@ -200,26 +200,28 @@ namespace MapProcessing
         /// <param name="carPos">Car Position</param>
         /// <param name="laserData">Laser Measurement Data</param>
         /// <returns>T:Read success F:File or data not exists</returns>
-        public bool ReadScanningInfo(int index, out CartesianPos carPos, out List<CartesianPos> laserData)
+        public bool ReadScanningInfo<T1, T2>(int index, ref T1 carPos, ref List<T2> laserData) where T1 : IToward, IPair, new() where T2 : IPair, new()
         {
             try
             {
-                carPos = new CartesianPos();
-                laserData = new List<CartesianPos>();
+                laserData.Clear();
                 if (!FileIsExist()) return false;
 
                 string[] info = data[index].Split(splitChar);
-                carPos.SetPosition(double.Parse(info[0]), double.Parse(info[1]), double.Parse(info[2]));
+                carPos.X = (int)double.Parse(info[0]);
+                carPos.Y = (int)double.Parse(info[1]);
+                carPos.Toward = double.Parse(info[2]);
                 for (int m = 3; m < info.Length - 1; m += 2)
                 {
-                    laserData.Add(new CartesianPos(double.Parse(info[m]), double.Parse(info[m + 1])));
+                    T2 def = new T2();
+                    def.X = (int)double.Parse(info[m]);
+                    def.Y = (int)double.Parse(info[m + 1]);
+                    laserData.Add(def);
                 }
                 return true;
             }
-            catch (Exception error)
+            catch (Exception)
             {
-                carPos = null;
-                laserData = null;
                 return false;
             }
 
@@ -231,24 +233,23 @@ namespace MapProcessing
         /// <param name="filePath"></param>
         /// <param name="goalList"></param>
         /// <returns>T:Read success F:File or data not exists</returns>
-        public bool ReadMapBoundary(out CartesianPos minimumPos, out CartesianPos maximumPos)
+        public bool ReadMapBoundary<TValue>(ref TValue minimumPos, ref TValue maximumPos) where TValue : IPair
         {
-            minimumPos = new CartesianPos();
-            maximumPos = new CartesianPos();
             if (!FileIsExist()) return false;
 
             string[] split = data[0].Split(splitChar);
             if (split[0] != "Minimum Position")
                 return false;
             else
-                minimumPos.SetPosition(double.Parse(split[1]), double.Parse(split[2]), 0);
+                minimumPos.X = (int)(double.Parse(split[1]));
+            minimumPos.Y = (int)(double.Parse(split[2]));
 
             split = data[1].Split(splitChar);
             if (split[0] != "Maximum Position")
                 return false;
             else
-                maximumPos.SetPosition(double.Parse(split[1]), double.Parse(split[2]), 0);
-
+                maximumPos.X = (int)(double.Parse(split[1]));
+            maximumPos.Y = (int)(double.Parse(split[2]));
             return true;
         }
 
@@ -258,9 +259,9 @@ namespace MapProcessing
         /// <param name="filePath"></param>
         /// <param name="goalList"></param>
         /// <returns>T:Read success F:File or data not exists</returns>
-        public bool ReadMapGoalList(out List<CartesianPos> goalList)
+        public bool ReadMapGoalList<TValue>(ref List<TValue> goalList) where TValue : IInfo, new()
         {
-            goalList = new List<CartesianPos>();
+            goalList.Clear();
 
             if (!FileIsExist()) return false;
             int startIndex = data.IndexOf("GoalList");
@@ -273,7 +274,29 @@ namespace MapProcessing
             for (int i = startIndex; i < endIndex; i++)
             {
                 string[] split = data[i].Split(splitChar);
-                goalList.Add(new CartesianPos(int.Parse(split[0]), int.Parse(split[1]), double.Parse(split[2])));
+                string name = string.Empty;
+                int x = 0, y = 0;
+                double toward = 0;
+                if (split.Length == 4)
+                {
+                    name = split[0];
+                    int.TryParse(split[1], out x);
+                    int.TryParse(split[2], out y);
+                    double.TryParse(split[3], out toward);
+                }
+                else
+                {
+                    name = "Goal";
+                    int.TryParse(split[0], out x);
+                    int.TryParse(split[1], out y);
+                    double.TryParse(split[2], out toward);
+                }
+                TValue def = new TValue();
+                def.Name = name;
+                def.X = x;
+                def.Y = y;
+                def.Toward = toward;
+                goalList.Add(def);
             }
             return true;
         }
@@ -284,9 +307,9 @@ namespace MapProcessing
         /// <param name="filePath"></param>
         /// <param name="obstacleLine"></param>
         /// <returns>T:Read success F:File or data not exists</returns>
-        public bool ReadMapObstacleLines(out List<MapLine> obstacleLine)
+        public bool ReadMapObstacleLines<TValue>(ref List<TValue> obstacleLine) where TValue : ILine, new()
         {
-            obstacleLine = new List<MapLine>();
+            obstacleLine.Clear();
             if (!FileIsExist()) return false;
 
             int startIndex = data.IndexOf("Obstacle Lines") + 1;
@@ -294,9 +317,17 @@ namespace MapProcessing
             for (int i = startIndex; i < endIndex; i++)
             {
                 string[] split = data[i].Split(splitChar);
-                CartesianPos start = new CartesianPos(int.Parse(split[0]), int.Parse(split[1]));
-                CartesianPos end = new CartesianPos(int.Parse(split[2]), int.Parse(split[3]));
-                obstacleLine.Add(new MapLine(start, end));
+                int x0 = 0, y0 = 0, x1 = 0, y1 = 0;
+                int.TryParse(split[0], out x0);
+                int.TryParse(split[1], out y0);
+                int.TryParse(split[2], out x1);
+                int.TryParse(split[3], out y1);
+                TValue def = new TValue();
+                def.Begin.X = x0;
+                def.Begin.Y = y0;
+                def.End.X = x1;
+                def.End.Y = y1;
+                obstacleLine.Add(def);
             }
             return true;
         }
@@ -307,16 +338,21 @@ namespace MapProcessing
         /// <param name="filePath"></param>
         /// <param name="obstacleLine"></param>
         /// <returns>T:Read success F:File or data not exists</returns>
-        public bool ReadMapObstaclePoints(out List<CartesianPos> obstaclePoint)
+        public bool ReadMapObstaclePoints<TValue>(ref List<TValue> obstaclePoint) where TValue : IPair, new()
         {
-            obstaclePoint = new List<CartesianPos>();
+            obstaclePoint.Clear();
             if (!FileIsExist()) return false;
             int startIndex = data.IndexOf("Obstacle Points") + 1;
             int endIndex = data.Count - 1;
             for (int i = startIndex; i < endIndex; i++)
             {
                 string[] split = data[i].Split(splitChar);
-                obstaclePoint.Add(new CartesianPos(int.Parse(split[0]), int.Parse(split[1])));
+                int x = 0; int.TryParse(split[0], out x);
+                int y = 0; int.TryParse(split[1], out y);
+                TValue def = new TValue();
+                def.X = x;
+                def.Y = y;
+                obstaclePoint.Add(def);
             }
             return true;
         }
@@ -698,6 +734,35 @@ namespace MapProcessing
         public void AddPoint(CartesianPos point)
         {
             kdTree.AddPoint(new double[2] { point.x, point.y }, point);
+        }
+
+        /// <summary>
+        /// Add new point
+        /// </summary>
+        /// <param name="point">Obstacle point</param>
+        /// <returns>State</returns>
+        public void AddPoint<T>(List<T> point) where T : IPair
+        {
+            foreach (var item in point)
+            {
+                kdTree.AddPoint(new double[2] { item.X, item.Y }, new CartesianPos(item.X, item.Y));
+            }
+        }
+
+        /// <summary>
+        /// Add new Line
+        /// </summary>
+        /// <param name="line">Obstacle Line</param>
+        /// <returns>State</returns>
+        public void AddLine<T>(T line) where T : ILine
+        {
+            int start = line.Begin.X;
+            int end = line.End.X;
+            int y = line.Begin.Y;
+            for (int x = start; x < end; x++)
+            {
+                kdTree.AddPoint(new double[2] { x, y }, new CartesianPos(x, y));
+            }
         }
 
         /// <summary>
@@ -2128,7 +2193,8 @@ namespace MapProcessing
 
         }
 
-        public MapLine(double x1,double y1,double x2,double y2):this(new CartesianPos(x1,y1),new CartesianPos(x2,y2)) {
+        public MapLine(double x1, double y1, double x2, double y2) : this(new CartesianPos(x1, y1), new CartesianPos(x2, y2))
+        {
 
         }
 
@@ -2140,6 +2206,6 @@ namespace MapProcessing
 
 
         #endregion
-        
+
     }
 }
