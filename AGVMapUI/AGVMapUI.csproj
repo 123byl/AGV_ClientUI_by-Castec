@@ -89,7 +89,6 @@
     <Compile Include="MapLib\Set\DSet.cs" />
     <Compile Include="MapLib\Set\Set.cs" />
     <Compile Include="MapLib\Geometry\ICCWVertex.cs" />
-    <Compile Include="MapLib\Geometry\Point.cs" />
     <Compile Include="MapUI.cs">
       <SubType>UserControl</SubType>
     </Compile>

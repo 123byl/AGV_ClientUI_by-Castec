@@ -2060,7 +2060,7 @@ namespace MapProcessing
 
     }
 
-    public class CartesianPos : IPoint
+    public class CartesianPos : IPair
     {
         #region - Member -
         public int X { get { return (int)x; } set { x = value; } }

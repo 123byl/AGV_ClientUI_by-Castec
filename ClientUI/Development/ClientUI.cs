@@ -835,14 +835,14 @@ namespace ClientUI
         private void DrawLaser(CarInfo info)
         {
             double angle = 0D, Laserangle = 0D;
-            List<AGVMap.Point> ObstaclePoint = new List<AGVMap.Point>();
+            List<AGVMap.Pair> ObstaclePoint = new List<AGVMap.Pair>();
             int idx = 0;
             foreach (int dist in info.LaserData)
             {
                 if (dist >= 30 && dist < 15000)
                 {
                     int[] pos = Transformation.LaserPoleToCartesian(dist, -135, 0.25, idx++, 43, 416.75, 43, info.X, info.Y, info.ThetaGyro, out angle, out Laserangle);//, out dataAngle, out laserAngle);
-                    ObstaclePoint.Add(new AGVMap.Point(pos[0], pos[1]));
+                    ObstaclePoint.Add(new AGVMap.Pair(pos[0], pos[1]));
                     pos = null;
                 }
             }
@@ -1593,7 +1593,7 @@ namespace ClientUI
             MapSimplication mapSimp = new MapSimplication(CurMapPath);
             mapSimp.Reset();
             List<Line> obstacleLines = new List<Line>();
-            List<AGVMap.Point> obstaclePoints = new List<AGVMap.Point>();
+            List<AGVMap.Pair> obstaclePoints = new List<AGVMap.Pair>();
             List<CartesianPos> resultPoints;
             List<MapSimplication.Line> resultlines;
             mapSimp.ReadMapAllTransferToLine(mMapMatch.parseMap, mMapMatch.minimumPos, mMapMatch.maximumPos
@@ -1606,7 +1606,7 @@ namespace ClientUI
                     );
                 }
                 for (int i = 0; i < resultPoints.Count; i++) {
-                    obstaclePoints.Add(new AGVMap.Point((int)resultPoints[i].x, (int)resultPoints[i].y));
+                    obstaclePoints.Add(new AGVMap.Pair((int)resultPoints[i].x, (int)resultPoints[i].y));
                 }
 
                 IMapCtrl.NewMap(obstaclePoints, obstacleLines);

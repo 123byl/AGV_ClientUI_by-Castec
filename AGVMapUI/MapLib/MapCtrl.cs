@@ -118,7 +118,7 @@ namespace AGVMap
         /// <summary>
         /// 建立新地圖(刪除所有資料)
         /// </summary>
-        void NewMap(IEnumerable<IPoint> obstaclePoints, IEnumerable<ILine> obstacleLines);
+        void NewMap(IEnumerable<IPair> obstaclePoints, IEnumerable<ILine> obstacleLines);
 
         /// <summary>
         /// 移除面集合
@@ -550,7 +550,7 @@ namespace AGVMap
         /// <summary>
         /// 建立新地圖(刪除所有資料)
         /// </summary>
-        public void NewMap(IEnumerable<IPoint> obstaclePoints, IEnumerable<ILine> obstacleLines)
+        public void NewMap(IEnumerable<IPair> obstaclePoints, IEnumerable<ILine> obstacleLines)
         {
             NewMap();
             if (obstaclePoints != null) AddPointsSet(Factory.CreatSet.ObstaclePoints( obstaclePoints));

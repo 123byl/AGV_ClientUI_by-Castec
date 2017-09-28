@@ -21,7 +21,7 @@ namespace AGVMap
     /// <summary>
     /// 整數數對
     /// </summary>
-    public class Pair : IPair
+    public class Pair : IPair, ICCWVertex
     {
         /// <summary>
         /// 整數數對預設建構子 X = 0, Y = 0 
@@ -47,6 +47,11 @@ namespace AGVMap
             X = x;
             Y = y;
         }
+
+        /// <summary>
+        /// 獲得逆時針排序的幾何頂點陣列
+        /// </summary>
+        public IPair[] VertexArray { get { return new IPair[] { this }; } }
 
         /// <summary>
         /// X 座標
@@ -120,6 +125,7 @@ namespace AGVMap
         }
 
         #endregion - 運算 -
+
         #region 運算子
 
         public static bool operator !=(Pair p1, Pair p2)

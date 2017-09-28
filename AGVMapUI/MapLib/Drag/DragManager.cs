@@ -183,15 +183,15 @@ namespace AGVMap
         {
             int index = 0;
             int res = -1;
-            mCtrlPointSet.ForEach((item) =>
+            mCtrlPointSet.ForEach((Action<DragPoint>)((item) =>
             {
-                Pair distance = new Pair(item.CtrlPoint) - new Pair(mousePos);
+                Pair distance = new Pair((IPair)item.CtrlPoint) - new Pair((IPair)mousePos);
                 if (Math.Abs(distance.X) <= item.Size.X / 2 && Math.Abs(distance.Y) <= item.Size.Y / 2)
                 {
                     res = index;
                 }
                 index++;
-            });
+            }));
             return res;
         }
     }

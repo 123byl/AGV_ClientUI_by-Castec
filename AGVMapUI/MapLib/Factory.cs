@@ -233,7 +233,7 @@ namespace AGVMap
             /// <summary>
             /// 建立可繪點集合
             /// </summary>
-            public static DPSet ObstaclePoints(IEnumerable<IPoint> data)
+            public static DPSet ObstaclePoints(IEnumerable<IPair> data)
             {
                 DPSet res = new DPSet();
                 res.PointSize = 1;
