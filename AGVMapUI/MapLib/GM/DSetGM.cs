@@ -8,7 +8,7 @@ namespace AGVMap
     /// <summary>
     /// 具執行緒安全的可繪集合管理器
     /// </summary>
-    public abstract class DSetGM<TKey, TValue> : GM<TKey, IDSet<TValue>> where TValue : ICCWVertex
+    public abstract class DSetGM<TKey, TValue> : GM<TKey, IDSet<TValue>>
     {
         /// <summary>
         /// 加入新元素

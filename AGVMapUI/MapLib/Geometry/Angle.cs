@@ -8,7 +8,7 @@
         /// <summary>
         /// 首向
         /// </summary>
-        Angle Toward{ get; set; }
+        Angle Toward { get; set; }
     }
 
     /// <summary>
@@ -67,5 +67,24 @@
         }
 
         #endregion - 轉型 -
+
+        #region 運算子
+        public override bool Equals(object obj)
+        {
+            return this == (obj as Angle);
+        }
+        public static bool operator ==(Angle lhs, Angle rhs)
+        {
+            return (lhs.Value - rhs.Value) <= 0.01;
+        }
+        public static bool operator !=(Angle p1, Angle p2)
+        {
+            return !(p1 == p2);
+        }
+        public override int GetHashCode()
+        {
+            return (Value - Value % 0.01).GetHashCode();
+        }
+        #endregion
     }
 }

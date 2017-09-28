@@ -60,7 +60,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MapLib\Define\Info.cs" />
+    <Compile Include="MapLib\Define\DefStruct.cs" />
     <Compile Include="MapLib\Factory.cs" />
     <Compile Include="MapLib\Ctrl\CtrlArea.cs" />
     <Compile Include="MapLib\Others\Attributes.cs" />

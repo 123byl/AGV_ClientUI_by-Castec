@@ -57,7 +57,7 @@ namespace AGVMap
     /// <summary>
     /// 提供執行緒安全的可繪點集合
     /// </summary>
-    public class DPSet : DSet<IPoint>
+    public class DPSet : DSet<IPair>
     {
         /// <summary>
         /// 點大小

@@ -120,5 +120,28 @@ namespace AGVMap
         }
 
         #endregion - 運算 -
+        #region 運算子
+
+        public static bool operator !=(Pair p1, Pair p2)
+        {
+            return !(p1 == p2);
+        }
+
+        public static bool operator ==(Pair lhs, Pair rhs)
+        {
+            return lhs.X == rhs.X && lhs.Y == rhs.Y;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return this == (obj as Pair);
+        }
+
+        public override int GetHashCode()
+        {
+            return X.GetHashCode() ^ Y.GetHashCode();
+        }
+
+        #endregion 運算子
     }
 }

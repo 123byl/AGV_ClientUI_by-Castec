@@ -1,24 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Diagnostics;
 
 using WeifenLuo.WinFormsUI.Docking;
-
-using System.Threading;
 using CtLib.Library;
-using CtLib.Forms;
-
-using CAMPro.Module;
-namespace ClientUI {
-
-   
+namespace ClientUI
+{
     /// <summary>
     /// 測試功能介面
     /// </summary>

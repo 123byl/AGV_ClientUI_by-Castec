@@ -247,7 +247,7 @@ namespace AGVMap
             /// <summary>
             /// 建立可繪點集合
             /// </summary>
-            public static DPSet LaserPoints(int id,IEnumerable<IPoint> data)
+            public static DPSet LaserPoints(int id,IEnumerable<IPair> data)
             {
                 DPSet res = new DPSet();
                 res.PointSize = 3;

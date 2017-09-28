@@ -125,19 +125,24 @@ namespace AGVMap
         }
 
         /// <summary>
+        /// 座標點
+        /// </summary>
+        public Pair Pos { get; set; } = new Pair();
+
+        /// <summary>
         /// 方向，提供一個介於 [0,360) 之間的角度
         /// </summary>
-        public Angle Toward { get; set; }
+        public Angle Toward { get; set; } = new Angle();
 
         /// <summary>
         /// X 座標
         /// </summary>
-        public int X { get; set; }
+        public int X { get { return Pos.X; } set { Pos.X = value; } }
 
         /// <summary>
         /// Y 座標
         /// </summary>
-        public int Y { get; set; }
+        public int Y { get { return Pos.Y; } set { Pos.Y = value; } }
 
         /// <summary>
         /// 設定位置
@@ -167,5 +172,29 @@ namespace AGVMap
             Y = y;
             Toward = toward;
         }
+
+        #region 運算子
+
+        public static bool operator !=(TowardPos p1, TowardPos p2)
+        {
+            return !(p1 == p2);
+        }
+
+        public static bool operator ==(TowardPos lhs, TowardPos rhs)
+        {
+            return lhs.Pos == rhs.Pos && lhs.Toward == rhs.Toward;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return this == (obj as TowardPos);
+        }
+
+        public override int GetHashCode()
+        {
+            return Pos.GetHashCode() ^ Toward.GetHashCode();
+        }
+
+        #endregion 運算子
     }
 }

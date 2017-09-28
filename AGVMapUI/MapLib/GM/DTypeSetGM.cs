@@ -5,12 +5,12 @@
     /// <summary>
     /// 可繪點集合管理器
     /// </summary>
-    public class DPSetGM<TKey> : DSetGM<TKey, IPoint>
+    public class DPSetGM<TKey> : DSetGM<TKey, IPair>
     {
         /// <summary>
         /// 建立相同的資料型態
         /// </summary>
-        protected override IDSet<IPoint> CreatSameGSet()
+        protected override IDSet<IPair> CreatSameGSet()
         {
             return new DPSet();
         }
