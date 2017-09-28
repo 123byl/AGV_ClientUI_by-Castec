@@ -49,6 +49,9 @@ namespace ClientUI
         ///         + 加上使用者登入/登出
         ///         + 加上使用者管理
         ///         + 加入版本號
+        ///         \ 修改Load File進度條為百分比
+        ///         \ 取得Ori檔後解鎖Ori檔操作
+        ///         \ 補上SimplfyOri功能
         /// </remarks>
         public CtVersion Version { get { return new CtVersion(0, 0, 0, "2017/09/28", "Jay Chang"); } }
 
@@ -1246,6 +1249,7 @@ namespace ClientUI
                     {
                         case FileType.Ori:
                             await Task.Run(() => LoadOri(openMap.FileName));
+                            ITest.UnLockOriOperator(true);
                             //RaiseTestingEvent(TestingEventType.CurOriPath);
                             break;
                         case FileType.Map:
@@ -1575,7 +1579,48 @@ namespace ClientUI
             ITest.SetVelocity += ITest_SetVelocity;
             ITest.Connect += ITest_CheckIsServerAlive;
             ITest.MotorServoOn += ITest_MotorServoOn;
+            ITest.SimplifyOri += ITest_SimplifyOri;
             #endregion 
+        }
+
+        private void ITest_SimplifyOri() {
+            if (mBypassLoadFile) {
+                /*-- 空跑模擬SimplifyOri --*/
+                SpinWait.SpinUntil(() => false, 1000);
+                return;
+            }
+
+            string[] tmpPath = CurOriPath.Split('.');
+            CurMapPath = tmpPath[0] + ".map";
+            MapSimplication mapSimp = new MapSimplication(CurMapPath);
+            mapSimp.Reset();
+            List<Line> obstacleLines = new List<Line>();
+            List<AGVMap.Point> obstaclePoints = new List<AGVMap.Point>();
+            List<CartesianPos> resultPoints;
+            List<MapSimplication.Line> resultlines;
+            mapSimp.ReadMapAllTransferToLine(mMapMatch.parseMap, mMapMatch.minimumPos, mMapMatch.maximumPos
+                , 100, 0, out resultlines, out resultPoints);
+            try {
+                for (int i = 0; i < resultlines.Count; i++) {
+                    obstacleLines.Add(
+                        new Line(resultlines[i].startX, resultlines[i].startY,
+                        resultlines[i].endX, resultlines[i].endY)
+                    );
+                }
+                for (int i = 0; i < resultPoints.Count; i++) {
+                    obstaclePoints.Add(new AGVMap.Point((int)resultPoints[i].x, (int)resultPoints[i].y));
+                }
+
+                IMapCtrl.NewMap(obstaclePoints, obstacleLines);
+            } catch(Exception ex) {
+                System.Console.WriteLine(ex.Message);
+            }
+
+
+            obstacleLines = null;
+            obstaclePoints = null;
+            resultPoints = null;
+            resultlines = null;
         }
 
         #region ITest 事件連結
