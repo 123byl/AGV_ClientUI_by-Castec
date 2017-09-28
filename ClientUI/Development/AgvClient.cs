@@ -1,30 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using System.IO;
-using System.Reflection;
 using System.Windows.Forms;
 using System.Drawing;
-using System.Diagnostics;
 
 using CtLib.Library;
-using CtLib.Module.Ultity;
-using CtLib.Forms;
-using CtLib.Module.TCPIP;
-using static CtLib.Forms.CtLogin;
 
 using MapProcessing;
-using ServerOperation;
-using CAMPro.Module;
 using static MapGL.CastecMapUI;
-using AGVMathOperation;
-namespace ClientUI {
+namespace ClientUI
+{
 
     #region Declaration - Variable Type
 

@@ -95,6 +95,12 @@
       <DependentUpon>CtTesting.cs</DependentUpon>
     </Compile>
     <Compile Include="Development\Events.cs" />
+    <Compile Include="Development\MapList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Development\MapList.Designer.cs">
+      <DependentUpon>MapList.cs</DependentUpon>
+    </Compile>
     <Compile Include="Development\SocketTest.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -435,10 +441,6 @@
     <ProjectReference Include="..\AGVMath\AGVMath.csproj">
       <Project>{68c119fe-7cf4-4828-8745-d9558acd7fab}</Project>
       <Name>AGVMath</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CAMPro\CAMPro.csproj">
-      <Project>{02418dbe-2f04-41e4-b00e-ba0af5d48560}</Project>
-      <Name>CAMPro</Name>
     </ProjectReference>
     <ProjectReference Include="..\CtLib\CtLib\CtLib.csproj">
       <Project>{a9bed8b3-2f9d-42a8-90bd-9fae0522eb09}</Project>

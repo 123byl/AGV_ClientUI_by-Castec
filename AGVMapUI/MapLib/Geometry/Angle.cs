@@ -1,6 +1,17 @@
 ﻿namespace AGVMap
 {
     /// <summary>
+    /// 具有角度方向的
+    /// </summary>
+    public interface IToward
+    {
+        /// <summary>
+        /// 首向
+        /// </summary>
+        Angle Toward{ get; set; }
+    }
+
+    /// <summary>
     /// 提供一個介於 [0,360) 之間的角度，
     /// 資料以 double 格式儲存
     /// </summary>

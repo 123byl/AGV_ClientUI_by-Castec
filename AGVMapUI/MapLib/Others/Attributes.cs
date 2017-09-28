@@ -46,7 +46,7 @@
     /// <summary>
     /// 可控的標示點屬性
     /// </summary>
-    public class CtrlMarkProperty : ICtrlMarkProperty
+    public class CtrlMarkProperty : ICtrlMarkProperty, IToward
     {
         private Pair mCenter = new Pair();
 

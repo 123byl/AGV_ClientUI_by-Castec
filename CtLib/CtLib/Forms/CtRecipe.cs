@@ -657,7 +657,7 @@ namespace CtLib.Forms {
         private Stat WrtieToEquipment() {
             Stat stt = Stat.SUCCESS;
             int step = 0;
-            CtProgress prog = new CtProgress(CtProgress.Style.PERCENT, "寫入參數", "正在寫入...", mRecipe.Count, true);
+            CtProgress prog = new CtProgress(ProgBarStyle.Percent, "寫入參數", "正在寫入...", mRecipe.Count, true);
             try {
                 mCurrInfo.LoadTime = DateTime.Now;
                 foreach (CtRecipeData item in mRecipe) {

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
@@ -12,13 +11,11 @@ using System.IO;
 using System.Net.Sockets;
 using System.Net;
 using System.Threading;
-
-using CtLib.Module.TCPIP;
 using CtLib.Library;
-using CAMPro.Module;
 using CtLib.Forms;
 using ServerOperation;
-namespace ClientUI {
+namespace ClientUI
+{
 
     public partial class SocketTest : Form {
 

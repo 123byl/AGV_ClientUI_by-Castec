@@ -1453,7 +1453,7 @@ namespace CtLib.Module.Adept {
                 if (prog) {
                     if (power) {
                         frmProg = new CtProgress(
-                            CtProgress.Style.COUNTDOWN,
+                            ProgBarStyle.Countdown,
                             "HighPower",
                             "請於10秒內按下面板電源鈕 / Press \"HighPower\" button at front panel in 10 sec.",
                             10F
