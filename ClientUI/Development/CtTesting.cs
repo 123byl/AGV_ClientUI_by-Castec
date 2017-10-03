@@ -44,7 +44,7 @@ namespace ClientUI
 
         private void btnConnect_Click(object sender, EventArgs e) {
             if (btnConnect.Tag == null || (btnConnect.Tag is bool && !(bool)btnConnect.Tag)) {
-                Connect.Invoke(true);
+                Connect.Invoke(true,cboHostIP.Text);
             } else {
                 Connect.Invoke(false);
             }

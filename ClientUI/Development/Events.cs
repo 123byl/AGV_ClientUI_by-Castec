@@ -93,6 +93,11 @@ namespace ClientUI
         event DelSendMapToAGV SendMapToAGVEvent;
 
         /// <summary>
+        /// 取得所有Goal點名稱
+        /// </summary>
+        event DelGetGoalNames GetGoalNames;
+
+        /// <summary>
         /// 當下車子的位置
         /// </summary>
         TowardPos CurrentCar { get; set; }
@@ -291,6 +296,11 @@ namespace ClientUI
             /// 更新 Goal 點
             /// </summary>
             public delegate void DelUpdateGoal(Info newGoal);
+
+            /// <summary>
+            /// 取得所有Goal點名稱
+            /// </summary>
+            public delegate void DelGetGoalNames();
         }
 
         /// <summary>
@@ -298,7 +308,7 @@ namespace ClientUI
         /// </summary>
         public static class TestingEvents
         {
-            public delegate void DelConnect(bool cnn);
+            public delegate void DelConnect(bool cnn,string hostIP = "");
 
             public delegate void DelCorrectOri();
 

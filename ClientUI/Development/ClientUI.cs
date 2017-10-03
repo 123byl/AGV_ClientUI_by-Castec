@@ -26,6 +26,7 @@ using System.IO;
 using AGVMathOperation;
 using System.Diagnostics;
 using CtLib.Module.Ultity;
+using System.Text.RegularExpressions;
 
 namespace ClientUI
 {
@@ -50,6 +51,11 @@ namespace ClientUI
         ///         \ 修改Load File進度條為百分比
         ///         \ 取得Ori檔後解鎖Ori檔操作
         ///         \ 補上SimplfyOri功能
+        ///     0.0.1   Jay [2017/10/03]
+        ///         \ 通訊機制修改
+        ///         + 於GoalSetting加入GetGoalList功能
+        ///         \ 連線時加入IP參數，可在介面指定要連接的IP
+        ///         \ 專案建置事件修正
         /// </remarks>
         public CtVersion Version { get { return new CtVersion(0, 0, 0, "2017/09/28", "Jay Chang"); } }
 
@@ -128,6 +134,11 @@ namespace ClientUI
         /// 路徑規劃接收物件
         /// </summary>
         private SocketMonitor mSoxMonitorPath = null;
+
+        /// <summary>
+        /// 命令發送用<see cref="Socket"/>
+        /// </summary>
+        private Socket mSoxCmd = null;
 
         /// <summary>
         /// 偵測多餘的呼叫
@@ -640,6 +651,48 @@ namespace ClientUI
         #endregion Function - Public Methdos
 
         #region Function - Private Methods
+
+        ///<summary>IP驗證</summary>
+        ///<param name="ip">要驗證的字串</param>
+        ///<returns>True:合法IP/False:非法IP</returns>
+        private bool VerifyIP(string ip) {
+            return Regex.IsMatch(ip, @"^((2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(2[0-4]\d|25[0-5]|[01]?\d\d?)$");
+        }
+
+        /// <summary>
+        /// 向AGV要求所有Goal點名稱
+        /// </summary>
+        /// <returns>Goal List:"{goal1},{goal2},{goal3}..."</returns>
+        /// <remarks>用來模擬iS向AGV要求所有Goal點名稱</remarks> 
+        private string GetGoalNames() {
+            string goalList = "Empty";
+            if (mBypassSocket) {
+                /*-- 模擬用資料 --*/
+                goalList = "GoalA,GoalB,GoalC";
+            } else {
+                string[] rtnMsg = SendMsg($"Get:GoalList");
+                if (rtnMsg.Count() > 3) {
+                    goalList = rtnMsg[3];
+                }
+            }
+            return goalList;
+        }
+
+        /// <summary>
+        /// 連接至Server端(AGV)
+        /// </summary>
+        /// <returns><see cref="Socket"/>連線狀態 True:已連線/False:已斷開</returns>
+        private bool ConnectServer() {
+            return serverComm.ConnectServer(ref mSoxCmd, mHostIP, mRecvCmdPort);
+        }
+
+        /// <summary>
+        /// 與Server端(AGV)斷開連線
+        /// </summary>
+        /// <returns><see cref="Socket"/>連線狀態 True:已連線/False:已斷開</returns>
+        public bool DisConnectServer() {
+            return serverComm.DisconnectServer(mSoxCmd);
+        }
 
         /// <summary>
         /// Send file of server to client
@@ -1513,6 +1566,7 @@ namespace ClientUI
             IGoalSetting.RunLoopEvent += IGoalSetting_RunLoopEvent;
             IGoalSetting.SaveGoalEvent += IGoalSetting_SaveGoalEvent;
             IGoalSetting.SendMapToAGVEvent += IGoalSetting_SendMapToAGVEvent;
+            IGoalSetting.GetGoalNames += IGoalSetting_GetGoalNames;
             #endregion
 
             #region IMapGL 事件連結
@@ -1540,7 +1594,13 @@ namespace ClientUI
             #endregion 
         }
 
-
+        /// <summary>
+        /// 取得所有Goal點名稱
+        /// </summary>
+        private void IGoalSetting_GetGoalNames() {
+            string goalNames = GetGoalNames();
+            IConsole.AddMsg($"Goal Names:{goalNames}");
+        }
 
         private void ITest_SimplifyOri()
         {
@@ -1607,7 +1667,6 @@ namespace ClientUI
         {
             IMapCtrl.NewMap();
             tsk_FixOriginScanningFile();
-            //CtThread.CreateThread(ref mTdMapOperation, "mLoadOriginScaning: ", tsk_FixOriginScanningFile);
         }
 
         /// <summary>
@@ -1618,25 +1677,23 @@ namespace ClientUI
         /// </remarks>
         private void tsk_FixOriginScanningFile()
         {
-            //try
-            //{
-            //    if (mBypassLoadFile)
-            //    {
+            //try {
+            //    if (mBypassLoadFile) {
             //        SpinWait.SpinUntil(() => false, 1000);
             //        return;
             //    }
             //    MapReading MapReading = new MapReading(CurOriPath);
-            //    TowardPos carPos = new TowardPos();
+            //    CartesianPos carPos = new CartesianPos();
             //    List<Pair> laserData = new List<Pair>();
             //    List<CartesianPos> filterData = new List<CartesianPos>();
             //    int dataLength = MapReading.OpenFile();
             //    if (dataLength == 0) return;
 
             //    List<Pair> dataSet = new List<Pair>();
-            //    List<Pair> predataSet = new List<Pair>();
-            //    List<Pair> matchSet = new List<Pair>();
-            //    TowardPos transResult = new TowardPos();
-            //    TowardPos nowOdometry = new TowardPos();
+            //    List<CartesianPos> predataSet = new List<CartesianPos>();
+            //    List<CartesianPos> matchSet = new List<CartesianPos>();
+            //    CartesianPos transResult = new CartesianPos();
+            //    CartesianPos nowOdometry = new CartesianPos();
             //    TowardPos preOdometry = new TowardPos();
             //    TowardPos accumError = new TowardPos();
             //    TowardPos diffOdometry = new TowardPos();
@@ -1655,15 +1712,14 @@ namespace ClientUI
             //    matchSet.AddRange(laserData);
             //    predataSet.AddRange(laserData);
             //    mMapMatch.GlobalMapUpdate(matchSet.ToCartesianPos());                            //Initial environment model
-            //    preOdometry = new TowardPos(carPos);
+            //    preOdometry = new CartesianPos(carPos);
 
             //    #endregion
 
-            //    for (int n = 1; n < dataLength; n++)
-            //    {
+            //    for (int n = 1; n < dataLength; n++) {
             //        #region 2.Read car position and laser scanning 
 
-            //        List<TowardPos> addedSet = new List<TowardPos>();
+            //        List<CartesianPos> addedSet = new List<CartesianPos>();
             //        transResult.SetPosition(0, 0, 0);
             //        carPos = null;
             //        laserData = null;
@@ -1683,12 +1739,12 @@ namespace ClientUI
 
             //        #region 4.Compute movement from last time to current time;
 
-            //        if (nowOdometry.Toward - preOdometry.Toward < -200)
-            //            diffOdometry.SetPosition(nowOdometry.x - preOdometry.x, nowOdometry.y - preOdometry.y, nowOdometry.theta + 360 - preOdometry.theta);
-            //        else if (nowOdometry.theta - preOdometry.theta > 200)
-            //            diffOdometry.SetPosition(nowOdometry.x - preOdometry.x, nowOdometry.y - preOdometry.y, -(preOdometry.theta + 360 - nowOdometry.theta));
+            //        if (nowOdometry.theta - preOdometry.Toward < -200)
+            //            diffOdometry.SetPosition(nowOdometry.X - preOdometry.X, nowOdometry.Y - preOdometry.Y, nowOdometry.theta + 360 - preOdometry.Toward);
+            //        else if (nowOdometry.theta - preOdometry.Toward > 200)
+            //            diffOdometry.SetPosition(nowOdometry.X - preOdometry.X, nowOdometry.Y - preOdometry.Y, -(preOdometry.Toward + 360 - nowOdometry.theta));
             //        else
-            //            diffOdometry.SetPosition(nowOdometry.x - preOdometry.x, nowOdometry.y - preOdometry.y, nowOdometry.theta - preOdometry.theta);
+            //            diffOdometry.SetPosition(nowOdometry.X - preOdometry.X, nowOdometry.Y - preOdometry.Y, nowOdometry.theta - preOdometry.Toward);
             //        //Console.WriteLine("Odometry varition:{0:F3} {1:F3} {2:F3}", diffOdometry.x, diffOdometry.y, diffOdometry.theta);
 
             //        #endregion
@@ -1702,23 +1758,19 @@ namespace ClientUI
             //        #region 6.Inspect odometry variation is not too large.Switch to pose tracking mode if too large.
 
             //        sw.Restart();
-            //        if (Math.Abs(diffOdometry.x) >= 400 || Math.Abs(diffOdometry.y) >= 400 || Math.Abs(diffOdometry.theta) >= 30)
-            //        {
+            //        if (Math.Abs(diffOdometry.X) >= 400 || Math.Abs(diffOdometry.Y) >= 400 || Math.Abs(diffOdometry.Toward) >= 30) {
             //            mode = 1;
-            //            gValue = mMapMatch.PairwiseMatching(predataSet, matchSet, 4, 1.5, 0.01, 20, 300, false, transResult);
-            //        }
-            //        else
-            //        {
+            //            gValue = mMapMatch.PairwiseMatching( predataSet, matchSet, 4, 1.5, 0.01, 20, 300, false, transResult);
+            //        } else {
             //            mode = 0;
             //            gValue = mMapMatch.FindClosetMatching(matchSet, 4, 1.5, 0.01, 20, 300, false, transResult);
-            //            diffLaser.SetPosition(transResult.x, transResult.y, transResult.theta);
+            //            diffLaser.SetPosition((int)transResult.x, (int)transResult.y, transResult.theta);
             //        }
 
             //        //If corresponding is too less,truct the odomery variation this time
-            //        if (mMapMatch.EstimateCorresponingPoints(matchSet, 10, 10, out corrNum, out addedSet))
-            //        {
+            //        if (mMapMatch.EstimateCorresponingPoints(matchSet, 10, 10, out corrNum, out addedSet)) {
             //            mMapMatch.NewPosTransformation(nowOdometry, transResult.x, transResult.y, transResult.theta);
-            //            accumError.SetPosition(accumError.x + transResult.x, accumError.y + transResult.y, accumError.theta + transResult.theta);
+            //            accumError.SetPosition(accumError.x + transResult.x, accumError.Y + transResult.y, accumError.Toward + transResult.theta);
             //        }
             //        sw.Stop();
 
@@ -1749,17 +1801,13 @@ namespace ClientUI
             //        IMapCtrl.AddAGV(Factory.CreatAGV.AGV(AGVID, "AGV", nowOdometry.X, nowOdometry.Y, nowOdometry.theta));
             //    }
             //    SetBalloonTip("Correct Map", "Correct Complete!!", ToolTipIcon.Info, 10);
-            //}
-            //catch
-            //{
+            //} catch {
 
-            //}
-            //finally
-            //{
+            //} finally {
             //}
         }
 
-        private async void ITest_CheckIsServerAlive(bool cnn)
+        private async void ITest_CheckIsServerAlive(bool cnn,string hostIP = "")
         {
             if (cnn != IsConnected)
             {
@@ -1768,11 +1816,14 @@ namespace ClientUI
                 {
                     if (cnn)
                     {
-                        IsConnected = await Task<bool>.Run(() => CheckIsServerAlive());
+                        if (mHostIP != hostIP && VerifyIP(hostIP)) {
+                            mHostIP = hostIP;
+                            IsConnected = await Task<bool>.Run(() => CheckIsServerAlive());
+                        }
                     }
                     else
                     {
-                        IsConnected = false;
+                        IsConnected = DisConnectServer();
                     }
                     ITest.SetServerStt(IsConnected);
                     IConsole.AddMsg($"Is {(cnn ? "Connected" : "Disconnected")}");
@@ -1801,8 +1852,10 @@ namespace ClientUI
                 bool isAlive = false;
                 try
                 {
-                    string[] rtnMsg = SendMsg("Get:Hello", false);
-                    isAlive = rtnMsg.Count() > 2 && rtnMsg[2] == "True";
+                    if (isAlive = ConnectServer()) {
+                        string[] rtnMsg = SendMsg("Get:Hello", false);
+                        isAlive = rtnMsg.Count() > 2 && rtnMsg[2] == "True";
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -2052,8 +2105,8 @@ namespace ClientUI
 
         private void miLoadFile_Click(object sender, EventArgs e)
         {
-            IsBypassLoadFile = !IsBypassSocket;
-            CtInvoke.ToolStripItemChecked(miLoadFile, IsBypassSocket);
+            IsBypassLoadFile = !IsBypassLoadFile;
+            CtInvoke.ToolStripItemChecked(miLoadFile, IsBypassLoadFile);
         }
     }
 

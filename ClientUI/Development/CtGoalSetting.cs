@@ -337,9 +337,19 @@ namespace ClientUI
         /// </summary>
         public event DelClearGoals ClearGoalsEvent;
 
+        /// <summary>
+        /// 取得所有Goal點名稱
+        /// </summary>
+        public event DelGetGoalNames GetGoalNames;
+
         #endregion IIGoalSetting
 
         #region UI Event
+
+        private void btnGetGoalList_Click(object sender, EventArgs e) {
+            GetGoalNames.Invoke();
+        }
+
 
         private void btnCurrPos_Click(object sender, EventArgs e)
         {
@@ -433,5 +443,7 @@ namespace ClientUI
             }
         }
         #endregion UI Event
+
+
     }
 }

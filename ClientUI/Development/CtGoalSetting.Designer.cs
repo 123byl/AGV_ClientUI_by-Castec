@@ -39,16 +39,17 @@
             this.label15 = new System.Windows.Forms.Label();
             this.label16 = new System.Windows.Forms.Label();
             this.dgvGoalPoint = new System.Windows.Forms.DataGridView();
-            this.btnNewPoint = new System.Windows.Forms.Button();
-            this.btnDeleteAll = new System.Windows.Forms.Button();
-            this.btnDelete = new System.Windows.Forms.Button();
-            this.btnCurrPos = new System.Windows.Forms.Button();
             this.cSelect = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.cID = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.cName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.cX = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.cY = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.cToward = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.btnNewPoint = new System.Windows.Forms.Button();
+            this.btnDeleteAll = new System.Windows.Forms.Button();
+            this.btnDelete = new System.Windows.Forms.Button();
+            this.btnCurrPos = new System.Windows.Forms.Button();
+            this.btnGetGoalList = new System.Windows.Forms.Button();
             this.grbMap.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvGoalPoint)).BeginInit();
             this.SuspendLayout();
@@ -255,6 +256,51 @@
             this.dgvGoalPoint.Size = new System.Drawing.Size(532, 442);
             this.dgvGoalPoint.TabIndex = 45;
             // 
+            // cSelect
+            // 
+            this.cSelect.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.cSelect.HeaderText = "Select";
+            this.cSelect.Name = "cSelect";
+            this.cSelect.Width = 47;
+            // 
+            // cID
+            // 
+            this.cID.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.cID.HeaderText = "ID";
+            this.cID.Name = "cID";
+            this.cID.Width = 51;
+            // 
+            // cName
+            // 
+            this.cName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.cName.HeaderText = "Name";
+            this.cName.Name = "cName";
+            this.cName.Width = 69;
+            // 
+            // cX
+            // 
+            this.cX.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.cX.DataPropertyName = "double";
+            this.cX.HeaderText = "X";
+            this.cX.Name = "cX";
+            this.cX.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // cY
+            // 
+            this.cY.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.cY.DataPropertyName = "double";
+            this.cY.HeaderText = "Y";
+            this.cY.Name = "cY";
+            this.cY.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // cToward
+            // 
+            this.cToward.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.cToward.DataPropertyName = "double";
+            this.cToward.HeaderText = "Toward";
+            this.cToward.Name = "cToward";
+            this.cToward.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
             // btnNewPoint
             // 
             this.btnNewPoint.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
@@ -303,50 +349,17 @@
             this.btnCurrPos.UseVisualStyleBackColor = true;
             this.btnCurrPos.Click += new System.EventHandler(this.btnCurrPos_Click);
             // 
-            // cSelect
+            // btnGetGoalList
             // 
-            this.cSelect.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.cSelect.HeaderText = "Select";
-            this.cSelect.Name = "cSelect";
-            this.cSelect.Width = 47;
-            // 
-            // cID
-            // 
-            this.cID.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.cID.HeaderText = "ID";
-            this.cID.Name = "cID";
-            this.cID.Width = 51;
-            // 
-            // cName
-            // 
-            this.cName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.cName.HeaderText = "Name";
-            this.cName.Name = "cName";
-            this.cName.Width = 69;
-            // 
-            // cX
-            // 
-            this.cX.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.cX.DataPropertyName = "double";
-            this.cX.HeaderText = "X";
-            this.cX.Name = "cX";
-            this.cX.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            // 
-            // cY
-            // 
-            this.cY.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.cY.DataPropertyName = "double";
-            this.cY.HeaderText = "Y";
-            this.cY.Name = "cY";
-            this.cY.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            // 
-            // cToward
-            // 
-            this.cToward.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.cToward.DataPropertyName = "double";
-            this.cToward.HeaderText = "Toward";
-            this.cToward.Name = "cToward";
-            this.cToward.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.btnGetGoalList.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.btnGetGoalList.Location = new System.Drawing.Point(565, 642);
+            this.btnGetGoalList.Margin = new System.Windows.Forms.Padding(4);
+            this.btnGetGoalList.Name = "btnGetGoalList";
+            this.btnGetGoalList.Size = new System.Drawing.Size(160, 62);
+            this.btnGetGoalList.TabIndex = 64;
+            this.btnGetGoalList.Text = "Get Goal List";
+            this.btnGetGoalList.UseVisualStyleBackColor = true;
+            this.btnGetGoalList.Click += new System.EventHandler(this.btnGetGoalList_Click);
             // 
             // CtGoalSetting
             // 
@@ -354,6 +367,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(752, 726);
+            this.Controls.Add(this.btnGetGoalList);
             this.Controls.Add(this.grbMap);
             this.Controls.Add(this.btnPath);
             this.Controls.Add(this.btnSaveGoal);
@@ -412,5 +426,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn cX;
         private System.Windows.Forms.DataGridViewTextBoxColumn cY;
         private System.Windows.Forms.DataGridViewTextBoxColumn cToward;
+        private System.Windows.Forms.Button btnGetGoalList;
     }
 }
