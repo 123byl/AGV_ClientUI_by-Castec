@@ -58,8 +58,11 @@ namespace ClientUI
         ///         + 於GoalSetting加入GetGoalList功能
         ///         \ 連線時加入IP參數，可在介面指定要連接的IP
         ///         \ 專案建置事件修正
+        ///     0.0.2   Jay [2017/10/11]
+        ///         \ 地圖修正功能修正
+        ///         \ 與AGV連線方式調整
         /// </remarks>
-        public CtVersion Version { get { return new CtVersion(0, 0, 0, "2017/09/28", "Jay Chang"); } }
+        public CtVersion Version { get { return new CtVersion(0, 0, 2, "2017/10/11", "Jay Chang"); } }
 
         #endregion Version - Information
 
@@ -1050,8 +1053,8 @@ namespace ClientUI
             IConsole.AddMsg(msg);
 
             /*-- 等待Server端的回應 --*/
-            string rtnMsg = SendStrMsg(mHostIP, mRecvCmdPort, sendMseeage);
-
+            string rtnMsg = SendStrMsg(mHostIP, mRecvCmdPort, sendMseeage).Trim();
+            
             /*-- 顯示Server端回應 --*/
             msg = $"{DateTime.Now} [Server] : {rtnMsg}\r\n";
             IConsole.AddMsg(msg);
@@ -1879,9 +1882,9 @@ namespace ClientUI
                 {
                     if (cnn)
                     {
-                        if (mHostIP != hostIP && VerifyIP(hostIP))
+                        if (VerifyIP(hostIP))
                         {
-                            mHostIP = hostIP;
+                            if (mHostIP != hostIP) mHostIP = hostIP;
                             IsConnected = await Task<bool>.Run(() => CheckIsServerAlive());
                         }
                     }
