@@ -1,4 +1,4 @@
-﻿using AGVMap;
+﻿using AGV.Map.Common.UI;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -18,7 +18,8 @@ namespace ClientUI.Development
         /// 共用建構方法
         /// </summary>
         public AGVMapUI(DockState defState = DockState.Float)
-            :base(defState) {
+            : base(defState)
+        {
             InitializeComponent();
             FixedSize = new Size(718, 814);
         }
@@ -26,6 +27,6 @@ namespace ClientUI.Development
         /// <summary>
         /// 獲得地圖控制器控制
         /// </summary>
-        public IMapCtrl Ctrl { get { return mapUI.Ctrl; } }
+        public IUIBaseCtrl Ctrl { get { return uiControl.BaseCtrl; } }
     }
 }

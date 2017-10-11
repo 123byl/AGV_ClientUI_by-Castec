@@ -28,40 +28,45 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.mapUI = new AGVMap.MapUI();
-            ((System.ComponentModel.ISupportInitialize)(this.mapUI)).BeginInit();
+            this.uiControl = new AGV.Map.UI.UIControl();
+            ((System.ComponentModel.ISupportInitialize)(this.uiControl)).BeginInit();
             this.SuspendLayout();
             // 
-            // mapUI
+            // uiControl
             // 
-            this.mapUI.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.uiControl.AllowEdit = true;
+            this.uiControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.mapUI.DrawFPS = true;
-            this.mapUI.Location = new System.Drawing.Point(14, 13);
-            this.mapUI.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
-            this.mapUI.Name = "mapUI";
-            this.mapUI.OpenGLVersion = SharpGL.Version.OpenGLVersion.OpenGL2_1;
-            this.mapUI.RenderContextType = SharpGL.RenderContextType.DIBSection;
-            this.mapUI.RenderTrigger = SharpGL.RenderTrigger.TimerBased;
-            this.mapUI.Size = new System.Drawing.Size(254, 227);
-            this.mapUI.TabIndex = 0;
+            this.uiControl.DrawFPS = false;
+            this.uiControl.Location = new System.Drawing.Point(13, 12);
+            this.uiControl.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.uiControl.Name = "uiControl";
+            this.uiControl.OpenGLVersion = SharpGL.Version.OpenGLVersion.OpenGL2_1;
+            this.uiControl.RenderContextType = SharpGL.RenderContextType.DIBSection;
+            this.uiControl.RenderTrigger = SharpGL.RenderTrigger.TimerBased;
+            this.uiControl.ShowAxis = true;
+            this.uiControl.ShowFPS = false;
+            this.uiControl.ShowGrid = true;
+            this.uiControl.ShowNames = true;
+            this.uiControl.Size = new System.Drawing.Size(256, 229);
+            this.uiControl.TabIndex = 0;
             // 
             // AGVMapUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(282, 253);
-            this.Controls.Add(this.mapUI);
+            this.Controls.Add(this.uiControl);
             this.Name = "AGVMapUI";
             this.Text = "AGVMapUI";
-            ((System.ComponentModel.ISupportInitialize)(this.mapUI)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.uiControl)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private AGVMap.MapUI mapUI;
+        private AGV.Map.UI.UIControl uiControl;
     }
 }

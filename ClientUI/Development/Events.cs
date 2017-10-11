@@ -1,4 +1,4 @@
-﻿using AGVMap;
+﻿using MapProcessing;
 using System.Collections.Generic;
 using static ClientUI.Events.ConsoleEvents;
 using static ClientUI.Events.GoalSettingEvents;
@@ -100,7 +100,7 @@ namespace ClientUI
         /// <summary>
         /// 當下車子的位置
         /// </summary>
-        TowardPos CurrentCar { get; set; }
+        CartesianPos CurrentCar { get; set; }
 
         /// <summary>
         /// 目標點個數
@@ -110,12 +110,12 @@ namespace ClientUI
         /// <summary>
         /// 加入 Goal 點
         /// </summary>
-        void AddGoal(Info goal);
+        void AddGoal(CartesianPosInfo goal);
 
         /// <summary>
         /// 移除目前 Goal 點並加入新的 goal 點
         /// </summary>
-        void ClearAndAddGoals(IEnumerable<Info> goals);
+        void ClearAndAddGoals(IEnumerable<CartesianPosInfo> goals);
 
         /// <summary>
         /// 移除所有 Goal 點
@@ -125,54 +125,47 @@ namespace ClientUI
         /// <summary>
         /// 根據 ID 移除 Goal 點
         /// </summary>
-        void DeleteGoal(int ID);
+        void DeleteGoal(uint ID);
 
         /// <summary>
         /// 根據 ID 移除 Goal 點
         /// </summary>
-        void DeleteGoals(IEnumerable<int> ID);
+        void DeleteGoals(IEnumerable<uint> ID);
 
         /// <summary>
         /// 用 ID 尋找 Goal 點所在的引索位置
         /// </summary>
-        int FindIndexByID(int ID);
+        int FindIndexByID(uint ID);
 
         /// <summary>
         /// 根據 ID 查詢 Goal 點
         /// </summary>
-        Info GetGoalByID(int ID);
+        CartesianPosInfo GetGoalByID(uint ID);
 
         /// <summary>
         /// 根據表單的列編號查詢 Goal
         /// </summary>
-        Info GetGoalByIndex(int row);
+        CartesianPosInfo GetGoalByIndex(int row);
 
         /// <summary>
         /// 獲得所有 Goal 點資訊
         /// </summary>
-        List<Info> GetGoals();
+        List<CartesianPosInfo> GetGoals();
 
         /// <summary>
         /// 獲得所有被選取的 Goal 點資訊
         /// </summary>
-        List<Info> GetSelectedGoals();
+        List<CartesianPosInfo> GetSelectedGoals();
 
         /// <summary>
         /// 設定真實座標
         /// </summary>
-        void SetCurrentRealPos(IPair realPos);
+        void SetCurrentRealPos(CartesianPos realPos);
 
         /// <summary>
         /// 設定表單選擇項目
         /// </summary>
-        void SetSelectItem(int id);
-    }
-
-    /// <summary>
-    /// MapGL視窗公開操作方法
-    /// </summary>
-    public interface IIMapGL
-    {
+        void SetSelectItem(uint id);
     }
 
     public interface IITesting
@@ -245,7 +238,7 @@ namespace ClientUI
             /// <summary>
             /// 加入 Goal 點
             /// </summary>
-            public delegate void DelAddNewGoal(Info goal);
+            public delegate void DelAddNewGoal(CartesianPosInfo goal);
 
             /// <summary>
             /// 清除所有目標點
@@ -255,12 +248,12 @@ namespace ClientUI
             /// <summary>
             /// 刪除
             /// </summary>
-            public delegate void DelDeleteGoals(IEnumerable<Info> goal);
+            public delegate void DelDeleteGoals(IEnumerable<CartesianPosInfo> goal);
 
             /// <summary>
             /// 尋找路徑
             /// </summary>
-            public delegate void DelFindPath(Info goal, int idxGoal);
+            public delegate void DelFindPath(CartesianPosInfo goal, int idxGoal);
 
             /// <summary>
             /// 載入地圖
@@ -275,12 +268,12 @@ namespace ClientUI
             /// <summary>
             /// 移動
             /// </summary>
-            public delegate void DelRunGoal(Info goal, int idxGoal);
+            public delegate void DelRunGoal(CartesianPosInfo goal, int idxGoal);
 
             /// <summary>
             /// 按照順序移動全部
             /// </summary>
-            public delegate void DelRunLoop(IEnumerable<Info> goal);
+            public delegate void DelRunLoop(IEnumerable<CartesianPosInfo> goal);
 
             /// <summary>
             /// 儲存
@@ -295,7 +288,7 @@ namespace ClientUI
             /// <summary>
             /// 更新 Goal 點
             /// </summary>
-            public delegate void DelUpdateGoal(Info newGoal);
+            public delegate void DelUpdateGoal(CartesianPosInfo newGoal);
 
             /// <summary>
             /// 取得所有Goal點名稱

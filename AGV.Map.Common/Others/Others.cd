@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Interface Name="AGV.Map.Common.IColor" Collapsed="true">
+    <Position X="4.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAKAEAAQA=</HashCode>
+      <FileName>Others\IColor.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="AGV.Map.Common.IName" Collapsed="true">
+    <Position X="4.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Others\IName.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="AGV.Map.Common.IGLSetting" Collapsed="true">
+    <Position X="2.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAAAAAAAiAgAAAAAAAAAQAEAQAAAAQ=</HashCode>
+      <FileName>Others\IGLSetting.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="AGV.Map.Common.IBound&lt;T&gt;" Collapsed="true">
+    <Position X="2.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAABAAAAAAEAAAAAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>Others\IBound.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="AGV.Map.Common.IRecode&lt;T&gt;" Collapsed="true">
+    <Position X="6" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAIAAAAACAA=</HashCode>
+      <FileName>Others\IRecode.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="AGV.Map.Common.IHasGLSetting">
+    <Position X="4.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Others\IHasGLSetting.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="AGV.Map.Common.IDrawable">
+    <Position X="6" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Others\IDraw.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="AGV.Map.Common.EType">
+    <Position X="2.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AUAABAAAAAAAAggAQAAQAAAAAABIAIABAAAAAAAAgAQ=</HashCode>
+      <FileName>Others\EType.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Microsoft JhengHei UI" Size="9" />
+</ClassDiagram>

@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Interface Name="AGV.Map.Common.IGoal">
+    <Position X="6.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Single\IGoal.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="AGV.Map.Common.IPower">
+    <Position X="10.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Single\IPower.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="AGV.Map.Common.IAGV">
+    <Position X="1.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Single\IAGV.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="AGV.Map.Common.IForbiddenLine">
+    <Position X="13" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Single\IForbiddenLine.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="AGV.Map.Common.INarrowLine">
+    <Position X="8.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Single\INarrowLine.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="AGV.Map.Common.IParking">
+    <Position X="4" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Single\IParking.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="AGV.Map.Common.ISingle&lt;TGeometry&gt;" Collapsed="true">
+    <Position X="7.25" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAA=</HashCode>
+      <FileName>Single\ISingle.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="AGV.Map.Common.IDragable" Collapsed="true">
+    <Position X="7.25" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAABAAA=</HashCode>
+      <FileName>Drag\IDragable.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="AGV.Map.Common.IForbiddenArea">
+    <Position X="15" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Single\IForbiddenArea.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Microsoft JhengHei UI" Size="9" />
+</ClassDiagram>

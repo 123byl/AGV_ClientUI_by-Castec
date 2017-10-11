@@ -14,7 +14,6 @@ using System.Threading;
 using CtLib.Library;
 using CtLib.Forms;
 using ServerOperation;
-using AGVMap;
 
 namespace ClientUI
 {

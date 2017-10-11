@@ -11,7 +11,7 @@ using System.Drawing;
 using CtLib.Library;
 
 using MapProcessing;
-using AGVMap;
+using static MapProcessing.MapSimplication;
 
 namespace ClientUI
 {
@@ -2778,9 +2778,8 @@ namespace ClientUI
         /// </summary>
         internal static readonly Dictionary<string, Type> NameTypeMap = new Dictionary<string, Type>() {
             { CarInfo,typeof(CarInfo) },
-            { ObstacleLines,typeof(List<AGVMap.Line>)},
+            { ObstacleLines,typeof(List<Line>)},
             { ObstaclePoints,typeof(List<Point>)},
-            { PosCar,typeof(TowardPos)},
             { ScanPoint,typeof(List<CartesianPos>) },
             { Goals,typeof(List<CartesianPos>)}
         };
@@ -2792,10 +2791,9 @@ namespace ClientUI
             { typeof(CarInfo),obj => obj is CarInfo},
             { typeof(List<CartesianPos>),obj => obj is List<CartesianPos>},
             { typeof(List<Point>),obj => obj is List<Point>},
-            { typeof(TowardPos),obj => obj is TowardPos},
-            { typeof(List<AGVMap.Line>),obj => obj is List<AGVMap.Line>}
+            { typeof(List<Line>),obj => obj is List<Line>}
         };
-        
+
         #endregion Declaration - Fields
 
         #region Function - Extenstion

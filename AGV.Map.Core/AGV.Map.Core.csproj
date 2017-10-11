@@ -1,0 +1,123 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{ABC19E43-75E8-4608-9D4D-6646CDA17BF3}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>AGV.Map.Core</RootNamespace>
+    <AssemblyName>AGV.Map.Core</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="SharpGL">
+      <HintPath>..\AGV.Map.Common\DLL\SharpGL.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpGL.SceneGraph">
+      <HintPath>..\AGV.Map.Common\DLL\SharpGL.SceneGraph.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpGL.WinForms">
+      <HintPath>..\AGV.Map.Common\DLL\SharpGL.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Database.cs" />
+    <Compile Include="Drag\DragPoint.cs" />
+    <Compile Include="Drag\DragManager.cs" />
+    <Compile Include="Extension.cs" />
+    <Compile Include="Factory.cs" />
+    <Compile Include="Geometry\Angle.cs" />
+    <Compile Include="Geometry\Area.cs" />
+    <Compile Include="Geometry\Operator.cs" />
+    <Compile Include="Geometry\TowardPair.cs" />
+    <Compile Include="Geometry\Line.cs" />
+    <Compile Include="Geometry\Pair.cs" />
+    <Compile Include="GLExtension\Stipple.cs" />
+    <Compile Include="GLExtension\Text2D.cs" />
+    <Compile Include="GLExtension\Texture.cs" />
+    <Compile Include="Muti\LaserPoints.cs" />
+    <Compile Include="Muti\Muti.cs" />
+    <Compile Include="Muti\ObstacleLines.cs" />
+    <Compile Include="Muti\ObstaclePoints.cs" />
+    <Compile Include="Others\Bound.cs" />
+    <Compile Include="Others\Color.cs" />
+    <Compile Include="Others\Recode.cs" />
+    <Compile Include="Others\GLSetting.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Safty\SaftyDictionary.cs" />
+    <Compile Include="Safty\SaftyList.cs" />
+    <Compile Include="Single\AGV.cs" />
+    <Compile Include="Single\ForbiddenLine.cs" />
+    <Compile Include="Single\Goal.cs" />
+    <Compile Include="Single\ForbiddenArea.cs" />
+    <Compile Include="Single\NarrowLine.cs" />
+    <Compile Include="Single\Parking.cs" />
+    <Compile Include="Single\Power.cs" />
+    <Compile Include="Single\Single.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AGV.Map.Common\AGV.Map.Common.csproj">
+      <Project>{d5b19a54-59db-42b0-b7f4-a3af97a1d274}</Project>
+      <Name>AGV.Map.Common</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Drag\Drag.cd" />
+    <None Include="Factory.cd" />
+    <None Include="Geometry\Geometry.cd" />
+    <None Include="Safty\Safty.cd" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Bmp\AGV.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Bmp\Power.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Bmp\Goal.bmp" />
+    <Content Include="Bmp\Parking.bmp" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

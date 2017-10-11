@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="AGV.Map.Core.DragManager">
+    <Position X="1.75" Y="2" Width="1.75" />
+    <Members>
+      <Field Name="mDragBound" Hidden="true" />
+      <Field Name="mDragPointBound" Hidden="true" />
+      <Field Name="mDragPoints" Hidden="true" />
+      <Field Name="mDragPointsIndex" Hidden="true" />
+      <Field Name="mDragPosition" Hidden="true" />
+      <Field Name="mDragTarget" Hidden="true" />
+      <Field Name="mKey" Hidden="true" />
+      <Field Name="mStatus" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAgAAAAkQIIQAAAAAAAAAAAAgQFUIAAAAAEAAAAgAgA=</HashCode>
+      <FileName>Drag\DragManager.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="AGV.Map.Core.DragPoint">
+    <Position X="4" Y="2" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAACAAAABAAAAA=</HashCode>
+      <FileName>Drag\DragPoint.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Font Name="Microsoft JhengHei UI" Size="9" />
+</ClassDiagram>

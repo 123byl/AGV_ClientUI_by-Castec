@@ -21,12 +21,14 @@ using ServerOperation;
 using System.Net;
 using System.Net.Sockets;
 using ClientUI.Development;
-using AGVMap;
 using System.IO;
 using AGVMathOperation;
 using System.Diagnostics;
 using CtLib.Module.Ultity;
 using System.Text.RegularExpressions;
+using AGV.Map.Common.UI;
+using AGV.Map.Core;
+using AGV.Map.Common;
 
 namespace ClientUI
 {
@@ -171,17 +173,27 @@ namespace ClientUI
         /// <summary>
         /// Laser ID
         /// </summary>
-        private IDCreater LaserID { get; } = new IDCreater();
+        private uint mLaserID = 1;
 
         /// <summary>
         /// AGV ID
         /// </summary>
-        private IDCreater AGVID { get; } = new IDCreater();
+        private uint mAGVID = 1;
+
+        /// <summary>
+        /// 障礙線 ID
+        /// </summary>
+        private uint mObstacleLinesID = 1;
+
+        /// <summary>
+        /// 障礙點 ID
+        /// </summary>
+        private uint mObstaclePointsID = 1;
 
         /// <summary>
         /// 車子資訊
         /// </summary>
-        private CarInfo mCarInfo = new CarInfo();
+        private CarInfo mCarInfo = new CarInfo(0, 0, 0, "AGV", 1);
 
         /// <summary>
         /// 車子模式
@@ -219,7 +231,7 @@ namespace ClientUI
         /// 系統列圖示標題
         /// </summary>
         protected string mNotifyCaption = "AGV Client";
-        private List<Info> Goals;
+        private List<CartesianPosInfo> Goals;
 
         #endregion Declaration - Fields
 
@@ -384,7 +396,7 @@ namespace ClientUI
         /// </summary>
         private IIConsole IConsole { get { return Console; } }
         private IIGoalSetting IGoalSetting { get { return GoalSetting; } }
-        private IMapCtrl IMapCtrl { get { return MapGL != null ? MapGL.Ctrl : null; } }
+        private IUIBaseCtrl IMapCtrl { get { return MapGL != null ? MapGL.Ctrl : null; } }
         private IITesting ITest { get { return Testing; } }
 
 
@@ -655,7 +667,8 @@ namespace ClientUI
         ///<summary>IP驗證</summary>
         ///<param name="ip">要驗證的字串</param>
         ///<returns>True:合法IP/False:非法IP</returns>
-        private bool VerifyIP(string ip) {
+        private bool VerifyIP(string ip)
+        {
             return Regex.IsMatch(ip, @"^((2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(2[0-4]\d|25[0-5]|[01]?\d\d?)$");
         }
 
@@ -664,14 +677,19 @@ namespace ClientUI
         /// </summary>
         /// <returns>Goal List:"{goal1},{goal2},{goal3}..."</returns>
         /// <remarks>用來模擬iS向AGV要求所有Goal點名稱</remarks> 
-        private string GetGoalNames() {
+        private string GetGoalNames()
+        {
             string goalList = "Empty";
-            if (mBypassSocket) {
+            if (mBypassSocket)
+            {
                 /*-- 模擬用資料 --*/
                 goalList = "GoalA,GoalB,GoalC";
-            } else {
+            }
+            else
+            {
                 string[] rtnMsg = SendMsg($"Get:GoalList");
-                if (rtnMsg.Count() > 3) {
+                if (rtnMsg.Count() > 3)
+                {
                     goalList = rtnMsg[3];
                 }
             }
@@ -682,7 +700,8 @@ namespace ClientUI
         /// 連接至Server端(AGV)
         /// </summary>
         /// <returns><see cref="Socket"/>連線狀態 True:已連線/False:已斷開</returns>
-        private bool ConnectServer() {
+        private bool ConnectServer()
+        {
             return serverComm.ConnectServer(ref mSoxCmd, mHostIP, mRecvCmdPort);
         }
 
@@ -690,7 +709,8 @@ namespace ClientUI
         /// 與Server端(AGV)斷開連線
         /// </summary>
         /// <returns><see cref="Socket"/>連線狀態 True:已連線/False:已斷開</returns>
-        public bool DisConnectServer() {
+        public bool DisConnectServer()
+        {
             return serverComm.DisconnectServer(mSoxCmd);
         }
 
@@ -858,18 +878,18 @@ namespace ClientUI
         private void DrawLaser(CarInfo info)
         {
             double angle = 0D, Laserangle = 0D;
-            List<AGVMap.Pair> ObstaclePoint = new List<AGVMap.Pair>();
+            ILaserPoints points = Factory.FMuti.LaserPoints();
             int idx = 0;
             foreach (int dist in info.LaserData)
             {
                 if (dist >= 30 && dist < 15000)
                 {
-                    int[] pos = Transformation.LaserPoleToCartesian(dist, -135, 0.25, idx++, 43, 416.75, 43, info.X, info.Y, info.Toward, out angle, out Laserangle);//, out dataAngle, out laserAngle);
-                    ObstaclePoint.Add(new AGVMap.Pair(pos[0], pos[1]));
+                    int[] pos = Transformation.LaserPoleToCartesian(dist, -135, 0.25, idx++, 43, 416.75, 43, info.x, info.y, info.theta, out angle, out Laserangle);//, out dataAngle, out laserAngle);
+                    points.DataList.Add(Factory.FGeometry.Pair(pos[0], pos[1]));
                     pos = null;
                 }
             }
-            IMapCtrl.AddPointsSet(Factory.CreatSet.LaserPoints(LaserID, ObstaclePoint));
+            Database.LaserPointsGM.Add(mLaserID, points);
         }
 
 
@@ -1104,15 +1124,45 @@ namespace ClientUI
 
         }
 
+        private IObstacleLines ConvertToObstacleLines(List<MapLine> lines)
+        {
+            IObstacleLines obstacleLines = Factory.FMuti.ObstacleLines();
+            foreach (var item in lines)
+            {
+                obstacleLines.DataList.Add(Factory.FGeometry.Line(item.start.x, item.start.y, item.end.x, item.end.y));
+            }
+            return obstacleLines;
+        }
+
+        private IObstaclePoints ConvertToObstaclePoints(List<CartesianPos> points)
+        {
+            IObstaclePoints obstaclePoints = Factory.FMuti.ObstaclePoints();
+            foreach (var item in points)
+            {
+                obstaclePoints.DataList.Add(Factory.FGeometry.Pair(item.x, item.y));
+            }
+            return obstaclePoints;
+        }
+
+        private ILaserPoints ConvertToLaserPoints(List<CartesianPos> points)
+        {
+            ILaserPoints laserPoints = Factory.FMuti.LaserPoints();
+            foreach (var item in points)
+            {
+                laserPoints.DataList.Add(Factory.FGeometry.Pair(item.x, item.y));
+            }
+            return laserPoints;
+        }
+
         /// <summary>
         /// 載入地圖
         /// </summary>
         /// <param name="mapPath">Map檔路徑</param>
         private void LoadMap(string mapPath)
         {
-            List<Info> goalList = new List<Info>();
-            List<Pair> obstaclePoints = new List<Pair>();
-            List<Line> obstacleLine = new List<Line>();
+            List<CartesianPosInfo> goalList = null;
+            List<CartesianPos> obstaclePoints = null;
+            List<MapLine> obstacleLine = null;
             mCurMapPath = mapPath;
             string mPath = CtFile.GetFileName(mapPath);
             SendMsg($"Set:MapName:{mPath}");
@@ -1131,9 +1181,9 @@ namespace ClientUI
                 using (MapReading read = new MapReading(mCurMapPath))
                 {
                     read.OpenFile();
-                    read.ReadMapGoalList(ref goalList);
-                    read.ReadMapObstacleLines(ref obstacleLine);
-                    read.ReadMapObstaclePoints(ref obstaclePoints);
+                    read.ReadMapGoalList(out goalList);
+                    read.ReadMapObstacleLines(out obstacleLine);
+                    read.ReadMapObstaclePoints(out obstaclePoints);
                 }
                 int total = obstacleLine.Count + 2;
 
@@ -1164,13 +1214,15 @@ namespace ClientUI
                 #endregion
             }
 
-            IMapCtrl.NewMap(obstaclePoints, obstacleLine);
+            IMapCtrl.NewMap();
+            Database.ObstacleLinesGM.Add(mObstacleLinesID, ConvertToObstacleLines(obstacleLine));
+            Database.ObstaclePointsGM.Add(mObstaclePointsID, ConvertToObstaclePoints(obstaclePoints));
             System.Console.WriteLine($"Draw:{sw.ElapsedMilliseconds}ms");
             sw.Restart();
 
-            foreach (var goal in goalList)
+            for (int i = 0; i < goalList.Count; i++)
             {
-                IMapCtrl.AddCtrlMark(Factory.CreatMark.Goal(goal.ID, goal.Name, (int)goal.X, (int)goal.Y, goal.Toward));
+                Database.GoalGM.Add(goalList[i].id, Factory.FSingle.FTowardPair.Goal((int)goalList[i].x, (int)goalList[i].y, goalList[i].theta, goalList[i].name));
             }
             prog.UpdateStep(nowProg++);
 
@@ -1194,12 +1246,13 @@ namespace ClientUI
         {
             CurOriPath = oriPath;
             IMapCtrl.NewMap();
+            Database.ObstaclePointsGM.Add(mObstaclePointsID, Factory.FMuti.ObstaclePoints());
             MapReading MapReading = null;
             if (!mBypassLoadFile)
             {//無BypassLoadFile
                 MapReading = new MapReading(CurOriPath);
-                TowardPos carPos = new TowardPos();
-                List<Pair> laserData = new List<Pair>();
+                CartesianPos carPos = null;
+                List<CartesianPos> laserData = null;
                 //List<Point> listMap = new List<Point>();
                 int dataLength = MapReading.OpenFile();
                 if (dataLength != 0)
@@ -1207,13 +1260,15 @@ namespace ClientUI
                     CtProgress prog = new CtProgress(ProgBarStyle.Percent, $"Load Ori", $"Loading {oriPath}...", dataLength - 1);
                     try
                     {
-                        IMapCtrl.Zoom = 1000;
+                        IMapCtrl.Zoom.Value = IMapCtrl.Zoom.Max;
                         for (int n = 0; n < dataLength; n++)
                         {
-                            MapReading.ReadScanningInfo(n, ref carPos, ref laserData);
-                            IMapCtrl.AddAGV(Factory.CreatAGV.AGV(AGVID, "AGV", carPos.X, carPos.Y, carPos.Toward));
-                            IMapCtrl.AddPointsSet(Factory.CreatSet.LaserPoints(LaserID, laserData));
-                            IMapCtrl.Focus(carPos);
+                            MapReading.ReadScanningInfo(n, out carPos, out laserData);
+                            Database.AGVGM.Add(mAGVID, Factory.FSingle.FTowardPair.AGV((int)carPos.x, (int)carPos.y, carPos.theta, "AGV"));
+                            ILaserPoints points = ConvertToLaserPoints(laserData);
+                            Database.LaserPointsGM.Add(mLaserID, points);
+                            Database.ObstaclePointsGM.SaftyEdit(mObstaclePointsID, (item) => item.DataList.AddRange(points.DataList.AsReadOnly()));
+                            IMapCtrl.Focus((int)carPos.x, (int)carPos.y);
                             Thread.Sleep(10);
                             System.Console.WriteLine(n);
                             prog.UpdateStep(n);
@@ -1297,7 +1352,6 @@ namespace ClientUI
                 { miTesting,new CtTesting(DockState.DockLeft)},
                 { miMapGL,new AGVMapUI( DockState.Document)}
             };
-            IMapCtrl.MouseType = EMouseType.EditMode;
             SetEvents();
 
             /*-- 計算每個固定停靠區域所需的顯示大小 --*/
@@ -1570,9 +1624,7 @@ namespace ClientUI
             #endregion
 
             #region IMapGL 事件連結
-            IMapCtrl.MouseDownEvent += IMapCtrl_MouseDownEvent;
-            IMapCtrl.MarkDragedEvent += IMapCtrl_MarkDragedEvent;
-            IMapCtrl.MarkSelectedEvent += IMapCtrl_MarkSelectedEvent;
+            IMapCtrl.DragEvent += IMapCtrl_DragEvent;
             #endregion
 
             #region ITesting 事件連結
@@ -1597,7 +1649,8 @@ namespace ClientUI
         /// <summary>
         /// 取得所有Goal點名稱
         /// </summary>
-        private void IGoalSetting_GetGoalNames() {
+        private void IGoalSetting_GetGoalNames()
+        {
             string goalNames = GetGoalNames();
             IConsole.AddMsg($"Goal Names:{goalNames}");
         }
@@ -1610,13 +1663,13 @@ namespace ClientUI
                 SpinWait.SpinUntil(() => false, 1000);
                 return;
             }
-
+            IMapCtrl.NewMap();
             string[] tmpPath = CurOriPath.Split('.');
             CurMapPath = tmpPath[0] + ".map";
             MapSimplication mapSimp = new MapSimplication(CurMapPath);
             mapSimp.Reset();
-            List<Line> obstacleLines = new List<Line>();
-            List<AGVMap.Pair> obstaclePoints = new List<AGVMap.Pair>();
+            IObstacleLines obstacleLines = Factory.FMuti.ObstacleLines();
+            IObstaclePoints obstaclePoints = Factory.FMuti.ObstaclePoints();
             List<CartesianPos> resultPoints;
             List<MapSimplication.Line> resultlines;
             mapSimp.ReadMapAllTransferToLine(mMapMatch.parseMap, mMapMatch.minimumPos, mMapMatch.maximumPos
@@ -1625,17 +1678,18 @@ namespace ClientUI
             {
                 for (int i = 0; i < resultlines.Count; i++)
                 {
-                    obstacleLines.Add(
-                        new Line(resultlines[i].startX, resultlines[i].startY,
+                    obstacleLines.DataList.Add(
+                        Factory.FGeometry.Line(resultlines[i].startX, resultlines[i].startY,
                         resultlines[i].endX, resultlines[i].endY)
                     );
                 }
                 for (int i = 0; i < resultPoints.Count; i++)
                 {
-                    obstaclePoints.Add(new AGVMap.Pair((int)resultPoints[i].x, (int)resultPoints[i].y));
+                    obstaclePoints.DataList.Add(Factory.FGeometry.Pair((int)resultPoints[i].x, (int)resultPoints[i].y));
                 }
 
-                IMapCtrl.NewMap(obstaclePoints, obstacleLines);
+                Database.ObstaclePointsGM.Add(mObstaclePointsID, obstaclePoints);
+                Database.ObstacleLinesGM.Add(mObstacleLinesID, obstacleLines);
             }
             catch (Exception ex)
             {
@@ -1807,7 +1861,7 @@ namespace ClientUI
             //}
         }
 
-        private async void ITest_CheckIsServerAlive(bool cnn,string hostIP = "")
+        private async void ITest_CheckIsServerAlive(bool cnn, string hostIP = "")
         {
             if (cnn != IsConnected)
             {
@@ -1816,7 +1870,8 @@ namespace ClientUI
                 {
                     if (cnn)
                     {
-                        if (mHostIP != hostIP && VerifyIP(hostIP)) {
+                        if (mHostIP != hostIP && VerifyIP(hostIP))
+                        {
                             mHostIP = hostIP;
                             IsConnected = await Task<bool>.Run(() => CheckIsServerAlive());
                         }
@@ -1852,7 +1907,8 @@ namespace ClientUI
                 bool isAlive = false;
                 try
                 {
-                    if (isAlive = ConnectServer()) {
+                    if (isAlive = ConnectServer())
+                    {
                         string[] rtnMsg = SendMsg("Get:Hello", false);
                         isAlive = rtnMsg.Count() > 2 && rtnMsg[2] == "True";
                     }
@@ -1990,28 +2046,14 @@ namespace ClientUI
 
         #region IMapGL事件連結
 
-        private void IMapCtrl_MouseDownEvent(IPair realPos)
-        {
-            IGoalSetting.SetCurrentRealPos(realPos);
-        }
 
-        private void IMapCtrl_MarkSelectedEvent(EMarkType type, string name, int id, IPair center, Angle toward)
+        private void IMapCtrl_DragEvent(ISingle<ITowardPair> single,uint id)
         {
-            if (type == EMarkType.Goal)
+            if (single.GLSetting.Type == EType.Goal)
             {
-                IGoalSetting.SetSelectItem(id);
+                GoalSetting.AddGoal(new CartesianPosInfo(single.Data.Position.X, single.Data.Position.Y, single.Data.Toward.Theta,single.Name,id));
             }
         }
-
-        private void IMapCtrl_MarkDragedEvent(EMarkType type,string name, int id, IPair center, Angle toward)
-        {
-            if (type == EMarkType.Goal)
-            {
-                Info goal = new Info(id, name, center.X, center.Y, toward);
-                IGoalSetting.AddGoal(goal);
-            }
-        }
-
 
         #endregion IMapGL 事件連結
 
@@ -2026,12 +2068,12 @@ namespace ClientUI
         {
             IConsole.AddMsg("[Save {0} Goals]", IGoalSetting.GoalCount);
             List<CartesianPos> goals = IGoalSetting.GetGoals().ConvertAll(v =>
-                new CartesianPos(v.X, v.Y, v.Toward)
+                new CartesianPos(v.x, v.y, v.theta)
                 );
             MapRecording.OverWriteGoal(goals, CurMapPath);
         }
 
-        private void IGoalSetting_RunLoopEvent(IEnumerable<Info> goal)
+        private void IGoalSetting_RunLoopEvent(IEnumerable<CartesianPosInfo> goal)
         {
             IConsole.AddMsg("[AGV Start Moving...]");
             foreach (var item in goal)
@@ -2042,7 +2084,7 @@ namespace ClientUI
             IConsole.AddMsg("[AGV Move Finished]");
         }
 
-        private void IGoalSetting_RunGoalEvent(Info goal, int idxGoal)
+        private void IGoalSetting_RunGoalEvent(CartesianPosInfo goal, int idxGoal)
         {
             Run(idxGoal);
             IConsole.AddMsg("[AGV Start Moving...]");
@@ -2062,21 +2104,21 @@ namespace ClientUI
             LoadFile(FileType.Map);
         }
 
-        private void IGoalSetting_FindPathEvent(Info goal, int idxGoal)
+        private void IGoalSetting_FindPathEvent(CartesianPosInfo goal, int idxGoal)
         {
             IConsole.AddMsg("[Find Path] - ", goal.ToString());
             IConsole.AddMsg("[AGV Find A Path]");
             PathPlan(idxGoal);
         }
 
-        private void IGoalSetting_DeleteGoalsEvent(IEnumerable<Info> goal)
+        private void IGoalSetting_DeleteGoalsEvent(IEnumerable<CartesianPosInfo> goal)
         {
             IConsole.AddMsg("[Delete {0} Goals]", goal.Count());
-            List<int> ID = new List<int>();
+            List<uint> ID = new List<uint>();
             foreach (var item in goal)
             {
-                ID.Add(item.ID);
-                IMapCtrl.HideCtrlMark(item.ID);
+                Database.GoalGM.Remove(item.id);
+                ID.Add(item.id);
                 IConsole.AddMsg("[Delete Goal] - {0}", item.ToString());
             }
             IGoalSetting.DeleteGoals(ID);
@@ -2085,15 +2127,15 @@ namespace ClientUI
         private void IGoalSetting_ClearGoalsEvent()
         {
             IConsole.AddMsg("[Clear Goal]");
-            IMapCtrl.HideAllGoals();
+            Database.GoalGM.Clear();
             IGoalSetting.ClearGoal();
         }
 
-        private void IGoalSetting_AddNewGoalEvent(Info goal)
+        private void IGoalSetting_AddNewGoalEvent(CartesianPosInfo goal)
         {
             IConsole.AddMsg("[Add Goal] - {0}", goal.ToString());
             IGoalSetting.AddGoal(goal);
-            IMapCtrl.AddCtrlMark(Factory.CreatMark.Goal(goal.ID, goal.Name, goal.X, goal.Y));
+            Database.GoalGM.Add(goal.id, Factory.FSingle.FTowardPair.Goal((int)goal.x, (int)goal.y, goal.theta, goal.name));
         }
         #endregion
 
