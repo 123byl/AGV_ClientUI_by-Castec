@@ -75,7 +75,7 @@ namespace AGV.Map.UI
             Database.ForbiddenLineGM.Clear();
             Database.GoalGM.Clear();
             Database.LaserPointsGM.Clear();
-            Database.NarrowLinGM.Clear();
+            Database.NarrowLineGM.Clear();
             Database.ObstacleLinesGM.Clear();
             Database.ObstaclePointsGM.Clear();
             Database.ParkingGM.Clear();

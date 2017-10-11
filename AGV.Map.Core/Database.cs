@@ -17,7 +17,7 @@ namespace AGV.Map.Core
         public static ISaftyDictionary<IForbiddenLine> ForbiddenLineGM { get; } = new SaftyDictionary<IForbiddenLine>();
         public static ISaftyDictionary<IGoal> GoalGM { get; } = new SaftyDictionary<IGoal>();
         public static ISaftyDictionary<ILaserPoints> LaserPointsGM { get; } = new SaftyDictionary<ILaserPoints>();
-        public static ISaftyDictionary<INarrowLine> NarrowLinGM { get; } = new SaftyDictionary<INarrowLine>();
+        public static ISaftyDictionary<INarrowLine> NarrowLineGM { get; } = new SaftyDictionary<INarrowLine>();
         public static ISaftyDictionary<IObstacleLines> ObstacleLinesGM { get; } = new SaftyDictionary<IObstacleLines>();
         public static ISaftyDictionary<IObstaclePoints> ObstaclePointsGM { get; } = new SaftyDictionary<IObstaclePoints>();
         public static ISaftyDictionary<IParking> ParkingGM { get; } = new SaftyDictionary<IParking>();

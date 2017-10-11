@@ -1266,7 +1266,7 @@ namespace ClientUI
                             MapReading.ReadScanningInfo(n, out carPos, out laserData);
                             Database.AGVGM.Add(mAGVID, Factory.FSingle.FTowardPair.AGV((int)carPos.x, (int)carPos.y, carPos.theta, "AGV"));
                             ILaserPoints points = ConvertToLaserPoints(laserData);
-                            //Database.LaserPointsGM.Add(mLaserID, points);
+                            Database.LaserPointsGM.Add(mLaserID, points);
                             Database.ObstaclePointsGM.SaftyEdit(mObstaclePointsID, (item) => item.DataList.AddRange(points.DataList.AsReadOnly()));
                             IMapCtrl.Focus((int)carPos.x, (int)carPos.y);
                             Thread.Sleep(10);
