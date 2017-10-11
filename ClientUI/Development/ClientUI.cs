@@ -61,6 +61,7 @@ namespace ClientUI
         ///     0.0.2   Jay [2017/10/11]
         ///         \ 地圖修正功能修正
         ///         \ 與AGV連線方式調整
+        ///         \ Ori繪製後補上雷射圖層清除
         /// </remarks>
         public CtVersion Version { get { return new CtVersion(0, 0, 2, "2017/10/11", "Jay Chang"); } }
 
@@ -1314,6 +1315,7 @@ namespace ClientUI
                     {
                         case FileType.Ori:
                             await Task.Run(() => LoadOri(openMap.FileName));
+                            Database.LaserPointsGM.Remove(mLaserID);
                             ITest.UnLockOriOperator(true);
                             //RaiseTestingEvent(TestingEventType.CurOriPath);
                             break;
@@ -1725,6 +1727,7 @@ namespace ClientUI
             IMapCtrl.NewMap();
             Database.ObstaclePointsGM.Add(mObstaclePointsID, Factory.FMuti.ObstaclePoints());
             tsk_FixOriginScanningFile();
+            Database.LaserPointsGM.Remove(mLaserID);
         }
 
         /// <summary>
