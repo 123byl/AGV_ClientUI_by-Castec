@@ -2,6 +2,7 @@
 using AGV.Map.Core;
 using AGV.Map.Core.GLExtension;
 using SharpGL;
+using System;
 using System.Windows.Forms;
 
 namespace AGV.Map.UI
@@ -25,6 +26,12 @@ namespace AGV.Map.UI
         public UIControl()
         {
             InitializeComponent();
+            MouseWheel += UIControl_MouseWheel;
+            MouseDown += UIControl_MouseDown;
+            MouseMove += UIControl_MouseMove;
+            MouseUp += UIControl_MouseUp;
+            MouseDoubleClick += UIControl_MouseDoubleClick;
+            GDIDraw += UIControl_GDIDraw;
         }
 
         /// <summary>
@@ -69,7 +76,7 @@ namespace AGV.Map.UI
             Database.AGVGM.Draw(gl);
             Database.GoalGM.Draw(gl);
             Database.LaserPointsGM.Draw(gl);
-            Database.NarrowLinGM.Draw(gl);
+            Database.NarrowLineGM.Draw(gl);
             Database.ObstacleLinesGM.Draw(gl);
             Database.ObstaclePointsGM.Draw(gl);
             Database.ParkingGM.Draw(gl);
@@ -170,6 +177,8 @@ namespace AGV.Map.UI
             if (res != null) return res;
             res = FindLineDragTarget(Database.ForbiddenLineGM, pos, ref mDragTargetID);
             if (res != null) return res;
+            res = FindLineDragTarget(Database.NarrowLineGM, pos, ref mDragTargetID);
+            if (res != null) return res;
             res = FindAreaDragTarget(Database.ForbiddenAreaGM, pos, ref mDragTargetID);
             return res;
         }
@@ -233,16 +242,16 @@ namespace AGV.Map.UI
             // MatrixMode 後要執行 LoadIdentity
             gl.LoadIdentity();
             //線條去鋸齒
-            gl.Enable(OpenGL.GL_LINE_SMOOTH);
+            // gl.Enable(OpenGL.GL_LINE_SMOOTH);
 
             // 點去鋸齒
-            gl.Enable(OpenGL.GL_POINT_SMOOTH);
+            // gl.Enable(OpenGL.GL_POINT_SMOOTH);
 
             // 多邊形去鋸齒
-            gl.Enable(OpenGL.GL_POLYGON_SMOOTH);
+            // gl.Enable(OpenGL.GL_POLYGON_SMOOTH);
 
             //// 多邊形去鋸齒
-            gl.Enable(OpenGL.GL_SMOOTH);
+            // gl.Enable(OpenGL.GL_SMOOTH);
 
             //深度測試
             gl.Enable(OpenGL.GL_DEPTH_TEST);
@@ -292,16 +301,6 @@ namespace AGV.Map.UI
             DrawDataBase();
             DrawDragManager();
             if (ShowNames) DrawNames();
-        }
-
-        private void UIControl_Load(object sender, System.EventArgs e)
-        {
-            MouseWheel += UIControl_MouseWheel;
-            GDIDraw += UIControl_GDIDraw;
-            MouseDown += UIControl_MouseDown;
-            MouseMove += UIControl_MouseMove;
-            MouseUp += UIControl_MouseUp;
-            MouseDoubleClick += UIControl_MouseDoubleClick;
         }
 
         private void UIControl_MouseDoubleClick(object sender, MouseEventArgs e)

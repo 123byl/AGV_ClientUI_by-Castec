@@ -6,6 +6,14 @@ namespace AGV.Map.Core
     public static class Operator
     {
         /// <summary>
+        /// 與 X 軸夾角
+        /// </summary>
+        public static IAngle Angle(this IPair pos)
+        {
+            return new Angle(Math.Atan2(pos.Y, pos.X) * 180 / Math.PI);
+        }
+
+        /// <summary>
         /// 座標取絕對值
         /// </summary>
         public static IPair Abs(this IPair value)
@@ -66,7 +74,6 @@ namespace AGV.Map.Core
             return distance.X <= single.GLSetting.Size.X / 2 && distance.Y <= single.GLSetting.Size.Y / 2;
         }
 
-
         /// <summary>
         /// 是否相交
         /// </summary>
@@ -80,14 +87,6 @@ namespace AGV.Map.Core
         }
 
         /// <summary>
-        /// 兩點間距離
-        /// </summary>
-        public static double LengthTo(this IPair beg, IPair end)
-        {
-            return Math.Sqrt((beg.X - end.X) * (beg.X - end.X) + (beg.Y - end.Y) * (beg.Y - end.Y));
-        }
-
-        /// <summary>
         /// 是否相交
         /// </summary>
         public static bool Interference(this ISingle<ILine> single, IPair pos)
@@ -97,6 +96,24 @@ namespace AGV.Map.Core
             double length1 = pos.LengthTo(single.Data.End);
             if (length0 <= 100 || length1 <= 100 || length0 + length1 < 1.01 * length) return true;
             return false;
+        }
+
+        /// <summary>
+        /// 求線段長度
+        /// </summary>
+        public static double Length(this ILine line)
+        {
+            int x = line.End.X - line.Begin.X;
+            int y = line.End.Y - line.Begin.Y;
+            return Math.Sqrt(x * x + y * y);
+        }
+
+        /// <summary>
+        /// 兩點間距離
+        /// </summary>
+        public static double LengthTo(this IPair beg, IPair end)
+        {
+            return Math.Sqrt((beg.X - end.X) * (beg.X - end.X) + (beg.Y - end.Y) * (beg.Y - end.Y));
         }
 
         /// <summary>

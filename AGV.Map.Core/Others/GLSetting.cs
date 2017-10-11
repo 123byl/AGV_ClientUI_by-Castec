@@ -55,7 +55,7 @@ namespace AGV.Map.Core
                     return;
 
                 case EType.LaserPoints:
-                    MainColor = new Color(System.Drawing.Color.Orange);
+                    MainColor = new Color(System.Drawing.Color.Red);
                     PointSize = 3;
                     return;
 
@@ -66,6 +66,7 @@ namespace AGV.Map.Core
                     return;
 
                 case EType.NarrowLine:
+                    BmpName = "NarrowLine";
                     MainColor = new Color(System.Drawing.Color.Red, 150);
                     LineStyle = ELineStyle._1111111011111110;
                     return;
