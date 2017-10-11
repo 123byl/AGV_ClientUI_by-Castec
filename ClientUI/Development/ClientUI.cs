@@ -1266,7 +1266,7 @@ namespace ClientUI
                             MapReading.ReadScanningInfo(n, out carPos, out laserData);
                             Database.AGVGM.Add(mAGVID, Factory.FSingle.FTowardPair.AGV((int)carPos.x, (int)carPos.y, carPos.theta, "AGV"));
                             ILaserPoints points = ConvertToLaserPoints(laserData);
-                            Database.LaserPointsGM.Add(mLaserID, points);
+                            //Database.LaserPointsGM.Add(mLaserID, points);
                             Database.ObstaclePointsGM.SaftyEdit(mObstaclePointsID, (item) => item.DataList.AddRange(points.DataList.AsReadOnly()));
                             IMapCtrl.Focus((int)carPos.x, (int)carPos.y);
                             Thread.Sleep(10);
@@ -1720,6 +1720,7 @@ namespace ClientUI
         private void CorrectOri()
         {
             IMapCtrl.NewMap();
+            Database.ObstaclePointsGM.Add(mObstaclePointsID, Factory.FMuti.ObstaclePoints());
             tsk_FixOriginScanningFile();
         }
 
@@ -1731,135 +1732,143 @@ namespace ClientUI
         /// </remarks>
         private void tsk_FixOriginScanningFile()
         {
-            //try {
-            //    if (mBypassLoadFile) {
-            //        SpinWait.SpinUntil(() => false, 1000);
-            //        return;
-            //    }
-            //    MapReading MapReading = new MapReading(CurOriPath);
-            //    CartesianPos carPos = new CartesianPos();
-            //    List<Pair> laserData = new List<Pair>();
-            //    List<CartesianPos> filterData = new List<CartesianPos>();
-            //    int dataLength = MapReading.OpenFile();
-            //    if (dataLength == 0) return;
+            try {
+                if (mBypassLoadFile) {
+                    SpinWait.SpinUntil(() => false, 1000);
+                    return;
+                }
+                MapReading MapReading = new MapReading(CurOriPath);
+                CartesianPos carPos;
+                List<CartesianPos> laserData;
+                List<CartesianPos> filterData = new List<CartesianPos>();
+                int dataLength = MapReading.OpenFile();
+                if (dataLength == 0) return;
 
-            //    List<Pair> dataSet = new List<Pair>();
-            //    List<CartesianPos> predataSet = new List<CartesianPos>();
-            //    List<CartesianPos> matchSet = new List<CartesianPos>();
-            //    CartesianPos transResult = new CartesianPos();
-            //    CartesianPos nowOdometry = new CartesianPos();
-            //    TowardPos preOdometry = new TowardPos();
-            //    TowardPos accumError = new TowardPos();
-            //    TowardPos diffOdometry = new TowardPos();
-            //    TowardPos diffLaser = new TowardPos();
-            //    Stopwatch sw = new Stopwatch();
-            //    double gValue = 0;
-            //    int mode = 0;
-            //    int corrNum = 0;
+                List<CartesianPos> dataSet = new List<CartesianPos>();
+                List<CartesianPos> predataSet = new List<CartesianPos>();
+                List<CartesianPos> matchSet = new List<CartesianPos>();
+                CartesianPos transResult = new CartesianPos();
+                CartesianPos nowOdometry = new CartesianPos();
+                CartesianPos preOdometry = new CartesianPos();
+                CartesianPos accumError = new CartesianPos();
+                CartesianPos diffOdometry = new CartesianPos();
+                CartesianPos diffLaser = new CartesianPos();
+                Stopwatch sw = new Stopwatch();
+                double gValue = 0;
+                int mode = 0;
+                int corrNum = 0;
 
-            //    mMapMatch.Reset();
-            //    #region  1.Read car position and first laser scanning
+                mMapMatch.Reset();
+                #region  1.Read car position and first laser scanning
 
-            //    MapReading.ReadScanningInfo(0, ref carPos, ref laserData);
-            //    mCarInfo.SetPosAndToward(carPos);
-            //    IMapCtrl.AddAGV(Factory.CreatAGV.AGV(AGVID, "AGV", carPos.X, carPos.Y, carPos.Toward));
-            //    matchSet.AddRange(laserData);
-            //    predataSet.AddRange(laserData);
-            //    mMapMatch.GlobalMapUpdate(matchSet.ToCartesianPos());                            //Initial environment model
-            //    preOdometry = new CartesianPos(carPos);
+                MapReading.ReadScanningInfo(0, out carPos, out laserData);
+                Database.AGVGM.Add(mAGVID, Factory.FSingle.FTowardPair.AGV((int)carPos.x, (int)carPos.y, carPos.theta, "AGV"));
+                //mCarInfo.SetPos(carPos);
+                //RaiseMapEventSync(MapEventType.RefreshPosCar, carPos.ToPos());
+                matchSet.AddRange(laserData);
+                predataSet.AddRange(laserData);
+                mMapMatch.GlobalMapUpdate(matchSet);                            //Initial environment model
+                preOdometry.SetPosition(carPos.x, carPos.y, carPos.theta);
 
-            //    #endregion
+                #endregion
 
-            //    for (int n = 1; n < dataLength; n++) {
-            //        #region 2.Read car position and laser scanning 
+                for (int n = 1; n < dataLength; n++) {
+                    #region 2.Read car position and laser scanning 
 
-            //        List<CartesianPos> addedSet = new List<CartesianPos>();
-            //        transResult.SetPosition(0, 0, 0);
-            //        carPos = null;
-            //        laserData = null;
-            //        MapReading.ReadScanningInfo(n, ref carPos, ref laserData);
-            //        nowOdometry = new TowardPos(carPos);
+                    List<CartesianPos> addedSet = new List<CartesianPos>();
+                    transResult.SetPosition(0, 0, 0);
+                    carPos = null;
+                    laserData = null;
+                    MapReading.ReadScanningInfo(n, out carPos, out laserData);
+                    nowOdometry.SetPosition(carPos.x, carPos.y, carPos.theta);
 
-            //        #endregion
+                    #endregion
 
-            //        #region 3.Correct accumulate error of odometry so far
+                    #region 3.Correct accumulate error of odometry so far
 
-            //        mMapMatch.NewPosTransformation(nowOdometry.ToCartesianPos(), accumError.X, accumError.Y, accumError.Toward);
-            //        mMapMatch.NewPosTransformation(laserData.ToCartesianPos(), accumError.Y, accumError.Y, accumError.Toward);
-            //        matchSet.Clear();
-            //        matchSet.AddRange(laserData);
+                    mMapMatch.NewPosTransformation(nowOdometry, accumError.x, accumError.y, accumError.theta);
+                    mMapMatch.NewPosTransformation(laserData, accumError.x, accumError.y, accumError.theta);
+                    matchSet.Clear();
+                    matchSet.AddRange(laserData);
 
-            //        #endregion
+                    #endregion
 
-            //        #region 4.Compute movement from last time to current time;
+                    #region 4.Compute movement from last time to current time;
 
-            //        if (nowOdometry.theta - preOdometry.Toward < -200)
-            //            diffOdometry.SetPosition(nowOdometry.X - preOdometry.X, nowOdometry.Y - preOdometry.Y, nowOdometry.theta + 360 - preOdometry.Toward);
-            //        else if (nowOdometry.theta - preOdometry.Toward > 200)
-            //            diffOdometry.SetPosition(nowOdometry.X - preOdometry.X, nowOdometry.Y - preOdometry.Y, -(preOdometry.Toward + 360 - nowOdometry.theta));
-            //        else
-            //            diffOdometry.SetPosition(nowOdometry.X - preOdometry.X, nowOdometry.Y - preOdometry.Y, nowOdometry.theta - preOdometry.Toward);
-            //        //Console.WriteLine("Odometry varition:{0:F3} {1:F3} {2:F3}", diffOdometry.x, diffOdometry.y, diffOdometry.theta);
+                    if (nowOdometry.theta - preOdometry.theta < -200)
+                        diffOdometry.SetPosition(nowOdometry.x - preOdometry.x, nowOdometry.y - preOdometry.y, nowOdometry.theta + 360 - preOdometry.theta);
+                    else if (nowOdometry.theta - preOdometry.theta > 200)
+                        diffOdometry.SetPosition(nowOdometry.x - preOdometry.x, nowOdometry.y - preOdometry.y, -(preOdometry.theta + 360 - nowOdometry.theta));
+                    else
+                        diffOdometry.SetPosition(nowOdometry.x - preOdometry.x, nowOdometry.y - preOdometry.y, nowOdometry.theta - preOdometry.theta);
+                    System.Console.WriteLine("Odometry varition:{0:F3} {1:F3} {2:F3}", diffOdometry.x, diffOdometry.y, diffOdometry.theta);
 
-            //        #endregion
+                    #endregion
 
-            //        #region 5.Display current scanning information
+                    #region 5.Display current scanning information
+                    //RaiseMapEventSync(MapEventType.RefreshScanPoint, matchSet);
 
-            //        IMapCtrl.AddPointsSet(Factory.CreatSet.LaserPoints(LaserID, matchSet));
+                    #endregion
 
-            //        #endregion
+                    #region 6.Inspect odometry variation is not too large.Switch to pose tracking mode if too large.
 
-            //        #region 6.Inspect odometry variation is not too large.Switch to pose tracking mode if too large.
+                    sw.Restart();
+                    if (Math.Abs(diffOdometry.x) >= 400 || Math.Abs(diffOdometry.y) >= 400 || Math.Abs(diffOdometry.theta) >= 30) {
+                        mode = 1;
+                        gValue = mMapMatch.PairwiseMatching(predataSet, matchSet, 4, 1.5, 0.01, 20, 300, false, transResult);
+                    } else {
+                        mode = 0;
+                        gValue = mMapMatch.FindClosetMatching(matchSet, 4, 1.5, 0.01, 20, 300, false, transResult);
+                        diffLaser.SetPosition(transResult.x, transResult.y, transResult.theta);
+                    }
 
-            //        sw.Restart();
-            //        if (Math.Abs(diffOdometry.X) >= 400 || Math.Abs(diffOdometry.Y) >= 400 || Math.Abs(diffOdometry.Toward) >= 30) {
-            //            mode = 1;
-            //            gValue = mMapMatch.PairwiseMatching( predataSet, matchSet, 4, 1.5, 0.01, 20, 300, false, transResult);
-            //        } else {
-            //            mode = 0;
-            //            gValue = mMapMatch.FindClosetMatching(matchSet, 4, 1.5, 0.01, 20, 300, false, transResult);
-            //            diffLaser.SetPosition((int)transResult.x, (int)transResult.y, transResult.theta);
-            //        }
+                    //If corresponding is too less,truct the odomery variation this time
+                    if (mMapMatch.EstimateCorresponingPoints(matchSet, 10, 10, out corrNum, out addedSet)) {
+                        mMapMatch.NewPosTransformation(nowOdometry, transResult.x, transResult.y, transResult.theta);
+                        accumError.SetPosition(accumError.x + transResult.x, accumError.y + transResult.y, accumError.theta + transResult.theta);
+                    }
+                    sw.Stop();
 
-            //        //If corresponding is too less,truct the odomery variation this time
-            //        if (mMapMatch.EstimateCorresponingPoints(matchSet, 10, 10, out corrNum, out addedSet)) {
-            //            mMapMatch.NewPosTransformation(nowOdometry, transResult.x, transResult.y, transResult.theta);
-            //            accumError.SetPosition(accumError.x + transResult.x, accumError.Y + transResult.y, accumError.Toward + transResult.theta);
-            //        }
-            //        sw.Stop();
+                    if (mode == 0)
+                        System.Console.WriteLine("[SLAM-Matching Mode]Corresponding Points:{0} Map Size:{1} Matching Time:{2:F3} Error{3:F3}",
+                             corrNum, mMapMatch.parseMap.Count, sw.Elapsed.TotalMilliseconds, gValue);
+                    else
+                        System.Console.WriteLine("[SLAM-Tracking Mode]Matching Time:{0:F3} Error{1:F3}", sw.Elapsed.TotalMilliseconds, gValue);
 
-            //        //if (mode == 0)
-            //        //    Console.WriteLine("[SLAM-Matching Mode]Corresponding Points:{0} Map Size:{1} Matching Time:{2:F3} Error{3:F3}",
-            //        //         corrNum, mMapMatch.parseMap.Count, sw.Elapsed.TotalMilliseconds, gValue);
-            //        //else
-            //        //    Console.WriteLine("[SLAM-Tracking Mode]Matching Time:{0:F3} Error{1:F3}", sw.Elapsed.TotalMilliseconds, gValue);
+                    #endregion
 
-            //        #endregion
+                    #region 7.Update variation
 
-            //        #region 7.Update variation
+                    //Pairwise update
+                    predataSet.Clear();
+                    predataSet.AddRange(laserData);
 
-            //        //Pairwise update
-            //        predataSet.Clear();
-            //        predataSet.AddRange(laserData);
+                    //Update previous variable
+                    preOdometry.SetPosition(nowOdometry.x, nowOdometry.y, nowOdometry.theta);
 
-            //        //Update previous variable
-            //        preOdometry.SetPosition(nowOdometry.x, nowOdometry.y, nowOdometry.theta);
-            //        mCarInfo.SetPosAndToward(nowOdometry.ToTowardPos());
+                    Database.AGVGM.Add(mAGVID, Factory.FSingle.FTowardPair.AGV((int)nowOdometry.x, (int)nowOdometry.y, nowOdometry.theta, "AGV"));
+                    //mCarInfo.SetPos(nowOdometry);
 
-            //        #endregion
+                    #endregion
 
-            //        //Display added new points    
-            //        IMapCtrl.AddPointsSet(Factory.CreatSet.LaserPoints(LaserID, addedSet));
 
-            //        //Display car position
-            //        IMapCtrl.AddAGV(Factory.CreatAGV.AGV(AGVID, "AGV", nowOdometry.X, nowOdometry.Y, nowOdometry.theta));
-            //    }
-            //    SetBalloonTip("Correct Map", "Correct Complete!!", ToolTipIcon.Info, 10);
-            //} catch {
+                    ILaserPoints points = ConvertToLaserPoints(addedSet);
+                    Database.LaserPointsGM.Add(mLaserID, points);
+                    Database.ObstaclePointsGM.SaftyEdit(mObstaclePointsID, (item) => item.DataList.AddRange(points.DataList.AsReadOnly()));
+                    //IMapCtrl.Focus((int)nowOdometry.x, (int)nowOdometry.y);
+                    //Display added new points                     
+                    //    RaiseMapEventSync(MapEventType.DrawScanMap, addedSet);
 
-            //} finally {
-            //}
+                    //    //Display car position
+                    //    RaiseMapEventSync(MapEventType.RefreshPosCar, nowOdometry.ToPos());
+                }
+                //RaiseMapEvent(MapEventType.CorrectOriComplete);
+            } catch {
+
+            } finally {
+            }
         }
+    
 
         private async void ITest_CheckIsServerAlive(bool cnn, string hostIP = "")
         {
