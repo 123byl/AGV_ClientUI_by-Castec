@@ -320,7 +320,7 @@ namespace ClientUI
   //      /// <summary>
   //      /// 使用者操作權限
   //      /// </summary>
-  //      private UserData mUser = new UserData("CASTEC", "", AccessLevel.ADMINISTRATOR);
+  //      private UserData mUser = new UserData("CASTEC", "", AccessLevel.Administrator);
 
   //      /// <summary>
   //      /// 當前語系
@@ -517,12 +517,12 @@ namespace ClientUI
   //      /// </summary>
   //      public void Login() {
   //          Stat stt = Stat.SUCCESS;
-  //          if (mUser.Level == AccessLevel.NONE) {
+  //          if (mUser.Level == AccessLevel.None) {
   //              using (CtLogin frmLogin = new CtLogin()) {
   //                  stt = frmLogin.Start(out mUser);
   //              }
   //          } else {
-  //              mUser = new UserData("N/A", "", AccessLevel.NONE);
+  //              mUser = new UserData("N/A", "", AccessLevel.None);
   //          }
   //          RaiseUserChanged(mUser);
   //      }
@@ -1253,7 +1253,7 @@ namespace ClientUI
   //                  Console.WriteLine($"[SocketException] : {ex.Message}");
   //              } finally {
   //                  if (!mBypassSocket && !isAlive) {
-  //                      CtMsgBox.Show("Failed", "Connect Failed!!", MsgBoxButton.OK, MsgBoxStyle.ERROR);
+  //                      CtMsgBox.Show("Failed", "Connect Failed!!", MsgBoxBtn.OK, MsgBoxStyle.Error);
   //                  }
   //              }
   //              IsServerAlive = isAlive;
@@ -2474,7 +2474,7 @@ namespace ClientUI
     //                Console.WriteLine($"[SocketException] : {ex.Message}");
     //            } finally {
     //                if (!mBypassSocket && !isAlive) {
-    //                    CtMsgBox.Show("Failed", "Connect Failed!!", MsgBoxButton.OK, MsgBoxStyle.ERROR);
+    //                    CtMsgBox.Show("Failed", "Connect Failed!!", MsgBoxBtn.OK, MsgBoxStyle.Error);
     //                }
     //            }
     //            IsServerAlive = isAlive;

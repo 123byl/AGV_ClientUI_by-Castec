@@ -225,7 +225,7 @@ namespace ClientUI
                 try {
                 bool isConnect = await Task.Run(() => mCliect.ConnectAsync(!mCliect.IsConnected));
                 if (cnn != null) {
-                    CtInvoke.ButtonText(cnn, isConnect ? "Connected" : "Disconnected");
+                    CtInvoke.ControlText(cnn, isConnect ? "Connected" : "Disconnected");
                     CtInvoke.ButtonImage(cnn, isConnect ?
                         Properties.Resources.Connect :
                         Properties.Resources.Disconnect
@@ -234,8 +234,8 @@ namespace ClientUI
                 if (isConnect) {
                     bool isServoOn = mCliect.GetMotorStatus();
                     if (servo != null) {
-                        CtInvoke.ButtonText(btnServoOnOff, isServoOn ? "ON" : "OFF");
-                        CtInvoke.ButtonBackColor(btnServoOnOff, isServoOn ? System.Drawing.Color.Green : System.Drawing.Color.Red);
+                        CtInvoke.ControlText(btnServoOnOff, isServoOn ? "ON" : "OFF");
+                        CtInvoke.ControlBackColor(btnServoOnOff, isServoOn ? System.Drawing.Color.Green : System.Drawing.Color.Red);
                     }
                 }
             } catch (Exception ex) {

@@ -442,6 +442,10 @@
     <None Include="Resources\Zoom.png" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\CtLib\CtLib\CtLib.csproj">
+      <Project>{a9bed8b3-2f9d-42a8-90bd-9fae0522eb09}</Project>
+      <Name>CtLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AGV.Map.UI\AGV.Map.UI.csproj">
       <Project>{7762AB26-E84F-45BA-8F87-9FC0ACEA65DF}</Project>
       <Name>AGV.Map.UI</Name>
@@ -449,10 +453,6 @@
     <ProjectReference Include="..\AGVMath\AGVMath.csproj">
       <Project>{68c119fe-7cf4-4828-8745-d9558acd7fab}</Project>
       <Name>AGVMath</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CtLib\CtLib\CtLib.csproj">
-      <Project>{a9bed8b3-2f9d-42a8-90bd-9fae0522eb09}</Project>
-      <Name>CtLib</Name>
     </ProjectReference>
     <ProjectReference Include="..\KDTree\KDTree.csproj">
       <Project>{33a00a90-c02e-474b-a8c0-3b0559873ea0}</Project>

@@ -106,7 +106,7 @@ namespace ClientUI
         }
 
         public void SetLaserStt(bool isGettingLaser) {
-            CtInvoke.ButtonBackColor(btnGetCarStatus, isGettingLaser ? Color.Green : Color.Transparent);
+            CtInvoke.ControlBackColor(btnGetCarStatus, isGettingLaser ? Color.Green : Color.Transparent);
         }
 
         private void btnSendMap_Click(object sender, EventArgs e) {
@@ -143,30 +143,30 @@ namespace ClientUI
                 btnImg = Properties.Resources.Connect;
                 btnTxt = "AGV Connected";
             }
-            CtInvoke.ButtonTag(btnConnect, isConnect);
-            CtInvoke.ButtonText(btnConnect, btnTxt);
+            CtInvoke.ControlTag(btnConnect, isConnect);
+            CtInvoke.ControlText(btnConnect, btnTxt);
             CtInvoke.ButtonImage(btnConnect, btnImg);
-            CtInvoke.ButtonEnable(btnGetLaser, isConnect);
-            CtInvoke.ButtonEnable(btnGetOri, isConnect);
-            CtInvoke.ButtonEnable(btnIdleMode, isConnect);
-            CtInvoke.ButtonEnable(btnWorkMode, isConnect);
-            CtInvoke.ButtonEnable(btnMapMode, isConnect);
-            CtInvoke.ButtonEnable(btnGetCarStatus, isConnect);
-            CtInvoke.ButtonEnable(btnPosConfirm, isConnect);
-            CtInvoke.ButtonEnable(btnServoOnOff, isConnect);
+            CtInvoke.ControlEnabled(btnGetLaser, isConnect);
+            CtInvoke.ControlEnabled(btnGetOri, isConnect);
+            CtInvoke.ControlEnabled(btnIdleMode, isConnect);
+            CtInvoke.ControlEnabled(btnWorkMode, isConnect);
+            CtInvoke.ControlEnabled(btnMapMode, isConnect);
+            CtInvoke.ControlEnabled(btnGetCarStatus, isConnect);
+            CtInvoke.ControlEnabled(btnPosConfirm, isConnect);
+            CtInvoke.ControlEnabled(btnServoOnOff, isConnect);
 
-            CtInvoke.ButtonEnable(btnSetVelo, isConnect);
-            CtInvoke.ButtonEnable(btnGetMap, isConnect);
-            CtInvoke.ButtonEnable(btnSendMap, isConnect);
-            CtInvoke.TextBoxEnable(txtVelocity, isConnect);
+            CtInvoke.ControlEnabled(btnSetVelo, isConnect);
+            CtInvoke.ControlEnabled(btnGetMap, isConnect);
+            CtInvoke.ControlEnabled(btnSendMap, isConnect);
+            CtInvoke.ControlEnabled(txtVelocity, isConnect);
 
             if (!isConnect) {
                 //CarMode = CarMode.OffLine;
-                CtInvoke.ButtonEnable(btnUp, false);
-                CtInvoke.ButtonEnable(btnStartStop, false);
-                CtInvoke.ButtonEnable(btnLeft, false);
-                CtInvoke.ButtonEnable(btnRight, false);
-                CtInvoke.ButtonEnable(btnDown, false);
+                CtInvoke.ControlEnabled(btnUp, false);
+                CtInvoke.ControlEnabled(btnStartStop, false);
+                CtInvoke.ControlEnabled(btnLeft, false);
+                CtInvoke.ControlEnabled(btnRight, false);
+                CtInvoke.ControlEnabled(btnDown, false);
             //} else if (CarMode == CarMode.OffLine) {
             //    CarMode = CarMode.Idle;
             }
@@ -177,26 +177,26 @@ namespace ClientUI
         /// </summary>
         /// <param name="isConnected"></param>
         private void ChangedConnectStt(bool isConnected) {
-            CtInvoke.ButtonEnable(btnGetLaser, isConnected);
-            CtInvoke.ButtonEnable(btnGetOri, isConnected);
-            CtInvoke.ButtonEnable(btnIdleMode, isConnected);
-            CtInvoke.ButtonEnable(btnWorkMode, isConnected);
-            CtInvoke.ButtonEnable(btnMapMode, isConnected);
-            CtInvoke.ButtonEnable(btnGetCarStatus, isConnected);
-            CtInvoke.ButtonEnable(btnPosConfirm, isConnected);
-            CtInvoke.ButtonEnable(btnServoOnOff, isConnected);
+            CtInvoke.ControlEnabled(btnGetLaser, isConnected);
+            CtInvoke.ControlEnabled(btnGetOri, isConnected);
+            CtInvoke.ControlEnabled(btnIdleMode, isConnected);
+            CtInvoke.ControlEnabled(btnWorkMode, isConnected);
+            CtInvoke.ControlEnabled(btnMapMode, isConnected);
+            CtInvoke.ControlEnabled(btnGetCarStatus, isConnected);
+            CtInvoke.ControlEnabled(btnPosConfirm, isConnected);
+            CtInvoke.ControlEnabled(btnServoOnOff, isConnected);
 
-            CtInvoke.ButtonEnable(btnSetVelo, isConnected);
-            CtInvoke.ButtonEnable(btnGetMap, isConnected);
-            CtInvoke.ButtonEnable(btnSendMap, isConnected);
-            CtInvoke.TextBoxEnable(txtVelocity, isConnected);
+            CtInvoke.ControlEnabled(btnSetVelo, isConnected);
+            CtInvoke.ControlEnabled(btnGetMap, isConnected);
+            CtInvoke.ControlEnabled(btnSendMap, isConnected);
+            CtInvoke.ControlEnabled(txtVelocity, isConnected);
 
             if (!isConnected) {
-                CtInvoke.ButtonEnable(btnUp, false);
-                CtInvoke.ButtonEnable(btnStartStop, false);
-                CtInvoke.ButtonEnable(btnLeft, false);
-                CtInvoke.ButtonEnable(btnRight, false);
-                CtInvoke.ButtonEnable(btnDown, false);
+                CtInvoke.ControlEnabled(btnUp, false);
+                CtInvoke.ControlEnabled(btnStartStop, false);
+                CtInvoke.ControlEnabled(btnLeft, false);
+                CtInvoke.ControlEnabled(btnRight, false);
+                CtInvoke.ControlEnabled(btnDown, false);
             }
         }
 
@@ -205,8 +205,8 @@ namespace ClientUI
         /// </summary>
         /// <param name="isUnLock"></param>
         public void UnLockOriOperator(bool isUnLock) {
-            CtInvoke.ButtonEnable(btnCorrectOri, isUnLock);
-            CtInvoke.ButtonEnable(btnSimplyOri, isUnLock);
+            CtInvoke.ControlEnabled(btnCorrectOri, isUnLock);
+            CtInvoke.ControlEnabled(btnSimplyOri, isUnLock);
         }
 
         private void btnServoOnOff_Click(object sender, EventArgs e) {
@@ -227,14 +227,14 @@ namespace ClientUI
                 color = Color.Red;
                 content = "OFF";
             }
-            CtInvoke.ButtonTag(btnServoOnOff, isOn);
-            CtInvoke.ButtonEnable(btnUp, isOn);
-            CtInvoke.ButtonEnable(btnDown, isOn);
-            CtInvoke.ButtonEnable(btnLeft, isOn);
-            CtInvoke.ButtonEnable(btnRight, isOn);
-            CtInvoke.ButtonEnable(btnStartStop, isOn);
-            CtInvoke.ButtonBackColor(btnServoOnOff, color);
-            CtInvoke.ButtonText(btnServoOnOff, content);
+            CtInvoke.ControlTag(btnServoOnOff, isOn);
+            CtInvoke.ControlEnabled(btnUp, isOn);
+            CtInvoke.ControlEnabled(btnDown, isOn);
+            CtInvoke.ControlEnabled(btnLeft, isOn);
+            CtInvoke.ControlEnabled(btnRight, isOn);
+            CtInvoke.ControlEnabled(btnStartStop, isOn);
+            CtInvoke.ControlBackColor(btnServoOnOff, color);
+            CtInvoke.ControlText(btnServoOnOff, content);
         }
 
         private void btnPosConfirm_Click(object sender, EventArgs e) {

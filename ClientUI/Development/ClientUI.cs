@@ -24,7 +24,7 @@ using ClientUI.Development;
 using System.IO;
 using AGVMathOperation;
 using System.Diagnostics;
-using CtLib.Module.Ultity;
+using CtLib.Module.Utility;
 using System.Text.RegularExpressions;
 using AGV.Map.Common.UI;
 using AGV.Map.Core;
@@ -62,8 +62,10 @@ namespace ClientUI
         ///         \ 地圖修正功能修正
         ///         \ 與AGV連線方式調整
         ///         \ Ori繪製後補上雷射圖層清除
+        ///     0.0.3   Jay [2017/10/12]
+        ///         \ 更新部分語法以符合新版本CtLib
         /// </remarks>
-        public CtVersion Version { get { return new CtVersion(0, 0, 2, "2017/10/11", "Jay Chang"); } }
+        public CtVersion Version { get { return new CtVersion(0, 0, 3, "2017/10/12", "Jay Chang"); } }
 
         #endregion Version - Information
 
@@ -159,7 +161,7 @@ namespace ClientUI
         /// <summary>
         /// 使用者操作權限
         /// </summary>
-        private UserData mUser = new UserData("CASTEC", "", AccessLevel.ADMINISTRATOR);
+        private UserData mUser = new UserData("CASTEC", "", AccessLevel.Administrator);
 
         /// <summary>
         /// 當前語系
@@ -167,7 +169,7 @@ namespace ClientUI
         /// <remarks>
         /// 未來開發多語系用
         /// </remarks>
-        private UILanguage mCulture = UILanguage.ENGLISH;
+        private UILanguage mCulture = UILanguage.English;
 
         /// <summary>
         /// Socket通訊物件
@@ -538,7 +540,7 @@ namespace ClientUI
         private void miLogin_Click(object sender, EventArgs e)
         {
             Stat stt = Stat.SUCCESS;
-            if (mUser.Level == AccessLevel.NONE)
+            if (mUser.Level == AccessLevel.None)
             {
                 using (CtLogin frmLogin = new CtLogin())
                 {
@@ -547,7 +549,7 @@ namespace ClientUI
             }
             else
             {
-                mUser = new UserData("N/A", "", AccessLevel.NONE);
+                mUser = new UserData("N/A", "", AccessLevel.None);
             }
             UserChanged(mUser);
         }
@@ -559,7 +561,7 @@ namespace ClientUI
         /// <param name="e"></param>
         private void miUserManager_Click(object sender, EventArgs e)
         {
-            using (CtUserManager frmUsrMgr = new CtUserManager(mUser))
+            using (CtUserManager frmUsrMgr = new CtUserManager(UILanguage.English))
             {
                 frmUsrMgr.ShowDialog();
             }
@@ -1616,25 +1618,25 @@ namespace ClientUI
             AccessLevel usrLv = usrData.Level;
             string title = string.Empty;//工具列選項標題
             string usrName = string.Empty;//狀態列帳號名稱
-            bool allowUsrMan = usrLv < AccessLevel.OPERATOR;
+            bool allowUsrMan = usrLv < AccessLevel.Operator;
 
             /*-- 依照權限切換模組可視層級 --*/
             switch (usrLv)
             {
-                case AccessLevel.NONE:
+                case AccessLevel.None:
                     DockContentVisible(miMapGL, false);
                     DockContentVisible(miConsole, true);
                     DockContentVisible(miTesting, false);
                     DockContentVisible(miGoalSetting, false);
                     miBypass.Visible = false;
                     break;
-                case AccessLevel.OPERATOR:
+                case AccessLevel.Operator:
                     DockContentVisible(miMapGL, true);
                     DockContentVisible(miConsole, true);
                     DockContentVisible(miGoalSetting, true);
                     break;
-                case AccessLevel.ENGINEER:
-                case AccessLevel.ADMINISTRATOR:
+                case AccessLevel.Engineer:
+                case AccessLevel.Administrator:
                     DockContentVisible(miMapGL, true);
                     DockContentVisible(miConsole, true);
                     DockContentVisible(miGoalSetting, true);
@@ -1645,7 +1647,7 @@ namespace ClientUI
             }
 
             /*-- 顯示帳號相關資訊 --*/
-            if (usrLv == AccessLevel.NONE)
+            if (usrLv == AccessLevel.None)
             {
                 title = "Login";
                 usrName = "No account";
@@ -1990,7 +1992,7 @@ namespace ClientUI
                 {
                     if (!mBypassSocket && !isAlive)
                     {
-                        CtMsgBox.Show("Failed", "Connect Failed!!", MsgBoxButton.OK, MsgBoxStyle.ERROR);
+                        CtMsgBox.Show("Failed", "Connect Failed!!",MsgBoxBtn.OK, MsgBoxStyle.Error);
                     }
                 }
                 IsServerAlive = isAlive;
@@ -2029,12 +2031,7 @@ namespace ClientUI
             if (mode == CarMode.Map)
             {
                 string oriName = string.Empty;
-                CtInput txtBox = new CtInput();
-                if (Stat.SUCCESS == txtBox.Start(
-                    CtInput.InputStyle.TEXT,
-                    "Set Map File Name", "MAP Name",
-                    out oriName,
-                    $"MAP{DateTime.Today:MMdd}"))
+                if (Stat.SUCCESS == CtInput.Text(out oriName, "MAP Name", "Set Map File Name"))
                 {
                     SendMsg($"Set:OriName:{oriName}.Ori");
                 }
