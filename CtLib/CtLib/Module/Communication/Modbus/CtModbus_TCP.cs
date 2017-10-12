@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading;
-using System.Windows.Forms;
 
 using CtLib.Library;
-using CtLib.Module.TCPIP;
-using CtLib.Module.Ultity;
+using CtLib.Module.Net;
+using CtLib.Module.Utility;
 
 namespace CtLib.Module.Modbus {
 
@@ -19,12 +16,12 @@ namespace CtLib.Module.Modbus {
     /// Modbus TCP
     /// <para>此程式適用 TCP 模式的 Modbus Protocol。 RTU、ASCII 請用另外的模組</para>
     /// </summary>
-    public class CtModbus_TCP : CtSyncSocket, ICtModbus {
+    public class CtModbus_TCP : CtTcpSocket, ICtModbus, ICtVersion {
 
         #region Version
 
         /// <summary>CtModbus_TCP 版本訊息</summary>
-        /// <remarks><code>
+        /// <remarks><code language="C#">
         /// 1.0.0  Ahern [2015/01/11]
         ///     + 建立基礎模組，使用 Wago 750-352 Modbus 手冊進行撰寫
         ///     
@@ -38,8 +35,14 @@ namespace CtLib.Module.Modbus {
         ///     - mSocket
         ///     \ 修改 Function 以符合 CtSyncSocket 之物件
         ///     + Override CtSyncSocket Function
+        /// 
+        /// 1.2.1  Ahern [2015/08/12]
+        ///     \ WaitResponse 改以 CtTimer.WaitTimeout 實作
+		///     
+		/// 1.3.0  Ahern [2017/05/15]
+		///		\ 套用最新版的 CtSocket
         /// </code></remarks>
-        public static readonly new CtVersion @Version = new CtVersion(1, 2, 0, "2015/02/16", "Ahern Kuo");
+        public new CtVersion Version { get { return new CtVersion(1, 3, 0, "2017/05/15", "Ahern Kuo"); } }
 
         #endregion
 
@@ -60,7 +63,7 @@ namespace CtLib.Module.Modbus {
             public TransferData() {
                 ID = 31;
                 Node = 0;
-                Function = ModbusFunction.EXCEPTION;
+                Function = ModbusFunction.Exception;
                 Data = 0;
             }
             /// <summary>建立一帶有預設值的 TransferData</summary>
@@ -87,7 +90,7 @@ namespace CtLib.Module.Modbus {
         /// <summary>預設的 Modbus TCP Port</summary>
         private static readonly int MODBUS_DEVICE_PORT = 502;
         /// <summary>傳送/接收資料時的逾時時間</summary>
-        private static readonly long MODBUS_TIMEOUT = 1000;
+        private static readonly int MODBUS_TIMEOUT = 1000;
         #endregion
 
         #region Declaration - Properties
@@ -100,42 +103,40 @@ namespace CtLib.Module.Modbus {
         /// <summary>取得或設定 Device Node</summary>
         public byte DeviceNode { get; set; }
 
-        #endregion
+		#endregion
 
-        #region Declaration - Members
+		#region Declaration - Fields
 
         /// <summary>暫存接收到的資料</summary>
         private List<byte> mRxData = new List<byte>();
-        /// <summary>[Flag] 是否收到回傳資料</summary>
+        ///// <summary>[Flag] 是否收到回傳資料</summary>
         private bool mFlag_RxData;
 
-        /// <summary>用於檢查最後一次命令傳送與接收狀態</summary>
-        private Stat mRxStt = Stat.SUCCESS;
+        ///// <summary>用於檢查最後一次命令傳送與接收狀態</summary>
+        //private Stat mRxStt = Stat.SUCCESS;
         #endregion
 
         #region Function - Constructors
         /// <summary>建立一採用預設值的 CtModbus_TCP</summary>
         /// <param name="autoConnect">是否直接連線?</param>
-        public CtModbus_TCP(bool autoConnect = false) {
+        public CtModbus_TCP(bool autoConnect = false) : base(TransDataFormats.EnumerableOfByte, false) {
             DeviceID = MODBUS_DEVICE_ID;
             DeviceIP = MODBUS_DEVICE_IP;
             DevicePort = MODBUS_DEVICE_PORT;
             DeviceNode = MODBUS_DEVICE_NODE;
-
-            if (autoConnect) ClientConnect(DeviceIP, DevicePort);
+			if (autoConnect) ClientConnect(DeviceIP, DevicePort);
         }
 
         /// <summary>建立一帶有預設值的 CtModbus_TCP</summary>
         /// <param name="ip">Modbus TCP IPAddress</param>
         /// <param name="port">Modbus TCP Port</param>
         /// <param name="autoConnect">是否直接連線?</param>
-        public CtModbus_TCP(string ip, int port, bool autoConnect = false) {
+        public CtModbus_TCP(string ip, int port, bool autoConnect = false) : base(TransDataFormats.EnumerableOfByte, false) {
             DeviceID = MODBUS_DEVICE_ID;
             DeviceNode = MODBUS_DEVICE_NODE;
             DeviceIP = ip;
             DevicePort = port;
-
-            if (autoConnect) ClientConnect(DeviceIP, DevicePort);
+			if (autoConnect) ClientConnect(DeviceIP, DevicePort);
         }
 
         /// <summary>建立一帶有預設值的 CtModbus_TCP</summary>
@@ -144,13 +145,12 @@ namespace CtLib.Module.Modbus {
         /// <param name="ip">Modbus TCP IPAddress</param>
         /// <param name="port">Modbus TCP Port</param>
         /// <param name="autoConnect">是否直接連線?</param>
-        public CtModbus_TCP(byte devID, byte devNode, string ip, int port, bool autoConnect = false) {
+        public CtModbus_TCP(byte devID, byte devNode, string ip, int port, bool autoConnect = false) : base(TransDataFormats.EnumerableOfByte, false) {
             DeviceID = devID;
             DeviceIP = ip;
             DevicePort = port;
             DeviceNode = devNode;
-
-            if (autoConnect) ClientConnect(DeviceIP, DevicePort);
+			if (autoConnect) ClientConnect(DeviceIP, DevicePort);
         }
         #endregion
 
@@ -234,7 +234,7 @@ namespace CtLib.Module.Modbus {
             cmd[9] = _addr[0];                                      //IO or Register Address (低)
 
             /*-- 如果是多筆性資料，如 MultiCoil、MultiRegister --*/
-            if (func >= ModbusFunction.FORCE_MULTI_COILS) {
+            if (func >= ModbusFunction.ForceMultiCoils) {
                 byte[] _count = BitConverter.GetBytes(count);       //寫入數量
                 cmd[10] = _count[1];                                //寫入數量 (高)
                 cmd[11] = _count[0];                                //寫入數量 (低)
@@ -244,41 +244,54 @@ namespace CtLib.Module.Modbus {
         }
 
         /// <summary>等待 Slave 回應任何訊息</summary>
-        /// <returns>(True)收到任意資料   (False)逾時</returns>
+        /// <returns>(<see langword="true"/>)收到任意資料   (<see langword="false"/>)逾時</returns>
         private bool WaitResponse() {
-            bool bRet = false;
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
-            do {
-                Thread.Sleep(1);
-                Application.DoEvents();
-            } while (!mFlag_RxData && sw.ElapsedMilliseconds < MODBUS_TIMEOUT);
-            sw.Stop();
-            bRet = mFlag_RxData;
-            return bRet;
+			//return !CtTimer.WaitTimeout(
+			//            MODBUS_TIMEOUT,
+			//            obj => {
+			//                while (!mFlag_RxData && !obj.IsDone) {
+			//                    CtTimer.Delay(10);
+			//                }
+			//                obj.WorkDone();
+			//            }
+			//        );
+
+			bool stt = true;
+			try {
+				var wrap = Receive(MODBUS_TIMEOUT);
+				var rxData = wrap.Data as List<byte>;
+				stt = rxData != null && rxData.Count > 0;
+			} catch (Exception) {
+				stt = false;
+			}
+			return stt;
         }
 
         /// <summary>回傳資料解碼</summary>
         /// <param name="data">收到的資料陣列</param>
         private Stat Decode(List<byte> data) {
             Stat stt = Stat.SUCCESS;
-            TransferData rxData = new TransferData();
-            rxData.ID = (ushort)(data[0] * 256 + data[1]);
-            rxData.Node = data[6];
-            rxData.Function = (ModbusFunction)data[7];
+			byte[] bytTemp = null;
+			if (data != null && data.Count >= 7) {
+				TransferData rxData = new TransferData();
+				rxData.ID = (ushort)(data[0] * 256 + data[1]);
+				rxData.Node = data[6];
+				rxData.Function = (ModbusFunction)data[7];
 
-            byte[] bytTemp;
-
-            if (rxData.Function >= ModbusFunction.FORCE_SINGLE_COIL) {
-                bytTemp = new byte[2];
-                data.CopyTo(10, bytTemp, 0, 2);
-            } else if (rxData.Function >= ModbusFunction.EXCEPTION) {
-                stt = Stat.ER3_MB_SLVERR;
-                bytTemp = new byte[1] { data[7] };  //等同回傳的Error Code
-            } else {
-                bytTemp = new byte[data[8]];
-                Array.Copy(data.ToArray(), 9, bytTemp, 0, data[8]);
-            }
+				if (rxData.Function >= ModbusFunction.ForceSingleCoil) {
+					if (data.Count >= 12) {
+						bytTemp = new byte[2];
+						data.CopyTo(10, bytTemp, 0, 2);
+					} else stt = Stat.ER_SYS_INVIDX;
+				} else if (rxData.Function >= ModbusFunction.Exception) {
+					stt = Stat.ER3_MB_SLVERR;
+					if (data.Count >= 8) bytTemp = new byte[1] { data[7] };  //等同回傳的Error Code
+					else stt = Stat.ER_SYS_INVIDX;
+				} else if (data.Count >= (9 + data[8])) {
+					bytTemp = new byte[data[8]];
+					Array.Copy(data.ToArray(), 9, bytTemp, 0, data[8]);
+				} else stt = Stat.ER_SYS_INVIDX;
+			} else stt = Stat.ER_SYS_INVIDX;
 
             mRxData.Clear();
             //if (bytTemp.Length > 1) {
@@ -291,7 +304,7 @@ namespace CtLib.Module.Modbus {
             //}
 
             //改以 ICtModbus 後，目前均回傳 byte
-            mRxData.AddRange(bytTemp);
+            if (bytTemp != null) mRxData.AddRange(bytTemp);
             return stt;
         }
 
@@ -317,18 +330,35 @@ namespace CtLib.Module.Modbus {
         }
 
         private void ConvertDataToBool(ushort count, out List<bool> bolVal) {
+            byte size = sizeof(byte) * 8;
             byte maxCount = 0;
             byte valTemp = 0;
             List<bool> bRet = new List<bool>();
-            for (byte idx = 0; idx < mRxData.Count; idx++) {
+            for (int idx = 0; idx < mRxData.Count; idx++) {
                 valTemp = mRxData[idx];
-                maxCount = (byte)(((idx * 8) < count) ? 8 : count % 8);
+                if (count <= size) maxCount = (byte)count;
+                else maxCount = (byte)(((idx * size) < count) ? size : count % size);
                 for (byte bit = 0; bit < maxCount; bit++) {
                     bRet.Add(((valTemp & 0x01) == 1) ? true : false);
                     valTemp >>= 1;
                 }
             }
             bolVal = bRet;
+        }
+
+        private Stat Sending(byte[] data) {
+            Stat stt = Stat.SUCCESS;
+            try {
+				if (!IsConnected) throw new InvalidOperationException("Connection with device was broken");
+				mSocket.Send(data);
+				var wrap = Receive(MODBUS_TIMEOUT);
+				var rxData = wrap.Data as List<byte>;
+				stt = Decode(rxData);
+            } catch (Exception ex) {
+                stt = Stat.ER3_MB_COMERR;
+                CtStatus.Report(stt, ex);
+            }
+            return stt;
         }
         #endregion
 
@@ -338,177 +368,230 @@ namespace CtLib.Module.Modbus {
         /// <returns>Status Code</returns>
         private void SendData(byte[] data) {
             mFlag_RxData = false;
-            if (IsConnected) Send(data);
+            if (IsConnected) mSocket.Send(data);
         }
 
-        /// <summary>[FC01] 讀取 Coil (InOut, Output) 狀態</summary>
+        /// <summary>[FC01] 讀取指定裝置的 Coil (InOut, Output) 狀態</summary>
+        /// <param name="devID">指定裝置的局號</param>
         /// <param name="addr">IO Address</param>
         /// <param name="coilCount">連續讀取的數量。如欲 0~7 則輸入 8 </param>
-        /// <param name="state">各點的狀態  (True)ON  (False)OFF</param>
+        /// <param name="state">各點的狀態  (<see langword="true"/>)ON  (<see langword="false"/>)OFF</param>
         /// <returns>Status Code</returns>
-        public Stat ReadCoilStatus(ushort addr, ushort coilCount, out List<bool> state) {
-            Stat stt = Stat.SUCCESS;
+        public Stat ReadCoilStatus(byte devID, ushort addr, ushort coilCount, out List<bool> state) {
             List<bool> bRet = null;
-            try {
-                byte[] data = CreateReadHeader(DeviceID, DeviceNode, addr, coilCount, ModbusFunction.READ_COIL_STATUS);
-                SendData(data);
-                if (WaitResponse()) {
-                    if (mRxData != null) ConvertDataToBool(coilCount, out bRet);
-                    stt = mRxStt;
-                    //bRet = mRxData.ConvertAll(new Converter<byte, bool>(val => CtConvert.CBool(val)));
-                }
-            } catch (Exception ex) {
-                CtStatus.Report(Stat.ER_SYSTEM, ex);
-            }
+            byte[] data = CreateReadHeader(devID, DeviceNode, addr, coilCount, ModbusFunction.ReadCoilState);
+            Stat stt = Sending(data);
+			if (stt == Stat.SUCCESS) CtConvert.ToBoolSequence(mRxData, out bRet, coilCount);
             state = bRet;
             return stt;
         }
 
-        /// <summary>[FC03] 讀取暫存器(Register)數值，可為輸入或輸出之暫存器(Input, Output, InOut)</summary>
+        /// <summary>[FC03] 讀取指定裝置的暫存器(Register)數值，可為輸入或輸出之暫存器(Input, Output, InOut)</summary>
+        /// <param name="devID">指定裝置的局號</param>
         /// <param name="addr">Register Address</param>
         /// <param name="regCount">連續讀取的暫存器數量。如 4000~4007 則輸入 8</param>
-        /// <param name="value">(True)ON  (False)OFF</param>
+        /// <param name="value">(<see langword="true"/>)ON  (<see langword="false"/>)OFF</param>
         /// <returns>Status Code</returns>
         /// <remarks>以 Wago IO 為例，一個 Register 都是 16bit，所以回傳的資訊以 ushort (uint16) 為主</remarks>
-        public Stat ReadHoldingRegister(ushort addr, ushort regCount, out List<byte> value) {
-            Stat stt = Stat.SUCCESS;
-            List<byte> usRet = null;
-            try {
-                byte[] data = CreateReadHeader(DeviceID, DeviceNode, addr, regCount, ModbusFunction.READ_HOLDING_REGISTERS);
-                SendData(data);
-                if (WaitResponse()) {
-                    usRet = mRxData.ToList();
-                    stt = mRxStt;
-                }
-            } catch (Exception ex) {
-                CtStatus.Report(Stat.ER_SYSTEM, ex);
-            }
-            value = usRet;
+        public Stat ReadHoldingRegister(byte devID, ushort addr, ushort regCount, out List<byte> value) {
+            byte[] data = CreateReadHeader(devID, DeviceNode, addr, regCount, ModbusFunction.ReadHoldingRegister);
+            Stat stt = Sending(data);
+            value = mRxData.Count > 0 ? mRxData.ToList() : null;
             return stt;
         }
 
-        /// <summary>[FC02] 讀取輸入 Bit 目前狀態，僅可讀取輸入端點(Input Only)</summary>
+        /// <summary>[FC02] 讀取指定裝置的輸入 Bit 目前狀態，僅可讀取輸入端點(Input Only)</summary>
+        /// <param name="devID">指定裝置的局號</param>
         /// <param name="addr">起始的 IO Address</param>
         /// <param name="bitCount">連續讀取的長度。如要讀取 0~7 則 addr=0 length=8</param>
         /// <param name="value">各 IO 的 ON OFF 狀態</param>
         /// <returns>Status Code</returns>
-        public Stat ReadInputStatus(ushort addr, ushort bitCount, out List<bool> value) {
-            Stat stt = Stat.SUCCESS;
+        public Stat ReadInputStatus(byte devID, ushort addr, ushort bitCount, out List<bool> value) {
             List<bool> bTemp = null;
-            try {
-                byte[] data = CreateReadHeader(DeviceID, DeviceNode, addr, bitCount, ModbusFunction.READ_INPUT_STATUS);
-                SendData(data);
-                if (WaitResponse()) {
-                    if (mRxData != null) ConvertDataToBool(bitCount, out bTemp);
-                    stt = mRxStt;
-                    //bTemp = mRxData.ConvertAll(new Converter<ushort, bool>(val => CtConvert.CBool(val)));
-                }
-            } catch (Exception ex) {
-                CtStatus.Report(Stat.ER_SYSTEM, ex);
-            }
-            value = bTemp.ToList();
+            byte[] data = CreateReadHeader(devID, DeviceNode, addr, bitCount, ModbusFunction.ReadCoilState);
+            Stat stt = Sending(data);
+            if (stt == Stat.SUCCESS) CtConvert.ToBoolSequence(mRxData, out bTemp, bitCount);
+			value = bTemp;
             return stt;
         }
 
-        /// <summary>[FC04] 讀取暫存器(Register)數值，僅可讀取輸入暫存器(Input Only)</summary>
+        /// <summary>[FC04] 讀取指定裝置的暫存器(Register)數值，僅可讀取輸入暫存器(Input Only)</summary>
+        /// <param name="devID">指定裝置的局號</param>
         /// <param name="addr">起始的 Register Address</param>
         /// <param name="regCount">連續讀取的長度。如要讀取 512~514 則 addr=512 length=3</param>
         /// <param name="value">各 Resiger 的數值</param>
         /// <returns>Status Code</returns>
-        public Stat ReadInputRegisters(ushort addr, ushort regCount, out List<byte> value) {
-            Stat stt = Stat.SUCCESS;
-            List<byte> bTemp = new List<byte>();
-            try {
-                byte[] data = CreateReadHeader(DeviceID, DeviceNode, addr, regCount, ModbusFunction.READ_INPUT_REGISTERS);
-                SendData(data);
-                if (WaitResponse()) {
-                    bTemp = mRxData.ToList();
-                    stt = mRxStt;
-                }
-            } catch (Exception ex) {
-                CtStatus.Report(Stat.ER_SYSTEM, ex);
-            }
-            value = bTemp.ToList();
+        public Stat ReadInputRegisters(byte devID, ushort addr, ushort regCount, out List<byte> value) {
+            byte[] data = CreateReadHeader(devID, DeviceNode, addr, regCount, ModbusFunction.ReadInputRegister);
+            Stat stt = Sending(data);
+            value = mRxData.Count > 0 ? mRxData.ToList() : null;
             return stt;
         }
 
-        /// <summary>[FC05] 寫入單一 bit 狀態，並回傳結果  [Force Single Coil]</summary>
+        /// <summary>[FC05] 寫入指定裝置的單一 bit 狀態，並回傳結果  [Force Single Coil]</summary>
+        /// <param name="devID">指定裝置的局號</param>
         /// <param name="addr">IO Address</param>
-        /// <param name="value">欲寫入之狀態  (True)ON (False)OFF</param>
+        /// <param name="value">欲寫入之狀態  (<see langword="true"/>)ON (<see langword="false"/>)OFF</param>
         /// <param name="result">回傳之結果</param>
         /// <returns>Status Code</returns>
-        public Stat WriteSingleCoil(ushort addr, bool value, out List<byte> result) {
-            Stat stt = Stat.SUCCESS;
-            try {
-                byte[] cmd = CreateWriteHeader(DeviceID, DeviceNode, addr, 1, 1, ModbusFunction.FORCE_SINGLE_COIL);
-                cmd[10] = (byte)((value) ? 0xFF : 0x00);
-                SendData(cmd);
-                WaitResponse();
-            } catch (Exception ex) {
-                CtStatus.Report(Stat.ER_SYSTEM, ex);
-            }
-            result = (mRxData != null) ? mRxData.ToList() : null;
-            stt = mRxStt;
+        public Stat WriteSingleCoil(byte devID, ushort addr, bool value, out List<byte> result) {
+            byte[] cmd = CreateWriteHeader(devID, DeviceNode, addr, 1, 1, ModbusFunction.ForceSingleCoil);
+            cmd[10] = (byte)((value) ? 0xFF : 0x00);
+            Stat stt = Sending(cmd);
+            result = (mRxData.Count > 0) ? mRxData.ToList() : null;
             return stt;
         }
 
-        /// <summary>[FC06] 寫入單一 Register 數值，並回傳結果  [Preset Single Register]</summary>
+        /// <summary>[FC06] 寫入指定裝置的單一 Register 數值，並回傳結果  [Preset Single Register]</summary>
+        /// <param name="devID">指定裝置的局號</param>
         /// <param name="addr">Register Address</param>
         /// <param name="value">欲寫入之數值</param>
         /// <param name="result">回傳之結果</param>
         /// <returns>Status Code</returns>
-        public Stat WriteSingleRegister(ushort addr, ushort value, out List<byte> result) {
-            Stat stt = Stat.SUCCESS;
-            try {
-                byte[] cmd = CreateWriteHeader(DeviceID, DeviceNode, addr, 1, 1, ModbusFunction.PRESET_SINGLE_REGISTER);
-                byte[] data = BitConverter.GetBytes(value);
-                cmd[10] = data[1];
-                cmd[11] = data[0];
-                SendData(cmd);
-                WaitResponse();
-            } catch (Exception ex) {
-                CtStatus.Report(Stat.ER_SYSTEM, ex);
-            }
-            result = (mRxData != null) ? mRxData.ToList() : null;
-            stt = mRxStt;
+        public Stat WriteSingleRegister(byte devID, ushort addr, ushort value, out List<byte> result) {
+            byte[] cmd = CreateWriteHeader(devID, DeviceNode, addr, 1, 1, ModbusFunction.PresetSingleRegister);
+            byte[] data = BitConverter.GetBytes(value);
+            cmd[10] = data[1];
+            cmd[11] = data[0];
+            Stat stt = Sending(cmd);
+            result = (mRxData.Count > 0) ? mRxData.ToList() : null;
             return stt;
         }
 
-        /// <summary>[FC15] 寫入連續 Bit 狀態  [Force Multi Coils]</summary>
+        /// <summary>[FC15] 寫入指定裝置的連續 Bit 狀態  [Force Multi Coils]</summary>
+        /// <param name="devID">指定裝置的局號</param>
         /// <param name="addr">起始 IO Address</param>
         /// <param name="value">欲寫入之狀態</param>
         /// <param name="result">回傳之結果</param>
         /// <returns>Status Code</returns>
-        public Stat WriteMultiCoils(ushort addr, List<bool> value, out List<byte> result) {
-            Stat stt = Stat.SUCCESS;
-            try {
-                byte[] data = CalcByte(value);
-                byte[] cmd = CreateWriteHeader(DeviceID, DeviceNode, addr, (ushort)value.Count, (byte)(data.Length + 2), ModbusFunction.FORCE_MULTI_COILS);
+        public Stat WriteMultiCoils(byte devID, ushort addr, List<bool> value, out List<byte> result) {
+			/*-- 將 bool 集合轉成傳輸順序的 byte 集合 --*/
+			List<byte> tempData, presetData = new List<byte>();
+			CtConvert.ToNumericSequence(value, out tempData);
 
-                int idx = 0;
-                foreach (byte item in data) {
-                    cmd[13 + idx] = item;
-                    idx++;
-                }
-                SendData(cmd);
-                WaitResponse();
-            } catch (Exception ex) {
-                CtStatus.Report(Stat.ER_SYSTEM, ex);
+			/*-- 因 Modbus FC15 是先傳送低位元再傳送高位元，故需將之高低位對調 --*/
+			for (int seq = 0; seq < tempData.Count; seq += 2) {
+				if (seq + 1 < tempData.Count) presetData.Add(tempData[seq + 1]);
+				presetData.Add(tempData[seq]);
+			}
+
+			//byte[] data = CalcByte(value);
+			byte[] cmd = CreateWriteHeader(devID, DeviceNode, addr, (ushort)value.Count, (byte)(presetData.Count + 2), ModbusFunction.ForceMultiCoils);
+
+            int idx = 0;
+            foreach (byte item in presetData) {
+                cmd[13 + idx] = item;
+                idx++;
             }
-            result = (mRxData != null) ? mRxData.ToList() : null;
-            stt = mRxStt;
+
+            Stat stt = Sending(cmd);
+            result = (mRxData.Count > 0) ? mRxData.ToList() : null;
             return stt;
         }
 
-        /// <summary>[FC16] 寫入連續 Register 數值  [Preset Multi Registers]</summary>
+        /// <summary>[FC16] 寫入指定裝置的連續 Register 數值  [Preset Multi Registers]</summary>
+        /// <param name="devID">指定裝置的局號</param>
         /// <param name="addr">起始 Register Address</param>
         /// <param name="data">欲寫入的資料</param>
         /// <param name="result">回傳之結果</param>
         /// <returns>Status Code</returns>
-        public Stat WriteMultiRegisters(ushort addr, List<ushort> data, out List<byte> result) {
+        public Stat WriteMultiRegisters(byte devID, ushort addr, List<ushort> data, out List<byte> result) {
+            byte[] cmd = CreateWriteHeader(devID, DeviceNode, addr, (byte)(data.Count), (byte)(data.Count * 2 + 2), ModbusFunction.PresetMultiRegisters);
+
+            int idx = 0;
+            foreach (ushort value in data) {
+                byte[] _val = BitConverter.GetBytes(value);
+                cmd[13 + idx] = _val[1];
+                cmd[14 + idx] = _val[0];
+                idx += 2;
+            }
+            Stat stt = Sending(cmd);
+            result = (mRxData.Count > 0) ? mRxData.ToList() : null;
+            return stt;
+        }
+
+        /// <summary>[FC05] 寫入指定裝置的單一 bit 狀態，但不等待裝置回應  [Force Single Coil]</summary>
+        /// <param name="devID">指定裝置的局號</param>
+        /// <param name="addr">IO Address</param>
+        /// <param name="value">欲寫入之狀態  (<see langword="true"/>)ON (<see langword="false"/>)OFF</param>
+        /// <returns>Status Code</returns>
+        public Stat WriteSingleCoil(byte devID, ushort addr, bool value) {
             Stat stt = Stat.SUCCESS;
             try {
-                byte[] cmd = CreateWriteHeader(DeviceID, DeviceNode, addr, (byte)(data.Count), (byte)(data.Count * 2 + 2), ModbusFunction.PRESET_MULTI_REGISTERS);
+                byte[] cmd = CreateWriteHeader(devID, DeviceNode, addr, 1, 1, ModbusFunction.ForceSingleCoil);
+                cmd[10] = (byte)((value) ? 0xFF : 0x00);
+                SendData(cmd);
+            } catch (Exception ex) {
+                stt = Stat.ER3_MB_COMERR;
+                CtStatus.Report(stt, ex);
+            }
+            return stt;
+        }
+
+        /// <summary>[FC06] 寫入指定裝置的單一 Register 數值，但不等待裝置回應  [Preset Single Register]</summary>
+        /// <param name="devID">指定裝置的局號</param>
+        /// <param name="addr">Register Address</param>
+        /// <param name="value">欲寫入之數值</param>
+        /// <returns>Status Code</returns>
+        public Stat WriteSingleRegister(byte devID, ushort addr, ushort value) {
+            Stat stt = Stat.SUCCESS;
+            try {
+                byte[] cmd = CreateWriteHeader(devID, DeviceNode, addr, 1, 1, ModbusFunction.PresetSingleRegister);
+                byte[] data = BitConverter.GetBytes(value);
+                cmd[10] = data[1];
+                cmd[11] = data[0];
+                SendData(cmd);
+            } catch (Exception ex) {
+                stt = Stat.ER3_MB_COMERR;
+                CtStatus.Report(stt, ex);
+            }
+            return stt;
+        }
+
+        /// <summary>[FC15] 寫入指定裝置的連續 Bit 狀態，但不等待裝置回應  [Force Multi Coils]</summary>
+        /// <param name="devID">指定裝置的局號</param>
+        /// <param name="addr">起始 IO Address</param>
+        /// <param name="value">欲寫入之狀態</param>
+        /// <returns>Status Code</returns>
+        public Stat WriteMultiCoils(byte devID, ushort addr, List<bool> value) {
+            Stat stt = Stat.SUCCESS;
+            try {
+
+				/*-- 將 bool 集合轉成傳輸順序的 byte 集合 --*/
+				List<byte> tempData, presetData = new List<byte>();
+				CtConvert.ToNumericSequence(value, out tempData);
+
+				/*-- 因 Modbus FC15 是先傳送低位元再傳送高位元，故需將之高低位對調 --*/
+				for (int seq = 0; seq < tempData.Count; seq += 2) {
+					if (seq + 1 < tempData.Count) presetData.Add(tempData[seq + 1]);
+					presetData.Add(tempData[seq]);
+				}
+
+				//byte[] data = CalcByte(value);
+                byte[] cmd = CreateWriteHeader(devID, DeviceNode, addr, (ushort)value.Count, (byte)(presetData.Count + 2), ModbusFunction.ForceMultiCoils);
+
+                int idx = 0;
+                foreach (byte item in presetData) {
+                    cmd[13 + idx] = item;
+                    idx++;
+                }
+                SendData(cmd);
+            } catch (Exception ex) {
+                stt = Stat.ER3_MB_COMERR;
+                CtStatus.Report(stt, ex);
+            }
+            return stt;
+        }
+
+        /// <summary>[FC16] 寫入指定裝置的連續 Register 數值，但不等待裝置回應  [Preset Multi Registers]</summary>
+        /// <param name="devID">指定裝置的局號</param>
+        /// <param name="addr">起始 Register Address</param>
+        /// <param name="data">欲寫入的資料</param>
+        /// <returns>Status Code</returns>
+        public Stat WriteMultiRegisters(byte devID, ushort addr, List<ushort> data) {
+            Stat stt = Stat.SUCCESS;
+            try {
+                byte[] cmd = CreateWriteHeader(devID, DeviceNode, addr, (byte)(data.Count), (byte)(data.Count * 2 + 2), ModbusFunction.PresetMultiRegisters);
 
                 int idx = 0;
                 foreach (ushort value in data) {
@@ -518,133 +601,255 @@ namespace CtLib.Module.Modbus {
                     idx += 2;
                 }
                 SendData(cmd);
-                WaitResponse();
             } catch (Exception ex) {
-                CtStatus.Report(Stat.ER_SYSTEM, ex);
+                stt = Stat.ER3_MB_COMERR;
+                CtStatus.Report(stt, ex);
             }
-            result = (mRxData != null) ? mRxData.ToList() : null;
-            stt = mRxStt;
             return stt;
         }
+
+        /// <summary>[FC01] 讀取 Coil (InOut, Output) 狀態</summary>
+        /// <param name="addr">IO Address</param>
+        /// <param name="coilCount">連續讀取的數量。如欲 0~7 則輸入 8 </param>
+        /// <param name="state">各點的狀態  (<see langword="true"/>)ON  (<see langword="false"/>)OFF</param>
+        /// <returns>Status Code</returns>
+        public Stat ReadCoilStatus(ushort addr, ushort coilCount, out List<bool> state) {
+            List<bool> bRet = null;
+            Stat stt = ReadCoilStatus(DeviceID, addr, coilCount, out bRet);
+            state = bRet;
+            return stt;
+        }
+
+        /// <summary>[FC03] 讀取暫存器(Register)數值，可為輸入或輸出之暫存器(Input, Output, InOut)</summary>
+        /// <param name="addr">Register Address</param>
+        /// <param name="regCount">連續讀取的暫存器數量。如 4000~4007 則輸入 8</param>
+        /// <param name="value">(<see langword="true"/>)ON  (<see langword="false"/>)OFF</param>
+        /// <returns>Status Code</returns>
+        /// <remarks>以 Wago IO 為例，一個 Register 都是 16bit，所以回傳的資訊以 ushort (uint16) 為主</remarks>
+        public Stat ReadHoldingRegister(ushort addr, ushort regCount, out List<byte> value) {
+            List<byte> result;
+            Stat stt = ReadHoldingRegister(DeviceID, addr, regCount, out result);
+            value = result;
+            return stt;
+        }
+
+        /// <summary>[FC02] 讀取輸入 Bit 目前狀態，僅可讀取輸入端點(Input Only)</summary>
+        /// <param name="addr">起始的 IO Address</param>
+        /// <param name="bitCount">連續讀取的長度。如要讀取 0~7 則 addr=0 length=8</param>
+        /// <param name="value">各 IO 的 ON OFF 狀態</param>
+        /// <returns>Status Code</returns>
+        public Stat ReadInputStatus(ushort addr, ushort bitCount, out List<bool> value) {
+            List<bool> bTemp = null;
+            Stat stt = ReadInputStatus(DeviceID, addr, bitCount, out bTemp);
+            value = bTemp;
+            return stt;
+        }
+
+        /// <summary>[FC04] 讀取暫存器(Register)數值，僅可讀取輸入暫存器(Input Only)</summary>
+        /// <param name="addr">起始的 Register Address</param>
+        /// <param name="regCount">連續讀取的長度。如要讀取 512~514 則 addr=512 length=3</param>
+        /// <param name="value">各 Resiger 的數值</param>
+        /// <returns>Status Code</returns>
+        public Stat ReadInputRegisters(ushort addr, ushort regCount, out List<byte> value) {
+            List<byte> result;
+            Stat stt = ReadInputRegisters(DeviceID, addr, regCount, out result);
+            value = result;
+            return stt;
+        }
+
+        /// <summary>[FC05] 寫入單一 bit 狀態，並回傳結果  [Force Single Coil]</summary>
+        /// <param name="addr">IO Address</param>
+        /// <param name="value">欲寫入之狀態  (<see langword="true"/>)ON (<see langword="false"/>)OFF</param>
+        /// <param name="result">回傳之結果</param>
+        /// <returns>Status Code</returns>
+        public Stat WriteSingleCoil(ushort addr, bool value, out List<byte> result) {
+            List<byte> temp;
+            Stat stt = WriteSingleCoil(DeviceID, addr, value, out temp);
+            result = temp;
+            return stt;
+        }
+
+        /// <summary>[FC06] 寫入單一 Register 數值，並回傳結果  [Preset Single Register]</summary>
+        /// <param name="addr">Register Address</param>
+        /// <param name="value">欲寫入之數值</param>
+        /// <param name="result">回傳之結果</param>
+        /// <returns>Status Code</returns>
+        public Stat WriteSingleRegister(ushort addr, ushort value, out List<byte> result) {
+            List<byte> temp;
+            Stat stt = WriteSingleRegister(DeviceID, addr, value, out temp);
+            result = temp;
+            return stt;
+        }
+
+        /// <summary>[FC15] 寫入連續 Bit 狀態  [Force Multi Coils]</summary>
+        /// <param name="addr">起始 IO Address</param>
+        /// <param name="value">欲寫入之狀態</param>
+        /// <param name="result">回傳之結果</param>
+        /// <returns>Status Code</returns>
+        public Stat WriteMultiCoils(ushort addr, List<bool> value, out List<byte> result) {
+            List<byte> temp;
+            Stat stt = WriteMultiCoils(DeviceID, addr, value, out temp);
+            result = temp;
+            return stt;
+        }
+
+        /// <summary>[FC16] 寫入連續 Register 數值  [Preset Multi Registers]</summary>
+        /// <param name="addr">起始 Register Address</param>
+        /// <param name="data">欲寫入的資料</param>
+        /// <param name="result">回傳之結果</param>
+        /// <returns>Status Code</returns>
+        public Stat WriteMultiRegisters(ushort addr, List<ushort> data, out List<byte> result) {
+            List<byte> temp;
+            Stat stt = WriteMultiRegisters(DeviceID, addr, data, out temp);
+            result = temp;
+            return stt;
+        }
+
+        /// <summary>[FC05] 寫入單一 bit 狀態，但不等待裝置回應  [Force Single Coil]</summary>
+        /// <param name="addr">IO Address</param>
+        /// <param name="value">欲寫入之狀態  (<see langword="true"/>)ON (<see langword="false"/>)OFF</param>
+        /// <returns>Status Code</returns>
+        public Stat WriteSingleCoil(ushort addr, bool value) {
+            return WriteSingleCoil(DeviceID, addr, value);
+        }
+
+        /// <summary>[FC06] 寫入單一 Register 數值，但不等待裝置回應  [Preset Single Register]</summary>
+        /// <param name="addr">Register Address</param>
+        /// <param name="value">欲寫入之數值</param>
+        /// <returns>Status Code</returns>
+        public Stat WriteSingleRegister(ushort addr, ushort value) {
+            return WriteSingleRegister(DeviceID, addr, value);
+        }
+
+        /// <summary>[FC15] 寫入連續 Bit 狀態，但不等待裝置回應  [Force Multi Coils]</summary>
+        /// <param name="addr">起始 IO Address</param>
+        /// <param name="value">欲寫入之狀態</param>
+        /// <returns>Status Code</returns>
+        public Stat WriteMultiCoils(ushort addr, List<bool> value) {
+            return WriteMultiCoils(DeviceID, addr, value);
+        }
+
+        /// <summary>[FC16] 寫入連續 Register 數值，但不等待裝置回應  [Preset Multi Registers]</summary>
+        /// <param name="addr">起始 Register Address</param>
+        /// <param name="data">欲寫入的資料</param>
+        /// <returns>Status Code</returns>
+        public Stat WriteMultiRegisters(ushort addr, List<ushort> data) {
+            return WriteMultiRegisters(DeviceID, addr, data);
+        }
+
         #endregion
 
         #region Function - CtSyncSocket Override
-        /// <summary>[Socket][Client] Socket 接收資料之處理執行緒(Thread)</summary>
-        protected override void tsk_Client_RxData() {
-            NetworkStream netStream = mClient.GetStream();
-            List<byte> rxData = new List<byte>();
-            do {
-                try {
-                    /*-- If mClient is dispose or disconnect, exit the loop --*/
-                    if (mClient == null) break;
+        ///// <summary>[Socket][Client] Socket 接收資料之處理執行緒(Thread)</summary>
+        //protected override void tsk_Client_RxData() {
+        //    NetworkStream netStream = mClient.GetStream();
+        //    List<byte> rxData = new List<byte>();
+        //    do {
+        //        try {
+        //            /*-- If mClient is dispose or disconnect, exit the loop --*/
+        //            if (mClient == null) break;
 
-                    /*-- Read stream buffer into byte[] --*/
-                    rxData.Clear();
-                    do {
-                        rxData.Add((byte)netStream.ReadByte());
-                    } while (netStream.DataAvailable);
+        //            /*-- Read stream buffer into byte[] --*/
+        //            rxData.Clear();
+        //            do {
+        //                rxData.Add((byte)netStream.ReadByte());
+        //            } while (netStream.DataAvailable);
 
-                    /*-- If there are something passing-in --*/
-                    if (rxData.Count > 0) {
-                        mRxStt = Decode(rxData);
-                        mFlag_RxData = true;
-                    }
-                    /*-- Dalay --*/
-                    Thread.Sleep(1);
+        //            /*-- If there are something passing-in --*/
+        //            if (rxData.Count > 0) {
+        //                mRxStt = Decode(rxData);
+        //                mFlag_RxData = true;
+        //            }
+        //            /*-- Dalay --*/
+        //            CtTimer.Delay(1);
 
-                } catch (IOException) {
-                    /*-- Raise disconnect event --*/
-                    RaiseEvents(
-                        new SocketEventArgs(
-                                SocketEvents.CONNECTED_WITH_SERVER,
-                                new ConnectInfo(
-                                        false,
-                                        DeviceIP,
-                                        DevicePort
-                                )
-                        )
-                    );
-                    break;
-                } catch (ThreadInterruptedException) {
-                    /*-- Using to catch exception of exit thread, but not report --*/
-                } catch (Exception ex) {
-                    CtStatus.Report(Stat.ER_SYSTEM, ex);
-                }
-            } while (mThread_ClientReceiveData.IsAlive);
-        }
+        //        } catch (IOException) {
+        //            /*-- Raise disconnect event --*/
+        //            RaiseEvents(
+        //                    SocketEvents.CONNECTED_WITH_SERVER,
+        //                    new SocketConnection(
+        //                            false,
+        //                            DeviceIP,
+        //                            DevicePort
+        //                )
+        //            );
+        //            break;
+        //        } catch (ThreadInterruptedException) {
+        //            /*-- Using to catch exception of exit thread, but not report --*/
+        //        } catch (Exception ex) {
+        //            CtStatus.Report(Stat.ER_SYSTEM, ex);
+        //        }
+        //    } while (mThread_ClientReceiveData.IsAlive);
+        //}
 
-        /// <summary>[Socket][Server] 各 Socket 接收資料之處理執行緒(Thread)</summary>
-        /// <param name="socket">此執行緒欲負責接收的 Socket 物件</param>
-        protected override void tsk_Server_RxData(object socket) {
-            Socket sckTemp = socket as Socket;                      //Temporary Socket from listen thread
-            NetworkStream netStream = new NetworkStream(sckTemp);   //Get the stream of the Socket that passing
-            List<byte> rxData = new List<byte>();
-            try {
-                do {
-                    try {
-                        /*-- If server or socket disconnect, exit the loop --*/
-                        if (mServer == null) break;
+        ///// <summary>[Socket][Server] 各 Socket 接收資料之處理執行緒(Thread)</summary>
+        ///// <param name="socket">此執行緒欲負責接收的 Socket 物件</param>
+        //protected override void tsk_Server_RxData(object socket) {
+        //    Socket sckTemp = socket as Socket;                      //Temporary Socket from listen thread
+        //    NetworkStream netStream = new NetworkStream(sckTemp);   //Get the stream of the Socket that passing
+        //    List<byte> rxData = new List<byte>();
+        //    try {
+        //        do {
+        //            try {
+        //                /*-- If server or socket disconnect, exit the loop --*/
+        //                if (mServer == null) break;
 
-                        /*-- Create the byte[] to receive data --*/
-                        rxData.Clear();
-                        do {
-                            rxData.Add((byte)netStream.ReadByte());
-                        } while (netStream.DataAvailable);
+        //                /*-- Create the byte[] to receive data --*/
+        //                rxData.Clear();
+        //                do {
+        //                    rxData.Add((byte)netStream.ReadByte());
+        //                } while (netStream.DataAvailable);
 
-                        /*-- If there are somehting exist --*/
-                        if (rxData.Count > 0) {
+        //                /*-- If there are somehting exist --*/
+        //                if (rxData.Count > 0) {
 
-                            mRxStt = Decode(rxData);
-                            mFlag_RxData = true;
+        //                    mRxStt = Decode(rxData);
+        //                    mFlag_RxData = true;
 
-                            /*-- If there are no response from client, close the tube --*/
-                        } else {
-                            /*-- Remove the Socket from list --*/
-                            mClientList.Remove(sckTemp);
-                            sckTemp.Disconnect(true);
+        //                    /*-- If there are no response from client, close the tube --*/
+        //                } else {
+        //                    /*-- Remove the Socket from list --*/
+        //                    mClientList.Remove(sckTemp);
+        //                    sckTemp.Disconnect(true);
 
-                            /*-- Raise Event --*/
-                            RaiseEvents(
-                                new SocketEventArgs(
-                                    SocketEvents.CLIENT_CONNECTED,
-                                    new ConnectInfo(
-                                            false,
-                                            (sckTemp.RemoteEndPoint as IPEndPoint).Address.ToString(),
-                                            (sckTemp.RemoteEndPoint as IPEndPoint).Port
-                                    )
-                                )
-                            );
-                            break;
-                        }
+        //                    /*-- Raise Event --*/
+        //                    RaiseEvents(
+        //                        SocketEvents.CLIENT_CONNECTED,
+        //                        new SocketConnection(
+        //                            false,
+        //                            (sckTemp.RemoteEndPoint as IPEndPoint).Address.ToString(),
+        //                            (sckTemp.RemoteEndPoint as IPEndPoint).Port
+        //                        )
+        //                    );
+        //                    break;
+        //                }
 
-                        /*-- Delay --*/
-                        Thread.Sleep(1);
+        //                /*-- Delay --*/
+        //                CtTimer.Delay(1);
 
-                    } catch (IOException) {
-                        /*-- Remove the Socket from list --*/
-                        mClientList.Remove(sckTemp);
-                        sckTemp.Disconnect(true);
+        //            } catch (IOException) {
+        //                /*-- Remove the Socket from list --*/
+        //                mClientList.Remove(sckTemp);
+        //                sckTemp.Disconnect(true);
 
-                        /*-- Raise Event --*/
-                        RaiseEvents(
-                            new SocketEventArgs(
-                                    SocketEvents.CLIENT_CONNECTED,
-                                    new ConnectInfo(
-                                            false,
-                                            (sckTemp.RemoteEndPoint as IPEndPoint).Address.ToString(),
-                                            (sckTemp.RemoteEndPoint as IPEndPoint).Port
-                                    )
-                            )
-                        );
-                        break;
-                    } catch (Exception ex) {
-                        CtStatus.Report(Stat.ER_SYSTEM, ex);
-                    }
-                } while (mThread_ServerListen.IsAlive);
-            } catch (Exception) {
-                /*-- Using to catch exception of exit thread --*/
-            }
-        }
+        //                /*-- Raise Event --*/
+        //                RaiseEvents(
+        //                    SocketEvents.CLIENT_CONNECTED,
+        //                    new SocketConnection(
+        //                            false,
+        //                            (sckTemp.RemoteEndPoint as IPEndPoint).Address.ToString(),
+        //                            (sckTemp.RemoteEndPoint as IPEndPoint).Port
+        //                    )
+        //                );
+        //                break;
+        //            } catch (Exception ex) {
+        //                CtStatus.Report(Stat.ER_SYSTEM, ex);
+        //            }
+        //        } while (mThread_ServerListen.IsAlive);
+        //    } catch (Exception) {
+        //        /*-- Using to catch exception of exit thread --*/
+        //    }
+        //}
         #endregion
     }
 }

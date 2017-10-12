@@ -1,18 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 using CtLib.Library;
+using CtLib.Module.Utility;
 
 using Ace.Core.Client;
 using Ace.HSVision.Client.Wizard;
 using Ace.HSVision.Server.Tools;
-using CtLib.Module.Ultity;
 
 namespace CtLib.Module.Adept {
 
@@ -20,10 +14,10 @@ namespace CtLib.Module.Adept {
     /// Adept ACE Locator Model之編輯視窗
     /// <para>創建時可不使用Show，直接透過Connect()即可顯示Editor</para>
     /// </summary>
-    /// <example><code>
+    /// <example><code language="C#">
     /// /*-- Create and connect to Adept ACE --*/
     /// CtAce mAce = new CtAce();
-    /// mAce.Connect(CtAce.ControllerType.WITH_SMARTCONTROLLER);
+    /// mAce.Connect(ControllerType.SmartController);
     /// 
     /// /*-- Execute Model Editor --*/
     /// CtAceModelEditor modelEditor = new CtAceModelEditor();

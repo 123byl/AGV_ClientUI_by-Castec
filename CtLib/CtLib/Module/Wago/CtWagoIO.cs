@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Windows.Forms;
 
 using CtLib.Library;
 using CtLib.Module.Modbus;
-using CtLib.Module.TCPIP;
+using CtLib.Module.Net;
+using CtLib.Module.Utility;
 
 namespace CtLib.Module.Wago {
 
@@ -17,21 +13,12 @@ namespace CtLib.Module.Wago {
     /// Wago IO 模組控制
     /// <para>此類別以 Wago 750-352 為基礎撰寫</para>
     /// </summary>
-    public class CtWagoIO {
+    public class CtWagoIO : ICtVersion {
 
-        #region Declaration - Enumerations
-        /// <summary>輸入輸出(Input_Output, IO) 類型</summary>
-        public enum IOType : byte {
-            /// <summary>輸入 Input</summary>
-            INPUT,
-            /// <summary>輸出 Output</summary>
-            OUTPUT,
-            /// <summary>輸入輸出 InOut</summary>
-            INOUT
-        }
-        #endregion
+        /// <summary>CtWagoIO 版本資訊</summary>
+        public CtVersion Version { get { return new CtVersion(0, 0, 0, "2014/10/10", "Ahern Kuo"); } }
 
-        #region Declaration - Members
+        #region Declaration - Fields
         /// <summary>Modbus TCP Object</summary>
         private CtModbus_TCP mModbus;
         #endregion
@@ -57,12 +44,12 @@ namespace CtLib.Module.Wago {
             /// 與 Slave/Master 連線狀態改變
             /// <para>事件附加的數值型態為 bool</para>
             /// </summary>
-            CONNECTION,
+            Connection,
             /// <summary>
             /// Socket 連線通訊異常
             /// <para>事件附加的數值型態為 string</para>
             /// </summary>
-            EXCEPTION
+            Exception
         }
 
         /// <summary>CtWagoIO 事件參數</summary>
@@ -114,13 +101,13 @@ namespace CtLib.Module.Wago {
         #endregion
 
         #region Function - CtModbus_TCP Events
-        void mModbus_OnSocketEvents(object sender, CtSyncSocket.SocketEventArgs e) {
+        void mModbus_OnSocketEvents(object sender, SocketEventArgs e) {
             switch (e.Event) {
-                case CtSyncSocket.SocketEvents.CONNECTED_WITH_SERVER:
-                    RaiseEvents(new WagoIOEventArgs(WagoIOEvents.CONNECTION, (e.Value as CtSyncSocket.ConnectInfo).Status));
+                case SocketEvents.ConnectionWithServer:
+                    RaiseEvents(new WagoIOEventArgs(WagoIOEvents.Connection, (e.Value as SocketConnection).Status));
                     break;
-                case CtSyncSocket.SocketEvents.EXCEPTION:
-                    RaiseEvents(new WagoIOEventArgs(WagoIOEvents.EXCEPTION, e.Value.ToString()));
+                case SocketEvents.Exception:
+                    RaiseEvents(new WagoIOEventArgs(WagoIOEvents.Exception, e.Value.ToString()));
                     break;
                 default:
                     break;
@@ -174,7 +161,7 @@ namespace CtLib.Module.Wago {
         /// I/O 編號
         /// <para>以 Wago 750-352 為例， Input: 0~255,24576~25339  Output: 512~767,28672~29435。 順序從第一張卡第一點開始算起</para>
         /// </param>
-        /// <param name="state">當前狀態  (True)ON (False)OFF</param>
+        /// <param name="state">當前狀態  (<see langword="true"/>)ON (<see langword="false"/>)OFF</param>
         /// <returns>Status Code</returns>
         public Stat GetIO(ushort io, out bool state) {
             List<bool> bolTemp = null;
@@ -274,7 +261,7 @@ namespace CtLib.Module.Wago {
         /// I/O 編號
         /// <para>以 Wago 750-352 為例， Output: 0~2040。 順序從第一張卡第一點開始算起</para>
         /// </param>
-        /// <param name="state">欲更改的狀態  (True)ON (False)OFF</param>
+        /// <param name="state">欲更改的狀態  (<see langword="true"/>)ON (<see langword="false"/>)OFF</param>
         /// <returns>Status Code</returns>
         public Stat SetIO(ushort io, bool state) {
             List<byte> result;

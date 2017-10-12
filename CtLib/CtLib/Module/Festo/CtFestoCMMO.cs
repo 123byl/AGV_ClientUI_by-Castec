@@ -1,10 +1,9 @@
 ﻿using CtLib.Library;
-using CtLib.Module.Ultity;
+using CtLib.Module.Utility;
+
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Sockets;
-using System.Text;
 using System.Windows.Forms;
 
 namespace CtLib.Module.FESTO
@@ -13,7 +12,7 @@ namespace CtLib.Module.FESTO
     /// FESTO CMMO 相關控制
     /// <para>由於 FESTO 馬達與控制器差異較大，故使用前請先確認是否適用</para>
     /// </summary>
-    public class CtFestoCMMO
+    public class CtFestoCMMO : ICtVersion
     {
         #region Version
 
@@ -22,7 +21,7 @@ namespace CtLib.Module.FESTO
         ///      + CtFestoCMMO
         /// </summary>
         /// 
-        public static readonly CtVersion @Version = new CtVersion(1, 0, 0, "2015/05/14", "Bruce Lee");
+        public CtVersion Version { get { return new CtVersion(1, 0, 0, "2015/05/14", "Bruce Lee"); } }
 
         #endregion
 
@@ -423,7 +422,7 @@ namespace CtLib.Module.FESTO
 
         #endregion
 
-        #region Declaration - Members
+        #region Declaration - Fields
 
         private NetworkStream mStream;
         private TcpClient mClient;
@@ -707,7 +706,7 @@ namespace CtLib.Module.FESTO
         /// 取得單一列記錄表內的記錄
         /// </summary>
         /// <param name="index">記錄索引</param>
-        /// <returns></returns>
+        /// <returns>欄位數值</returns>
         public List<string> GetRecordTableRow(ushort index)
         {
             try

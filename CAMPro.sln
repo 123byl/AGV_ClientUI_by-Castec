@@ -23,7 +23,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AGV.Map.Core", "AGV.Map.Cor
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AGV.Map.UI", "AGV.Map.UI\AGV.Map.UI.csproj", "{7762AB26-E84F-45BA-8F87-9FC0ACEA65DF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CtLib", "..\CtLib\CtLib\CtLib.csproj", "{A9BED8B3-2F9D-42A8-90BD-9FAE0522EB09}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CtLib", "CtLib\CtLib\CtLib.csproj", "{A9BED8B3-2F9D-42A8-90BD-9FAE0522EB09}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

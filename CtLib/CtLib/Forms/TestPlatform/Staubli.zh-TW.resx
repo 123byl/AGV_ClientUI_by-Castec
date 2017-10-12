@@ -1,0 +1,319 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="misProg.Size" type="System.Drawing.Size, System.Drawing">
+    <value>58, 27</value>
+  </data>
+  <data name="misProg.Text" xml:space="preserve">
+    <value>程序</value>
+  </data>
+  <data name="miExit.Size" type="System.Drawing.Size, System.Drawing">
+    <value>129, 30</value>
+  </data>
+  <data name="miExit.Text" xml:space="preserve">
+    <value>離開</value>
+  </data>
+  <data name="lblIP.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Verdana, 10pt</value>
+  </data>
+  <data name="lblIP.Size" type="System.Drawing.Size, System.Drawing">
+    <value>32, 25</value>
+  </data>
+  <data name="grpNet.Font" type="System.Drawing.Font, System.Drawing">
+    <value>微軟正黑體, 10pt</value>
+  </data>
+  <data name="grpNet.Text" xml:space="preserve">
+    <value>CS8 設定</value>
+  </data>
+  <data name="btnLogin.Font" type="System.Drawing.Font, System.Drawing">
+    <value>微軟正黑體, 10.2pt</value>
+  </data>
+  <data name="btnLogin.Text" xml:space="preserve">
+    <value>登入</value>
+  </data>
+  <data name="txtUsr.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Verdana, 10pt</value>
+  </data>
+  <data name="lblUsr.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Verdana, 10pt</value>
+  </data>
+  <data name="lblUsr.Size" type="System.Drawing.Size, System.Drawing">
+    <value>58, 25</value>
+  </data>
+  <data name="txtPort.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Verdana, 10pt</value>
+  </data>
+  <data name="lblPort.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Verdana, 10pt</value>
+  </data>
+  <data name="lblPort.Size" type="System.Drawing.Size, System.Drawing">
+    <value>53, 25</value>
+  </data>
+  <data name="txtIP.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Verdana, 10pt</value>
+  </data>
+  <data name="colTime.HeaderText" xml:space="preserve">
+    <value>時間</value>
+  </data>
+  <data name="colType.HeaderText" xml:space="preserve">
+    <value>類型</value>
+  </data>
+  <data name="colMsg.HeaderText" xml:space="preserve">
+    <value>訊息</value>
+  </data>
+  <data name="button1.Font" type="System.Drawing.Font, System.Drawing">
+    <value>微軟正黑體, 10pt</value>
+  </data>
+  <data name="btnCurJoint.Font" type="System.Drawing.Font, System.Drawing">
+    <value>微軟正黑體, 10pt</value>
+  </data>
+  <data name="btnCurJoint.Text" xml:space="preserve">
+    <value>取得 Joint</value>
+  </data>
+  <data name="grpLoc.Font" type="System.Drawing.Font, System.Drawing">
+    <value>微軟正黑體, 10pt</value>
+  </data>
+  <data name="grpLoc.Text" xml:space="preserve">
+    <value>當前座標</value>
+  </data>
+  <data name="btnCurPoint.Font" type="System.Drawing.Font, System.Drawing">
+    <value>微軟正黑體, 10pt</value>
+  </data>
+  <data name="btnCurPoint.Text" xml:space="preserve">
+    <value>取得 World</value>
+  </data>
+  <data name="grpPwr.Font" type="System.Drawing.Font, System.Drawing">
+    <value>微軟正黑體, 10pt</value>
+  </data>
+  <data name="grpPwr.Text" xml:space="preserve">
+    <value>電源</value>
+  </data>
+  <data name="rdoPwrOff.Font" type="System.Drawing.Font, System.Drawing">
+    <value>微軟正黑體, 10pt</value>
+  </data>
+  <data name="rdoPwrOff.Size" type="System.Drawing.Size, System.Drawing">
+    <value>77, 29</value>
+  </data>
+  <data name="rdoPwrOff.Text" xml:space="preserve">
+    <value>斷電</value>
+  </data>
+  <data name="rdoPwrOn.Font" type="System.Drawing.Font, System.Drawing">
+    <value>微軟正黑體, 10pt</value>
+  </data>
+  <data name="rdoPwrOn.Size" type="System.Drawing.Size, System.Drawing">
+    <value>77, 29</value>
+  </data>
+  <data name="rdoPwrOn.Text" xml:space="preserve">
+    <value>致能</value>
+  </data>
+  <data name="btnPwr.Font" type="System.Drawing.Font, System.Drawing">
+    <value>微軟正黑體, 10pt</value>
+  </data>
+  <data name="btnPwr.Text" xml:space="preserve">
+    <value>切換</value>
+  </data>
+  <data name="grpIO.Font" type="System.Drawing.Font, System.Drawing">
+    <value>微軟正黑體, 10pt</value>
+  </data>
+  <data name="grpIO.Text" xml:space="preserve">
+    <value>數位輸入/輸出訊號</value>
+  </data>
+  <data name="txtIO.Size" type="System.Drawing.Size, System.Drawing">
+    <value>112, 34</value>
+  </data>
+  <data name="btnAllIo.Font" type="System.Drawing.Font, System.Drawing">
+    <value>微軟正黑體, 10pt</value>
+  </data>
+  <data name="btnAllIo.Text" xml:space="preserve">
+    <value>取得所有</value>
+  </data>
+  <data name="rdoIoOff.Size" type="System.Drawing.Size, System.Drawing">
+    <value>57, 29</value>
+  </data>
+  <data name="rdoIoOff.Text" xml:space="preserve">
+    <value>關</value>
+  </data>
+  <data name="rdoIoOn.Size" type="System.Drawing.Size, System.Drawing">
+    <value>57, 29</value>
+  </data>
+  <data name="rdoIoOn.Text" xml:space="preserve">
+    <value>開</value>
+  </data>
+  <data name="btnIoWrite.Font" type="System.Drawing.Font, System.Drawing">
+    <value>微軟正黑體, 10pt</value>
+  </data>
+  <data name="btnIoWrite.Text" xml:space="preserve">
+    <value>寫入</value>
+  </data>
+  <data name="btnIoRead.Font" type="System.Drawing.Font, System.Drawing">
+    <value>微軟正黑體, 10pt</value>
+  </data>
+  <data name="btnIoRead.Text" xml:space="preserve">
+    <value>讀取</value>
+  </data>
+  <data name="grpTask.Font" type="System.Drawing.Font, System.Drawing">
+    <value>微軟正黑體, 10pt</value>
+  </data>
+  <data name="grpTask.Text" xml:space="preserve">
+    <value>任務</value>
+  </data>
+  <data name="btnKill.Font" type="System.Drawing.Font, System.Drawing">
+    <value>微軟正黑體, 10pt</value>
+  </data>
+  <data name="btnKill.Text" xml:space="preserve">
+    <value>移除</value>
+  </data>
+  <data name="btnResume.Font" type="System.Drawing.Font, System.Drawing">
+    <value>微軟正黑體, 10pt</value>
+  </data>
+  <data name="btnResume.Text" xml:space="preserve">
+    <value>繼續</value>
+  </data>
+  <data name="btnSusp.Font" type="System.Drawing.Font, System.Drawing">
+    <value>微軟正黑體, 10pt</value>
+  </data>
+  <data name="btnSusp.Text" xml:space="preserve">
+    <value>暫停</value>
+  </data>
+  <data name="btnTask.Font" type="System.Drawing.Font, System.Drawing">
+    <value>微軟正黑體, 10pt</value>
+  </data>
+  <data name="btnTask.Text" xml:space="preserve">
+    <value>取得任務</value>
+  </data>
+  <data name="btnApp.Font" type="System.Drawing.Font, System.Drawing">
+    <value>微軟正黑體, 10pt</value>
+  </data>
+  <data name="btnApp.Text" xml:space="preserve">
+    <value>取得 App</value>
+  </data>
+  <data name="btnVarGet.Text" xml:space="preserve">
+    <value>取得數值</value>
+  </data>
+  <data name="grpVar.Font" type="System.Drawing.Font, System.Drawing">
+    <value>微軟正黑體, 10pt</value>
+  </data>
+  <data name="grpVar.Text" xml:space="preserve">
+    <value>全域變數</value>
+  </data>
+  <data name="txtVarName.Size" type="System.Drawing.Size, System.Drawing">
+    <value>121, 34</value>
+  </data>
+</root>

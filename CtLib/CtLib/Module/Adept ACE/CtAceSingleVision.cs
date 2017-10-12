@@ -1,214 +1,168 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 using CtLib.Library;
+using CtLib.Module.Utility;
 
+using Ace.Core.Client;
 using Ace.HSVision.Client.ImageDisplay;
 using Ace.HSVision.Server.Tools;
 using Ace.HSVision.Server.Integration;
-using CtLib.Module.Ultity;
 
 namespace CtLib.Module.Adept {
-    /// <summary>顯示單一 VisionTool 畫面</summary>
-    /// <example><code>
-    /// /*-- Create and connect Adept ACE --*/
-    /// CtAce mAce = new CtAce();
-    /// mAce.Connect(CtAce.ControllerType.WITH_SMARTCONTROLLER);
-    /// 
-    /// /*-- Create an object --*/
-    /// CtAceSingleVision singleVision = new CtAceSingleVision();   //New a form or drag it into form from Visualize Utility
-    /// 
-    /// /*-- Select the tool that you want to show --*/
-    /// CtAceSingleVision.ToolType toolType = CtAceSingleVision.ToolType.VirtualCamera;
-    /// string visPath = @"/Equipment/Vision/Device/Virtual Camera";
-    /// 
-    /// /*-- Show it --*/
-    /// singleVision.Connect(toolType, mAce, visPath);
-    /// </code></example>
-    public partial class CtAceSingleVision : UserControl {
+	/// <summary>顯示單一 VisionTool 畫面</summary>
+	/// <example><code language="C#">
+	/// /*-- Create and connect Adept ACE --*/
+	/// CtAce mAce = new CtAce();
+	/// mAce.Connect(ControllerType.SmartController);
+	/// 
+	/// /*-- Create an object --*/
+	/// CtAceSingleVision singleVision = new CtAceSingleVision();   //New a form or drag it into form from Visualize Utility
+	/// 
+	/// /*-- Select the tool that you want to show --*/
+	/// string visPath = @"/Equipment/Vision/Device/Virtual Camera";
+	/// 
+	/// /*-- Show it --*/
+	/// singleVision.Connect(mAce, visPath);
+	/// </code></example>
+	public partial class CtAceSingleVision : UserControl {
 
-        #region Version
+		#region Version
 
-        /// <summary>CtAce 版本訊息</summary>
-        public static readonly CtVersion @Version = new CtVersion(1, 0, 0, "2014/09/10", "Ahern Kuo");
+		/// <summary>CtAce 版本訊息</summary>
+		public static readonly CtVersion @Version = new CtVersion(1, 1, 0, "2016/11/09", "Ahern Kuo");
 
-        /*---------- Version Note ----------
+		/*---------- Version Note ----------
          * 
          * 1.0.0  <Ahern> [2014/09/10]
          *      + 建立Connect模組
-         *      
+		 *      
+		 * 1.1.0  <Ahern> [2016/11/09]
+		 *		\ 使用 IVisionImageSource 與 IVisionTool 進行判斷，省去填入 ToolType
+		 *		\ 修正尺標等顯示屬性，可於 VS 屬性分頁調整
+         *      + 新增 Disconnect 方法
+		 * 
          *----------------------------------*/
 
-        #endregion
+		#endregion
 
-        #region Declaration - Properties
+		#region Declaration - Properties
 
-        /// <summary>是否顯示尺標</summary>
-        [DefaultValue(false)]
-        public bool OPTION_RULER {
-            get;
-            set;
-        }
+		/// <summary>是否顯示尺標</summary>
+		[DefaultValue(false)]
+		[EditorBrowsable(EditorBrowsableState.Always)]
+		public bool ShowRuler { get; set; } = false;
 
-        /// <summary>是否顯示滑條</summary>
-        [DefaultValue(false)]
-        public bool OPTION_SCROLLBAR {
-            get;
-            set;
-        }
+		/// <summary>是否顯示滑條</summary>
+		[DefaultValue(false)]
+		[EditorBrowsable(EditorBrowsableState.Always)]
+		public bool ShowScrollBar { get; set; } = false;
 
-        /// <summary>是否顯示工作列</summary>
-        [DefaultValue(false)]
-        public bool OPTION_TOOLBAR {
-            get;
-            set;
-        }
+		/// <summary>是否顯示工作列</summary>
+		[DefaultValue(false)]
+		[EditorBrowsable(EditorBrowsableState.Always)]
+		public bool ShowToolBar { get; set; } = false;
 
-        /// <summary>是否顯示狀態列</summary>
-        [DefaultValue(false)]
-        public bool OPTION_STATUSBAR {
-            get;
-            set;
-        }
+		/// <summary>是否顯示狀態列</summary>
+		[DefaultValue(false)]
+		[EditorBrowsable(EditorBrowsableState.Always)]
+		public bool ShowStatusBar { get; set; } = false;
 
-        /// <summary>是否顯示執行時間</summary>
-        [DefaultValue(false)]
-        public bool OPTION_EXECTIME {
-            get;
-            set;
-        }
+		/// <summary>是否顯示執行時間</summary>
+		[DefaultValue(false)]
+		[EditorBrowsable(EditorBrowsableState.Always)]
+		public bool ShowExecutionTime { get; set; } = false;
 
-        /// <summary>是否顯示自動清除</summary>
-        [DefaultValue(true)]
-        public bool OPTION_AUTOCLEAR {
-            get;
-            set;
-        }
+		/// <summary>是否顯示自動清除</summary>
+		[DefaultValue(true)]
+		[EditorBrowsable(EditorBrowsableState.Always)]
+		public bool AutoClearEnabled { get; set; } = true;
 
-        #endregion
+		#endregion
 
-        #region Declaration - Enumeration
+		#region Declaration - Fields
+		private IImageDisplayControl mImgDisp;
+		#endregion
 
-        /// <summary>VisionTool類型</summary>
-        public enum ToolType : byte {
-            /// <summary>攝影機(Virtual Camera)</summary>
-            VirtualCamera = 0,
-            /// <summary>定位點工具(Locator)</summary>
-            Locator = 1,
-            /// <summary>自定義影像工具(Custom Vision Tool, CVT)</summary>
-            CSharpCustomTool = 2,
-            /// <summary>Blob Analyzer</summary>
-            Blob = 3,
-            /// <summary>影像處理工具(Image Process)</summary>
-            ImageProcess = 4
-        }
+		#region Function - Core
+		/// <summary>建構一單影像之使用者控制項</summary>
+		public CtAceSingleVision() {
+			InitializeComponent();
+		}
 
-        #endregion
+		/// <summary>與透過CtAce連接影像工具，並顯示在畫面上</summary>
+		/// <param name="ace">CtAce元件，用於連接並取的影像</param>
+		/// <param name="path">影像工具之路徑，如 @"/Equipment/Vision/Device/Virtual Camera"</param>
+		/// <param name="showExecption">指出當 <see cref="Exception"/> 發生時，是否顯示對話視窗以提醒使用者</param>
+		/// <returns>Status Code</returns>
+		public Stat Connect(CtAce ace, string path, bool showExecption = true) {
+			Stat stt = Stat.SUCCESS;
 
-        #region Function - Core
-        /// <summary>建構一單影像之使用者控制項</summary>
-        public CtAceSingleVision() {
-            InitializeComponent();
-        }
-        
-        /// <summary>與透過CtAce連接影像工具，並顯示在畫面上</summary>
-        /// <param name="toolType">影像工具類型</param>
-        /// <param name="ace">CtAce元件，用於連接並取的影像</param>
-        /// <param name="path">影像工具之路徑，如 @"/Equipment/Vision/Device/Virtual Camera"</param>
-        /// <returns>Status Code</returns>
-        public Stat Connect(ToolType toolType, CtAce ace, string path) {
-            Stat stt = Stat.SUCCESS;
-            try {
-                /*-- 取得相對應工具之IImageBuffer --*/
-                IImageBuffer imgBuf = null;
-                switch ( toolType ) {
-                    case ToolType.VirtualCamera:
-                        IVisionImageSource imgSrc = ace.FindObject(path) as IVisionImageSource;
-                        if ( imgSrc != null ) {
-                            imgBuf = imgSrc.Buffer;
-                        } else
-                            stt = Stat.ER_SYS_ILFLPH;
-                        break;
+			try {
+				var tool = ace.FindObject(path) as IVisionToolBase;
+				if (tool == null) {
+					stt = Stat.ER_SYS_INVARG;
+					throw new System.IO.FileNotFoundException("Can not find specified vision tool", "VisionToolPath");
+				}
 
-                    case ToolType.Locator:
-                        ILocatorTool imgLoc = ace.FindObject(path) as ILocatorTool;
-                        if ( imgLoc != null ) {
-                            imgBuf = imgLoc.ImageSource.Buffer;
-                        } else
-                            stt = Stat.ER_SYS_ILFLPH;
-                        break;
+				IImageBuffer imgBuf = null;
+				if (tool is IVisionImageSource) imgBuf = (tool as IVisionImageSource).Buffer;
+				else if (tool is IVisionTool) imgBuf = (tool as IVisionTool).ImageSource.Buffer;
 
-                    case ToolType.CSharpCustomTool:
-                        ICSharpCustomTool imgCVT = ace.FindObject(path) as ICSharpCustomTool;
-                        if ( imgCVT != null ) {
-                            imgBuf = imgCVT.ImageSource.Buffer;
-                        } else
-                            stt = Stat.ER_SYS_ILFLPH;
-                        break;
+				/*-- 如果有正確取得IImageBuffer，建立Control並顯示 --*/
+				if (imgBuf != null) {
 
-                    case ToolType.Blob:
-                        IBlobAnalyzerTool imgBlob = ace.FindObject(path) as IBlobAnalyzerTool;
-                        if ( imgBlob != null ) {
-                            imgBuf = imgBlob.ImageSource.Buffer;
-                        } else
-                            stt = Stat.ER_SYS_ILFLPH;
-                        break;
+					/*-- 在IAceClient建立DisplayControl --*/
+					IAceClient client = ace.GetClient();
 
-                    case ToolType.ImageProcess:
-                        IImageProcessingTool imgProc = ace.FindObject(path) as IImageProcessingTool;
-                        if ( imgProc != null ) {
-                            imgBuf = imgProc.ImageOperandSource.Buffer;
-                        } else
-                            stt = Stat.ER_SYS_ILFLPH;
-                        break;
+					mImgDisp = client.CreateObject(typeof(IImageDisplayControl)) as IImageDisplayControl;
 
-                    default:
-                        stt = Stat.ER_SYS_INVARG;
-                        throw ( new Exception("無相對應的VisionTool，如是新型態請加入Enum並讀取Buffer") );
-                }
+					/*-- 設定DisplayControl --*/
+					mImgDisp.Client = client;
+					mImgDisp.Buffer = imgBuf;
+					mImgDisp.AutomaticRendering = true;
+					mImgDisp.RulersVisible = ShowRuler;
+					mImgDisp.ScrollBarsVisible = ShowScrollBar;
+					mImgDisp.ToolBarVisible = ShowToolBar;
+					mImgDisp.StatusBarVisible = ShowStatusBar;
+					mImgDisp.ExecutionTimeVisible = ShowExecutionTime;
+					mImgDisp.AutoClearGraphics = AutoClearEnabled;
 
-                /*-- 如果有正確取得IImageBuffer，建立Control並顯示 --*/
-                if ( imgBuf != null ) {
+					/*-- 轉為Windows之Control --*/
+					Control ctrl = mImgDisp as Control;
+					ctrl.Dock = DockStyle.Fill;
+					ctrl.Name = imgBuf.Name;
+					ctrl.Visible = false;
+					ctrl.Visible = true;
 
-                    /*-- 在IAceClient建立DisplayControl --*/
-                    IImageDisplayControl imgCtrl = ace.GetClient().CreateObject(typeof(IImageDisplayControl)) as IImageDisplayControl;
+					/*-- Assign --*/
+					this.Controls.Add(ctrl);
+				}
+			} catch (Exception ex) {
+				stt = Stat.ER3_ACE;
+				CtStatus.Report(stt, ex, showExecption);
+			}
 
-                    /*-- 設定DisplayControl --*/
-                    imgCtrl.Client = ace.GetClient();
-                    imgCtrl.Buffer = imgBuf;
-                    imgCtrl.AutomaticRendering = true;
-                    imgCtrl.RulersVisible = OPTION_RULER;
-                    imgCtrl.ScrollBarsVisible = OPTION_SCROLLBAR;
-                    imgCtrl.ToolBarVisible = OPTION_TOOLBAR;
-                    imgCtrl.StatusBarVisible = OPTION_STATUSBAR;
-                    imgCtrl.ExecutionTimeVisible = OPTION_EXECTIME;
-                    imgCtrl.AutoClearGraphics = OPTION_AUTOCLEAR;
-                    
-                    /*-- 轉為Windows之Control --*/
-                    Control ctrl = imgCtrl as Control;
-                    ctrl.Dock = DockStyle.Fill;
-                    ctrl.Name = imgBuf.Name;
-                    ctrl.Visible = false;
-                    ctrl.Visible = true;
+			return stt;
+		}
 
-                    /*-- Assign --*/
-                    this.Controls.Add(ctrl);
-                }
+		/// <summary>停止影像視窗，此方法僅將 <see cref="IImageDisplayControl"/> 視窗釋放，而非釋放整個 <see cref="CtAceSingleVision"/></summary>
+		/// <returns>Status Code</returns>
+		public Stat Disconnect() {
+			Stat stt = Stat.SUCCESS;
+			try {
+				if (mImgDisp != null) {
+					mImgDisp.Dispose();
+					mImgDisp = null;
+				}
+			} catch (Exception ex) {
+				stt = Stat.ER3_ACE;
+				CtStatus.Report(stt, ex);
+			}
+			return stt;
+		}
 
-            } catch ( Exception ex ) {
-                if ( stt == Stat.SUCCESS )
-                    stt = Stat.ER_SYSTEM;
-                CtStatus.Report(stt, "SngVisConnect", ex.Message);
-            }
-            return stt;
-        }
-
-        #endregion
-    }
+		#endregion
+	}
 }

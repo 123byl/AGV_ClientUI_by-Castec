@@ -128,7 +128,7 @@
     <value>System.Windows.Forms.DateTimePicker, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="rdbTime_Week.Size" type="System.Drawing.Size, System.Drawing">
-    <value>96, 16</value>
+    <value>60, 19</value>
   </data>
   <data name="cbLv.Items3" xml:space="preserve">
     <value>Fatal Error</value>
@@ -146,11 +146,11 @@
   <data name="&gt;&gt;rdbTime_Today.Name" xml:space="preserve">
     <value>rdbTime_Today</value>
   </data>
-  <data name="btnSearch.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>MiddleRight</value>
+  <data name="lbLv.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleCenter</value>
   </data>
   <data name="cbLv.Size" type="System.Drawing.Size, System.Drawing">
-    <value>121, 20</value>
+    <value>121, 23</value>
   </data>
   <data name="&gt;&gt;rdbTime_Today.ZOrder" xml:space="preserve">
     <value>4</value>
@@ -159,14 +159,14 @@
   <data name="gbSelect.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
   </data>
-  <data name="&gt;&gt;rdbTime_Custom.ZOrder" xml:space="preserve">
-    <value>1</value>
+  <data name="&gt;&gt;lbTo.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;colMsg.Name" xml:space="preserve">
     <value>colMsg</value>
   </data>
-  <data name="btnExit.TabIndex" type="System.Int32, mscorlib">
-    <value>5</value>
+  <data name="&gt;&gt;gbType.Name" xml:space="preserve">
+    <value>gbType</value>
   </data>
   <data name="btnExit.Location" type="System.Drawing.Point, System.Drawing">
     <value>667, 459</value>
@@ -189,14 +189,14 @@
   <data name="cbType.Items" xml:space="preserve">
     <value>All</value>
   </data>
-  <data name="rdbTime_Week.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
+  <data name="btnExit.TabIndex" type="System.Int32, mscorlib">
+    <value>5</value>
   </data>
   <data name="colKind.HeaderText" xml:space="preserve">
     <value>colKind</value>
   </data>
   <data name="rdbTime_Week.Text" xml:space="preserve">
-    <value>rdbTime_Week</value>
+    <value>Week</value>
   </data>
   <data name="&gt;&gt;btnSearch.Parent" xml:space="preserve">
     <value>$this</value>
@@ -217,7 +217,7 @@
     <value>gbSelect</value>
   </data>
   <data name="rdbTime_Custom.Text" xml:space="preserve">
-    <value>rdbTime_Custom</value>
+    <value>Custom</value>
   </data>
   <data name="&gt;&gt;tpickStart.ZOrder" xml:space="preserve">
     <value>5</value>
@@ -226,7 +226,7 @@
     <value>444, 75</value>
   </data>
   <data name="lbTo.Location" type="System.Drawing.Point, System.Drawing">
-    <value>206, 48</value>
+    <value>203, 43</value>
   </data>
   <data name="&gt;&gt;colType.Type" xml:space="preserve">
     <value>System.Windows.Forms.DataGridViewTextBoxColumn, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -235,10 +235,13 @@
     <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="lbType.Size" type="System.Drawing.Size, System.Drawing">
-    <value>38, 12</value>
+    <value>46, 19</value>
   </data>
   <data name="cbLv.Items" xml:space="preserve">
     <value>Warning</value>
+  </data>
+  <data name="gbType.Size" type="System.Drawing.Size, System.Drawing">
+    <value>199, 75</value>
   </data>
   <data name="&gt;&gt;dgvMsg.ZOrder" xml:space="preserve">
     <value>3</value>
@@ -503,13 +506,10 @@
     <value>System.Windows.Forms.DataGridViewTextBoxColumn, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="rdbTime_Month.Location" type="System.Drawing.Point, System.Drawing">
-    <value>226, 21</value>
+    <value>224, 21</value>
   </data>
   <data name="rdbTime_Today.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
-  </data>
-  <data name="&gt;&gt;btnExit.Name" xml:space="preserve">
-    <value>btnExit</value>
   </data>
   <data name="colMsg.HeaderText" xml:space="preserve">
     <value>colMsg</value>
@@ -526,11 +526,14 @@
   <data name="&gt;&gt;colTime.Type" xml:space="preserve">
     <value>System.Windows.Forms.DataGridViewTextBoxColumn, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="cbType.Items2" xml:space="preserve">
-    <value>System Error</value>
+  <data name="rdbTime_Month.Size" type="System.Drawing.Size, System.Drawing">
+    <value>66, 19</value>
   </data>
   <data name="&gt;&gt;tpickEnd.Parent" xml:space="preserve">
     <value>gbSelect</value>
+  </data>
+  <data name="lbType.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleCenter</value>
   </data>
   <data name="cbType.Items3" xml:space="preserve">
     <value>System Error</value>
@@ -553,32 +556,26 @@
   <data name="&gt;&gt;gbSelect.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;colKind.Name" xml:space="preserve">
-    <value>colKind</value>
-  </data>
   <data name="rdbTime_Custom.Location" type="System.Drawing.Point, System.Drawing">
-    <value>332, 21</value>
+    <value>302, 22</value>
   </data>
-  <data name="gbSelect.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 2</value>
+  <data name="&gt;&gt;lbLv.Name" xml:space="preserve">
+    <value>lbLv</value>
   </data>
   <data name="&gt;&gt;gbSelect.Type" xml:space="preserve">
     <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="btnExit.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>MiddleRight</value>
+  <data name="btnExit.ImageAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
   </data>
   <data name="cbLv.Location" type="System.Drawing.Point, System.Drawing">
     <value>63, 46</value>
   </data>
-  <data name="cbLv.Items4" xml:space="preserve">
-    <value>Fatal Error</value>
-  </data>
   <data name="&gt;&gt;cbLv.Parent" xml:space="preserve">
     <value>gbType</value>
   </data>
-  <data name="&gt;&gt;lbLv.Name" xml:space="preserve">
-    <value>lbLv</value>
+  <data name="&gt;&gt;lbType.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;gbSelect.Name" xml:space="preserve">
     <value>gbSelect</value>
@@ -596,7 +593,7 @@
     <value>2</value>
   </data>
   <data name="lbLv.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 23</value>
+    <value>46, 19</value>
   </data>
   <data name="&gt;&gt;dgvMsg.Name" xml:space="preserve">
     <value>dgvMsg</value>
@@ -606,6 +603,9 @@
   </data>
   <data name="colType.HeaderText" xml:space="preserve">
     <value>colType</value>
+  </data>
+  <data name="&gt;&gt;dgvMsg.Type" xml:space="preserve">
+    <value>System.Windows.Forms.DataGridView, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;gbType.Parent" xml:space="preserve">
     <value>$this</value>
@@ -622,8 +622,11 @@
   <data name="btnExit.Text" xml:space="preserve">
     <value>btnExit</value>
   </data>
+  <data name="btnExit.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleRight</value>
+  </data>
   <data name="tpickStart.Size" type="System.Drawing.Size, System.Drawing">
-    <value>134, 22</value>
+    <value>134, 25</value>
   </data>
   <data name="rdbTime_Month.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -638,10 +641,13 @@
     <value>110, 42</value>
   </data>
   <data name="rdbTime_Custom.Size" type="System.Drawing.Size, System.Drawing">
-    <value>105, 16</value>
+    <value>71, 19</value>
   </data>
   <data name="tpickEnd.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
+  </data>
+  <data name="rdbTime_Week.Location" type="System.Drawing.Point, System.Drawing">
+    <value>150, 21</value>
   </data>
   <data name="&gt;&gt;colKind.Type" xml:space="preserve">
     <value>System.Windows.Forms.DataGridViewTextBoxColumn, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -649,8 +655,8 @@
   <data name="&gt;&gt;tpickStart.Parent" xml:space="preserve">
     <value>gbSelect</value>
   </data>
-  <data name="lbTo.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
+  <data name="rdbTime_Week.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
   </data>
   <data name="&gt;&gt;rdbTime_Custom.Type" xml:space="preserve">
     <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -676,26 +682,23 @@
   <data name="dgvMsg.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Bottom, Left, Right</value>
   </data>
-  <data name="&gt;&gt;colTime.Name" xml:space="preserve">
-    <value>colTime</value>
-  </data>
-  <data name="cbLv.Items2" xml:space="preserve">
-    <value>Normal Error</value>
+  <data name="&gt;&gt;cbType.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;cbLv.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
+  <data name="cbLv.Items2" xml:space="preserve">
+    <value>Normal Error</value>
+  </data>
   <data name="&gt;&gt;lbType.Name" xml:space="preserve">
     <value>lbType</value>
-  </data>
-  <data name="btnExit.ImageAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>MiddleLeft</value>
   </data>
   <data name="&gt;&gt;cbType.Parent" xml:space="preserve">
     <value>gbType</value>
   </data>
   <data name="lbTo.Size" type="System.Drawing.Size, System.Drawing">
-    <value>14, 12</value>
+    <value>30, 22</value>
   </data>
   <data name="colTit.HeaderText" xml:space="preserve">
     <value>ColTitle</value>
@@ -712,14 +715,17 @@
   <data name="lbType.Text" xml:space="preserve">
     <value>lbType</value>
   </data>
-  <data name="rdbTime_Month.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 16</value>
+  <data name="lbTo.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleCenter</value>
+  </data>
+  <data name="cbLv.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>CtErrorHistory</value>
   </data>
-  <data name="&gt;&gt;colMsg.Type" xml:space="preserve">
-    <value>System.Windows.Forms.DataGridViewTextBoxColumn, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;rdbTime_Custom.ZOrder" xml:space="preserve">
+    <value>1</value>
   </data>
   <data name="&gt;&gt;colType.Name" xml:space="preserve">
     <value>colType</value>
@@ -728,34 +734,25 @@
     <value>1</value>
   </data>
   <data name="tpickEnd.Location" type="System.Drawing.Point, System.Drawing">
-    <value>226, 43</value>
+    <value>245, 43</value>
   </data>
-  <data name="&gt;&gt;lbType.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="tpickStart.Location" type="System.Drawing.Point, System.Drawing">
-    <value>64, 43</value>
+  <data name="cbLv.Items4" xml:space="preserve">
+    <value>Fatal Error</value>
   </data>
   <data name="&gt;&gt;gbType.Type" xml:space="preserve">
     <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;gbType.Name" xml:space="preserve">
-    <value>gbType</value>
-  </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
     <value>System.Windows.Forms.Form, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;lbType.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;lbTo.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="btnSearch.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleRight</value>
   </data>
   <data name="&gt;&gt;tpickEnd.ZOrder" xml:space="preserve">
     <value>6</value>
   </data>
   <data name="tpickEnd.Size" type="System.Drawing.Size, System.Drawing">
-    <value>134, 22</value>
+    <value>134, 25</value>
   </data>
   <data name="btnExit.Size" type="System.Drawing.Size, System.Drawing">
     <value>110, 42</value>
@@ -775,11 +772,14 @@
   <data name="&gt;&gt;rdbTime_Month.Name" xml:space="preserve">
     <value>rdbTime_Month</value>
   </data>
-  <data name="&gt;&gt;cbType.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="rdbTime_Custom.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="lbLv.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
   </data>
   <data name="rdbTime_Today.Size" type="System.Drawing.Size, System.Drawing">
-    <value>99, 16</value>
+    <value>64, 19</value>
   </data>
   <data name="rdbTime_Week.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -790,20 +790,26 @@
   <data name="&gt;&gt;cbType.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
-  <data name="rdbTime_Today.Location" type="System.Drawing.Point, System.Drawing">
-    <value>19, 21</value>
+  <data name="&gt;&gt;colKind.Name" xml:space="preserve">
+    <value>colKind</value>
   </data>
   <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
-    <value>6, 12</value>
+    <value>8, 15</value>
   </data>
-  <data name="lbType.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
+  <data name="gbSelect.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 2</value>
   </data>
   <data name="rdbTime_Month.Text" xml:space="preserve">
-    <value>rdbTime_Month</value>
+    <value>Month</value>
   </data>
   <data name="lbLv.Location" type="System.Drawing.Point, System.Drawing">
-    <value>21, 49</value>
+    <value>11, 48</value>
+  </data>
+  <data name="&gt;&gt;colTime.Name" xml:space="preserve">
+    <value>colTime</value>
+  </data>
+  <data name="rdbTime_Today.Text" xml:space="preserve">
+    <value>Today</value>
   </data>
   <data name="rdbTime_Today.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -814,14 +820,14 @@
   <data name="cbLv.Items1" xml:space="preserve">
     <value>Light Error</value>
   </data>
-  <data name="rdbTime_Today.Text" xml:space="preserve">
-    <value>rdbTime_Today</value>
+  <data name="&gt;&gt;lbType.ZOrder" xml:space="preserve">
+    <value>3</value>
   </data>
   <data name="&gt;&gt;lbLv.Parent" xml:space="preserve">
     <value>gbType</value>
   </data>
   <data name="cbType.Size" type="System.Drawing.Size, System.Drawing">
-    <value>121, 20</value>
+    <value>121, 23</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
     <value>788, 510</value>
@@ -829,8 +835,8 @@
   <data name="&gt;&gt;rdbTime_Week.Parent" xml:space="preserve">
     <value>gbSelect</value>
   </data>
-  <data name="&gt;&gt;dgvMsg.Type" xml:space="preserve">
-    <value>System.Windows.Forms.DataGridView, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;gbSelect.ZOrder" xml:space="preserve">
+    <value>4</value>
   </data>
   <data name="&gt;&gt;lbTo.Name" xml:space="preserve">
     <value>lbTo</value>
@@ -844,11 +850,17 @@
   <data name="&gt;&gt;btnExit.Type" xml:space="preserve">
     <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="lbLv.Text" xml:space="preserve">
+    <value>lbLv</value>
+  </data>
   <data name="rdbTime_Month.TabIndex" type="System.Int32, mscorlib">
     <value>4</value>
   </data>
-  <data name="rdbTime_Week.Location" type="System.Drawing.Point, System.Drawing">
-    <value>124, 21</value>
+  <data name="tpickStart.Location" type="System.Drawing.Point, System.Drawing">
+    <value>57, 43</value>
+  </data>
+  <data name="rdbTime_Today.Location" type="System.Drawing.Point, System.Drawing">
+    <value>73, 21</value>
   </data>
   <data name="btnSearch.Location" type="System.Drawing.Point, System.Drawing">
     <value>666, 23</value>
@@ -856,32 +868,29 @@
   <data name="lbType.Location" type="System.Drawing.Point, System.Drawing">
     <value>11, 24</value>
   </data>
+  <data name="&gt;&gt;colMsg.Type" xml:space="preserve">
+    <value>System.Windows.Forms.DataGridViewTextBoxColumn, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;cbLv.Name" xml:space="preserve">
     <value>cbLv</value>
   </data>
   <data name="&gt;&gt;rdbTime_Custom.Parent" xml:space="preserve">
     <value>gbSelect</value>
   </data>
-  <data name="rdbTime_Custom.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
+  <data name="cbType.Items2" xml:space="preserve">
+    <value>Equipment Alarm</value>
   </data>
-  <data name="gbType.Size" type="System.Drawing.Size, System.Drawing">
-    <value>199, 75</value>
+  <data name="&gt;&gt;btnExit.Name" xml:space="preserve">
+    <value>btnExit</value>
   </data>
   <data name="cbType.Items1" xml:space="preserve">
-    <value>Equipment Alarm</value>
+    <value>Trace Log</value>
   </data>
   <data name="rdbTime_Custom.TabIndex" type="System.Int32, mscorlib">
     <value>5</value>
   </data>
-  <data name="&gt;&gt;gbSelect.ZOrder" xml:space="preserve">
-    <value>4</value>
-  </data>
   <metadata name="colKind.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
-  </metadata>
-  <metadata name="$this.Language" type="System.Globalization.CultureInfo, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>zh-TW</value>
   </metadata>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>

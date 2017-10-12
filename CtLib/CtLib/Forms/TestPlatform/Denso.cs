@@ -24,10 +24,10 @@ namespace CtLib.Forms.TestPlatform {
         private void button1_Click(object sender, EventArgs e) {
             if (CtConvert.CBool(button1.Tag)) {
                 mORiN2.Disconnect();
-                CtInvoke.ButtonTag(button1, false);
+                CtInvoke.ControlTag(button1, false);
             } else {
                 mORiN2.Connect(txtIP.Text);
-                CtInvoke.ButtonTag(button1, true);
+                CtInvoke.ControlTag(button1, true);
             }
         }
 
@@ -56,7 +56,7 @@ namespace CtLib.Forms.TestPlatform {
 
         private void button7_Click(object sender, EventArgs e) {
             List<string> temp = mORiN2.GetTasks();
-            MessageBox.Show(string.Join(", ", temp.ToArray()));
+            MessageBox.Show(string.Join(", ", temp));
         }
 
         private void button8_Click(object sender, EventArgs e) {

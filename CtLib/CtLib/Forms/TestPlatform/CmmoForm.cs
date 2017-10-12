@@ -1,17 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using System.Net.Sockets;
 using System.Threading;
+
 using CtLib.Library;
 using CtLib.Module.FESTO;
-using System.Collections;
-
+using CtLib.Module.Utility;
 
 namespace CtLib.Forms.TestPlatform
 {
@@ -39,9 +33,9 @@ namespace CtLib.Forms.TestPlatform
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            CtInvoke.TextBoxText(textBoxMasterControl, (CtFestoCMMO.ControlViaEthernet.GetHashCode().ToString()), false, false);
-            CtInvoke.TextBoxText(textBoxIP, CtFestoCMMO.IP, false, false);
-            CtInvoke.TextBoxText(textBoxPort, CtFestoCMMO.PORT, false, false);
+            CtInvoke.ControlText(textBoxMasterControl, CtFestoCMMO.ControlViaEthernet.GetHashCode().ToString());
+            CtInvoke.ControlText(textBoxIP, CtFestoCMMO.IP);
+            CtInvoke.ControlText(textBoxPort, CtFestoCMMO.PORT);
 
             //Measurement Unit Combobox DataSource from Enum
             cbxMeasurementUnit.DataSource = Enum.GetValues(typeof(CtFestoCMMO.eUnitOfMeasurementConversionFactor));
@@ -49,19 +43,19 @@ namespace CtLib.Forms.TestPlatform
 
         private void btnConnect_Click(object sender, EventArgs e)
         {
-            CtInvoke.ButtonEnable(btnConnect, false);
+            CtInvoke.ControlEnabled(btnConnect, false);
 
             if (rCmmo.IsConnected)
             {
                 rCmmo.CloseConnection();
                 newThread.Join(1000);
 
-                CtInvoke.ButtonText(btnConnect, "Connect");
-                CtInvoke.ButtonEnable(btnEnable, false);
-                CtInvoke.ButtonEnable(btnGetRecordTable, false);
-                CtInvoke.ButtonEnable(btnSaveRecordTable, false);
-                CtInvoke.TextBoxEnable(textBoxMasterControl, false);
-                CtInvoke.LabelEnable(lbMasterControl, false);
+                CtInvoke.ControlText(btnConnect, "Connect");
+                CtInvoke.ControlEnabled(btnEnable, false);
+                CtInvoke.ControlEnabled(btnGetRecordTable, false);
+                CtInvoke.ControlEnabled(btnSaveRecordTable, false);
+                CtInvoke.ControlEnabled(textBoxMasterControl, false);
+                CtInvoke.ControlEnabled(lbMasterControl, false);
 
                 lbSWbit1.Image = Properties.Resources.Grey_Ball;
                 lbSWbit2.Image = Properties.Resources.Grey_Ball;
@@ -91,41 +85,41 @@ namespace CtLib.Forms.TestPlatform
                 }
             }
 
-            CtInvoke.ButtonEnable(btnConnect, true);
+            CtInvoke.ControlEnabled(btnConnect, true);
         }
 
         private void btnSet_Click(object sender, EventArgs e)
         {
             if (rCmmo.IsEnabled)
             {
-                CtInvoke.ButtonText(btnEnable, "Enable");
-                CtInvoke.ButtonEnable(btnStep0, false);
-                CtInvoke.ButtonEnable(btnStep1, false);
-                CtInvoke.ButtonEnable(btnJog0, false);
-                CtInvoke.ButtonEnable(btnJog1, false);
-                CtInvoke.ButtonEnable(btnHoming, false);
-                CtInvoke.TextBoxText(textBoxIncrement, "", false, false);
-                CtInvoke.TextBoxText(textBoxVelocity, "", false, false);
-                CtInvoke.TextBoxEnable(textBoxIncrement, false);
-                CtInvoke.TextBoxEnable(textBoxVelocity, false);
-                CtInvoke.ComboBoxEnable(cbxMeasurementUnit, false);
-                CtInvoke.LabelEnable(lbMeasurementUnit, false);
+                CtInvoke.ControlText(btnEnable, "Enable");
+                CtInvoke.ControlEnabled(btnStep0, false);
+                CtInvoke.ControlEnabled(btnStep1, false);
+                CtInvoke.ControlEnabled(btnJog0, false);
+                CtInvoke.ControlEnabled(btnJog1, false);
+                CtInvoke.ControlEnabled(btnHoming, false);
+                CtInvoke.ControlText(textBoxIncrement, "");
+                CtInvoke.ControlText(textBoxVelocity, "");
+                CtInvoke.ControlEnabled(textBoxIncrement, false);
+                CtInvoke.ControlEnabled(textBoxVelocity, false);
+                CtInvoke.ControlEnabled(cbxMeasurementUnit, false);
+                CtInvoke.ControlEnabled(lbMeasurementUnit, false);
 
                 rCmmo.Disable();
 
             }
             else
             {
-                CtInvoke.ButtonText(btnEnable, "Disable");
-                CtInvoke.ButtonEnable(btnHoming, true);
-                CtInvoke.ButtonEnable(btnJog1, true);
-                CtInvoke.ButtonEnable(btnJog0, true);
-                CtInvoke.TextBoxText(textBoxIncrement, ((double)1).ToString("F3"), false, false);
-                CtInvoke.TextBoxText(textBoxVelocity, rCmmo.DefaultVelocity.ToString("F3"), false, false);
-                CtInvoke.TextBoxEnable(textBoxIncrement, true);
-                CtInvoke.TextBoxEnable(textBoxVelocity, true);
-                CtInvoke.ComboBoxEnable(cbxMeasurementUnit, true);
-                CtInvoke.LabelEnable(lbMeasurementUnit, true);
+                CtInvoke.ControlText(btnEnable, "Disable");
+                CtInvoke.ControlEnabled(btnHoming, true);
+                CtInvoke.ControlEnabled(btnJog1, true);
+                CtInvoke.ControlEnabled(btnJog0, true);
+                CtInvoke.ControlText(textBoxIncrement, ((double)1).ToString("F3"));
+                CtInvoke.ControlText(textBoxVelocity, rCmmo.DefaultVelocity.ToString("F3"));
+                CtInvoke.ControlEnabled(textBoxIncrement, true);
+                CtInvoke.ControlEnabled(textBoxVelocity, true);
+                CtInvoke.ControlEnabled(cbxMeasurementUnit, true);
+                CtInvoke.ControlEnabled(lbMeasurementUnit, true);
 
                 //CVE (Control Via Ethernet) , Set 2
                 rCmmo.HigherOrderControl = (CtFestoCMMO.eHigherOrderControl)Enum.Parse(typeof(CtFestoCMMO.eHigherOrderControl),textBoxMasterControl.Text);
@@ -226,18 +220,18 @@ namespace CtLib.Forms.TestPlatform
             //Store Data into Device (Disable status) , WriteRecord (CVE mode)
             if (rCmmo.IsEnabled)
             {
-                CtInvoke.ButtonText(btnEnable, "Enable");
-                CtInvoke.ButtonEnable(btnStep0, false);
-                CtInvoke.ButtonEnable(btnStep1, false);
-                CtInvoke.ButtonEnable(btnJog0, false);
-                CtInvoke.ButtonEnable(btnJog1, false);
-                CtInvoke.ButtonEnable(btnHoming, false);
-                CtInvoke.TextBoxText(textBoxIncrement, "", false, false);
-                CtInvoke.TextBoxText(textBoxVelocity, "", false, false);
-                CtInvoke.TextBoxEnable(textBoxIncrement, false);
-                CtInvoke.TextBoxEnable(textBoxVelocity, false);
-                CtInvoke.ComboBoxEnable(cbxMeasurementUnit, false);
-                CtInvoke.LabelEnable(lbMeasurementUnit, false);
+                CtInvoke.ControlText(btnEnable, "Enable");
+                CtInvoke.ControlEnabled(btnStep0, false);
+                CtInvoke.ControlEnabled(btnStep1, false);
+                CtInvoke.ControlEnabled(btnJog0, false);
+                CtInvoke.ControlEnabled(btnJog1, false);
+                CtInvoke.ControlEnabled(btnHoming, false);
+                CtInvoke.ControlText(textBoxIncrement, "");
+                CtInvoke.ControlText(textBoxVelocity, "");
+                CtInvoke.ControlEnabled(textBoxIncrement, false);
+                CtInvoke.ControlEnabled(textBoxVelocity, false);
+                CtInvoke.ControlEnabled(cbxMeasurementUnit, false);
+                CtInvoke.ControlEnabled(lbMeasurementUnit, false);
 
                 rCmmo.Disable();
 
@@ -290,7 +284,7 @@ namespace CtLib.Forms.TestPlatform
                     rCmmo.SetRecordTableRow(No, Type, PositionX, PositionY, Velocity, Acceleration, Force);
                 }
             }
-            Thread.Sleep(500);
+            CtTimer.Delay(500);
             btnGetRecordTable_Click(sender, e);
 
             rCmmo.StoreDataToDevice();
@@ -306,44 +300,44 @@ namespace CtLib.Forms.TestPlatform
             switch (MeasurementUnit)
             {
                 case (CtFestoCMMO.eUnitOfMeasurementConversionFactor.METRE):
-                    CtInvoke.LabelText(lbIncrementUnit, "mm");
-                    CtInvoke.LabelText(lbVelocityUnit, "mm/s");
-                    CtInvoke.LabelText(lbActualVelocityUnit, "mm/s");
-                    CtInvoke.LabelText(lbActualPositionUnit, "mm");
-                    CtInvoke.LabelText(lbTargetPositionUnit, "mm");
+                    CtInvoke.ControlText(lbIncrementUnit, "mm");
+                    CtInvoke.ControlText(lbVelocityUnit, "mm/s");
+                    CtInvoke.ControlText(lbActualVelocityUnit, "mm/s");
+                    CtInvoke.ControlText(lbActualPositionUnit, "mm");
+                    CtInvoke.ControlText(lbTargetPositionUnit, "mm");
                     break;
 
                 case (CtFestoCMMO.eUnitOfMeasurementConversionFactor.INCH):
-                    CtInvoke.LabelText(lbIncrementUnit, "inch");
-                    CtInvoke.LabelText(lbVelocityUnit, "inch/s");
-                    CtInvoke.LabelText(lbActualVelocityUnit, "inch/s");
-                    CtInvoke.LabelText(lbActualPositionUnit, "inch");
-                    CtInvoke.LabelText(lbTargetPositionUnit, "inch");
+                    CtInvoke.ControlText(lbIncrementUnit, "inch");
+                    CtInvoke.ControlText(lbVelocityUnit, "inch/s");
+                    CtInvoke.ControlText(lbActualVelocityUnit, "inch/s");
+                    CtInvoke.ControlText(lbActualPositionUnit, "inch");
+                    CtInvoke.ControlText(lbTargetPositionUnit, "inch");
                     break;
 
                 case (CtFestoCMMO.eUnitOfMeasurementConversionFactor.REVOLUTIONS):
-                    CtInvoke.LabelText(lbIncrementUnit, "r");
-                    CtInvoke.LabelText(lbVelocityUnit, "rpm");
-                    CtInvoke.LabelText(lbActualVelocityUnit, "rpm");
-                    CtInvoke.LabelText(lbActualPositionUnit, "r");
-                    CtInvoke.LabelText(lbTargetPositionUnit, "r");
+                    CtInvoke.ControlText(lbIncrementUnit, "r");
+                    CtInvoke.ControlText(lbVelocityUnit, "rpm");
+                    CtInvoke.ControlText(lbActualVelocityUnit, "rpm");
+                    CtInvoke.ControlText(lbActualPositionUnit, "r");
+                    CtInvoke.ControlText(lbTargetPositionUnit, "r");
                     break;
 
                 case (CtFestoCMMO.eUnitOfMeasurementConversionFactor.DEGREE):
-                    CtInvoke.LabelText(lbIncrementUnit, "∘");
-                    CtInvoke.LabelText(lbVelocityUnit, "∘/s");
-                    CtInvoke.LabelText(lbActualVelocityUnit, "∘/s");
-                    CtInvoke.LabelText(lbActualPositionUnit, "∘");
-                    CtInvoke.LabelText(lbTargetPositionUnit, "∘");
+                    CtInvoke.ControlText(lbIncrementUnit, "∘");
+                    CtInvoke.ControlText(lbVelocityUnit, "∘/s");
+                    CtInvoke.ControlText(lbActualVelocityUnit, "∘/s");
+                    CtInvoke.ControlText(lbActualPositionUnit, "∘");
+                    CtInvoke.ControlText(lbTargetPositionUnit, "∘");
                     break;
 
                 case (CtFestoCMMO.eUnitOfMeasurementConversionFactor.UNDEFINED):
                 default:
-                    CtInvoke.LabelText(lbIncrementUnit, "");
-                    CtInvoke.LabelText(lbVelocityUnit, "");
-                    CtInvoke.LabelText(lbActualVelocityUnit, "");
-                    CtInvoke.LabelText(lbActualPositionUnit, "");
-                    CtInvoke.LabelText(lbTargetPositionUnit, "");
+                    CtInvoke.ControlText(lbIncrementUnit, "");
+                    CtInvoke.ControlText(lbVelocityUnit, "");
+                    CtInvoke.ControlText(lbActualVelocityUnit, "");
+                    CtInvoke.ControlText(lbActualPositionUnit, "");
+                    CtInvoke.ControlText(lbTargetPositionUnit, "");
                     break;
             }
         }
@@ -370,7 +364,7 @@ namespace CtLib.Forms.TestPlatform
                     // --------------------------------------------
                     UpdateUI();
 
-                    Thread.Sleep(100);
+                    CtTimer.Delay(100);
                 }
                 catch (System.IO.IOException)
                 {
@@ -395,12 +389,12 @@ namespace CtLib.Forms.TestPlatform
             }
             else
             {
-                CtInvoke.ButtonText(btnConnect, "Disconnect");
-                CtInvoke.ButtonEnable(btnEnable, true);
-                CtInvoke.ButtonEnable(btnGetRecordTable, true);
-                CtInvoke.ButtonEnable(btnSaveRecordTable, true);
-                CtInvoke.TextBoxEnable(textBoxMasterControl, true);
-                CtInvoke.LabelEnable(lbMasterControl, true);
+                CtInvoke.ControlText(btnConnect, "Disconnect");
+                CtInvoke.ControlEnabled(btnEnable, true);
+                CtInvoke.ControlEnabled(btnGetRecordTable, true);
+                CtInvoke.ControlEnabled(btnSaveRecordTable, true);
+                CtInvoke.ControlEnabled(textBoxMasterControl, true);
+                CtInvoke.ControlEnabled(lbMasterControl, true);
 
                 CtInvoke.ComboBoxSelectedItem(cbxMeasurementUnit, rCmmo.UnitOfMeasurementConversionFactor);
             }
@@ -429,34 +423,34 @@ namespace CtLib.Forms.TestPlatform
                     switch (mode)
                     {
                         case CtFestoCMMO.eNominalOperatingMode.POSITIONING_MODE:
-                            CtInvoke.LabelText(lbOperationMode, "Positioning Mode");
+                            CtInvoke.ControlText(lbOperationMode, "Positioning Mode");
                             break;
                         case CtFestoCMMO.eNominalOperatingMode.SPEED_MODE:
-                            CtInvoke.LabelText(lbOperationMode, "Speed Mode");
+                            CtInvoke.ControlText(lbOperationMode, "Speed Mode");
                             break;
                         case CtFestoCMMO.eNominalOperatingMode.FORCE_MODE:
-                            CtInvoke.LabelText(lbOperationMode, "Force Mode");
+                            CtInvoke.ControlText(lbOperationMode, "Force Mode");
                             break;
                         case CtFestoCMMO.eNominalOperatingMode.HOMING_MODE:
-                            CtInvoke.LabelText(lbOperationMode, "Homing Mode");
+                            CtInvoke.ControlText(lbOperationMode, "Homing Mode");
                             break;
                         case CtFestoCMMO.eNominalOperatingMode.JOG_POSITIVE:
-                            CtInvoke.LabelText(lbOperationMode, "Jog positive");
+                            CtInvoke.ControlText(lbOperationMode, "Jog positive");
                             break;
                         case CtFestoCMMO.eNominalOperatingMode.JOG_NEGATIVE:
-                            CtInvoke.LabelText(lbOperationMode, "Jog negative");
+                            CtInvoke.ControlText(lbOperationMode, "Jog negative");
                             break;
                         case 0:
                         default:
-                            CtInvoke.LabelText(lbOperationMode, "");
+                            CtInvoke.ControlText(lbOperationMode, "");
                             break;
                     }
 
-                    CtInvoke.LabelText(lbActualVelocity, rCmmo.ActualVelocity.ToString("F3"));
-                    CtInvoke.LabelText(lbActualCurrent, rCmmo.ActualCurrent.ToString("F3"));
-                    CtInvoke.LabelText(lbActualTorque, rCmmo.ActualForce.ToString("F1"));
-                    CtInvoke.LabelText(lbTargetPosition, rCmmo.SetPointPosition.ToString("F3"));
-                    CtInvoke.LabelText(lbActualPosition, rCmmo.ActualPosition.ToString("F3"));
+                    CtInvoke.ControlText(lbActualVelocity, rCmmo.ActualVelocity.ToString("F3"));
+                    CtInvoke.ControlText(lbActualCurrent, rCmmo.ActualCurrent.ToString("F3"));
+                    CtInvoke.ControlText(lbActualTorque, rCmmo.ActualForce.ToString("F1"));
+                    CtInvoke.ControlText(lbTargetPosition, rCmmo.SetPointPosition.ToString("F3"));
+                    CtInvoke.ControlText(lbActualPosition, rCmmo.ActualPosition.ToString("F3"));
 
                     //Ready
                     if ((sw & 0x02) > 0) { lbSWbit1.Image = Properties.Resources.Yellow_Ball; }
@@ -465,24 +459,24 @@ namespace CtLib.Forms.TestPlatform
                     //Enable
                     if ((sw & 0x04) > 0)
                     {
-                        CtInvoke.ButtonEnable(btnStopMotion, true);
+                        CtInvoke.ControlEnabled(btnStopMotion, true);
                         lbSWbit2.Image = Properties.Resources.Green_Ball;
                     }
                     else
                     {
-                        CtInvoke.ButtonEnable(btnStopMotion, false);
+                        CtInvoke.ControlEnabled(btnStopMotion, false);
                         lbSWbit2.Image = Properties.Resources.Grey_Ball;
                     }
 
                     //Error
                     if ((sw & 0x08) > 0)
                     {
-                        CtInvoke.ButtonEnable(btnReset, true);
+                        CtInvoke.ControlEnabled(btnReset, true);
                         lbSWbit3.Image = Properties.Resources.Red_Ball;
                     }
                     else
                     {
-                        CtInvoke.ButtonEnable(btnReset, false);
+                        CtInvoke.ControlEnabled(btnReset, false);
                         lbSWbit3.Image = Properties.Resources.Grey_Ball;
                     }
 
@@ -496,25 +490,25 @@ namespace CtLib.Forms.TestPlatform
                         //Enable = 1 and MC = 1 , button enable
                         if (rCmmo.IsEnabled)
                         {
-                            CtInvoke.ButtonEnable(btnJog0, true);
-                            CtInvoke.ButtonEnable(btnJog1, true);
+                            CtInvoke.ControlEnabled(btnJog0, true);
+                            CtInvoke.ControlEnabled(btnJog1, true);
                             //Homing Valid = 1
                             if ((sw & 0x8000) > 0)
                             {
-                                CtInvoke.ButtonEnable(btnStep0, true);
-                                CtInvoke.ButtonEnable(btnStep1, true);
+                                CtInvoke.ControlEnabled(btnStep0, true);
+                                CtInvoke.ControlEnabled(btnStep1, true);
                             }
-                            CtInvoke.ButtonEnable(btnHoming, true);
-                            CtInvoke.ButtonEnable(btnStart, true);
+                            CtInvoke.ControlEnabled(btnHoming, true);
+                            CtInvoke.ControlEnabled(btnStart, true);
                         }
                         else
                         {
-                            CtInvoke.ButtonEnable(btnJog0, false);
-                            CtInvoke.ButtonEnable(btnJog1, false);
-                            CtInvoke.ButtonEnable(btnStep0, false);
-                            CtInvoke.ButtonEnable(btnStep1, false);
-                            CtInvoke.ButtonEnable(btnHoming, false);
-                            CtInvoke.ButtonEnable(btnStart, false);
+                            CtInvoke.ControlEnabled(btnJog0, false);
+                            CtInvoke.ControlEnabled(btnJog1, false);
+                            CtInvoke.ControlEnabled(btnStep0, false);
+                            CtInvoke.ControlEnabled(btnStep1, false);
+                            CtInvoke.ControlEnabled(btnHoming, false);
+                            CtInvoke.ControlEnabled(btnStart, false);
                         }
 
                         lbSWbit10.Image = Properties.Resources.Yellow_Ball;
@@ -524,13 +518,13 @@ namespace CtLib.Forms.TestPlatform
                         //!Jog positive and !Jog negative and MC = 0 , Jog button disable
                         if (mode != CtFestoCMMO.eNominalOperatingMode.JOG_POSITIVE && mode != CtFestoCMMO.eNominalOperatingMode.JOG_NEGATIVE)
                         {
-                            CtInvoke.ButtonEnable(btnJog0, false);
-                            CtInvoke.ButtonEnable(btnJog1, false);
+                            CtInvoke.ControlEnabled(btnJog0, false);
+                            CtInvoke.ControlEnabled(btnJog1, false);
                         }
-                        CtInvoke.ButtonEnable(btnStep0, false);
-                        CtInvoke.ButtonEnable(btnStep1, false);
-                        CtInvoke.ButtonEnable(btnHoming, false);
-                        CtInvoke.ButtonEnable(btnStart, false);
+                        CtInvoke.ControlEnabled(btnStep0, false);
+                        CtInvoke.ControlEnabled(btnStep1, false);
+                        CtInvoke.ControlEnabled(btnHoming, false);
+                        CtInvoke.ControlEnabled(btnStart, false);
 
                         lbSWbit10.Image = Properties.Resources.Grey_Ball;
                     }

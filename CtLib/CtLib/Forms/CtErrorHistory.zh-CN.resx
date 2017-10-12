@@ -117,185 +117,97 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="tpickStart.Location" type="System.Drawing.Point, System.Drawing">
-    <value>19, 48</value>
-  </data>
-  <data name="tpickStart.Size" type="System.Drawing.Size, System.Drawing">
-    <value>134, 20</value>
-  </data>
-  <data name="tpickEnd.Location" type="System.Drawing.Point, System.Drawing">
-    <value>182, 48</value>
-  </data>
-  <data name="tpickEnd.Size" type="System.Drawing.Size, System.Drawing">
-    <value>134, 20</value>
-  </data>
-  <data name="gbSelect.Font" type="System.Drawing.Font, System.Drawing">
-    <value>SimSun-ExtB, 9.75pt</value>
-  </data>
-  <data name="gbSelect.Size" type="System.Drawing.Size, System.Drawing">
-    <value>332, 75</value>
-  </data>
-  <data name="gbSelect.Text" xml:space="preserve">
-    <value>时间</value>
-  </data>
-  <data name="lbTo.Font" type="System.Drawing.Font, System.Drawing">
-    <value>SimSun-ExtB, 11.25pt</value>
-  </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="lbTo.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
-  <data name="lbTo.Location" type="System.Drawing.Point, System.Drawing">
-    <value>153, 50</value>
-  </data>
-  <data name="lbTo.Size" type="System.Drawing.Size, System.Drawing">
-    <value>23, 15</value>
-  </data>
   <data name="lbTo.Text" xml:space="preserve">
-    <value>到</value>
-  </data>
-  <data name="rdbTime_Custom.Font" type="System.Drawing.Font, System.Drawing">
-    <value>SimSun-ExtB, 9pt</value>
+    <value>至</value>
   </data>
   <data name="rdbTime_Custom.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
-  <data name="rdbTime_Custom.Location" type="System.Drawing.Point, System.Drawing">
-    <value>178, 21</value>
-  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="rdbTime_Custom.Size" type="System.Drawing.Size, System.Drawing">
-    <value>59, 16</value>
+    <value>73, 19</value>
   </data>
   <data name="rdbTime_Custom.Text" xml:space="preserve">
     <value>自定义</value>
   </data>
-  <data name="rdbTime_Month.Font" type="System.Drawing.Font, System.Drawing">
-    <value>SimSun-ExtB, 9pt</value>
-  </data>
   <data name="rdbTime_Month.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
-  <data name="rdbTime_Month.Location" type="System.Drawing.Point, System.Drawing">
-    <value>125, 20</value>
-  </data>
   <data name="rdbTime_Month.Size" type="System.Drawing.Size, System.Drawing">
-    <value>47, 16</value>
+    <value>58, 19</value>
   </data>
   <data name="rdbTime_Month.Text" xml:space="preserve">
     <value>本月</value>
   </data>
-  <data name="rdbTime_Week.Font" type="System.Drawing.Font, System.Drawing">
-    <value>SimSun-ExtB, 9pt</value>
-  </data>
   <data name="rdbTime_Week.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
-  <data name="rdbTime_Week.Location" type="System.Drawing.Point, System.Drawing">
-    <value>72, 21</value>
-  </data>
   <data name="rdbTime_Week.Size" type="System.Drawing.Size, System.Drawing">
-    <value>47, 16</value>
+    <value>58, 19</value>
   </data>
   <data name="rdbTime_Week.Text" xml:space="preserve">
     <value>本周</value>
-  </data>
-  <data name="rdbTime_Today.Font" type="System.Drawing.Font, System.Drawing">
-    <value>SimSun-ExtB, 9pt</value>
   </data>
   <data name="rdbTime_Today.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
   <data name="rdbTime_Today.Size" type="System.Drawing.Size, System.Drawing">
-    <value>47, 16</value>
+    <value>58, 19</value>
   </data>
   <data name="rdbTime_Today.Text" xml:space="preserve">
     <value>今日</value>
+  </data>
+  <data name="gbSelect.Text" xml:space="preserve">
+    <value>时间选项</value>
   </data>
   <data name="colTime.HeaderText" xml:space="preserve">
     <value>时间</value>
   </data>
   <data name="colKind.HeaderText" xml:space="preserve">
-    <value>种类</value>
+    <value>讯息种类</value>
   </data>
   <data name="colType.HeaderText" xml:space="preserve">
-    <value>类型</value>
+    <value>错误等级</value>
   </data>
   <data name="colTit.HeaderText" xml:space="preserve">
     <value>标题</value>
   </data>
   <data name="colMsg.HeaderText" xml:space="preserve">
-    <value>讯息</value>
-  </data>
-  <data name="gbType.Font" type="System.Drawing.Font, System.Drawing">
-    <value>SimSun-ExtB, 9.75pt</value>
-  </data>
-  <data name="gbType.Location" type="System.Drawing.Point, System.Drawing">
-    <value>341, 2</value>
-  </data>
-  <data name="gbType.Text" xml:space="preserve">
-    <value>筛选</value>
-  </data>
-  <data name="cbLv.Font" type="System.Drawing.Font, System.Drawing">
-    <value>SimSun-ExtB, 9.75pt</value>
-  </data>
-  <data name="cbLv.Size" type="System.Drawing.Size, System.Drawing">
-    <value>121, 21</value>
-  </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="lbLv.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
+    <value>错误讯息</value>
   </data>
   <data name="lbLv.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
-  <data name="lbLv.Location" type="System.Drawing.Point, System.Drawing">
-    <value>11, 53</value>
-  </data>
-  <data name="lbLv.Size" type="System.Drawing.Size, System.Drawing">
-    <value>35, 13</value>
-  </data>
   <data name="lbLv.Text" xml:space="preserve">
     <value>等级</value>
-  </data>
-  <data name="cbType.Font" type="System.Drawing.Font, System.Drawing">
-    <value>SimSun-ExtB, 9.75pt</value>
-  </data>
-  <data name="cbType.Size" type="System.Drawing.Size, System.Drawing">
-    <value>121, 21</value>
-  </data>
-  <data name="lbType.Font" type="System.Drawing.Font, System.Drawing">
-    <value>SimSun-ExtB, 9.75pt</value>
   </data>
   <data name="lbType.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
-  <data name="lbType.Size" type="System.Drawing.Size, System.Drawing">
-    <value>35, 13</value>
-  </data>
   <data name="lbType.Text" xml:space="preserve">
-    <value>文件</value>
+    <value>种类</value>
+  </data>
+  <data name="gbType.Text" xml:space="preserve">
+    <value>筛选</value>
   </data>
   <data name="btnExit.Font" type="System.Drawing.Font, System.Drawing">
-    <value>SimSun-ExtB, 12pt</value>
+    <value>新細明體, 12pt</value>
   </data>
   <data name="btnExit.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
   <data name="btnExit.Text" xml:space="preserve">
-    <value>关闭</value>
+    <value>离开</value>
   </data>
   <data name="btnSearch.Font" type="System.Drawing.Font, System.Drawing">
-    <value>SimSun-ExtB, 12pt</value>
+    <value>新細明體, 12pt</value>
   </data>
   <data name="btnSearch.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
-  </data>
-  <data name="btnSearch.Location" type="System.Drawing.Point, System.Drawing">
-    <value>568, 22</value>
-  </data>
-  <data name="btnSearch.Size" type="System.Drawing.Size, System.Drawing">
-    <value>97, 42</value>
   </data>
   <data name="btnSearch.Text" xml:space="preserve">
     <value>查询</value>
@@ -556,10 +468,7 @@
         //8AAAAAAAD//wAAAAAAAP//AAAAAAAA//8=
 </value>
   </data>
-  <data name="$this.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
   <data name="$this.Text" xml:space="preserve">
-    <value>纪录文件检视</value>
+    <value>历史纪录</value>
   </data>
 </root>

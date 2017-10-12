@@ -3,7 +3,7 @@ using System.Windows.Forms;
 using System.Threading;
 
 using CtLib.Library;
-using CtLib.Module.Ultity;
+using CtLib.Module.Utility;
 
 namespace CtLib.Forms {
     /// <summary>
@@ -110,26 +110,26 @@ namespace CtLib.Forms {
             InitializeComponent();
 
             mStyle = sty;
-            CtInvoke.FormText(this, title);
-            CtInvoke.LabelText(lbCaption, caption);
+            CtInvoke.ControlText(this, title);
+            CtInvoke.ControlText(lbCaption, caption);
 
             switch (sty) {
                 case Style.Percent:
                     mCurrStep = 0F;
                     mMaxStep = maxValue;
-                    CtInvoke.LabelText(lbPercent, "0.00%");
+                    CtInvoke.ControlText(lbPercent, "0.00%");
                     CtInvoke.ProgressBarRange(progProcess, 0, 100);
                     CtInvoke.ProgressBarStyle(progProcess, ProgressBarStyle.Continuous);
                     break;
                 case Style.Countdown:
                     mMaxStep = maxValue;
                     mCurrStep = maxValue;
-                    CtInvoke.LabelText(lbPercent, mMaxStep.ToString("##0.0s"));
+                    CtInvoke.ControlText(lbPercent, mMaxStep.ToString("##0.0s"));
                     CtInvoke.ProgressBarRange(progProcess, 0, 100);
                     CtInvoke.ProgressBarStyle(progProcess, ProgressBarStyle.Continuous);
                     break;
                 case Style.Loading:
-                    CtInvoke.LabelVisible(lbPercent, false);
+                    CtInvoke.ControlVisible(lbPercent, false);
                     CtInvoke.ProgressBarStyle(progProcess, ProgressBarStyle.Marquee);
                     break;
                 default:
@@ -162,11 +162,11 @@ namespace CtLib.Forms {
         private void UpdateState() {
             try {
                 if (mStyle == Style.Countdown) {
-                    CtInvoke.LabelText(lbPercent, mCurrStep.ToString("##0.0") + "s");
+                    CtInvoke.ControlText(lbPercent, mCurrStep.ToString("##0.0") + "s");
                     CtInvoke.ProgressBarValue(progProcess, (int)CalcPercent());
                 } else if (mStyle == Style.Percent) {
                     float sngCurVal = CalcPercent();
-                    CtInvoke.LabelText(lbPercent, sngCurVal.ToString("##0.00") + "%");
+                    CtInvoke.ControlText(lbPercent, sngCurVal.ToString("##0.00") + "%");
                     CtInvoke.ProgressBarValue(progProcess, (int)sngCurVal);
                 }
                 Application.DoEvents();
@@ -197,7 +197,7 @@ namespace CtLib.Forms {
         public Stat UpdateStep(float currentStep, string caption) {
             Stat stt = Stat.SUCCESS;
             try {
-                CtInvoke.LabelText(lbCaption, caption);
+                CtInvoke.ControlText(lbCaption, caption);
                 mCurrStep = currentStep;
                 UpdateState();
             } catch (Exception ex) {
@@ -215,8 +215,8 @@ namespace CtLib.Forms {
         public Stat UpdateStep(float currentStep, string caption, string title) {
             Stat stt = Stat.SUCCESS;
             try {
-                CtInvoke.FormText(this, title);
-                CtInvoke.LabelText(lbCaption, caption);
+                CtInvoke.ControlText(this, title);
+                CtInvoke.ControlText(lbCaption, caption);
                 mCurrStep = currentStep;
                 UpdateState();
             } catch (Exception ex) {

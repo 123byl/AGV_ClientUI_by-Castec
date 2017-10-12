@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading;
 
 using CtLib.Library;
-using CtLib.Module.Adept;
+using CtLib.Module.Utility;
 
 using Ace.Core.Client;
 using Ace.Core.Server;
@@ -23,7 +20,8 @@ namespace CtLib.Module.Adept {
     /// Adept ACE 之影像相關控制
     /// <para>此部分包含 Vision Event 及相關 Vision Tool 之使用</para>
     /// </summary>
-    public class CtAceVision : IDisposable {
+	[Serializable]
+    public sealed class CtAceVision : IDisposable {
 
         #region Declaration - Support Functions
         /// <summary>控管 Vision Server 相關事件</summary>
@@ -129,7 +127,7 @@ namespace CtLib.Module.Adept {
         /// <summary>觸發ImageBuffer新增或移除事件</summary>
         /// <param name="change">True:新增  False:移除</param>
         /// <param name="e">ImageBufferModified事件參數</param>
-        protected virtual void OnVisionBufferChange(bool change, ImageBufferModifiedEventArgs e) {
+        private void OnVisionBufferChange(bool change, ImageBufferModifiedEventArgs e) {
             if (FreezeList.Count > 0) {
                 if (FreezeList.FindAll(keyWord => e.Buffer.Name.Contains(keyWord)).Count == 0) return;
             }
@@ -139,24 +137,24 @@ namespace CtLib.Module.Adept {
             if (handler != null) handler(this, e);
         }
 
-        /// <summary>觸發ImageBuffer重新命名事件</summary>
-        /// <param name="e">ImageBufferNameChange事件參數</param>
-        protected virtual void OnVisionBufferRenamed(ImageBufferNameChangeEventArgs e) {
+		/// <summary>觸發ImageBuffer重新命名事件</summary>
+		/// <param name="e">ImageBufferNameChange事件參數</param>
+		private void OnVisionBufferRenamed(ImageBufferNameChangeEventArgs e) {
             EventHandler<ImageBufferNameChangeEventArgs> handler = ImageBufferRenamed;
 
             if (handler != null) handler(this, e);
         }
 
-        /// <summary>觸發VisionServer狀態改變事件</summary>
-        /// <param name="e">VisionServerStateChange事件參數</param>
-        protected virtual void OnVisionServerStateChange(VisionServerStateChangeEventArgs e) {
+		/// <summary>觸發VisionServer狀態改變事件</summary>
+		/// <param name="e">VisionServerStateChange事件參數</param>
+		private void OnVisionServerStateChange(VisionServerStateChangeEventArgs e) {
             EventHandler<VisionServerStateChangeEventArgs> handler = VisionServerChagned;
 
             if (handler != null) handler(this, e);
         }
         #endregion
 
-        #region Declaration - Members
+        #region Declaration - Fields
         /// <summary>用於Handle Vision Server 相關事件</summary>
         private VisionServerEventHandler mVisSrvHdl;
         /// <summary>Vision是否已加入過事件</summary>
@@ -197,9 +195,9 @@ namespace CtLib.Module.Adept {
             }
         }
 
-        /// <summary>關閉與 Vision Server 之連線，並釋放資源</summary>
-        /// <param name="isDisposing">是否為第一次釋放</param>
-        protected virtual void Dispose(bool isDisposing) {
+		/// <summary>關閉與 Vision Server 之連線，並釋放資源</summary>
+		/// <param name="isDisposing">是否為第一次釋放</param>
+		private void Dispose(bool isDisposing) {
             try {
                 if (isDisposing) {
                     /*-- 移除相關事件 --*/
@@ -275,7 +273,7 @@ namespace CtLib.Module.Adept {
                 mVisSrvHdl = new VisionServerEventHandler(mIClient, mIVisPlug);
                 mVisSrvHdl.StateChanged += new EventHandler<VisionServerStateChangeEventArgs>(mVisSrvHdl_StateChanged);
 
-                Thread.Sleep(500);
+                CtTimer.Delay(500);
                 mVisionAdded = true;
             }
         }
@@ -316,25 +314,25 @@ namespace CtLib.Module.Adept {
         /// <param name="path">該VisionTool於ACE之路徑，如 @"/Equipment/Vision/CVT"</param>
         /// <param name="toolType">VisionTool類型</param>
         /// <param name="takePicture">是否重新取得影像? 如是在 Vision On The Fly 請小心 Camera 位置是不是跑走了</param>
-        public void ExecuteVisionTool(string path, CtAce.VisionToolType toolType, bool takePicture) {
+        public void ExecuteVisionTool(string path, VisionToolType toolType, bool takePicture) {
             switch (toolType) {
-                case CtAce.VisionToolType.VISION_SOURCE:
+                case VisionToolType.VisionSource:
                     IVisionImageSource imgSrc = FindObject(path) as IVisionImageSource;
                     imgSrc.Execute(takePicture);
                     break;
-                case CtAce.VisionToolType.LOCATOR:
+                case VisionToolType.Locator:
                     ILocatorTool imgLoc = FindObject(path) as ILocatorTool;
                     imgLoc.Execute(takePicture);
                     break;
-                case CtAce.VisionToolType.CSHARP_VISION_TOOL:
+                case VisionToolType.CustomVisionTool:
                     ICSharpCustomTool imgCVT = FindObject(path) as ICSharpCustomTool;
                     imgCVT.Execute(takePicture);
                     break;
-                case CtAce.VisionToolType.BLOB_ANALYZER:
+                case VisionToolType.BlobAnalyzer:
                     IBlobAnalyzerTool imgBlob = FindObject(path) as IBlobAnalyzerTool;
                     imgBlob.Execute(takePicture);
                     break;
-                case CtAce.VisionToolType.IMAGE_PROCESSING:
+                case VisionToolType.ImageProcessing:
                     IImageProcessingTool imgProc = FindObject(path) as IImageProcessingTool;
                     imgProc.Execute(takePicture);
                     break;
@@ -348,29 +346,29 @@ namespace CtLib.Module.Adept {
         /// <param name="toolType">VisionTool類型</param>
         /// <param name="takePicture">是否重新取得影像? 如是在 Vision On The Fly 請小心 Camera 位置是不是跑走了</param>
         /// <param name="matchQuality">回傳該Tool之Match Quality，如果沒有結果或此Tool沒有分數選項，則回傳-1</param>
-        public void ExecuteVisionTool(string path, CtAce.VisionToolType toolType, bool takePicture, out float matchQuality) {
+        public void ExecuteVisionTool(string path, VisionToolType toolType, bool takePicture, out float matchQuality) {
             float sngQuality = -1F;
 
             switch (toolType) {
-                case CtAce.VisionToolType.VISION_SOURCE:
+                case VisionToolType.VisionSource:
                     IVisionImageSource imgSrc = FindObject(path) as IVisionImageSource;
                     imgSrc.Execute(takePicture);
                     break;
-                case CtAce.VisionToolType.LOCATOR:
+                case VisionToolType.Locator:
                     ILocatorTool imgLoc = FindObject(path) as ILocatorTool;
                     imgLoc.Execute(takePicture);
                     if (imgLoc.ResultsAvailable) sngQuality = imgLoc.Results[0].MatchQuality * 100;
                     break;
-                case CtAce.VisionToolType.CSHARP_VISION_TOOL:
+                case VisionToolType.CustomVisionTool:
                     ICSharpCustomTool imgCVT = FindObject(path) as ICSharpCustomTool;
                     imgCVT.Execute(takePicture);
                     break;
-                case CtAce.VisionToolType.BLOB_ANALYZER:
+                case VisionToolType.BlobAnalyzer:
                     IBlobAnalyzerTool imgBlob = FindObject(path) as IBlobAnalyzerTool;
                     imgBlob.Execute(takePicture);
                     if (imgBlob.ResultsAvailable) sngQuality = imgBlob.Results[0].Area;
                     break;
-                case CtAce.VisionToolType.IMAGE_PROCESSING:
+                case VisionToolType.ImageProcessing:
                     IImageProcessingTool imgProc = FindObject(path) as IImageProcessingTool;
                     imgProc.Execute(takePicture);
                     break;
@@ -387,16 +385,16 @@ namespace CtLib.Module.Adept {
         /// <param name="takePicture">是否重新取得影像? 如是在 Vision On The Fly 請小心 Camera 位置是不是跑走了</param>
         /// <param name="matchQuality">回傳該Tool之Match Quality，如果沒有結果或此Tool沒有分數選項，則回傳-1</param>
         /// <param name="scaleFactor">回傳該Tool之ScaleFactor，如果沒有結果或此Tool沒有分數選項，則回傳-1</param>
-        public void ExecuteVisionTool(string path, CtAce.VisionToolType toolType, bool takePicture, out float matchQuality, out float scaleFactor) {
+        public void ExecuteVisionTool(string path, VisionToolType toolType, bool takePicture, out float matchQuality, out float scaleFactor) {
             float sngQuality = -1F;
             float sngScale = -1F;
 
             switch (toolType) {
-                case CtAce.VisionToolType.VISION_SOURCE:
+                case VisionToolType.VisionSource:
                     IVisionImageSource imgSrc = FindObject(path) as IVisionImageSource;
                     imgSrc.Execute(takePicture);
                     break;
-                case CtAce.VisionToolType.LOCATOR:
+                case VisionToolType.Locator:
                     ILocatorTool imgLoc = FindObject(path) as ILocatorTool;
                     imgLoc.Execute(takePicture);
                     if (imgLoc.ResultsAvailable) {
@@ -404,16 +402,16 @@ namespace CtLib.Module.Adept {
                         sngScale = imgLoc.Results[0].ScaleFactor;
                     }
                     break;
-                case CtAce.VisionToolType.CSHARP_VISION_TOOL:
+                case VisionToolType.CustomVisionTool:
                     ICSharpCustomTool imgCVT = FindObject(path) as ICSharpCustomTool;
                     imgCVT.Execute(takePicture);
                     break;
-                case CtAce.VisionToolType.BLOB_ANALYZER:
+                case VisionToolType.BlobAnalyzer:
                     IBlobAnalyzerTool imgBlob = FindObject(path) as IBlobAnalyzerTool;
                     imgBlob.Execute(takePicture);
                     if (imgBlob.ResultsAvailable) sngQuality = imgBlob.Results[0].Area;
                     break;
-                case CtAce.VisionToolType.IMAGE_PROCESSING:
+                case VisionToolType.ImageProcessing:
                     IImageProcessingTool imgProc = FindObject(path) as IImageProcessingTool;
                     imgProc.Execute(takePicture);
                     break;
@@ -570,26 +568,84 @@ namespace CtLib.Module.Adept {
                 camera.ImportImage(picturePath);
             }
         }
-        #endregion
+		#endregion
 
-        #endregion
+		#region Tools
+		/// <summary>取得對應的 Vision Tool 類型</summary>
+		/// <param name="type">欲取得的 VisionToolType</param>
+		/// <returns>對應的 Vision Tool 類型</returns>
+		public Type GetHexSightToolType(VisionToolType type) {
+			Type tarType = null;
+			switch (type) {
+				case VisionToolType.VisionSource:
+					tarType = typeof(IVisionImageSource);
+					break;
+				case VisionToolType.Locator:
+					tarType = typeof(ILocatorTool);
+					break;
+				case VisionToolType.CustomVisionTool:
+					tarType = typeof(ICSharpCustomTool);
+					break;
+				case VisionToolType.BlobAnalyzer:
+					tarType = typeof(IBlobAnalyzerTool);
+					break;
+				case VisionToolType.ImageProcessing:
+					tarType = typeof(IImageProcessingTool);
+					break;
+				case VisionToolType.LocatorModel:
+					tarType = typeof(ILocatorModel);
+					break;
+				case VisionToolType.EdgeLocator:
+					tarType = typeof(IEdgeLocatorTool);
+					break;
+				case VisionToolType.LineFinder:
+					tarType = typeof(ILineFinderTool);
+					break;
+				case VisionToolType.ArcFinder:
+					tarType = typeof(IArcFinderTool);
+					break;
+				case VisionToolType.PointFinder:
+					tarType = typeof(IPointFinderTool);
+					break;
+				default:
+					break;
+			}
+			return tarType;
+		}
 
-        #region Function - IVisionPlugin Events
+		/// <summary>搜尋所有可做為影像來源之工具完整路徑</summary>
+		/// <returns>工具完整路徑集合，如 "/Vision/Tools/Locator"</returns>
+		public List<string> GetImageSources() {
+			return mIServer.Root.FilterType(typeof(IVisionImageSource), true).Select(tool => tool.FullPath).ToList();
+		}
 
-        void mIVisPlug_ServerBufferNameChanged(object sender, ImageBufferNameChangeEventArgs e) {
-            OnVisionBufferRenamed(e);
+		/// <summary>取得所有特定影像工具之完整路徑</summary>
+		/// <param name="type">欲尋找的種類</param>
+		/// <returns>工具完整路徑集合，如 "/Vision/Tools/Locator"</returns>
+		public List<string> GetVisionTools(VisionToolType type) {
+			Type sightType = GetHexSightToolType(type);
+			return mIServer.Root.FilterType(sightType, true).Select(tool => tool.FullPath).ToList();
+		}
+		#endregion
+
+		#endregion
+
+		#region Function - IVisionPlugin Events
+
+		void mIVisPlug_ServerBufferNameChanged(object sender, ImageBufferNameChangeEventArgs e) {
+			OnVisionBufferRenamed(e);
         }
 
         void mIVisPlug_ServerBufferRemoved(object sender, ImageBufferModifiedEventArgs e) {
-            OnVisionBufferChange(false, e);
+			OnVisionBufferChange(false, e);
         }
 
         void mIVisPlug_ServerBufferAdded(object sender, ImageBufferModifiedEventArgs e) {
-            OnVisionBufferChange(true, e);
+			OnVisionBufferChange(true, e);
         }
 
         void mVisSrvHdl_StateChanged(object sender, VisionServerStateChangeEventArgs e) {
-            OnVisionServerStateChange(e);
+			OnVisionServerStateChange(e);
         }
         #endregion
     }

@@ -121,8 +121,11 @@
   <data name="lbProduct.Font" type="System.Drawing.Font, System.Drawing">
     <value>微軟正黑體, 14.25pt, style=Bold</value>
   </data>
+  <data name="lbProduct.Location" type="System.Drawing.Point, System.Drawing">
+    <value>171, 14</value>
+  </data>
   <data name="lbProduct.Size" type="System.Drawing.Size, System.Drawing">
-    <value>86, 24</value>
+    <value>110, 31</value>
   </data>
   <data name="lbProduct.Text" xml:space="preserve">
     <value>產品名稱</value>
@@ -130,26 +133,35 @@
   <data name="lbVersion.Font" type="System.Drawing.Font, System.Drawing">
     <value>微軟正黑體, 12pt</value>
   </data>
+  <data name="lbVersion.Location" type="System.Drawing.Point, System.Drawing">
+    <value>172, 55</value>
+  </data>
   <data name="lbVersion.Size" type="System.Drawing.Size, System.Drawing">
-    <value>41, 20</value>
+    <value>52, 25</value>
   </data>
   <data name="lbVersion.Text" xml:space="preserve">
     <value>版本</value>
   </data>
   <data name="lbVersion_val.Font" type="System.Drawing.Font, System.Drawing">
-    <value>方正等线, 12pt</value>
+    <value>Consolas, 12pt</value>
+  </data>
+  <data name="lbVersion_val.Location" type="System.Drawing.Point, System.Drawing">
+    <value>270, 55</value>
   </data>
   <data name="lbVersion_val.Size" type="System.Drawing.Size, System.Drawing">
-    <value>111, 19</value>
+    <value>164, 23</value>
   </data>
   <data name="lbVersion_val.Text" xml:space="preserve">
     <value>lbVersion_val </value>
   </data>
   <data name="lbDate_val.Font" type="System.Drawing.Font, System.Drawing">
-    <value>方正等线, 12pt</value>
+    <value>Consolas, 12pt</value>
+  </data>
+  <data name="lbDate_val.Location" type="System.Drawing.Point, System.Drawing">
+    <value>270, 80</value>
   </data>
   <data name="lbDate_val.Size" type="System.Drawing.Size, System.Drawing">
-    <value>91, 19</value>
+    <value>131, 23</value>
   </data>
   <data name="lbDate_val.Text" xml:space="preserve">
     <value>lbDate_val </value>
@@ -157,8 +169,11 @@
   <data name="lbDate.Font" type="System.Drawing.Font, System.Drawing">
     <value>微軟正黑體, 12pt</value>
   </data>
+  <data name="lbDate.Location" type="System.Drawing.Point, System.Drawing">
+    <value>172, 80</value>
+  </data>
   <data name="lbDate.Size" type="System.Drawing.Size, System.Drawing">
-    <value>73, 20</value>
+    <value>92, 25</value>
   </data>
   <data name="lbDate.Text" xml:space="preserve">
     <value>編譯日期</value>
@@ -166,8 +181,11 @@
   <data name="lbCopyright.Font" type="System.Drawing.Font, System.Drawing">
     <value>微軟正黑體, 12pt</value>
   </data>
+  <data name="lbCopyright.Location" type="System.Drawing.Point, System.Drawing">
+    <value>172, 107</value>
+  </data>
   <data name="lbCopyright.Size" type="System.Drawing.Size, System.Drawing">
-    <value>73, 20</value>
+    <value>92, 25</value>
   </data>
   <data name="lbCopyright.Text" xml:space="preserve">
     <value>版權所有</value>
@@ -175,8 +193,26 @@
   <data name="txtDescription.Font" type="System.Drawing.Font, System.Drawing">
     <value>微軟正黑體, 9.75pt</value>
   </data>
+  <data name="txtDescription.Location" type="System.Drawing.Point, System.Drawing">
+    <value>177, 149</value>
+  </data>
+  <data name="txtDescription.Size" type="System.Drawing.Size, System.Drawing">
+    <value>289, 63</value>
+  </data>
   <data name="txtDescription.Text" xml:space="preserve">
     <value>描述</value>
+  </data>
+  <data name="colName.HeaderText" xml:space="preserve">
+    <value>名稱</value>
+  </data>
+  <data name="colVer.HeaderText" xml:space="preserve">
+    <value>版本</value>
+  </data>
+  <data name="dgvModule.Location" type="System.Drawing.Point, System.Drawing">
+    <value>177, 218</value>
+  </data>
+  <data name="dgvModule.Size" type="System.Drawing.Size, System.Drawing">
+    <value>289, 126</value>
   </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

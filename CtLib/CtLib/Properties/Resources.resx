@@ -439,4 +439,49 @@
   <data name="Sub_4" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Sub_4.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Adept_ACE_Fade" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Adept_ACE_Fade.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Adept_ACE_Normal" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Adept_ACE_Normal.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Adept_DisablePower" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Adept_DisablePower.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Adept_EnablePower" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Adept_EnablePower.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Beckhoff_TwinCAT_Fade" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Beckhoff_TwinCAT_Fade.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Beckhoff_TwinCAT_Machine_Fade" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Beckhoff_TwinCAT_Machine_Fade.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Beckhoff_TwinCAT_Machine_Normal" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Beckhoff_TwinCAT_Machine_Normal.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Beckhoff_TwinCAT_Normal" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Beckhoff_TwinCAT_Normal.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Zoom_Flip" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Zoom_Flip.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Arrow_LeftDouble_4" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Arrow_LeftDouble_4.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Arrow_RightDouble_4" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Arrow_RightDouble_4.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Eexport" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Eexport.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Import" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Import.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="List" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\List.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="List_2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\List_2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

@@ -1,18 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 
 using CtLib.Forms;
 using CtLib.Library;
-using CtLib.Module;
+using CtLib.Module.Utility;
 
 namespace CtLib.Module.Adept {
     /// <summary>
@@ -20,7 +17,7 @@ namespace CtLib.Module.Adept {
     /// <para>可控制 World/Tool/Joint 等方式移動，並可透過鍵盤按鍵操作</para>
     /// <para>請由 <see cref="CtAce.Pendant"/> 開啟此介面</para>
     /// </summary>
-    /// <example><code>
+    /// <example><code language="C#">
     /// ace.Pendant(true, true);
     /// </code></example>
     internal partial class CtAcePendant : Form {
@@ -33,17 +30,17 @@ namespace CtLib.Module.Adept {
         private static extern short GetAsyncKeyState(int vKey);
         #endregion
 
-        #region Declaration - Members
+        #region Declaration - Fields
         /*-- Temporary Flags --*/
         /// <summary>暫存當前的 Jog 模式</summary>
-        private CtAce.JogMode mJogMode = CtAce.JogMode.FREE;
-        /// <summary>[Flag] 滑鼠左鍵是否已 Release？  (True)左鍵已放開  (False)左鍵仍壓著</summary>
-        private bool mMouseUp = false;
-        /// <summary>[Flag] 位移模式或連續移動模式？  (True)Increment  (False)Continue Moving</summary>
+        private JogMode mJogMode = JogMode.Free;
+        /// <summary>[Flag] 滑鼠左鍵是否已 Release？  (<see langword="true"/>)左鍵已放開  (<see langword="false"/>)左鍵仍壓著</summary>
+        private volatile bool mMouseUp = false;
+        /// <summary>[Flag] 位移模式或連續移動模式？  (<see langword="true"/>)Increment  (<see langword="false"/>)Continue Moving</summary>
         private bool mIncrement = false;
-        /// <summary>[Flag] World/Tool 或是 Jog 模式？  (True)World/Tool  (False)Joint</summary>
+        /// <summary>[Flag] World/Tool 或是 Jog 模式？  (<see langword="true"/>)World/Tool  (<see langword="false"/>)Joint</summary>
         private bool mIsWorld = true;
-        /// <summary>[Flag] 用於鍵盤按下時判斷是否已經執行中?  (True)執行中，不再觸發  (False)未執行，觸發按鈕事件</summary>
+        /// <summary>[Flag] 用於鍵盤按下時判斷是否已經執行中?  (<see langword="true"/>)執行中，不再觸發  (<see langword="false"/>)未執行，觸發按鈕事件</summary>
         private bool mIsWorking = false;
 
         /*-- Sort Data --*/
@@ -146,32 +143,32 @@ namespace CtLib.Module.Adept {
         }
 
         /// <summary>顯示座標標題</summary>
-        /// <param name="isWorld">(True)World/Tool  (False)Joint</param>
+        /// <param name="isWorld">(<see langword="true"/>)World/Tool  (<see langword="false"/>)Joint</param>
         private void ShowCoordinate(bool isWorld) {
             if (isWorld) {
-                CtInvoke.LabelText(lbLoc1, "X");
-                CtInvoke.LabelText(lbLoc2, "Y");
-                CtInvoke.LabelText(lbLoc3, "Z");
-                CtInvoke.LabelText(lbLoc4, "Yaw");
-                CtInvoke.LabelText(lbLoc5, "Pitch");
-                CtInvoke.LabelText(lbLoc6, "Roll");
+                CtInvoke.ControlText(lbLoc1, "X");
+                CtInvoke.ControlText(lbLoc2, "Y");
+                CtInvoke.ControlText(lbLoc3, "Z");
+                CtInvoke.ControlText(lbLoc4, "Yaw");
+                CtInvoke.ControlText(lbLoc5, "Pitch");
+                CtInvoke.ControlText(lbLoc6, "Roll");
 
                 /*-- 將有可能隱藏的 Label 顯示出來，例如 s800 切成 Joint 時會隱藏 J5 J6 --*/
                 for (int idx = mJointLength; idx < 6; idx++) {
-                    CtInvoke.LabelVisible(mCoordinate[idx], true);
-                    CtInvoke.LabelVisible(mLocation[idx], true);
+                    CtInvoke.ControlVisible(mCoordinate[idx], true);
+                    CtInvoke.ControlVisible(mLocation[idx], true);
                 }
             } else {
 
                 /*-- 將多餘的軸隱藏起來 --*/
                 for (int idx = mJointLength; idx < 6; idx++) {
-                    CtInvoke.LabelVisible(mCoordinate[idx], false);
-                    CtInvoke.LabelVisible(mLocation[idx], false);
+                    CtInvoke.ControlVisible(mCoordinate[idx], false);
+                    CtInvoke.ControlVisible(mLocation[idx], false);
                 }
 
                 /*-- 更改標題為 Joint + ? --*/
                 for (byte idx = 0; idx < mCoordinate.Count; idx++) {
-                    CtInvoke.LabelText(mCoordinate[idx], "Joint " + (idx + 1));
+                    CtInvoke.ControlText(mCoordinate[idx], "Joint " + (idx + 1));
                 }
             }
         }
@@ -180,48 +177,48 @@ namespace CtLib.Module.Adept {
         /// <param name="location">座標數值</param>
         private void ShowLocation(List<double> location) {
             for (byte idx = 0; idx < location.Count; idx++) {
-                CtInvoke.LabelText(mLocation[idx], location[idx].ToString("##0.0##"));
+                CtInvoke.ControlText(mLocation[idx], location[idx].ToString("##0.0##"));
             }
         }
 
         /// <summary>顯示 PicturBox 按鈕</summary>
-        /// <param name="isWorld">(True)World/Tool  (False)Joint</param>
+        /// <param name="isWorld">(<see langword="true"/>)World/Tool  (<see langword="false"/>)Joint</param>
         private void ShowButtons(bool isWorld) {
             if (isWorld) {
-                mLbJoint.ForEach(val => CtInvoke.LabelVisible(val, false));
-                mPbJointAdd.ForEach(val => CtInvoke.PictureBoxVisible(val, false));
-                mPbJointSub.ForEach(val => CtInvoke.PictureBoxVisible(val, false));
-                mPbWorld.ForEach(val => CtInvoke.PictureBoxVisible(val, true));
+                mLbJoint.ForEach(val => CtInvoke.ControlVisible(val, false));
+                mPbJointAdd.ForEach(val => CtInvoke.ControlVisible(val, false));
+                mPbJointSub.ForEach(val => CtInvoke.ControlVisible(val, false));
+                mPbWorld.ForEach(val => CtInvoke.ControlVisible(val, true));
             } else {
-                mPbWorld.ForEach(val => CtInvoke.PictureBoxVisible(val, false));
+                mPbWorld.ForEach(val => CtInvoke.ControlVisible(val, false));
                 for (byte idx = 0; idx < mJointLength; idx++) {
-                    CtInvoke.LabelVisible(mLbJoint[idx], true);
-                    CtInvoke.PictureBoxVisible(mPbJointAdd[idx], true);
-                    CtInvoke.PictureBoxVisible(mPbJointSub[idx], true);
+                    CtInvoke.ControlVisible(mLbJoint[idx], true);
+                    CtInvoke.ControlVisible(mPbJointAdd[idx], true);
+                    CtInvoke.ControlVisible(mPbJointSub[idx], true);
                 }
             }
         }
 
         /// <summary>更新現在座標</summary>
-        /// <param name="isWorld">(True)World/Tool  (False)Joint</param>
+        /// <param name="isWorld">(<see langword="true"/>)World/Tool  (<see langword="false"/>)Joint</param>
         private void UpdateCurrentLocation(bool isWorld) {
             List<double> loc;
-            rAce.Variable.GetHere(mRobotNum, out loc, isWorld ? CtAce.VPlusVariableType.LOCATION : CtAce.VPlusVariableType.PRECISION_POINT);
+            rAce.Variable.GetHere(mRobotNum, out loc, isWorld ? VPlusVariableType.Location : VPlusVariableType.PrecisionPoint);
             ShowLocation(loc);
         }
         #endregion
 
         #region Function - Threads
-        private void tsk_WorldJog(int robotNum, CtAce.JogMode jogMode, double speed, int axis) {
+        private void tsk_WorldJog(int robotNum, JogMode jogMode, double speed, int axis) {
             List<double> loc;
             mIsWorking = true;
             do {
                 try {
-                    if (jogMode != CtAce.JogMode.WORLD && jogMode != CtAce.JogMode.TOOL) jogMode = CtAce.JogMode.WORLD;
+                    if (jogMode != JogMode.World && jogMode != JogMode.Tool) jogMode = JogMode.World;
                     rAce.Motion.Jog(robotNum, jogMode, speed, axis, out loc);
                     ShowLocation(loc);
                 } catch (Exception ex) {
-                    CtMsgBox.Show("Error", ex.Message, MsgBoxButton.OK, MsgBoxStyle.ERROR);
+                    CtMsgBox.Show("Error", ex.Message, MsgBoxBtn.OK, MsgBoxStyle.Error);
                     mMouseUp = true;
                     UpdateCurrentLocation(true);
                 }
@@ -234,10 +231,10 @@ namespace CtLib.Module.Adept {
             mIsWorking = true;
             do {
                 try {
-                    rAce.Motion.Jog(robotNum, CtAce.JogMode.JOINT, speed, axis, out loc);
+                    rAce.Motion.Jog(robotNum, JogMode.Joint, speed, axis, out loc);
                     ShowLocation(loc);
                 } catch (Exception ex) {
-                    CtMsgBox.Show("Error", ex.Message, MsgBoxButton.OK, MsgBoxStyle.ERROR);
+                    CtMsgBox.Show("Error", ex.Message, MsgBoxBtn.OK, MsgBoxStyle.Error);
                     mMouseUp = true;
                     UpdateCurrentLocation(false);
                 }
@@ -245,14 +242,14 @@ namespace CtLib.Module.Adept {
             } while (!mMouseUp);
         }
 
-        private void tsk_WorldIncrement(int robotNum, CtAce.Axis axis, double speed) {
+        private void tsk_WorldIncrement(int robotNum, Axis axis, double dist) {
             List<double> loc;
             mIsWorking = true;
             try {
-                rAce.Motion.Jog(mRobotNum, axis, speed, out loc);
+                rAce.Motion.Jog(mRobotNum, axis, dist, out loc);
                 ShowLocation(loc);
             } catch (Exception ex) {
-                CtMsgBox.Show("Error", ex.Message, MsgBoxButton.OK, MsgBoxStyle.ERROR);
+                CtMsgBox.Show("Error", ex.Message, MsgBoxBtn.OK, MsgBoxStyle.Error);
                 mMouseUp = true;
                 UpdateCurrentLocation(true);
             }
@@ -261,7 +258,7 @@ namespace CtLib.Module.Adept {
         private void tsk_UpdateLocation(object obj) {
             mMouseUp = true;
             //rAce.Motion.WaitMoveDone(mRobotNum);
-            Thread.Sleep(500);
+            CtTimer.Delay(500);
             UpdateCurrentLocation(mIsWorld);
             mIsWorking = false;
         }
@@ -278,7 +275,7 @@ namespace CtLib.Module.Adept {
             CtInvoke.ComboBoxSelectedIndex(cbMode, 0);
             CtInvoke.ComboBoxSelectedIndex(cbCtrlMode, 0);
 
-            CtInvoke.ButtonImage(btnPower, rAce.IsPower ? Properties.Resources.Green_Ball : Properties.Resources.Grey_Ball);
+            CtInvoke.ButtonImage(btnPower, rAce.IsHighPower() ? Properties.Resources.Green_Ball : Properties.Resources.Grey_Ball);
         }
 
         private void pbMouseEnter(object sender, EventArgs e) {
@@ -366,7 +363,7 @@ namespace CtLib.Module.Adept {
         }
 
         private void nudSpeed_ValueChanged_1(object sender, EventArgs e) {
-            CtInvoke.LabelFocus(lbMode);
+            CtInvoke.ControlFocus(lbMode);
         }
 
         private void ComboBoxKeyDown(object sender, KeyEventArgs e) {
@@ -380,27 +377,27 @@ namespace CtLib.Module.Adept {
                     ShowCoordinate(true);
                     ShowButtons(true);
                     UpdateCurrentLocation(true);
-                    CtInvoke.ComboBoxEnable(cbCtrlMode, true);
+                    CtInvoke.ControlEnabled(cbCtrlMode, true);
                     CtInvoke.ComboBoxSelectedIndex(cbCtrlMode, 0);
-                    mJogMode = CtAce.JogMode.WORLD;
+                    mJogMode = JogMode.World;
                     break;
                 case 1:
                     mIsWorld = false;
                     ShowCoordinate(false);
                     ShowButtons(false);
                     UpdateCurrentLocation(false);
-                    CtInvoke.ComboBoxEnable(cbCtrlMode, false);
+                    CtInvoke.ControlEnabled(cbCtrlMode, false);
                     CtInvoke.ComboBoxSelectedIndex(cbCtrlMode, 0);
-                    mJogMode = CtAce.JogMode.JOINT;
+                    mJogMode = JogMode.Joint;
                     break;
                 case 2:
                     mIsWorld = true;
                     ShowCoordinate(true);
                     ShowButtons(true);
                     UpdateCurrentLocation(true);
-                    CtInvoke.ComboBoxEnable(cbCtrlMode, true);
+                    CtInvoke.ControlEnabled(cbCtrlMode, true);
                     CtInvoke.ComboBoxSelectedIndex(cbCtrlMode, 0);
-                    mJogMode = CtAce.JogMode.TOOL;
+                    mJogMode = JogMode.Tool;
                     break;
             }
         }
@@ -414,7 +411,7 @@ namespace CtLib.Module.Adept {
             List<int> value = (sender as PictureBox).Tag.ToString().Split(CtConst.CHR_COMMA).ToList().ConvertAll(val => int.Parse(val));
 
             if (mIncrement)
-                CtThread.AddWorkItem(obj => tsk_WorldIncrement(mRobotNum, (CtAce.Axis)value[0], (double)nudSpeed.Value * value[1]));
+                CtThread.AddWorkItem(obj => tsk_WorldIncrement(mRobotNum, (Axis)value[0], (double)nudSpeed.Value * value[1]));
             else
                 CtThread.AddWorkItem(obj => tsk_WorldJog(mRobotNum, mJogMode, (double)nudSpeed.Value * 0.01 * value[1], value[0]));
         }
@@ -423,13 +420,13 @@ namespace CtLib.Module.Adept {
             switch (cbCtrlMode.SelectedIndex) {
                 case 0:
                     mIncrement = false;
-                    CtInvoke.LabelText(lbUnit, "%");
+                    CtInvoke.ControlText(lbUnit, "%");
                     CtInvoke.NumericUpDownValue(nudSpeed, 20);
                     break;
 
                 case 1:
                     mIncrement = true;
-                    CtInvoke.LabelText(lbUnit, "mm | °");
+                    CtInvoke.ControlText(lbUnit, "mm | °");
                     CtInvoke.NumericUpDownValue(nudSpeed, 1);
                     break;
             }
@@ -450,7 +447,7 @@ namespace CtLib.Module.Adept {
                 mRobotNum = 1;
                 mJointLength = 4;
             }
-            CtInvoke.LabelFocus(lbMode);
+            CtInvoke.ControlFocus(lbMode);
         }
 
         private void CtAcePendant_KeyDown(object sender, KeyEventArgs e) {
@@ -504,18 +501,29 @@ namespace CtLib.Module.Adept {
 
         private void btnHelp_Click(object sender, EventArgs e) {
             if (btnHelp.Text == ">>") {
-                CtInvoke.FormWidth(this, lbHelp.Left + lbHelp.Width + 25);
-                CtInvoke.ButtonText(btnHelp, "<<");
+                CtInvoke.ControlWidth(this, lbHelp.Left + lbHelp.Width + 25);
+                CtInvoke.ControlText(btnHelp, "<<");
             } else {
-                CtInvoke.FormWidth(this, lbSep.Left + 8);
-                CtInvoke.ButtonText(btnHelp, ">>");
+                CtInvoke.ControlWidth(this, lbSep.Left + 8);
+                CtInvoke.ControlText(btnHelp, ">>");
             }
         }
 
         private void btnPower_Click(object sender, EventArgs e) {
-            rAce.SetPower(!rAce.IsPower);
-            CtInvoke.ButtonImage(btnPower, rAce.IsPower ? Properties.Resources.Green_Ball : Properties.Resources.Grey_Ball);
+            rAce.SetPower(!rAce.IsHighPower());
+            CtInvoke.ButtonImage(btnPower, rAce.IsHighPower() ? Properties.Resources.Green_Ball : Properties.Resources.Grey_Ball);
         }
-        #endregion
-    }
+
+		private void CtAcePendant_FormClosing(object sender, FormClosingEventArgs e) {
+			try {
+				for (int i = 1; i <= rAce.Robots.Count; i++) {
+					rAce.Motion.Detach(i);
+				}
+			} catch (Exception ex) {
+				CtStatus.Report(Stat.ER3_ACE, ex);
+			}
+		}
+
+		#endregion
+	}
 }

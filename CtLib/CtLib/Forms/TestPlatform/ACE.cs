@@ -1,42 +1,44 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 using CtLib.Library;
 using CtLib.Module.Adept;
-
-using Ace.Adept.Server.Controls;
-using CtLib.Module.Ultity;
+using CtLib.Module.Utility;
 
 namespace CtLib.Forms.TestPlatform {
     /// <summary>Test Platform of CtACE</summary>
-    public partial class Test_ACE : Form {
+	[Serializable]
+    public partial class Test_ACE : Form, ICtVersion {
 
         #region Version
 
         /// <summary>Test_ACE 版本訊息</summary>
-        public static readonly CtVersion @Version = new CtVersion(1, 0, 1, "2014/09/19", "Ahern Kuo");
+        public CtVersion Version { get { return new CtVersion(1, 1, 0, "2016/10/18", "Ahern Kuo"); } }
 
         /*---------- Version Note ----------
          * 
-         * 1.0.0  <Ahern> [2014/09/12]
-         *      + 完成初版介面
+         * 1.0.0	Ahern	[2014/09/12]
+         *		+ 完成初版介面
          *      
-         * 1.0.1  <Ahern> [2014/09/19]
-         *      + CtAceVisionWindow
+         * 1.0.1	Ahern	[2014/09/19]
+         *		+ CtAceVisionWindow
+		 *      
+		 * 1.1.0	Ahern	[2016/10/18]
+		 *		+ Motion
+		 *		\ 調整版面
          *      
          *----------------------------------*/
 
         #endregion
 
-        #region Declaration - Members
+        #region Declaration - Fields
         /// <summary>Reference of CtAce</summary>
         private CtAce rAce;
+        ///<summary>手臂位置監看物件</summary>
+        private CtRobotMonitor monitor = null;
         #endregion
 
         #region Function - Constructor
@@ -44,6 +46,8 @@ namespace CtLib.Forms.TestPlatform {
         /// <summary>Constructor, Initial the form component and objects</summary>
         public Test_ACE() {
             InitializeComponent();
+
+			tabVision.SelectedIndex = 1;
         }
         #endregion
 
@@ -58,7 +62,7 @@ namespace CtLib.Forms.TestPlatform {
                     EnableControl(subCtrl, enable);
                 }
             } else {
-                ctrl.Enabled = enable;
+                CtInvoke.ControlEnabled(ctrl,enable);
             }
         }
 
@@ -82,7 +86,7 @@ namespace CtLib.Forms.TestPlatform {
         #region Function - CtAce Events
 
         /// <summary>Handle CtAce OnMessage event, display the message that send from CtAce object</summary>
-        void rAce_OnMessage(object sender, CtAce.MessageEventArgs e) {
+        void rAce_OnMessage(object sender, AceMessageEventArgs e) {
             /* According the message type, choose the different background color */
             Color bgColor = Color.Black;
             switch (e.Type) {
@@ -111,22 +115,22 @@ namespace CtLib.Forms.TestPlatform {
         }
 
         /// <summary>Handle CtACe OnNotifyEventChanged event</summary>
-        void rAce_NotifyEventOccur(object sender, CtAce.NotifyEventArgs e) {
+        void rAce_NotifyEventOccur(object sender, AceNotifyEventArgs e) {
             /* You cna do something for each event, just show a messsage to DataGridView here */
             switch (e.Events) {
-                case CtAce.NotifyEvents.WORKSPACE_LOAD:
+                case AceNotifyEvents.WorkspaceLoaded:
                     ShowMessage("Workspace載入");
                     break;
-                case CtAce.NotifyEvents.WORKSPACE_SAVE:
+                case AceNotifyEvents.WorkspaceSaved:
                     ShowMessage("Workspace已儲存");
                     break;
-                case CtAce.NotifyEvents.WORKSPACE_UNLOAD:
+                case AceNotifyEvents.WorkspaceUnloaded:
                     ShowMessage("Workspace卸載");
                     break;
-                case CtAce.NotifyEvents.PROGRAM_MODIFIED:
+                case AceNotifyEvents.ProgramModified:
                     ShowMessage("有程式受到變更");
                     break;
-                case CtAce.NotifyEvents.ACE_SHUTDOWN:
+                case AceNotifyEvents.AceShutdown:
                     ShowMessage("Adept ACE 已關閉");
                     break;
                 default:
@@ -135,33 +139,77 @@ namespace CtLib.Forms.TestPlatform {
         }
 
         /// <summary>Handle CtAce OnNumericEventChanged event</summary>
-        void rAce_NumericEventOccur(object sender, CtAce.NumericEventArgs e) {
+        void rAce_NumericEventOccur(object sender, AceNumericEventArgs e) {
             /* show the message */
             switch (e.Events) {
-                case CtAce.NumericEvents.SPEED_CHANGED:
+                case AceNumericEvents.SpeedChanged:
                     ShowMessage("速度變更為: " + CtConvert.CStr(e.Value));
-                    CtInvoke.TextBoxText(txtSpeed, CtConvert.CStr(e.Value));
+                    CtInvoke.ControlText(txtSpeed, CtConvert.CStr(e.Value));
                     break;
+				case AceNumericEvents.Contents:
+					ShowMessage("物件變更: " + e.Value.ToString());
+					break;
                 default:
                     break;
             }
         }
 
         /// <summary>Handle CtAce OnBoolEventChanged event</summary>
-        void rAce_BoolEventOccur(object sender, CtAce.BoolEventArgs e) {
+        void rAce_BoolEventOccur(object sender, AceBoolEventArgs e) {
             /* According the state to change item */
             switch (e.Events) {
-                case CtAce.BoolEvents.POWER_CHANGED:
+                case AceBoolEvents.PowerChanged:
                     if (e.Value) {
-                        CtInvoke.PictureBoxTag(imgPower, true);
+                        CtInvoke.ControlTag(imgPower, true);
                         CtInvoke.PictureBoxImage(imgPower, Properties.Resources.Green_Ball);
                         ShowMessage("電源開啟");
                     } else {
-                        CtInvoke.PictureBoxTag(imgPower, false);
+                        CtInvoke.ControlTag(imgPower, false);
                         CtInvoke.PictureBoxImage(imgPower, Properties.Resources.Grey_Ball);
                         ShowMessage("電源已關閉");
                     }
                     break;
+				case AceBoolEvents.Calibration:
+					if (e.Value) {
+						ShowMessage("已進行校正");
+					} else {
+						ShowMessage("校正失效");
+					}
+					break;
+                case AceBoolEvents.Connection:
+                    if (e.Value) {
+                        rAce.RequestPower();
+                        rAce.RequestSpeed();
+
+                        foreach (Control ctrl in this.Controls) {
+                            EnableControl(ctrl, true);
+                        }
+
+                        CtInvoke.ControlEnabled(chkCtrl, false);
+                        CtInvoke.ControlEnabled(btnConnect, true);
+                        CtInvoke.ControlText(btnConnect, "中斷連線");
+                        CtInvoke.ControlTag(btnConnect, true);
+
+                        List<string> lstCtrl = rAce.VpLinks;
+                        if (lstCtrl != null && lstCtrl.Count > 0) CtInvoke.ControlText(txtCtrl, lstCtrl);
+                        List<string> lstRob = rAce.Robots;
+                        if (lstRob != null && lstRob.Count > 0) CtInvoke.ControlText(txtRobot, lstRob);
+                    } else {
+                        foreach (Control ctrl in this.Controls) {
+                            EnableControl(ctrl, false);
+                        }
+
+                        CtInvoke.ControlEnabled(chkCtrl, true);
+                        CtInvoke.ControlEnabled(btnConnect, true);
+                        CtInvoke.ControlText(btnConnect, "連線");
+                        CtInvoke.ControlTag(btnConnect, false);
+                        visionWindow.Disconnect();
+                        visWindow.Disconnect();
+                    }
+
+                    break;
+				default:
+					break;
             }
         }
 
@@ -176,17 +224,8 @@ namespace CtLib.Forms.TestPlatform {
                     rAce = null;
                 }
 
-                foreach (Control ctrl in this.Controls) {
-                    EnableControl(ctrl, false);
-                }
-
-                CtInvoke.CheckBoxEnable(chkCtrl, true);
-                CtInvoke.ButtonEnable(btnConnect, true);
-                CtInvoke.ButtonText(btnConnect, "連線");
-                CtInvoke.ButtonTag(btnConnect, false);
             } else {
-
-                CtAce.ControllerType ctrlType = (chkCtrl.Checked) ? CtAce.ControllerType.WITH_SMARTCONTROLLER : CtAce.ControllerType.WITHOUT_SMARTCONTROLLER;
+                ControllerType ctrlType = (chkCtrl.Checked) ? ControllerType.SmartController : ControllerType.Embedded;
                 rAce = new CtAce();
 
                 if (rAce != null) {
@@ -198,28 +237,11 @@ namespace CtLib.Forms.TestPlatform {
                     rAce.OnMessage += rAce_OnMessage;
                 }
 
+				//rAce.ClientMode = false;
+				//rAce.WorkspacePath = @"D:\Codes\Testing Code\ACE_Empty\empty.awp";
+                rAce.Connect(ctrlType, true);
 
-                rAce.Connect(ctrlType);
-
-                if (rAce.IsConnected) {
-
-                    rAce.RequestPower();
-                    rAce.RequestSpeed();
-
-                    foreach (Control ctrl in this.Controls) {
-                        EnableControl(ctrl, true);
-                    }
-
-                    CtInvoke.CheckBoxEnable(chkCtrl, false);
-                    CtInvoke.ButtonEnable(btnConnect, true);
-                    CtInvoke.ButtonText(btnConnect, "中斷連線");
-                    CtInvoke.ButtonTag(btnConnect, true);
-
-                    List<string> lstCtrl = rAce.Controllers;
-                    if (lstCtrl != null && lstCtrl.Count > 0) CtInvoke.TextBoxText(txtCtrl, lstCtrl);
-                    List<string> lstRob = rAce.Robots;
-                    if (lstRob != null && lstRob.Count > 0) CtInvoke.TextBoxText(txtRobot, lstRob);
-                } else {
+                if (!rAce.IsVpConnected()) {
                     ShowMessage("連線失敗");
                 }
             }
@@ -239,12 +261,12 @@ namespace CtLib.Forms.TestPlatform {
 
         private void txtSpeed_KeyPress(object sender, KeyPressEventArgs e) {
             if ((e.KeyChar != '\n') && (e.KeyChar != '\r')) {
-                CtInvoke.TextBoxForeColor(txtSpeed, Color.Red);
-                CtInvoke.TextBoxFont(txtSpeed, new Font("Consolas", 10, FontStyle.Bold));
+                CtInvoke.ControlForeColor(txtSpeed, Color.Red);
+                CtInvoke.ControlFont(txtSpeed, new Font("Consolas", 10, FontStyle.Bold));
             } else {
                 if (CtConvert.CInt(txtSpeed.Text) < 101) {
-                    CtInvoke.TextBoxForeColor(txtSpeed, Color.Black);
-                    CtInvoke.TextBoxFont(txtSpeed, new Font("Consolas", 10, FontStyle.Regular));
+                    CtInvoke.ControlForeColor(txtSpeed, Color.Black);
+                    CtInvoke.ControlFont(txtSpeed, new Font("Consolas", 10, FontStyle.Regular));
                     if (rAce != null)
                         rAce.SetSpeed(CtConvert.CInt(txtSpeed.Text));
                 }
@@ -252,67 +274,65 @@ namespace CtLib.Forms.TestPlatform {
         }
 
         private void btnVarRead_Click(object sender, EventArgs e) {
-            object objTemp;
-            rAce.Variable.GetValue(txtVarName.Text, out objTemp);
-            if (objTemp != null) {
-                string strTemp = CtConvert.CStr(objTemp);
-                CtInvoke.TextBoxText(txtVarVal, strTemp);
-            }
+			try {
+				object objTemp;
+				rAce.Variable.GetUndefVpValue(txtVarName.Text, out objTemp);
+				if (objTemp != null) {
+					string strTemp = CtConvert.CStr(objTemp);
+					CtInvoke.ControlText(txtVarVal, strTemp);
+				}
+			} catch (Exception ex) {
+				ShowMessage(ex.Message, Color.Red);
+			}
         }
 
         private void Test_ACE_Load(object sender, EventArgs e) {
-            //List<double> aa = new List<double> { -999.95, 5.9, 1.0, 0.5 };
-            //MessageBox.Show(CtConvert.CStr(aa.Max()));
-            //List<string> num = new List<string> { "-999.999", "3", "5", "7", "9" };
-            ////double max_val = num.Max(val => Convert.ToDouble(val));
-            //List<double> num2 = num.ConvertAll(new Converter<string,double>(val => Convert.ToDouble(val)));
-            //double max_val = num2.Min();
-            //MessageBox.Show(max_val.ToString());
 
-
-            CtInvoke.ComboBoxSelectedIndex(cbVisTool, 1);
-            //CtInvoke.ComboBoxSelectedIndex(cbProgTask, 1);
         }
 
         private void btnVarWrite_Click(object sender, EventArgs e) {
-            if (txtVarVal.Text != "") {
-                CtAce.VPlusVariableType varType;
-                rAce.Variable.GetVariabeType(txtVarName.Text, out varType);
+			try {
+				if (txtVarVal.Text != "") {
+					VPlusVariableType varType;
+					rAce.Variable.GetVariabeType(txtVarName.Text, out varType);
 
-                object objTemp = null;
-                switch (varType) {
-                    case CtAce.VPlusVariableType.REAL:
-                        objTemp = CtConvert.CFloat(txtVarVal.Text);
-                        break;
-                    case CtAce.VPlusVariableType.STRING:
-                        objTemp = txtVarVal.Text;
-                        break;
-                    case CtAce.VPlusVariableType.LOCATION:
-                        List<string> strSplit = txtVarVal.Text.Split(CtConst.CHR_DELIMITERS, StringSplitOptions.RemoveEmptyEntries).ToList();
-                        List<double> dblTemp = strSplit.ConvertAll(new Converter<string, double>(val => Convert.ToDouble(val)));
-                        objTemp = dblTemp;
-                        break;
-                    case CtAce.VPlusVariableType.PRECISION_POINT:
-                        List<string> strSplitPP = txtVarVal.Text.Split(CtConst.CHR_DELIMITERS, StringSplitOptions.RemoveEmptyEntries).ToList();
-                        List<double> dblTempPP = strSplitPP.ConvertAll(new Converter<string, double>(val => Convert.ToDouble(val)));
-                        objTemp = dblTempPP;
-                        break;
-                }
-                if (objTemp != null) {
-                    rAce.Variable.SetValue(txtVarName.Text, objTemp);
-                }
-            }
+					object objTemp = null;
+					switch (varType) {
+						case VPlusVariableType.Real:
+							objTemp = CtConvert.CFloat(txtVarVal.Text);
+							break;
+						case VPlusVariableType.String:
+							objTemp = txtVarVal.Text;
+							break;
+						case VPlusVariableType.Location:
+							List<string> strSplit = txtVarVal.Text.Split(CtConst.CHR_DELIMITERS, StringSplitOptions.RemoveEmptyEntries).ToList();
+							List<double> dblTemp = strSplit.ConvertAll(val => Convert.ToDouble(val));
+							objTemp = dblTemp;
+							break;
+						case VPlusVariableType.PrecisionPoint:
+							List<string> strSplitPP = txtVarVal.Text.Split(CtConst.CHR_DELIMITERS, StringSplitOptions.RemoveEmptyEntries).ToList();
+							List<double> dblTempPP = strSplitPP.ConvertAll(val => Convert.ToDouble(val));
+							objTemp = dblTempPP;
+							break;
+					}
+					if (objTemp != null) {
+						rAce.Variable.SetUndefVpValue(txtVarName.Text, objTemp);
+					}
+				}
+			} catch (Exception ex) {
+				ShowMessage(ex.Message, Color.Red);
+			}
         }
 
         private void btnProgExe_Click(object sender, EventArgs e) {
             if (CtConvert.CBool(btnProgExe.Tag)) {
                 rAce.Tasks.TaskAbort(cbProgTask.SelectedIndex);
-                CtInvoke.ButtonTag(btnProgExe, false);
-                CtInvoke.ButtonText(btnProgExe, "執行");
+                CtInvoke.ControlTag(btnProgExe, false);
+                CtInvoke.ControlText(btnProgExe, "執行");
             } else {
                 rAce.Tasks.TaskExecute(txtProgName.Text, cbProgTask.SelectedIndex);
-                CtInvoke.ButtonTag(btnProgExe, true);
-                CtInvoke.ButtonText(btnProgExe, "停止/暫停");
+                CtInvoke.ControlTag(btnProgExe, true);
+                CtInvoke.ControlText(btnProgExe, "停止/暫停");
             }
 
         }
@@ -328,30 +348,30 @@ namespace CtLib.Forms.TestPlatform {
         private void btnProgMoni_Click(object sender, EventArgs e) {
             if (CtConvert.CBool(btnProgMoni.Tag)) {
                 rAce.Tasks.RemoveMonitorTask(cbProgTask.SelectedIndex);
-                CtInvoke.ButtonTag(btnProgMoni, false);
-                CtInvoke.ButtonText(btnProgMoni, "加入監控");
+                CtInvoke.ControlTag(btnProgMoni, false);
+                CtInvoke.ControlText(btnProgMoni, "加入監控");
             } else {
                 rAce.Tasks.AddMonitorTask(cbProgTask.SelectedIndex);
-                CtInvoke.ButtonTag(btnProgMoni, true);
-                CtInvoke.ButtonText(btnProgMoni, "停止監控");
+                CtInvoke.ControlTag(btnProgMoni, true);
+                CtInvoke.ControlText(btnProgMoni, "停止監控");
             }
         }
 
         private void cbProgTask_SelectedValueChanged(object sender, EventArgs e) {
             if (rAce.Tasks.IsMoniting(cbProgTask.SelectedIndex)) {
-                CtInvoke.ButtonTag(btnProgMoni, true);
-                CtInvoke.ButtonText(btnProgMoni, "停止監控");
+                CtInvoke.ControlTag(btnProgMoni, true);
+                CtInvoke.ControlText(btnProgMoni, "停止監控");
             } else {
-                CtInvoke.ButtonTag(btnProgMoni, false);
-                CtInvoke.ButtonText(btnProgMoni, "加入監控");
+                CtInvoke.ControlTag(btnProgMoni, false);
+                CtInvoke.ControlText(btnProgMoni, "加入監控");
             }
 
             if (rAce.Tasks.IsTaskExist(cbProgTask.SelectedIndex)) {
-                CtInvoke.ButtonTag(btnProgExe, true);
-                CtInvoke.ButtonText(btnProgExe, "停止/暫停");
+                CtInvoke.ControlTag(btnProgExe, true);
+                CtInvoke.ControlText(btnProgExe, "停止/暫停");
             } else {
-                CtInvoke.ButtonTag(btnProgExe, false);
-                CtInvoke.ButtonText(btnProgExe, "執行");
+                CtInvoke.ControlTag(btnProgExe, false);
+                CtInvoke.ControlText(btnProgExe, "執行");
             }
         }
 
@@ -365,26 +385,9 @@ namespace CtLib.Forms.TestPlatform {
         }
 
         private void btnVision_Click(object sender, EventArgs e) {
-            if (txtVisionPath.Text != null) {
-                CtAceSingleVision.ToolType toolType = CtAceSingleVision.ToolType.VirtualCamera;
-                switch (cbVisTool.SelectedIndex) {
-                    case 0:
-                        toolType = CtAceSingleVision.ToolType.Blob;
-                        break;
-                    case 1:
-                        toolType = CtAceSingleVision.ToolType.VirtualCamera;
-                        break;
-                    case 2:
-                        toolType = CtAceSingleVision.ToolType.CSharpCustomTool;
-                        break;
-                    case 3:
-                        toolType = CtAceSingleVision.ToolType.ImageProcess;
-                        break;
-                    case 4:
-                        toolType = CtAceSingleVision.ToolType.Locator;
-                        break;
-                }
-                visionWindow.Connect(toolType, rAce, txtVisionPath.Text);
+            if (!string.IsNullOrEmpty(txtVisionPath.Text)) {
+				visionWindow.Disconnect();
+                visionWindow.Connect(rAce, txtVisionPath.Text);
             }
         }
 
@@ -400,33 +403,39 @@ namespace CtLib.Forms.TestPlatform {
             rAce.ZeroMemory();
         }
 
-        #endregion
-
         private void btnShowVision_Click(object sender, EventArgs e) {
+			visWindow.Disconnect();
             visWindow.Connect(rAce);
         }
 
         private void btnOpen_Click(object sender, EventArgs e) {
             int io = -1;
             if (int.TryParse(txtIO.Text.Replace("-", ""), out io)) {
-                rAce.IO.SetIO(io);
+				try {
+					rAce.IO.SetIO(io);
+				} catch (Exception ex) {
+					ShowMessage(ex.Message, Color.Red);
+				}
             }
         }
 
         private void btnClose_Click(object sender, EventArgs e) {
             int io = -1;
             if (int.TryParse(txtIO.Text.Replace("-", ""), out io)) {
-                rAce.IO.SetIO(io * -1);
-                //MessageBox.Show(rAce.IO.GetIO(io).ToString());
+				try {
+					rAce.IO.SetIO(io * -1);
+				} catch (Exception ex) {
+					ShowMessage(ex.Message, Color.Red);
+				}
             }
         }
 
         private void btn90P_Click(object sender, EventArgs e) {
-            rAce.Motion.MoveDistance(1, CtAce.Axis.ROLL, 90);
+            rAce.Motion.MoveDistance(1, Axis.Roll, 90);
         }
 
         private void btn90N_Click(object sender, EventArgs e) {
-            rAce.Motion.MoveDistance(1, CtAce.Axis.ROLL, -90);
+            rAce.Motion.MoveDistance(1, Axis.Roll, -90);
         }
 
         private void btnPendant_Click(object sender, EventArgs e) {
@@ -434,11 +443,80 @@ namespace CtLib.Forms.TestPlatform {
         }
 
         private void btnCusCmd_Click(object sender, EventArgs e) {
-            CtInput input = new CtInput();
-            string temp = "";
-            input.Start(CtInput.InputStyle.TEXT, "自訂命令", "請輸入命令", out temp);
+            string temp;
+			CtInput.Text(out temp, "自訂命令", "請輸入命令");
             //if (temp != "") rAce.Motion.SendString(temp);
         }
+
+		private void btnExConnect_Click(object sender, EventArgs e) {
+			rAce.ConnectWithController(!rAce.IsVpConnected());
+		}
+
+		private void btnVisBud_Click(object sender, EventArgs e) {
+			using (CtAceVisionBuilder_Ctrl builder = new CtAceVisionBuilder_Ctrl(rAce)) {
+				this.Hide();
+				builder.ShowDialog();
+				this.Show();
+			}
+		}
+
+		private void btnRdIO_Click(object sender, EventArgs e) {
+			int io;
+			if (int.TryParse(txtIO.Text?.Replace("-", ""), out io)) {
+				bool result = rAce.IO.GetIO(io);
+				ShowMessage($"I/O ({io}) {(result? "ON" : "OFF")}", Color.LightSkyBlue);
+			}
+		}
+
+		private void btnRdHere_Click(object sender, EventArgs e) {
+			int robotNum;
+			if (int.TryParse(txtMoRob.Text, out robotNum)) {
+				List<double> location;
+				try {
+					rAce.Variable.GetHere(robotNum, out location);
+					CtInvoke.ControlText(txtX, location[0].ToString("F2"));
+					CtInvoke.ControlText(txtY, location[1].ToString("F2"));
+					CtInvoke.ControlText(txtZ, location[2].ToString("F2"));
+					CtInvoke.ControlText(txtYaw, location[3].ToString("F2"));
+					CtInvoke.ControlText(txtPitch, location[4].ToString("F2"));
+					CtInvoke.ControlText(txtRoll, location[5].ToString("F2"));
+				} catch (Exception ex) {
+					ShowMessage(ex.Message, Color.Red);
+				}
+			}
+		}
+
+		private void btnMove_Click(object sender, EventArgs e) {
+			int robotNum;
+			if (int.TryParse(txtMoRob.Text, out robotNum)) {
+				List<double> location = new List<double>();
+				try {
+					location.Add(double.Parse(CtInvoke.ControlText(txtX)));
+					location.Add(double.Parse(CtInvoke.ControlText(txtY)));
+					location.Add(double.Parse(CtInvoke.ControlText(txtZ)));
+					location.Add(double.Parse(CtInvoke.ControlText(txtYaw)));
+					location.Add(double.Parse(CtInvoke.ControlText(txtPitch)));
+					location.Add(double.Parse(CtInvoke.ControlText(txtRoll)));
+					rAce.Motion.MoveToLocation(robotNum, location);
+					rAce.Motion.WaitMoveDone(robotNum);
+				} catch (Exception ex) {
+					ShowMessage(ex.Message, Color.Red);
+				}
+			}
+		}
+        
+        private void btnMonitor_Click(object sender, EventArgs e) {
+            try {
+                if (monitor == null) monitor = new CtRobotMonitor(rAce);
+                monitor.Show();
+            } catch(Exception ex) {
+                CtStatus.Report(Stat.ER_SYSTEM, ex, true);
+            }
+
+        }
+
+        #endregion
+
 
     }
 }

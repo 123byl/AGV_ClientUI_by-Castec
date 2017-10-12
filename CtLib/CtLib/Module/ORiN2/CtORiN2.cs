@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
-using CtLib.Forms;
-using CtLib.Library;
+using CtLib.Module.Utility;
 
 using ORiN2.interop.CAO;
-using CtLib.Module.Ultity;
 
 namespace CtLib.Module.ORiN2 {
 
@@ -15,17 +12,17 @@ namespace CtLib.Module.ORiN2 {
     /// ORiN2
     /// <para>此為聯盟協議，包含 DENSO、FANUC 等</para>
     /// </summary>
-    public class CtORiN2 {
+    public class CtORiN2 : ICtVersion {
 
         #region Version
 
         /// <summary>CtORiN2 版本相關訊息</summary>
-        /// <remarks><code>
+        /// <remarks><code language="C#">
         /// 0.0.0  Ahern [2015/05/14]
         ///     + 建立 CtORiN2
         ///     
         /// </code></remarks>
-        public static readonly CtVersion @Version = new CtVersion(0, 0, 0, "2015/05/14", "Ahern Kuo");
+        public CtVersion Version { get { return new CtVersion(0, 0, 0, "2015/05/14", "Ahern Kuo"); } }
 
         #endregion
 
@@ -41,13 +38,13 @@ namespace CtLib.Module.ORiN2 {
             /// <summary>I/O</summary>
             IO,
             /// <summary>Point</summary>
-            POINT,
+            Point,
             /// <summary>Joint</summary>
-            JOINT
+            Joint
         }
         #endregion
 
-        #region Declaration - Members
+        #region Declaration - Fields
         private CaoEngine mIEngine;
         private CaoController mICtrl;
         private CaoWorkspace mIWrks;
@@ -148,22 +145,22 @@ namespace CtLib.Module.ORiN2 {
         /// <param name="varName">變數名稱</param>
         /// <param name="value">欲寫入變數之數值。Point 長度為 7 (含姿態定義)，Joint 長度為 6</param>
         /// <param name="varType">變數類型，Point 或 Joint</param>
-        public void SetValue(string varName, List<float> value, VariableType varType = VariableType.POINT) {
+        public void SetValue(string varName, List<float> value, VariableType varType = VariableType.Point) {
             if (!varName.StartsWith("P") && !varName.StartsWith("J")) {
                 int verify = -1;
                 if (int.TryParse(varName, out verify))
-                    varName = (varType == VariableType.POINT ? "P" : "J") + varName;
+                    varName = (varType == VariableType.Point ? "P" : "J") + varName;
                 else
                     throw (new Exception("The name \"" + varName + "\" is invalid for access I/O"));
             }
-            if (varType == VariableType.POINT) {
+            if (varType == VariableType.Point) {
                 //if (value.Count == 6) value.Add(-1);
                 //else if (value.Count != 7) throw (new Exception("Invalid value for setting Point location. Pass-in value are \"" + string.Join(", ", value) + "\""));
             } else {
                 if (value.Count == 6) {
                     value.Add(0);
                     value.Add(0);
-                } else if (value.Count != 8) throw (new Exception("Invalid value for setting Joint variable. Pass-in value are \"" + string.Join(", ", value.ConvertAll(val => val.ToString("0.0##")).ToArray()) + "\""));
+                } else if (value.Count != 8) throw (new Exception("Invalid value for setting Joint variable. Pass-in value are \"" + string.Join(", ", value) + "\""));
             }
 
 
@@ -180,7 +177,7 @@ namespace CtLib.Module.ORiN2 {
 
         /// <summary>取得 I/O 狀態</summary>
         /// <param name="ioName">欲取得的 I/O。如 "IO64"、"73"</param>
-        /// <returns>(True)ON  (False)OFF</returns>
+        /// <returns>(<see langword="true"/>)ON  (<see langword="false"/>)OFF</returns>
         public bool GetIO(string ioName) {
             if (!ioName.StartsWith("IO")) {
                 int verify = -1;
@@ -197,7 +194,7 @@ namespace CtLib.Module.ORiN2 {
                 mCaoVars.Add(ioName, caoVar);
             }
 
-            return CtConvert.CBool(caoVar.Value);
+            return (bool)caoVar.Value;
         }
 
         /// <summary>設定 I/O 狀態</summary>
@@ -248,7 +245,7 @@ namespace CtLib.Module.ORiN2 {
             if (mCaoTasks.ContainsKey(fullName)) caoTask = mCaoTasks[fullName];
             else {
                 caoTask = mICtrl.AddTask(fullName);
-                mCaoTasks.Add(fullName, caoTask);
+                mCaoTasks.Add(fullName,caoTask);
             }
 
             caoTask.Start(2, "");
@@ -276,9 +273,9 @@ namespace CtLib.Module.ORiN2 {
         }
 
         /// <summary>取得所有 Task 名稱</summary>
-        /// <returns></returns>
+        /// <returns>當前的 Task 清單</returns>
         public List<string> GetTasks() {
-            object[] temp = mICtrl.TaskNames as object[];
+            object[] temp = mICtrl.TaskNames;
             return temp.Cast<string>().ToList();
         }
 

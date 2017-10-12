@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 using CtLib.Library;
@@ -21,16 +18,16 @@ namespace CtLib.Forms {
         /// <summary>記錄檔類型</summary>
         private enum LogType {
             /// <summary>Alarm Log</summary>
-            ALARM,
+            Alarm,
             /// <summary>Trace Log</summary>
-            TRACE,
+            Trace,
             /// <summary>System Status Report</summary>
-            SYSTEM
+            System
         }
         
         #endregion
 
-        #region Declaration - Members
+        #region Declaration - Fields
 
         /// <summary>顯示Alarm Log</summary>
         private bool mShowAlarmLog = true;
@@ -71,13 +68,13 @@ namespace CtLib.Forms {
                 foreach (string file in Directory.GetFiles(path, "*.log", SearchOption.AllDirectories)) {
                     if ((file.Contains(CtConst.FILE_ALARMLOG)) && (mShowAlarmLog)) {
                         fileTime = File.GetLastWriteTime(file);
-                        if ((startTime.Date <= fileTime.Date) && (fileTime.Date <= endTime.Date)) pathCollection.Add(file, LogType.ALARM);
+                        if ((startTime.Date <= fileTime.Date) && (fileTime.Date <= endTime.Date)) pathCollection.Add(file, LogType.Alarm);
                     } else if ((file.Contains(CtConst.FILE_REPORTLOG)) && (mShowErrorLog)) {
                         fileTime = File.GetLastWriteTime(file);
-                        if ((startTime.Date <= fileTime.Date) && (fileTime.Date <= endTime.Date)) pathCollection.Add(file, LogType.SYSTEM);
+                        if ((startTime.Date <= fileTime.Date) && (fileTime.Date <= endTime.Date)) pathCollection.Add(file, LogType.System);
                     } else if ((file.Contains(CtConst.FILE_TRACELOG)) && (mShowTraceLog)) {
                         fileTime = File.GetLastWriteTime(file);
-                        if ((startTime.Date <= fileTime.Date) && (fileTime.Date <= endTime.Date)) pathCollection.Add(file, LogType.TRACE);
+                        if ((startTime.Date <= fileTime.Date) && (fileTime.Date <= endTime.Date)) pathCollection.Add(file, LogType.Trace);
                     }
                 }
             } catch (Exception ex) {
@@ -99,7 +96,7 @@ namespace CtLib.Forms {
                     string[] strSplit;
                     foreach (string item in strDocument) {
                         switch (kind) {
-                            case LogType.ALARM:
+                            case LogType.Alarm:
                                 strSplit = item.Split(new char[] { '[', ']', '{', '}', '(', ')' }, StringSplitOptions.RemoveEmptyEntries);
                                 strDGV.Clear();
                                 strDGV.Add(File.GetCreationTime(path).ToString("yyyy/MM/dd") + " " + strSplit[0]);
@@ -108,23 +105,24 @@ namespace CtLib.Forms {
                                 strDGV.Add(strSplit[6]);
                                 strDGV.Add(strSplit[7].Replace("-", "").Trim());
                                 break;
-                            case LogType.TRACE:
+                            case LogType.Trace:
                                 strSplit = item.Split(CtConst.CHR_BRACKET, StringSplitOptions.RemoveEmptyEntries);
                                 strDGV.Clear();
                                 strDGV.Add(File.GetCreationTime(path).ToString("yyyy/MM/dd") + " " + strSplit[0]);
                                 strDGV.Add("Trace");
                                 strDGV.Add("");
                                 strDGV.Add(strSplit[2]);
-                                strDGV.Add(strSplit[3].Replace("-", "").Trim());
+								strSplit = item.Split(CtConst.CHR_DASH, StringSplitOptions.RemoveEmptyEntries);
+								strDGV.Add(string.Join(" - ", strSplit, 1, strSplit.Count() - 1));
                                 break;
-                            case LogType.SYSTEM:
-                                strSplit = item.Split(new char[] { '[', ']', '<', '>', '(', ')' }, StringSplitOptions.RemoveEmptyEntries);
+                            case LogType.System:
+                                strSplit = item.Split(new char[] { '[', ']', '<', '>' }, StringSplitOptions.RemoveEmptyEntries);
                                 strDGV.Clear();
                                 strDGV.Add(File.GetCreationTime(path).ToString("yyyy/MM/dd") + " " + strSplit[0]);
                                 strDGV.Add("System");
                                 strDGV.Add(strSplit[2]);
-                                strDGV.Add(strSplit[6]);
-                                strDGV.Add(strSplit[7].Trim());
+                                strDGV.Add(strSplit[4]);
+								strDGV.Add(string.Join(" ", strSplit, 5, strSplit.Count() - 5));
                                 break;
                         }
                         CtInvoke.DataGridViewAddRow(dgvMsg, strDGV, false, false);
@@ -152,8 +150,8 @@ namespace CtLib.Forms {
                 CtInvoke.DateTimePickerValue(tpickEnd, DateTime.Now);
 
                 /*-- 更改Enable --*/
-                CtInvoke.DateTimePickerEnable(tpickStart, false);
-                CtInvoke.DateTimePickerEnable(tpickEnd, false);
+                CtInvoke.ControlEnabled(tpickStart, false);
+                CtInvoke.ControlEnabled(tpickEnd, false);
             }
         }
 
@@ -170,8 +168,8 @@ namespace CtLib.Forms {
                 CtInvoke.DateTimePickerValue(tpickEnd, DateTime.Now);
 
                 /*-- 更改Enable --*/
-                CtInvoke.DateTimePickerEnable(tpickStart, false);
-                CtInvoke.DateTimePickerEnable(tpickEnd, false);
+                CtInvoke.ControlEnabled(tpickStart, false);
+                CtInvoke.ControlEnabled(tpickEnd, false);
             }
         }
 
@@ -188,8 +186,8 @@ namespace CtLib.Forms {
                 CtInvoke.DateTimePickerValue(tpickEnd, DateTime.Now);
 
                 /*-- 更改Enable --*/
-                CtInvoke.DateTimePickerEnable(tpickStart, false);
-                CtInvoke.DateTimePickerEnable(tpickEnd, false);
+                CtInvoke.ControlEnabled(tpickStart, false);
+                CtInvoke.ControlEnabled(tpickEnd, false);
             }
         }
 
@@ -202,8 +200,8 @@ namespace CtLib.Forms {
                 CtInvoke.RadioButtonChecked(rdbTime_Custom, true);
 
                 /*-- 更改Enable --*/
-                CtInvoke.DateTimePickerEnable(tpickStart, true);
-                CtInvoke.DateTimePickerEnable(tpickEnd, true);
+                CtInvoke.ControlEnabled(tpickStart, true);
+                CtInvoke.ControlEnabled(tpickEnd, true);
             }
         }
 
@@ -211,11 +209,13 @@ namespace CtLib.Forms {
             CtInvoke.DataGridViewClear(dgvMsg);
 
             /*-- 搜尋Log --*/
-            Dictionary<string, LogType> logs = SearchLog(CtDefaultPath.GetPath(SystemPath.LOG), tpickStart.Value, tpickEnd.Value);
+            Dictionary<string, LogType> logs = SearchLog(CtDefaultPath.GetPath(SystemPath.Log), tpickStart.Value, tpickEnd.Value);
 
             foreach (KeyValuePair<string, LogType> item in logs) {
                 LoadLog(item.Value, item.Key);
             }
+
+			dgvMsg.Sort(dgvMsg.Columns[0], ListSortDirection.Descending);
         }
 
         private void cbType_SelectedIndexChanged(object sender, EventArgs e) {

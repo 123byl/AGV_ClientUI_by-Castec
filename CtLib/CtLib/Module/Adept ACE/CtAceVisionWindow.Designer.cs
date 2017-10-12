@@ -11,7 +11,16 @@
         /// <param name="disposing">如果應該處置 Managed 資源則為 true，否則為 false。</param>
         protected override void Dispose(bool disposing) {
             if ( disposing && ( components != null ) ) {
-                rAce.Vision.RemoveVisionEventHandler();
+				if (rAce != null) {
+					rAce.Vision.RemoveVisionEventHandler();
+
+					rAce.Vision.ImageBufferAdded -= mIVisPlug_ServerBufferAdded;
+					rAce.Vision.ImageBufferRemoved -= mIVisPlug_ServerBufferRemoved;
+					rAce.Vision.ImageBufferRenamed -= mIVisPlug_ServerBufferNameChanged;
+					rAce.Vision.VisionServerChagned -= rAce_VisionServerChagned;
+
+					rAce = null;
+				}
                 components.Dispose();
             }
             base.Dispose(disposing);
@@ -24,31 +33,33 @@
         /// 修改這個方法的內容。
         /// </summary>
         private void InitializeComponent() {
-            this.tabWindow = new System.Windows.Forms.TabControl();
-            this.SuspendLayout();
-            // 
-            // tabWindow
-            // 
-            this.tabWindow.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabWindow.Location = new System.Drawing.Point(0, 0);
-            this.tabWindow.Name = "tabWindow";
-            this.tabWindow.SelectedIndex = 0;
-            this.tabWindow.Size = new System.Drawing.Size(419, 491);
-            this.tabWindow.TabIndex = 0;
-            // 
-            // CtAceVisionWindow
-            // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.tabWindow);
-            this.Name = "CtAceVisionWindow";
-            this.Size = new System.Drawing.Size(419, 491);
-            this.ResumeLayout(false);
+			this.tabWindow = new System.Windows.Forms.TabControl();
+			this.SuspendLayout();
+			// 
+			// tabWindow
+			// 
+			this.tabWindow.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.tabWindow.Location = new System.Drawing.Point(0, 0);
+			this.tabWindow.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.tabWindow.Name = "tabWindow";
+			this.tabWindow.SelectedIndex = 0;
+			this.tabWindow.Size = new System.Drawing.Size(200, 200);
+			this.tabWindow.TabIndex = 0;
+			// 
+			// CtAceVisionWindow
+			// 
+			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this.tabWindow);
+			this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Name = "CtAceVisionWindow";
+			this.Size = new System.Drawing.Size(200, 200);
+			this.ResumeLayout(false);
 
         }
 
-        #endregion
+		#endregion
 
-        private System.Windows.Forms.TabControl tabWindow;
-    }
+		private System.Windows.Forms.TabControl tabWindow;
+	}
 }
