@@ -114,6 +114,11 @@ namespace AGV.Map.Core
         {
             lock (mKey)
             {
+                if (Status != EDragStatus.Idle)
+                {
+                    mDragPoints = mDragTarget.CreatDragPoints();
+                    UpdateBound();
+                }
                 float z = (int)GLSetting.Type;
                 gl.Color(GLSetting.MainColor.GetFloats());
                 gl.LineWidth(GLSetting.LineWidth);

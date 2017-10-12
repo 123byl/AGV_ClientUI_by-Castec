@@ -70,16 +70,7 @@ namespace AGV.Map.UI
         {
             mDragTargetID = 0;
             mDragManager.DragTaeget = null;
-            Database.AGVGM.Clear();
-            Database.ForbiddenAreaGM.Clear();
-            Database.ForbiddenLineGM.Clear();
-            Database.GoalGM.Clear();
-            Database.LaserPointsGM.Clear();
-            Database.NarrowLineGM.Clear();
-            Database.ObstacleLinesGM.Clear();
-            Database.ObstaclePointsGM.Clear();
-            Database.ParkingGM.Clear();
-            Database.PowerGM.Clear();
+            Database.ClearAll();
         }
 
         /// <summary>
