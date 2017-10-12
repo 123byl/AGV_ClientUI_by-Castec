@@ -1,7 +1,9 @@
 ﻿using AGV.Map.Common;
 using AGV.Map.Core.GLExtension;
 using SharpGL;
+using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 namespace AGV.Map.Core
 {
@@ -10,6 +12,20 @@ namespace AGV.Map.Core
     /// </summary>
     internal abstract class MutiArea : IMuti<IArea>
     {
+        /// <summary>
+        /// 執行緒鎖
+        /// </summary>
+        private readonly object mKey = new object();
+
+        private IntPtr mPtr;
+
+        /// <summary>
+        /// 頂點數
+        /// </summary>
+        private int mVertexCount = -1;
+
+        private uint preDataEditVersion = 0;
+
         public MutiArea()
         {
         }
@@ -40,6 +56,22 @@ namespace AGV.Map.Core
         public string Name { get; set; } = string.Empty;
 
         /// <summary>
+        /// 重新生成頂點陣列(加速顯示)
+        /// </summary>
+        public void BuildVertexArray()
+        {
+            lock (mKey)
+            {
+                mVertexCount = -1;
+                if (mPtr != IntPtr.Zero)
+                {
+                    Marshal.FreeHGlobal(mPtr);
+                    mPtr = IntPtr.Zero;
+                }
+            }
+        }
+
+        /// <summary>
         /// 繪圖
         /// </summary>
         public void Draw(OpenGL gl)
@@ -47,18 +79,44 @@ namespace AGV.Map.Core
             float z = (int)GLSetting.Type;
             gl.Color(GLSetting.MainColor.GetFloats());
             gl.Disable(OpenGL.GL_DEPTH_TEST);
-            gl.Begin(OpenGL.GL_QUADS);
-            {
-                DataList.SaftyForLoop((item) =>
-                {
-                    gl.Vertex(item.Min.X, item.Min.Y, z);
-                    gl.Vertex(item.Max.X, item.Min.Y, z);
-                    gl.Vertex(item.Max.X, item.Max.Y, z);
-                    gl.Vertex(item.Min.X, item.Max.Y, z);
-                });
-            }
+            GenVertexArray();
+            gl.DrawArrays(OpenGL.GL_QUADS, mVertexCount, mPtr);
             gl.End();
             gl.Enable(OpenGL.GL_DEPTH_TEST);
+        }
+
+        private void GenVertexArray()
+        {
+            lock (mKey)
+            {
+                if (preDataEditVersion == DataList.EditVersion && mVertexCount != -1) return;
+                BuildVertexArray();
+                preDataEditVersion = DataList.EditVersion;
+                int[] vertex = new int[DataList.Count * 8];
+                mVertexCount = vertex.Length / 2;
+                int index = 0;
+                DataList.SaftyForLoop((item) =>
+                {
+                    vertex[index] = item.Min.X;
+                    index++;
+                    vertex[index] = item.Min.Y;
+                    index++;
+                    vertex[index] = item.Max.X;
+                    index++;
+                    vertex[index] = item.Min.Y;
+                    index++;
+                    vertex[index] = item.Max.X;
+                    index++;
+                    vertex[index] = item.Max.Y;
+                    index++;
+                    vertex[index] = item.Min.X;
+                    index++;
+                    vertex[index] = item.Max.Y;
+                    index++;
+                });
+                mPtr = Marshal.AllocHGlobal(vertex.Length * sizeof(int));
+                Marshal.Copy(vertex, 0, mPtr, vertex.Length);
+            }
         }
     }
 
@@ -67,6 +125,20 @@ namespace AGV.Map.Core
     /// </summary>
     internal abstract class MutiLine : IMuti<ILine>
     {
+        /// <summary>
+        /// 執行緒鎖
+        /// </summary>
+        private readonly object mKey = new object();
+
+        private IntPtr mPtr;
+
+        /// <summary>
+        /// 頂點數
+        /// </summary>
+        private int mVertexCount = -1;
+
+        private uint preDataEditVersion = 0;
+
         public MutiLine()
         {
         }
@@ -97,6 +169,22 @@ namespace AGV.Map.Core
         public string Name { get; set; } = string.Empty;
 
         /// <summary>
+        /// 重新生成頂點陣列(加速顯示)
+        /// </summary>
+        public void BuildVertexArray()
+        {
+            lock (mKey)
+            {
+                mVertexCount = -1;
+                if (mPtr != IntPtr.Zero)
+                {
+                    Marshal.FreeHGlobal(mPtr);
+                    mPtr = IntPtr.Zero;
+                }
+            }
+        }
+
+        /// <summary>
         /// 繪圖
         /// </summary>
         public void Draw(OpenGL gl)
@@ -107,18 +195,37 @@ namespace AGV.Map.Core
             gl.BeginStipple(GLSetting.LineStyle);
             {
                 gl.Disable(OpenGL.GL_DEPTH_TEST);
-                gl.Begin(OpenGL.GL_LINES);
-                {
-                    DataList.SaftyForLoop((item) =>
-                    {
-                        gl.Vertex(item.Begin.X, item.Begin.Y, z);
-                        gl.Vertex(item.End.X, item.End.Y, z);
-                    });
-                }
-                gl.End();
+                GenVertexArray();
+                gl.DrawArrays(OpenGL.GL_LINES, mVertexCount, mPtr);
                 gl.Enable(OpenGL.GL_DEPTH_TEST);
             }
             gl.EndStipple();
+        }
+
+        private void GenVertexArray()
+        {
+            lock (mKey)
+            {
+                if (preDataEditVersion == DataList.EditVersion && mVertexCount != -1) return;
+                BuildVertexArray();
+                preDataEditVersion = DataList.EditVersion;
+                int[] vertex = new int[DataList.Count * 4];
+                mVertexCount = vertex.Length / 2;
+                int index = 0;
+                DataList.SaftyForLoop((item) =>
+                {
+                    vertex[index] = item.Begin.X;
+                    index++;
+                    vertex[index] = item.Begin.Y;
+                    index++;
+                    vertex[index] = item.End.X;
+                    index++;
+                    vertex[index] = item.End.Y;
+                    index++;
+                });
+                mPtr = Marshal.AllocHGlobal(vertex.Length * sizeof(int));
+                Marshal.Copy(vertex, 0, mPtr, vertex.Length);
+            }
         }
     }
 
@@ -127,13 +234,27 @@ namespace AGV.Map.Core
     /// </summary>
     internal abstract class MutiPair : IMuti<IPair>
     {
+        /// <summary>
+        /// 執行緒鎖
+        /// </summary>
+        private readonly object mKey = new object();
+
+        private IntPtr mPtr;
+
+        /// <summary>
+        /// 頂點數
+        /// </summary>
+        private int mVertexCount = -1;
+
+        private uint preDataEditVersion = 0;
+
         public MutiPair()
         {
         }
 
         public MutiPair(IEnumerable<IPair> collection)
         {
-            DataList = new SaftyList<IPair>(collection);
+            mDataList = new SaftyList<IPair>(collection);
         }
 
         public MutiPair(IPair item)
@@ -144,7 +265,7 @@ namespace AGV.Map.Core
         /// <summary>
         /// 集合資料
         /// </summary>
-        public ISaftyList<IPair> DataList { get; } = new SaftyList<IPair>();
+        public ISaftyList<IPair> DataList { get { lock (mKey) return mDataList; } }
 
         /// <summary>
         /// 繪圖設定
@@ -156,6 +277,24 @@ namespace AGV.Map.Core
         /// </summary>
         public string Name { get; set; } = string.Empty;
 
+        private ISaftyList<IPair> mDataList { get; } = new SaftyList<IPair>();
+
+        /// <summary>
+        /// 重新生成頂點陣列(加速顯示)
+        /// </summary>
+        public void BuildVertexArray()
+        {
+            lock (mKey)
+            {
+                mVertexCount = -1;
+                if (mPtr != IntPtr.Zero)
+                {
+                    Marshal.FreeHGlobal(mPtr);
+                    mPtr = IntPtr.Zero;
+                }
+            }
+        }
+
         /// <summary>
         /// 繪圖
         /// </summary>
@@ -165,15 +304,31 @@ namespace AGV.Map.Core
             gl.Color(GLSetting.MainColor.GetFloats());
             gl.PointSize(GLSetting.PointSize);
             gl.Disable(OpenGL.GL_DEPTH_TEST);
-            gl.Begin(OpenGL.GL_POINTS);
+            GenVertexArray();
+            gl.DrawArrays(OpenGL.GL_POINTS, mVertexCount, mPtr);
+            gl.Enable(OpenGL.GL_DEPTH_TEST);
+        }
+
+        private void GenVertexArray()
+        {
+            lock (mKey)
             {
+                if (preDataEditVersion == DataList.EditVersion && mVertexCount != -1) return;
+                BuildVertexArray();
+                preDataEditVersion = DataList.EditVersion;
+                int[] vertex = new int[DataList.Count * 2];
+                mVertexCount = vertex.Length / 2;
+                int index = 0;
                 DataList.SaftyForLoop((item) =>
                 {
-                    gl.Vertex(item.X, item.Y, z);
+                    vertex[index] = item.X;
+                    index++;
+                    vertex[index] = item.Y;
+                    index++;
                 });
+                mPtr = Marshal.AllocHGlobal(vertex.Length * sizeof(int));
+                Marshal.Copy(vertex, 0, mPtr, vertex.Length);
             }
-            gl.End();
-            gl.Enable(OpenGL.GL_DEPTH_TEST);
         }
     }
 }

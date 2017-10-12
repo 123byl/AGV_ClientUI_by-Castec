@@ -10,6 +10,11 @@ namespace AGV.Map.Common
     public interface ISaftyList<T> : ISafty
     {
         /// <summary>
+        /// 紀錄最後的編輯版本
+        /// </summary>
+        uint EditVersion { get; }
+
+        /// <summary>
         /// 加入新元素
         /// </summary>
         void Add(T item);

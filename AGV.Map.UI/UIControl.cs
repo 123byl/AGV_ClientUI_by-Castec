@@ -3,6 +3,7 @@ using AGV.Map.Core;
 using AGV.Map.Core.GLExtension;
 using SharpGL;
 using System;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace AGV.Map.UI
@@ -14,9 +15,19 @@ namespace AGV.Map.UI
         private uint mDragTargetID;
 
         /// <summary>
-        /// 網格 CallList 編號
+        /// 網格指標
         /// </summary>
-        private uint mGridList = 0;
+        private IntPtr mGridPtr;
+
+        /// <summary>
+        /// 網格大小
+        /// </summary>
+        private int mGridSize = 1000;
+
+        /// <summary>
+        /// 網格頂點數量
+        /// </summary>
+        private int mGridVertexCount = -1;
 
         private bool mISMousePress = false;
         private IRecode<IPair> mMousePosition = Factory.FOthers.Recode<IPair>(Factory.FGeometry.Pair());
@@ -96,10 +107,6 @@ namespace AGV.Map.UI
         {
             if (Zoom.Value > 40) return;
 
-            int gridSize = 1000; //mm
-            int gridCount = 50;
-
-            int mapSize = gridSize * gridCount;
             OpenGL gl = OpenGL;
 
             // 顏色、大小
@@ -110,30 +117,14 @@ namespace AGV.Map.UI
             gl.PushMatrix();
             {
                 gl.LoadIdentity();
-                gl.Translate((Translate.X) % gridSize, (Translate.Y) % gridSize, (int)EType.Grid);
-                if (mGridList != 0)
+                gl.Translate((Translate.X) % mGridSize, (Translate.Y) % mGridSize, (int)EType.Grid);
+                if (mGridVertexCount != -1)
                 {
-                    gl.CallList(mGridList);
+                    gl.DrawArrays(OpenGL.GL_LINES, mGridVertexCount, mGridPtr);
                 }
                 else
                 {
-                    mGridList = gl.GenLists(1);
-                    gl.NewList(mGridList, OpenGL.GL_COMPILE_AND_EXECUTE);
-                    {
-                        gl.LineWidth(1.0f);
-                        gl.Begin(OpenGL.GL_LINES);
-                        {
-                            for (int ii = -gridCount; ii <= gridCount; ++ii)
-                            {
-                                gl.Vertex(ii * gridSize, -mapSize);
-                                gl.Vertex(ii * gridSize, +mapSize);
-                                gl.Vertex(-mapSize, ii * gridSize);
-                                gl.Vertex(+mapSize, ii * gridSize);
-                            }
-                        }
-                        gl.End();
-                    }
-                    gl.EndList();
+                    GenGridVertex();
                 }
             }
             gl.PopMatrix();
@@ -213,6 +204,42 @@ namespace AGV.Map.UI
             });
             ID = resID;
             return res;
+        }
+
+        /// <summary>
+        /// 產生網格
+        /// </summary>
+        private void GenGridVertex()
+        {
+            int rowCount = 15;
+            int columonCount = 30;
+            int[] vertex = new int[(rowCount * 2 + 1 + columonCount * 2 + 1) * 4];
+            mGridVertexCount = vertex.Length / 2;
+            int index = 0;
+            for (int row = -rowCount; row <= rowCount; ++row)
+            {
+                vertex[index] = -columonCount * mGridSize; // begin.X
+                index++;
+                vertex[index] = row * mGridSize; // begin.Y
+                index++;
+                vertex[index] = columonCount * mGridSize; // end.X
+                index++;
+                vertex[index] = row * mGridSize; // end.Y
+                index++;
+            }
+            for (int column = -columonCount; column <= columonCount; ++column)
+            {
+                vertex[index] = column * mGridSize; // begin.X
+                index++;
+                vertex[index] = -rowCount * mGridSize; // begin.Y
+                index++;
+                vertex[index] = column * mGridSize; // end.X
+                index++;
+                vertex[index] = rowCount * mGridSize; // end.Y
+                index++;
+            }
+            mGridPtr = Marshal.AllocHGlobal(vertex.Length * sizeof(int));
+            Marshal.Copy(vertex, 0, mGridPtr, vertex.Length);
         }
 
         private IPair GLToText(IPair gl)

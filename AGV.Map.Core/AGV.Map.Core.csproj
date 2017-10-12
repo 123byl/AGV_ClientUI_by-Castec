@@ -30,6 +30,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="SharpGL">
@@ -62,6 +63,7 @@
     <Compile Include="Geometry\TowardPair.cs" />
     <Compile Include="Geometry\Line.cs" />
     <Compile Include="Geometry\Pair.cs" />
+    <Compile Include="GLExtension\DrawArrays.cs" />
     <Compile Include="GLExtension\Stipple.cs" />
     <Compile Include="GLExtension\Text2D.cs" />
     <Compile Include="GLExtension\Texture.cs" />

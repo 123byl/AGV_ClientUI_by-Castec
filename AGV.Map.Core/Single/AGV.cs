@@ -36,6 +36,21 @@ namespace AGV.Map.Core
         public override bool CanDrag { get; } = false;
 
         /// <summary>
+        /// 遠端 IP 位置
+        /// </summary>
+        public string IP { get; set; } = "127.0.0.1:123";
+
+        /// <summary>
+        /// 地圖吻合度
+        /// </summary>
+        public IBound<double> Match { get; } = new Bound<double>(0, 100);
+
+        /// <summary>
+        /// 電池電量
+        /// </summary>
+        public IBound<double> Power { get; } = new Bound<double>(0, 100);
+
+        /// <summary>
         /// 建立拖曳點陣列
         /// </summary>
         public override IDragPoint[] CreatDragPoints()

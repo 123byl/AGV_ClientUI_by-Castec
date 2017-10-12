@@ -9,5 +9,10 @@
         /// 集合資料
         /// </summary>
         ISaftyList<TGeometry> DataList { get; }
+
+        /// <summary>
+        /// 重新生成頂點陣列(加速顯示)
+        /// </summary>
+        void BuildVertexArray();
     }
 }
