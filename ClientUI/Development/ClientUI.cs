@@ -414,6 +414,9 @@ namespace ClientUI
         public AgvClientUI()
         {
             InitializeComponent();
+
+            /*-- 車子資訊接收 --*/
+            mSoxMonitorCmd = new SocketMonitor(mCmdPort, tsk_RecvCmd).Listen();
         }
 
         #endregion Function - Constructors
@@ -668,6 +671,56 @@ namespace ClientUI
 
         #region Function - Private Methods
 
+        /// <summary>
+        /// 車子資訊接收執行緒
+        /// </summary>
+        public void tsk_RecvCmd(object obj) {
+            SocketMonitor soxMonitor = obj as SocketMonitor;
+            Socket sRecvCmdTemp = null;
+            sRecvCmdTemp = serverComm.ClientAccept(soxMonitor.Socket);
+            try {
+                while (IsGettingLaser) {
+
+                    SpinWait.SpinUntil(() => false, 1);//每個執行緒內部的閉環裡面都要加個「短時間」睡眠，使得執行緒佔用資源得到及時釋放
+                                                       //Thread.Sleep(1);
+                    byte[] recvBytes = new byte[1024 * 500];//開啟一個緩衝區，存儲接收到的資訊
+                    sRecvCmdTemp.Receive(recvBytes); //將讀得的內容放在recvBytes中
+                    string strRecvCmd = Encoding.Default.GetString(recvBytes);//
+                                                                              //程式運行到這個地方，已經能接收到遠端發過來的命令了
+                    strRecvCmd = strRecvCmd.Split(new char[] { '\0' })[0];
+                    //Console.WriteLine("[Server] : " + strRecvCmd);
+
+                    //*************
+                    //解碼命令，並執行相應的操作----如下面的發送本機圖片
+                    //*************
+
+                    string[] strArray = strRecvCmd.Split(':');
+                    recvBytes = null;
+                    if (CarInfo.TryParse(strRecvCmd, out mCarInfo)) {
+                        tsprgBattery.Value = mCarInfo.PowerPercent;
+                        tslbBattery.Text = string.Format(tslbBattery.Tag.ToString(), mCarInfo.PowerPercent);
+                        tslbStatus.Text = mCarInfo.Status;
+                        DrawLaser(mCarInfo);
+                        sRecvCmdTemp.Send(Encoding.UTF8.GetBytes("Get:Car:True:True"));
+                    } else {
+                        sRecvCmdTemp.Send(Encoding.UTF8.GetBytes("Get:Car:False"));
+                    }
+
+                    strRecvCmd = null;
+                    strArray = null;
+                }
+            } catch (SocketException se) {
+                System.Console.WriteLine("[Status Recv] : " + se.ToString());
+                MessageBox.Show("目標拒絕連線");
+            } catch (Exception ex) {
+                System.Console.Write(ex.Message);
+                //throw ex;
+            } finally {
+                sRecvCmdTemp?.Close();
+                sRecvCmdTemp = null;
+            }
+        }
+
         ///<summary>IP驗證</summary>
         ///<param name="ip">要驗證的字串</param>
         ///<returns>True:合法IP/False:非法IP</returns>
@@ -836,28 +889,29 @@ namespace ClientUI
         /// <returns>True:發送中/False:停止發送</returns>
         public bool ChangeSendInfo()
         {
-            IsGettingLaser = !IsGettingLaser;
-            if (IsGettingLaser)
-            {
-                /*-- 開啟車子資訊讀取執行緒 --*/
-                mSoxMonitorCmd.Start();
+            try {
+                IsGettingLaser = !IsGettingLaser;
+                if (IsGettingLaser) {
+                    /*-- 開啟車子資訊讀取執行緒 --*/
+                    mSoxMonitorCmd.Start();
 
-                /*-- 向Server端要求車子資料 --*/
-                string[] rtnMsg = SendMsg("Get:Car:True");
-                IsGettingLaser = mBypassSocket || (rtnMsg.Count() > 2 && "True" == rtnMsg[2]);
+                    /*-- 向Server端要求車子資料 --*/
+                    string[] rtnMsg = SendMsg("Get:Car:True");
+                    IsGettingLaser = mBypassSocket || (rtnMsg.Count() > 2 && "True" == rtnMsg[2]);
 
-                /*-- 車子未發送資料則關閉Socket --*/
-                if (!IsGettingLaser)
-                {
-                    mSoxMonitorCmd.Socket.Shutdown(SocketShutdown.Both);
-                    mSoxMonitorCmd.Socket.Close();
+                    /*-- 車子未發送資料則關閉Socket --*/
+                    if (!IsGettingLaser) {
+                        mSoxMonitorCmd.Socket.Shutdown(SocketShutdown.Both);
+                        mSoxMonitorCmd.Socket.Close();
+                    }
+                } else {
+                    SendMsg("Get:Car:False");
                 }
+                ITest.SetLaserStt(IsGettingLaser);
+            } catch (Exception ex) {
+                System.Console.WriteLine(ex.Message);
             }
-            else
-            {
-                SendMsg("Get:Car:False");
-            }
-            ITest.SetLaserStt(IsGettingLaser);
+            
             return IsGettingLaser;
         }
 
