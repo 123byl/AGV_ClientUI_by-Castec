@@ -77,41 +77,6 @@
     <NoWin32Manifest>true</NoWin32Manifest>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Ace.Adept">
-      <HintPath>C:\Program Files\Omron\ACE 3.6\bin\Ace.Adept.dll</HintPath>
-    </Reference>
-    <Reference Include="Ace.Adept.Common">
-      <HintPath>C:\Program Files\Omron\ACE 3.6\bin\Ace.Adept.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="Ace.AdeptSight.Common">
-      <HintPath>C:\Program Files\Omron\ACE 3.6\bin\Ace.AdeptSight.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="Ace.Core">
-      <HintPath>C:\Program Files\Omron\ACE 3.6\bin\Ace.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Ace.Feeder.Common">
-      <HintPath>C:\Program Files\Omron\ACE 3.6\bin\Ace.Feeder.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="Ace.HSVision.Common">
-      <HintPath>C:\Program Files\Omron\ACE 3.6\bin\Ace.HSVision.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="Ace.ProcessManager.Common">
-      <HintPath>C:\Program Files\Omron\ACE 3.6\bin\Ace.ProcessManager.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="Ace.UIBuilder.Common">
-      <HintPath>C:\Program Files\Omron\ACE 3.6\bin\Ace.UIBuilder.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="AxInterop.HSDISPLAYLib">
-      <HintPath>C:\Program Files\Omron\ACE 3.6\bin\AxInterop.HSDISPLAYLib.dll</HintPath>
-    </Reference>
-    <Reference Include="CaoRCW">
-      <HintPath>Dynamic Link Libraries\ORiN2\CaoRCW.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </Reference>
-    <Reference Include="StaubliSoap, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>Dynamic Link Libraries\Staubli\StaubliSoap.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -130,10 +95,6 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Serialization" />
-    <Reference Include="TwinCAT.Ads, Version=4.0.17.0, Culture=neutral, PublicKeyToken=180016cd49e5e8c3, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>Dynamic Link Libraries\Beckhoff\TwinCAT.Ads.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Forms\CtAbout.cs">
