@@ -223,60 +223,6 @@
     <Compile Include="Forms\TestPlatform\ChineseTranslator.Designer.cs">
       <DependentUpon>ChineseTranslator.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\TestPlatform\CmmoForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\TestPlatform\CmmoForm.Designer.cs">
-      <DependentUpon>CmmoForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\TestPlatform\Delta_ASDA-A2.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\TestPlatform\Delta_ASDA-A2.Designer.cs">
-      <DependentUpon>Delta_ASDA-A2.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\TestPlatform\Delta_SE.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\TestPlatform\Delta_SE.Designer.cs">
-      <DependentUpon>Delta_SE.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\TestPlatform\Denso.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\TestPlatform\Denso.Designer.cs">
-      <DependentUpon>Denso.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\TestPlatform\Dimmer_CH4I700RS485.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\TestPlatform\Dimmer_CH4I700RS485.Designer.cs">
-      <DependentUpon>Dimmer_CH4I700RS485.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\TestPlatform\Dimmer_CH5I700RS232.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\TestPlatform\Dimmer_CH5I700RS232.Designer.cs">
-      <DependentUpon>Dimmer_CH5I700RS232.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\TestPlatform\DimmerCtrl.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\TestPlatform\DimmerCtrl.Designer.cs">
-      <DependentUpon>DimmerCtrl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\TestPlatform\IAI_PCON.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\TestPlatform\IAI_PCON.Designer.cs">
-      <DependentUpon>IAI_PCON.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\TestPlatform\Keyence_DL_RS1A.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\TestPlatform\Keyence_DL_RS1A.Designer.cs">
-      <DependentUpon>Keyence_DL_RS1A.cs</DependentUpon>
-    </Compile>
     <Compile Include="Forms\TestPlatform\Launcher.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -289,23 +235,11 @@
     <Compile Include="Forms\TestPlatform\ModbusRTU.Designer.cs">
       <DependentUpon>ModbusRTU.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\TestPlatform\RobotMonitor.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\TestPlatform\RobotMonitor.Designer.cs">
-      <DependentUpon>RobotMonitor.cs</DependentUpon>
-    </Compile>
     <Compile Include="Forms\TestPlatform\Socket.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\TestPlatform\Socket.Designer.cs">
       <DependentUpon>Socket.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\TestPlatform\Oriental_BLE_FLEX.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\TestPlatform\Oriental_BLE_FLEX.Designer.cs">
-      <DependentUpon>Oriental_BLE_FLEX.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\TestPlatform\ProcessMonitor.cs">
       <SubType>Form</SubType>
@@ -317,17 +251,6 @@
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>SocketSetting.settings</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\TestPlatform\Staubli.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\TestPlatform\Staubli.Designer.cs">
-      <DependentUpon>Staubli.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\TestPlatform\Staubli1.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>Staubli.settings</DependentUpon>
     </Compile>
     <Compile Include="Forms\TestPlatform\SystemInfo.cs">
       <SubType>Form</SubType>
@@ -356,62 +279,16 @@
     <Compile Include="Library\CtIO.cs" />
     <Compile Include="Data\CtIOData.cs" />
     <Compile Include="Library\CtNetwork.cs" />
-    <Compile Include="Module\Adept ACE\CtAceScript.cs" />
-    <Compile Include="Module\Adept ACE\CtRobotMonitor.cs" />
     <Compile Include="Module\Communication\Net\BaseClasses.cs" />
     <Compile Include="Module\Communication\Net\TCP\CtTcpSocket.cs" />
     <Compile Include="Module\Communication\Net\Enumerations.cs" />
     <Compile Include="Module\Communication\Net\Extension.cs" />
     <Compile Include="Module\Communication\Net\SupportClasses.cs" />
     <Compile Include="Module\Communication\Net\UDP\CtUdpSocket.cs" />
-    <Compile Include="Module\Staubli\CtStaubli.cs" />
-    <Compile Include="Module\Staubli\Enumerations.cs" />
-    <Compile Include="Module\Staubli\SupportedClasses.cs" />
     <Compile Include="Module\XML\IXmlOperable.cs" />
-    <Compile Include="Module\Adept ACE\Vision Builder\CtAceLightSetting.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Module\Adept ACE\Vision Builder\CtAceLightSetting.Designer.cs">
-      <DependentUpon>CtAceLightSetting.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Module\Adept ACE\Vision Builder\CtAceDimmerSetting.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Module\Adept ACE\Vision Builder\CtAceDimmerSetting.Designer.cs">
-      <DependentUpon>CtAceDimmerSetting.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Module\Adept ACE\ACE CSharp Extension\CtAceExtension.cs" />
-    <Compile Include="Module\Adept ACE\Vision Builder\CtAceVisionBuilder.cs" />
-    <Compile Include="Module\Adept ACE\Vision Builder\CtAceVisionBuilder_Ctrl.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Module\Adept ACE\Vision Builder\CtAceVisionBuilder_Ctrl.Designer.cs">
-      <DependentUpon>CtAceVisionBuilder_Ctrl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Module\Adept ACE\CtACE_Enumerations.cs" />
-    <Compile Include="Module\Adept ACE\CtAce_Events.cs" />
-    <Compile Include="Module\Adept ACE\Static Methods\CtFileOperate.cs" />
-    <Compile Include="Module\Adept ACE\Vision Builder\SupportedClasses.cs" />
-    <Compile Include="Module\Adept ACE\Vision Builder\VisionClasses.cs" />
-    <Compile Include="Module\Adept ACE\VpLinksLock.cs" />
-    <Compile Include="Module\Beckhoff\CtBeckhoff_Events.cs" />
     <Compile Include="Module\Communication\Pipe\CtAsyncPipe.cs" />
     <Compile Include="Module\Communication\Pipe\PipeCommonData.cs" />
     <Compile Include="Module\Communication\Serial\CtSerial_Events.cs" />
-    <Compile Include="Module\Delta\CtDelta_ASDA-A2_Events.cs" />
-    <Compile Include="Module\Dimmer\CtDimmer_CH4I700RS485.cs" />
-    <Compile Include="Module\Dimmer\CtDimmer_CH5I700RS232.cs" />
-    <Compile Include="Module\Dimmer\DimmerCommonData.cs" />
-    <Compile Include="Module\Dimmer\ICtDimmer.cs" />
-    <Compile Include="Module\IAI\CtIAI_PCON_Events.cs" />
-    <Compile Include="Module\Oriental\CtOriental_BLE_Events.cs" />
-    <Compile Include="Module\PCB\ICT\CtIctBase.cs" />
-    <Compile Include="Module\PCB\ICT\IctReader.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Module\PCB\ICT\IctReader.Designer.cs">
-      <DependentUpon>IctReader.cs</DependentUpon>
-    </Compile>
     <Compile Include="Module\Utility\CtConfig.cs" />
     <Compile Include="Module\Utility\CtDraw.cs" />
     <Compile Include="Module\Utility\CtLanguage.cs" />
@@ -440,18 +317,6 @@
     <Compile Include="Forms\CtUserManager.Designer.cs">
       <DependentUpon>CtUserManager.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\TestPlatform\ACE.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\TestPlatform\ACE.Designer.cs">
-      <DependentUpon>ACE.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\TestPlatform\BkfPLC.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\TestPlatform\BkfPLC.Designer.cs">
-      <DependentUpon>BkfPLC.cs</DependentUpon>
-    </Compile>
     <Compile Include="Forms\CtProgress.cs" />
     <Compile Include="Forms\CtProgress_Ctrl.cs">
       <SubType>Form</SubType>
@@ -464,12 +329,6 @@
     </Compile>
     <Compile Include="Forms\TestPlatform\Serial.Designer.cs">
       <DependentUpon>Serial.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\TestPlatform\WagoIO.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\TestPlatform\WagoIO.Designer.cs">
-      <DependentUpon>WagoIO.cs</DependentUpon>
     </Compile>
     <Compile Include="Library\CtApplication.cs" />
     <Compile Include="Library\CtConst.cs" />
@@ -486,40 +345,6 @@
     <Compile Include="Module\Utility\CtUser.cs" />
     <Compile Include="Module\Utility\CtVersion.cs" />
     <Compile Include="Module\XML\CtXML.cs" />
-    <Compile Include="Module\Adept ACE\Static Methods\CtDrawImage.cs" />
-    <Compile Include="Module\Adept ACE\Adept MobileRobot\CtArcl.cs" />
-    <Compile Include="Module\Adept ACE\Adept MobileRobot\CtMobileStatus.cs" />
-    <Compile Include="Module\Adept ACE\CtAce.cs" />
-    <Compile Include="Module\Adept ACE\CtAceIO.cs" />
-    <Compile Include="Module\Adept ACE\CtAceModelEditor.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Module\Adept ACE\CtAceModelEditor.Designer.cs">
-      <DependentUpon>CtAceModelEditor.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Module\Adept ACE\CtAceMotion.cs" />
-    <Compile Include="Module\Adept ACE\CtAcePendant.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Module\Adept ACE\CtAcePendant.Designer.cs">
-      <DependentUpon>CtAcePendant.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Module\Adept ACE\CtAceSingleVision.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Module\Adept ACE\CtAceSingleVision.Designer.cs">
-      <DependentUpon>CtAceSingleVision.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Module\Adept ACE\CtAceTask.cs" />
-    <Compile Include="Module\Adept ACE\CtAceVariable.cs" />
-    <Compile Include="Module\Adept ACE\CtAceVision.cs" />
-    <Compile Include="Module\Adept ACE\CtAceVisionWindow.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Module\Adept ACE\CtAceVisionWindow.Designer.cs">
-      <DependentUpon>CtAceVisionWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Module\Beckhoff\CtBeckhoff.cs" />
     <Compile Include="Module\Utility\CtOpcode.cs" />
     <Compile Include="Module\Communication\Modbus\CtModbus_ASCII.cs" />
     <Compile Include="Module\Communication\Modbus\CtModbus_Define.cs" />
@@ -527,20 +352,10 @@
     <Compile Include="Module\Communication\Modbus\CtModbus_TCP.cs" />
     <Compile Include="Module\Communication\Serial\CtSerial.cs" />
     <Compile Include="Module\Communication\Modbus\ICtModbus.cs" />
-    <Compile Include="Module\Delta\CtDelta_ASDA-A2.cs" />
-    <Compile Include="Module\Dimmer\CtDimmer.cs" />
-    <Compile Include="Module\Festo\CtFestoCMMO.cs" />
-    <Compile Include="Module\Festo\SVE_Object.cs" />
-    <Compile Include="Module\IAI\CtIAI_PCON.cs" />
-    <Compile Include="Module\Keyence\CtKeyence_DL_RS1A.cs" />
-    <Compile Include="Module\Oriental\CtOriental_BLE.cs" />
-    <Compile Include="Module\ORiN2\CtORiN2.cs" />
-    <Compile Include="Module\Delta\CtDelta_PLC.CS" />
     <Compile Include="Module\UniversalRobots\CtUrServer.cs" />
     <Compile Include="Module\XML\XmlCommonData.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Module\Wago\CtWagoIO.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -619,59 +434,11 @@
     <EmbeddedResource Include="Forms\TestPlatform\AsyncPipe.resx">
       <DependentUpon>AsyncPipe.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\TestPlatform\Delta_SE.resx">
-      <DependentUpon>Delta_SE.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\TestPlatform\Dimmer_CH4I700RS485.resx">
-      <DependentUpon>Dimmer_CH4I700RS485.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\TestPlatform\RobotMonitor.resx">
-      <DependentUpon>RobotMonitor.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\TestPlatform\Socket.zh-CN.resx">
       <DependentUpon>Socket.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\TestPlatform\Socket.zh-TW.resx">
       <DependentUpon>Socket.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\TestPlatform\Staubli.resx">
-      <DependentUpon>Staubli.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\TestPlatform\Staubli.zh-CN.resx">
-      <DependentUpon>Staubli.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\TestPlatform\Staubli.zh-TW.resx">
-      <DependentUpon>Staubli.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Module\Adept ACE\Vision Builder\CtAceDimmerSetting.zh-CN.resx">
-      <DependentUpon>CtAceDimmerSetting.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Module\Adept ACE\Vision Builder\CtAceDimmerSetting.zh-TW.resx">
-      <DependentUpon>CtAceDimmerSetting.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Module\Adept ACE\Vision Builder\CtAceLightSetting.en-US.resx">
-      <DependentUpon>CtAceLightSetting.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Module\Adept ACE\Vision Builder\CtAceLightSetting.resx">
-      <DependentUpon>CtAceLightSetting.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Module\Adept ACE\Vision Builder\CtAceDimmerSetting.resx">
-      <DependentUpon>CtAceDimmerSetting.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Module\Adept ACE\Vision Builder\CtAceLightSetting.zh-CN.resx">
-      <DependentUpon>CtAceLightSetting.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Module\Adept ACE\Vision Builder\CtAceLightSetting.zh-TW.resx">
-      <DependentUpon>CtAceLightSetting.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Module\Adept ACE\Vision Builder\CtAceVisionBuilder_Ctrl.en-US.resx">
-      <DependentUpon>CtAceVisionBuilder_Ctrl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Module\Adept ACE\Vision Builder\CtAceVisionBuilder_Ctrl.zh-CN.resx">
-      <DependentUpon>CtAceVisionBuilder_Ctrl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Module\Adept ACE\Vision Builder\CtAceVisionBuilder_Ctrl.zh-TW.resx">
-      <DependentUpon>CtAceVisionBuilder_Ctrl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Module\Communication\Serial\CtSerialSetup.en-US.resx">
       <DependentUpon>CtSerialSetup.cs</DependentUpon>
@@ -700,12 +467,6 @@
     <EmbeddedResource Include="Forms\CtUserManager.zh-TW.resx">
       <DependentUpon>CtUserManager.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\TestPlatform\ACE.resx">
-      <DependentUpon>ACE.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\TestPlatform\BkfPLC.resx">
-      <DependentUpon>BkfPLC.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\CtProgress_Ctrl.resx">
       <DependentUpon>CtProgress_Ctrl.cs</DependentUpon>
     </EmbeddedResource>
@@ -715,35 +476,11 @@
     <EmbeddedResource Include="Forms\TestPlatform\ChineseTranslator.resx">
       <DependentUpon>ChineseTranslator.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\TestPlatform\CmmoForm.resx">
-      <DependentUpon>CmmoForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\TestPlatform\Delta_ASDA-A2.resx">
-      <DependentUpon>Delta_ASDA-A2.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\TestPlatform\Denso.resx">
-      <DependentUpon>Denso.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\TestPlatform\Dimmer_CH5I700RS232.resx">
-      <DependentUpon>Dimmer_CH5I700RS232.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\TestPlatform\DimmerCtrl.resx">
-      <DependentUpon>DimmerCtrl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\TestPlatform\IAI_PCON.resx">
-      <DependentUpon>IAI_PCON.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\TestPlatform\Keyence_DL_RS1A.resx">
-      <DependentUpon>Keyence_DL_RS1A.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\TestPlatform\Launcher.resx">
       <DependentUpon>Launcher.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\TestPlatform\ModbusRTU.resx">
       <DependentUpon>ModbusRTU.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\TestPlatform\Oriental_BLE_FLEX.resx">
-      <DependentUpon>Oriental_BLE_FLEX.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\TestPlatform\ProcessMonitor.resx">
       <DependentUpon>ProcessMonitor.cs</DependentUpon>
@@ -760,35 +497,8 @@
     <EmbeddedResource Include="Forms\TestPlatform\UniversalRobots.resx">
       <DependentUpon>UniversalRobots.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\TestPlatform\WagoIO.resx">
-      <DependentUpon>WagoIO.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\TestPlatform\XML_Editor.resx">
       <DependentUpon>XML_Editor.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Module\Adept ACE\CtAceModelEditor.resx">
-      <DependentUpon>CtAceModelEditor.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Module\Adept ACE\CtAcePendant.resx">
-      <DependentUpon>CtAcePendant.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Module\Adept ACE\CtAceSingleVision.resx">
-      <DependentUpon>CtAceSingleVision.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Module\Adept ACE\Vision Builder\CtAceVisionBuilder_Ctrl.resx">
-      <DependentUpon>CtAceVisionBuilder_Ctrl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Module\Adept ACE\CtAceVisionWindow.resx">
-      <DependentUpon>CtAceVisionWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Module\PCB\ICT\IctReader.resx">
-      <DependentUpon>IctReader.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Module\PCB\ICT\IctReader.zh-CN.resx">
-      <DependentUpon>IctReader.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Module\PCB\ICT\IctReader.zh-TW.resx">
-      <DependentUpon>IctReader.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
@@ -804,10 +514,6 @@
     <None Include="Forms\TestPlatform\SocketSetting.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>SocketSetting.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="Forms\TestPlatform\Staubli.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Staubli1.Designer.cs</LastGenOutput>
     </None>
     <None Include="PostBuildEventScript.cmd" />
     <None Include="Properties\Settings.settings">
@@ -864,10 +570,6 @@
     <None Include="Resources\Eexport.png" />
     <None Include="Resources\Arrow_RightDouble_4.png" />
     <None Include="Resources\Arrow_LeftDouble_4.png" />
-    <EmbeddedResource Include="Module\Adept ACE\Vision Builder\Language.xml">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Module\ORiN2\CaoRCW.dll" />
     <None Include="Resources\Zoom_Flip.png" />
     <None Include="Resources\Beckhoff_TwinCAT_Normal.png" />
     <None Include="Resources\Beckhoff_TwinCAT_Machine_Normal.png" />
@@ -986,17 +688,15 @@
     <None Include="Resources\Green Ball.png" />
     <None Include="Resources\Blue Ball.png" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Module\PCB\Gerber\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>CALL "$(ProjectDir)RunScriptAsAdmin.cmd" "$(SolutionDir)$(SolutionName)\$(OutDir)"  "$(SolutionDir)$(SolutionName)\$(OutDir)$(SolutionName)$(TargetExt)" "$(TargetPath)"  "$(TargetDir)$(TargetName).xml"</PostBuildEvent>
+    <PostBuildEvent>::CALL "$(ProjectDir)RunScriptAsAdmin.cmd" "$(SolutionDir)$(SolutionName)\$(OutDir)"  "$(SolutionDir)$(SolutionName)\$(OutDir)$(SolutionName)$(TargetExt)" "$(TargetPath)"  "$(TargetDir)$(TargetName).xml"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PreBuildEvent>COPY "$(ProjectDir)Dynamic Link Libraries\Delta\DMT.dll" "$(SolutionDir)$(SolutionName)\$(OutDir)"
+    <PreBuildEvent>::COPY "$(ProjectDir)Dynamic Link Libraries\Delta\DMT.dll" "$(SolutionDir)$(SolutionName)\$(OutDir)"
 
-COPY "$(ProjectDir)Module\7-Zip\7z.exe" "$(SolutionDir)$(SolutionName)\$(OutDir)"</PreBuildEvent>
+::COPY "$(ProjectDir)Module\7-Zip\7z.exe" "$(SolutionDir)$(SolutionName)\$(OutDir)"</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

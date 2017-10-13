@@ -11,8 +11,8 @@ using System.Threading;
 using System.Windows.Forms;
 
 using CtLib.Library;
-using CtLib.Module.Adept;
-using CtLib.Module.Beckhoff;
+//using CtLib.Module.Adept;
+//using CtLib.Module.Beckhoff;
 using CtLib.Module.Utility;
 using CtLib.Module.XML;
 
@@ -96,9 +96,9 @@ namespace CtLib.Forms {
 		#region Declaration - Fields
 
 		/// <summary>[Ref] 已建立之CtAce</summary>
-		private List<CtAce> rAce = new List<CtAce>();
-		/// <summary>[Ref] 已建立之CtBeckhoff</summary>
-		private List<CtBeckhoff> rBkf = new List<CtBeckhoff>();
+		//private List<CtAce> rAce = new List<CtAce>();
+		///// <summary>[Ref] 已建立之CtBeckhoff</summary>
+		//private List<CtBeckhoff> rBkf = new List<CtBeckhoff>();
 
 		/// <summary>處理XML相關事項</summary>
 		private CtXML mXML = new CtXML();
@@ -146,19 +146,19 @@ namespace CtLib.Forms {
 		#endregion
 
 		#region Function - Core
-		/// <summary>將已建立的 CtAce 加入至欄位中</summary>
-		/// <param name="ace">CtAce 集合</param>
-		public void AssignAce(params CtAce[] ace) {
-			if (rAce == null) rAce = new List<CtAce>();
-			rAce.AddRange(ace);
-		}
+		///// <summary>將已建立的 CtAce 加入至欄位中</summary>
+		///// <param name="ace">CtAce 集合</param>
+		//public void AssignAce(params CtAce[] ace) {
+		//	if (rAce == null) rAce = new List<CtAce>();
+		//	rAce.AddRange(ace);
+		//}
 
-		/// <summary>將已建立的 CtBeckhoff 加入至欄位中</summary>
-		/// <param name="bkf">CtBeckhoff 集合</param>
-		public void AssignBeckhoff(params CtBeckhoff[] bkf) {
-			if (rBkf == null) rBkf = new List<CtBeckhoff>();
-			rBkf.AddRange(bkf);
-		}
+		///// <summary>將已建立的 CtBeckhoff 加入至欄位中</summary>
+		///// <param name="bkf">CtBeckhoff 集合</param>
+		//public void AssignBeckhoff(params CtBeckhoff[] bkf) {
+		//	if (rBkf == null) rBkf = new List<CtBeckhoff>();
+		//	rBkf.AddRange(bkf);
+		//}
 
 		/// <summary>
 		/// 開啟 Recipe 視窗。請先確認已使用 AssignACE / AssignBeckhoff 等方法加入相關物件
@@ -222,84 +222,85 @@ namespace CtLib.Forms {
 		/// <param name="ace">此設備所含有之 Adept ACE 裝置</param>
 		/// <param name="bkf">此設備所含有之 Beckhoff PLC 裝置</param>
 		/// <returns>Status Code</returns>
-		public static Stat LoadRecipe(string recipeName, List<CtAce> ace = null, List<CtBeckhoff> bkf = null) {
-			Stat stt = Stat.SUCCESS;
-			string path = CtFile.BackSlash(CtDefaultPath.GetPath(SystemPath.Recipe)) + RECIPE_EXTENSION.Replace("*", recipeName);
-			string strTemp = "";
-			try {
-				if (CtFile.IsFileExist(path)) {
+		//public static Stat LoadRecipe(string recipeName, List<CtAce> ace = null, List<CtBeckhoff> bkf = null) {
+		//	Stat stt = Stat.SUCCESS;
+		//	string path = CtFile.BackSlash(CtDefaultPath.GetPath(SystemPath.Recipe)) + RECIPE_EXTENSION.Replace("*", recipeName);
+		//	string strTemp = "";
+		//	try {
+		//		if (CtFile.IsFileExist(path)) {
 
-					List<ICtRecipe> recipe = new List<ICtRecipe>();
+		//			List<ICtRecipe> recipe = new List<ICtRecipe>();
 
-					/*-- 載入XML --*/
-					XmlElmt ctRcp = CtXML.Load(path);
+		//			/*-- 載入XML --*/
+		//			XmlElmt ctRcp = CtXML.Load(path);
 
-					/*-- 註解 --*/
-					strTemp = ctRcp.Element("Comment")?.Value;
+		//			/*-- 註解 --*/
+		//			strTemp = ctRcp.Element("Comment")?.Value;
 
-					/*-- 抓取內容 --*/
-					List<XmlElmt> data = ctRcp.Elements("Data");
-					if (data.Count < 1) {
-						stt = Stat.ER_SYS_ILLVAL;
-						throw (new Exception("Recipe檔案有誤"));
-					}
+		//			/*-- 抓取內容 --*/
+		//			List<XmlElmt> data = ctRcp.Elements("Data");
+		//			if (data.Count < 1) {
+		//				stt = Stat.ER_SYS_ILLVAL;
+		//				throw (new Exception("Recipe檔案有誤"));
+		//			}
 
-					XmlAttr attr;
-					foreach (XmlElmt item in data) {
-						if (item.Attribute("Device", out attr)) {
-							switch (attr.Value) {
-								case "ACE":
-									recipe.Add(new AceVPlusRecipe(item));
-									break;
-								case "ACE_NUM":
-									recipe.Add(new AceNumRecipe(item));
-									break;
-								case "ACE_VIS":
-								case "CAMPro":
-									recipe.Add(new AceVisionRecipe(item));
-									break;
-								case "BECKHOFF":
-									recipe.Add(new BeckhoffRecipe(item));
-									break;
-								case "DELTA_PLC":
-									recipe.Add(new DeltaPlcRecipe(item));
-									break;
-								default:
-									break;
-							}
-						}
-					}
+		//			XmlAttr attr;
+		//			foreach (XmlElmt item in data) {
+		//				if (item.Attribute("Device", out attr)) {
+		//					switch (attr.Value) {
+		//						case "ACE":
+		//							recipe.Add(new AceVPlusRecipe(item));
+		//							break;
+		//						case "ACE_NUM":
+		//							recipe.Add(new AceNumRecipe(item));
+		//							break;
+		//						case "ACE_VIS":
+		//						case "CAMPro":
+		//							recipe.Add(new AceVisionRecipe(item));
+		//							break;
+		//						case "BECKHOFF":
+		//							recipe.Add(new BeckhoffRecipe(item));
+		//							break;
+		//						case "DELTA_PLC":
+		//							recipe.Add(new DeltaPlcRecipe(item));
+		//							break;
+		//						default:
+		//							break;
+		//					}
+		//				}
+		//			}
 
-					foreach (ICtRecipe item in recipe) {
-						if (item is AceVPlusRecipe) {
-							AceVPlusRecipe rcp = item as AceVPlusRecipe;
-							rcp.WriteValue(ace[rcp.DeviceIndex]);
-						} else if (item is AceNumRecipe) {
-							AceNumRecipe rcp = item as AceNumRecipe;
-							rcp.WriteValue(ace[rcp.DeviceIndex]);
-						} else if (item is AceVisionRecipe) {
-							AceVisionRecipe rcp = item as AceVisionRecipe;
-							rcp.WriteValue(ace[rcp.DeviceIndex]);
-						} else if (item is BeckhoffRecipe) {
-							BeckhoffRecipe rcp = item as BeckhoffRecipe;
-							rcp.WriteValue(bkf[rcp.DeviceIndex]);
-						} else if (item is DeltaPlcRecipe) {
-							DeltaPlcRecipe rcp = item as DeltaPlcRecipe;
-						}
-					}
+		//			foreach (ICtRecipe item in recipe) {
+		//				if (item is AceVPlusRecipe) {
+		//					AceVPlusRecipe rcp = item as AceVPlusRecipe;
+		//					rcp.WriteValue(ace[rcp.DeviceIndex]);
+		//				} else if (item is AceNumRecipe) {
+		//					AceNumRecipe rcp = item as AceNumRecipe;
+		//					rcp.WriteValue(ace[rcp.DeviceIndex]);
+		//				} else if (item is AceVisionRecipe) {
+		//					AceVisionRecipe rcp = item as AceVisionRecipe;
+		//					rcp.WriteValue(ace[rcp.DeviceIndex]);
+		//				} else if (item is BeckhoffRecipe) {
+		//					BeckhoffRecipe rcp = item as BeckhoffRecipe;
+		//					rcp.WriteValue(bkf[rcp.DeviceIndex]);
+		//				} else if (item is DeltaPlcRecipe) {
+		//					DeltaPlcRecipe rcp = item as DeltaPlcRecipe;
+		//				}
+		//			}
 
-				} else {
-					stt = Stat.ER_SYS_NOFILE;
-					throw (new Exception("找無對應檔案，請檢查檔案是否正確"));
-				}
+		//		} else {
+		//			stt = Stat.ER_SYS_NOFILE;
+		//			throw (new Exception("找無對應檔案，請檢查檔案是否正確"));
+		//		}
 
-			} catch (Exception ex) {
-				if (stt == Stat.SUCCESS) stt = Stat.ER_SYSTEM;
-				CtStatus.Report(stt, ex);
-			}
-			return stt;
-		}
-		#endregion
+		//	} catch (Exception ex) {
+		//		if (stt == Stat.SUCCESS) stt = Stat.ER_SYSTEM;
+		//		CtStatus.Report(stt, ex);
+		//	}
+		//	return stt;
+		//}
+		
+        #endregion
 
 		#region Function - Methods
 
@@ -378,21 +379,21 @@ namespace CtLib.Forms {
 					foreach (XmlElmt item in data) {
 						if (item.Attribute("Device", out attr)) {
 							switch (attr.Value) {
-								case "ACE":
-									mRecipe.Add(new AceVPlusRecipe(item));
-									break;
-								case "ACE_NUM":
-									mRecipe.Add(new AceNumRecipe(item));
-									break;
-								case "ACE_VIS":
-									mRecipe.Add(new AceVisionRecipe(item));
-									break;
-								case "BECKHOFF":
-									mRecipe.Add(new BeckhoffRecipe(item));
-									break;
-								case "DELTA_PLC":
-									mRecipe.Add(new DeltaPlcRecipe(item));
-									break;
+								//case "ACE":
+								//	mRecipe.Add(new AceVPlusRecipe(item));
+								//	break;
+								//case "ACE_NUM":
+								//	mRecipe.Add(new AceNumRecipe(item));
+								//	break;
+								//case "ACE_VIS":
+								//	mRecipe.Add(new AceVisionRecipe(item));
+								//	break;
+								//case "BECKHOFF":
+								//	mRecipe.Add(new BeckhoffRecipe(item));
+								//	break;
+								//case "DELTA_PLC":
+								//	mRecipe.Add(new DeltaPlcRecipe(item));
+								//	break;
 								default:
 									break;
 							}
@@ -526,19 +527,19 @@ namespace CtLib.Forms {
 			try {
 				List<DataGridViewRow> rowColl = new List<DataGridViewRow>();
 				foreach (ICtRecipe item in data) {
-					if (item is AceVPlusRecipe) {
-						AceVPlusRecipe rcp = item as AceVPlusRecipe;
-						rcp.ReadValue(rAce[rcp.DeviceIndex]);
-					} else if (item is AceNumRecipe) {
-						AceNumRecipe rcp = item as AceNumRecipe;
-						rcp.ReadValue(rAce[rcp.DeviceIndex]);
-					} else if (item is AceVisionRecipe) {
-						AceVisionRecipe rcp = item as AceVisionRecipe;
-						rcp.ReadValue(rAce[rcp.DeviceIndex]);
-					} else if (item is BeckhoffRecipe) {
-						BeckhoffRecipe rcp = item as BeckhoffRecipe;
-						rcp.ReadValue(rBkf[rcp.DeviceIndex]);
-					}
+					//if (item is AceVPlusRecipe) {
+					//	AceVPlusRecipe rcp = item as AceVPlusRecipe;
+					//	rcp.ReadValue(rAce[rcp.DeviceIndex]);
+					//} else if (item is AceNumRecipe) {
+					//	AceNumRecipe rcp = item as AceNumRecipe;
+					//	rcp.ReadValue(rAce[rcp.DeviceIndex]);
+					//} else if (item is AceVisionRecipe) {
+					//	AceVisionRecipe rcp = item as AceVisionRecipe;
+					//	rcp.ReadValue(rAce[rcp.DeviceIndex]);
+					//} else if (item is BeckhoffRecipe) {
+					//	BeckhoffRecipe rcp = item as BeckhoffRecipe;
+					//	rcp.ReadValue(rBkf[rcp.DeviceIndex]);
+					//}
 
 					DataGridViewRow row = new DataGridViewRow();
 					row.CreateCells(dgvRecipe);
@@ -584,19 +585,19 @@ namespace CtLib.Forms {
 				else mCurrInfo.SetLoadTime();
 
 				foreach (ICtRecipe item in mRecipe) {
-					if (item is AceVPlusRecipe) {
-						AceVPlusRecipe rcp = item as AceVPlusRecipe;
-						rcp.WriteValue(rAce[rcp.DeviceIndex]);
-					} else if (item is AceNumRecipe) {
-						AceNumRecipe rcp = item as AceNumRecipe;
-						rcp.WriteValue(rAce[rcp.DeviceIndex]);
-					} else if (item is AceVisionRecipe) {
-						AceVisionRecipe rcp = item as AceVisionRecipe;
-						rcp.WriteValue(rAce[rcp.DeviceIndex]);
-					} else if (item is BeckhoffRecipe) {
-						BeckhoffRecipe rcp = item as BeckhoffRecipe;
-						rcp.WriteValue(rBkf[rcp.DeviceIndex]);
-					}
+					//if (item is AceVPlusRecipe) {
+					//	AceVPlusRecipe rcp = item as AceVPlusRecipe;
+					//	rcp.WriteValue(rAce[rcp.DeviceIndex]);
+					//} else if (item is AceNumRecipe) {
+					//	AceNumRecipe rcp = item as AceNumRecipe;
+					//	rcp.WriteValue(rAce[rcp.DeviceIndex]);
+					//} else if (item is AceVisionRecipe) {
+					//	AceVisionRecipe rcp = item as AceVisionRecipe;
+					//	rcp.WriteValue(rAce[rcp.DeviceIndex]);
+					//} else if (item is BeckhoffRecipe) {
+					//	BeckhoffRecipe rcp = item as BeckhoffRecipe;
+					//	rcp.WriteValue(rBkf[rcp.DeviceIndex]);
+					//}
 
 					prog.UpdateStep(++step);
 				}
