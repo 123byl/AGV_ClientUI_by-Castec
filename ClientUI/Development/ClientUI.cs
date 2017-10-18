@@ -1685,7 +1685,7 @@ namespace ClientUI
             #endregion
 
             #region IMapGL 事件連結
-            IMapCtrl.DragEvent += IMapCtrl_DragEvent;
+            IMapCtrl.DragTowerPairEvent += IMapCtrl_DragEvent;
             #endregion
 
             #region ITesting 事件連結
@@ -2113,11 +2113,11 @@ namespace ClientUI
         #region IMapGL事件連結
 
 
-        private void IMapCtrl_DragEvent(ISingle<ITowardPair> single,uint id)
+        private void IMapCtrl_DragEvent(object sender, DragTowerPairEventArgs e)
         {
-            if (single.GLSetting.Type == EType.Goal)
+            if (e.DargTarget.GLSetting.Type == EType.Goal)
             {
-                GoalSetting.AddGoal(new CartesianPosInfo(single.Data.Position.X, single.Data.Position.Y, single.Data.Toward.Theta,single.Name,id));
+                GoalSetting.AddGoal(new CartesianPosInfo(e.DargTarget.Data.Position.X, e.DargTarget.Data.Position.Y, e.DargTarget.Data.Toward.Theta,e.DargTarget.Name,e.ID));
             }
         }
 

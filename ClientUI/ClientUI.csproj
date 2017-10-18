@@ -34,12 +34,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AGV.Map.Common">
-      <HintPath>..\AGV.Map.Common\bin\Debug\AGV.Map.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="AGV.Map.Core">
-      <HintPath>..\AGV.Map.Core\bin\Debug\AGV.Map.Core.dll</HintPath>
-    </Reference>
     <Reference Include="SharpGL">
       <HintPath>..\AGVMapUI\bin\Debug\SharpGL.dll</HintPath>
     </Reference>
@@ -442,8 +436,16 @@
     <None Include="Resources\Zoom.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AGV.Map.UI\AGV.Map.UI.csproj">
-      <Project>{7762AB26-E84F-45BA-8F87-9FC0ACEA65DF}</Project>
+    <ProjectReference Include="..\..\Project\AGV.Map\AGV.Map.Common\AGV.Map.Common.csproj">
+      <Project>{d5b19a54-59db-42b0-b7f4-a3af97a1d274}</Project>
+      <Name>AGV.Map.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Project\AGV.Map\AGV.Map.Core\AGV.Map.Core.csproj">
+      <Project>{abc19e43-75e8-4608-9d4d-6646cda17bf3}</Project>
+      <Name>AGV.Map.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Project\AGV.Map\AGV.Map.UI\AGV.Map.UI.csproj">
+      <Project>{7762ab26-e84f-45ba-8f87-9fc0acea65df}</Project>
       <Name>AGV.Map.UI</Name>
     </ProjectReference>
     <ProjectReference Include="..\AGVMath\AGVMath.csproj">

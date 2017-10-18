@@ -46,8 +46,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AGV.Map.Core\AGV.Map.Core.csproj">
-      <Project>{ABC19E43-75E8-4608-9D4D-6646CDA17BF3}</Project>
+    <ProjectReference Include="..\..\Project\AGV.Map\AGV.Map.Core\AGV.Map.Core.csproj">
+      <Project>{abc19e43-75e8-4608-9d4d-6646cda17bf3}</Project>
       <Name>AGV.Map.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\AGVMath\AGVMath.csproj">

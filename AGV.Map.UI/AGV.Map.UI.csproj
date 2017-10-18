@@ -67,16 +67,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AGV.Map.Common\AGV.Map.Common.csproj">
-      <Project>{d5b19a54-59db-42b0-b7f4-a3af97a1d274}</Project>
-      <Name>AGV.Map.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\AGV.Map.Core\AGV.Map.Core.csproj">
-      <Project>{abc19e43-75e8-4608-9d4d-6646cda17bf3}</Project>
-      <Name>AGV.Map.Core</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="UIControl.resx">
       <DependentUpon>UIControl.cs</DependentUpon>
     </EmbeddedResource>

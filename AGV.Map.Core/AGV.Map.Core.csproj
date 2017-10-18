@@ -93,12 +93,6 @@
     <Compile Include="Single\Single.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AGV.Map.Common\AGV.Map.Common.csproj">
-      <Project>{d5b19a54-59db-42b0-b7f4-a3af97a1d274}</Project>
-      <Name>AGV.Map.Common</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Drag\Drag.cd" />
     <None Include="Factory.cd" />
     <None Include="Geometry\Geometry.cd" />
