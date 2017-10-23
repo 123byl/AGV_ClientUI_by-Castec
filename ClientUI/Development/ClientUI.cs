@@ -64,8 +64,10 @@ namespace ClientUI
         ///         \ Ori繪製後補上雷射圖層清除
         ///     0.0.3   Jay [2017/10/12]
         ///         \ 更新部分語法以符合新版本CtLib
+        ///     0.0.4   Jay [2017/10/23]
+        ///         \ 命令傳送用Socket連線方式修改，改為持續連接
         /// </remarks>
-        public CtVersion Version { get { return new CtVersion(0, 0, 3, "2017/10/12", "Jay Chang"); } }
+        public CtVersion Version { get { return new CtVersion(0, 0, 4, "2017/10/23", "Jay Chang"); } }
 
         #endregion Version - Information
 
@@ -242,6 +244,8 @@ namespace ClientUI
         #endregion Declaration - Fields
 
         #region Declaration - Properties
+
+        public Stopwatch WatchDog { get; } = new Stopwatch();
 
         /// <summary>
         /// 伺服端是否還有在運作
@@ -1094,24 +1098,22 @@ namespace ClientUI
         /// <returns>Server端回應</returns>
         private string[] SendMsg(string sendMseeage, bool passChkConn = true)
         {
-            if (mBypassSocket)
-            {
+            if (mBypassSocket) {
                 /*-- Bypass略過不傳 --*/
                 return new string[] { "True" };
-            }
-            else if (passChkConn && !IsServerAlive)
-            {
+            } else if (passChkConn && !IsServerAlive) {
                 /*-- 略過連線檢查且Server端未運作 --*/
                 return new string[] { "False" };
             }
 
             /*-- 顯示發送出去的訊息 --*/
-            string msg = $"{DateTime.Now} [Client] : {sendMseeage}\r\n";
+            string msg = $"{DateTime.Now} [Client] : {sendMseeage}";
             IConsole.AddMsg(msg);
 
             /*-- 等待Server端的回應 --*/
-            string rtnMsg = SendStrMsg(mHostIP, mRecvCmdPort, sendMseeage).Trim();
-            
+            string rtnMsg = SendStrMsg(sendMseeage);
+            //string rtnMsg = SendStrMsg(mHostIP, mRecvCmdPort, sendMseeage );
+            rtnMsg = rtnMsg.Trim();
             /*-- 顯示Server端回應 --*/
             msg = $"{DateTime.Now} [Server] : {rtnMsg}\r\n";
             IConsole.AddMsg(msg);
@@ -1126,60 +1128,34 @@ namespace ClientUI
         /// <param name="requerPort">通訊埠號</param>
         /// <param name="sendMseeage">傳送訊息內容</param>
         /// <returns>Server端回應</returns>
-        private string SendStrMsg(string serverIP, int requerPort, string sendMseeage)
+        private string SendStrMsg(string sendMseeage)
         {
-
             //可以在字串編碼上做文章，可以傳送各種資訊內容，目前主要有三種編碼方式：
             //1.自訂連接字串編碼－－微量
             //2.JSON編碼--輕量
             //3.XML編碼--重量
             int state;
-            int timeout = 5000;
             byte[] recvBytes = new byte[8192];//開啟一個緩衝區，存儲接收到的資訊
+            try {
 
-            IPEndPoint ipEndPoint = new IPEndPoint(IPAddress.Parse(serverIP.ToString()), requerPort);
-            Socket answerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            answerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, 5000);//設置接收資料超時
-            answerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.SendTimeout, timeout);
-            try
-            {
-
-                answerSocket.Connect(ipEndPoint);//建立Socket連接
-                byte[] sendContents = Encoding.UTF8.GetBytes(sendMseeage);
-                state = answerSocket.Send(sendContents, sendContents.Length, 0);//發送二進位資料
-                state = answerSocket.Receive(recvBytes);
+                byte[] sendContents = Encoding.UTF8.GetBytes(sendMseeage + "\r\n");
+                state = mSoxCmd.Send(sendContents, sendContents.Length, 0);//發送二進位資料
+                state = mSoxCmd.Receive(recvBytes);
                 string strRecvCmd = Encoding.Default.GetString(recvBytes);//
                 strRecvCmd = strRecvCmd.Split(new char[] { '\0' })[0];
                 sendContents = null;
                 return strRecvCmd;
-
-            }
-            catch (SocketException se)
-            {
-                //Console.WriteLine("SocketException : {0}", se.ToString());
-                //MessageBox.Show("目標拒絕連線!!");
+            } catch (SocketException se) {
+                System.Console.WriteLine("SocketException : {0}", se.ToString());
                 return "False";
-            }
-            catch (ArgumentNullException ane)
-            {
-                //Console.WriteLine("ArgumentNullException : {0}", ane.ToString());
+            } catch (ArgumentNullException ane) {
+                System.Console.WriteLine("ArgumentNullException : {0}", ane.ToString());
                 return "False";
-            }
-            catch (Exception ex)
-            {
-                //Console.Write(ex.Message);
+            } catch (Exception ex) {
+                System.Console.Write(ex.Message);
                 return "False";
-            }
-            finally
-            {
-                ipEndPoint = null;
+            } finally {
                 recvBytes = null;
-                // answerSocket.Shutdown(SocketShutdown.Both);
-                // answerSocket.Disconnect(false);
-                answerSocket.Close();
-                // Console.Write("Disconnecting from server...\n");
-                //Console.ReadKey();
-                answerSocket.Dispose();
             }
 
         }
@@ -1769,8 +1745,11 @@ namespace ClientUI
 
         private void ITest_MotorServoOn(bool servoOn)
         {
+            WatchDog.Restart();
+            SendMsg($"Set:Servo{(servoOn ? "On" : "Off")}");
             ITest.ChangedMotorStt(servoOn);
             IConsole.AddMsg($"Motor Servo {(servoOn ? "ON" : "OFF")}");
+            IConsole.AddMsg($"Spend:{WatchDog.ElapsedMilliseconds}(ms)");
         }
 
 
