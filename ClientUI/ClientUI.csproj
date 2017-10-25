@@ -448,6 +448,14 @@
       <Project>{7762ab26-e84f-45ba-8f87-9fc0acea65df}</Project>
       <Name>AGV.Map.UI</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\AGV.Map\AGVDefine\AGVDefine.csproj">
+      <Project>{c8a96307-43b9-47f5-a7fe-04356a9f1c8e}</Project>
+      <Name>AGVDefine</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\AGV.Map\NetExtension\NetExtension.csproj">
+      <Project>{38665bd5-1e6a-4206-874b-2d371edfdb6e}</Project>
+      <Name>NetExtension</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AGVMath\AGVMath.csproj">
       <Project>{68c119fe-7cf4-4828-8745-d9558acd7fab}</Project>
       <Name>AGVMath</Name>

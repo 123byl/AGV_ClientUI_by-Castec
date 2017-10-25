@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AGV.Map.UI", "..\AGV.Map\AG
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetExtension", "..\AGV.Map\NetExtension\NetExtension.csproj", "{38665BD5-1E6A-4206-874B-2D371EDFDB6E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AGVDefine", "..\AGV.Map\AGVDefine\AGVDefine.csproj", "{C8A96307-43B9-47F5-A7FE-04356A9F1C8E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -111,6 +113,14 @@ Global
 		{38665BD5-1E6A-4206-874B-2D371EDFDB6E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{38665BD5-1E6A-4206-874B-2D371EDFDB6E}.Release|x86.ActiveCfg = Release|Any CPU
 		{38665BD5-1E6A-4206-874B-2D371EDFDB6E}.Release|x86.Build.0 = Release|Any CPU
+		{C8A96307-43B9-47F5-A7FE-04356A9F1C8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8A96307-43B9-47F5-A7FE-04356A9F1C8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8A96307-43B9-47F5-A7FE-04356A9F1C8E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C8A96307-43B9-47F5-A7FE-04356A9F1C8E}.Debug|x86.Build.0 = Debug|Any CPU
+		{C8A96307-43B9-47F5-A7FE-04356A9F1C8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8A96307-43B9-47F5-A7FE-04356A9F1C8E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8A96307-43B9-47F5-A7FE-04356A9F1C8E}.Release|x86.ActiveCfg = Release|Any CPU
+		{C8A96307-43B9-47F5-A7FE-04356A9F1C8E}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
