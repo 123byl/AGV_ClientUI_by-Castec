@@ -452,9 +452,9 @@
       <Project>{c8a96307-43b9-47f5-a7fe-04356a9f1c8e}</Project>
       <Name>AGVDefine</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\AGV.Map\NetExtension\NetExtension.csproj">
-      <Project>{38665bd5-1e6a-4206-874b-2d371edfdb6e}</Project>
-      <Name>NetExtension</Name>
+    <ProjectReference Include="..\..\LiteLib\Geometry\Geometry.csproj">
+      <Project>{A06BB86D-7862-48CC-A10E-3C9437F888DC}</Project>
+      <Name>Geometry</Name>
     </ProjectReference>
     <ProjectReference Include="..\AGVMath\AGVMath.csproj">
       <Project>{68c119fe-7cf4-4828-8745-d9558acd7fab}</Project>
