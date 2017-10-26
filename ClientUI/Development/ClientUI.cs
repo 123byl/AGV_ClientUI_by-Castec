@@ -949,7 +949,7 @@ namespace ClientUI
                 if (dist >= 30 && dist < 15000)
                 {
                     int[] pos = Transformation.LaserPoleToCartesian(dist, -135, 0.25, idx++, 43, 416.75, 43, info.x, info.y, info.theta, out angle, out Laserangle);//, out dataAngle, out laserAngle);
-                    points.DataList.Add(Factory.FGeometry.Pair(pos[0], pos[1]));
+                    points.DataList.Add(Geometry.Factory.Pair(pos[0], pos[1]));
                     pos = null;
                 }
             }
@@ -1165,7 +1165,7 @@ namespace ClientUI
             IObstacleLines obstacleLines = Factory.FMuti.ObstacleLines();
             foreach (var item in lines)
             {
-                obstacleLines.DataList.Add(Factory.FGeometry.Line(item.start.x, item.start.y, item.end.x, item.end.y));
+                obstacleLines.DataList.Add(Geometry.Factory.Line(item.start.x, item.start.y, item.end.x, item.end.y));
             }
             return obstacleLines;
         }
@@ -1175,7 +1175,7 @@ namespace ClientUI
             IObstaclePoints obstaclePoints = Factory.FMuti.ObstaclePoints();
             foreach (var item in points)
             {
-                obstaclePoints.DataList.Add(Factory.FGeometry.Pair(item.x, item.y));
+                obstaclePoints.DataList.Add(Geometry.Factory.Pair(item.x, item.y));
             }
             return obstaclePoints;
         }
@@ -1185,7 +1185,7 @@ namespace ClientUI
             ILaserPoints laserPoints = Factory.FMuti.LaserPoints();
             foreach (var item in points)
             {
-                laserPoints.DataList.Add(Factory.FGeometry.Pair(item.x, item.y));
+                laserPoints.DataList.Add(Geometry.Factory.Pair(item.x, item.y));
             }
             return laserPoints;
         }
@@ -1296,7 +1296,7 @@ namespace ClientUI
                     CtProgress prog = new CtProgress(ProgBarStyle.Percent, $"Load Ori", $"Loading {oriPath}...", dataLength - 1);
                     try
                     {
-                        IMapCtrl.Zoom.Value = IMapCtrl.Zoom.Max;
+                        IMapCtrl.Zoom = 100;
                         for (int n = 0; n < dataLength; n++)
                         {
                             MapReading.ReadScanningInfo(n, out carPos, out laserData);
@@ -1716,13 +1716,13 @@ namespace ClientUI
                 for (int i = 0; i < resultlines.Count; i++)
                 {
                     obstacleLines.DataList.Add(
-                        Factory.FGeometry.Line(resultlines[i].startX, resultlines[i].startY,
+                        Geometry.Factory.Line(resultlines[i].startX, resultlines[i].startY,
                         resultlines[i].endX, resultlines[i].endY)
                     );
                 }
                 for (int i = 0; i < resultPoints.Count; i++)
                 {
-                    obstaclePoints.DataList.Add(Factory.FGeometry.Pair((int)resultPoints[i].x, (int)resultPoints[i].y));
+                    obstaclePoints.DataList.Add(Geometry.Factory.Pair((int)resultPoints[i].x, (int)resultPoints[i].y));
                 }
 
                 Database.ObstaclePointsGM.Add(mObstaclePointsID, obstaclePoints);
