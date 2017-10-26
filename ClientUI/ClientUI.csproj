@@ -73,6 +73,7 @@
     <Compile Include="Development\ClientUI.Designer.cs">
       <DependentUpon>ClientUI.cs</DependentUpon>
     </Compile>
+    <Compile Include="Development\CommandCore.cs" />
     <Compile Include="Development\Convert.cs" />
     <Compile Include="Development\CtConsole.cs">
       <SubType>Form</SubType>
