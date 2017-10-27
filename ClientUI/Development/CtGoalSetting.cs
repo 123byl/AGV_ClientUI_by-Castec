@@ -6,7 +6,7 @@ using WeifenLuo.WinFormsUI.Docking;
 using static ClientUI.Events.GoalSettingEvents;
 using MapProcessing;
 using CtLib.Library;
-using AGV.Map.Core;
+using GLCore;
 
 namespace ClientUI
 {
@@ -354,7 +354,7 @@ namespace ClientUI
 
         private void btnCurrPos_Click(object sender, EventArgs e)
         {
-            uint id = Factory.FID.GetID();
+            uint id = Database.ID.GenerateID();
             CartesianPosInfo goal = new CartesianPosInfo(CurrentCar.x, CurrentCar.y, CurrentCar.theta, "Goal" + id, id);
             AddNewGoalEvent?.Invoke(goal);
         }
@@ -371,7 +371,7 @@ namespace ClientUI
 
         private void btnNewPoint_Click(object sender, EventArgs e)
         {
-            uint id = Factory.FID.GetID();
+            uint id = Database.ID.GenerateID();
             int x; int.TryParse(txtAddPx.Text, out x);
             int y; int.TryParse(txtAddPy.Text, out y);
             double toward; double.TryParse(txtAddPtheta.Text, out toward);

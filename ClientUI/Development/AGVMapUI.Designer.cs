@@ -1,4 +1,6 @@
-﻿namespace ClientUI.Development
+﻿using GLUI;
+
+namespace ClientUI.Development
 {
     partial class AGVMapUI
     {
@@ -28,7 +30,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.uiControl = new AGV.Map.UI.UIControl();
+            this.uiControl = new UIControl();
             ((System.ComponentModel.ISupportInitialize)(this.uiControl)).BeginInit();
             this.SuspendLayout();
             // 
@@ -67,6 +69,6 @@
 
         #endregion
 
-        private AGV.Map.UI.UIControl uiControl;
+        private UIControl uiControl;
     }
 }

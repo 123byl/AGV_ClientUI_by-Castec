@@ -26,9 +26,9 @@ using AGVMathOperation;
 using System.Diagnostics;
 using CtLib.Module.Utility;
 using System.Text.RegularExpressions;
-using AGV.Map.Common.UI;
-using AGV.Map.Core;
-using AGV.Map.Common;
+using Geometry;
+using GLCore;
+using GLUI;
 
 namespace ClientUI
 {
@@ -680,12 +680,15 @@ namespace ClientUI
         /// <summary>
         /// 車子資訊接收執行緒
         /// </summary>
-        public void tsk_RecvCmd(object obj) {
+        public void tsk_RecvCmd(object obj)
+        {
             SocketMonitor soxMonitor = obj as SocketMonitor;
             Socket sRecvCmdTemp = null;
             sRecvCmdTemp = serverComm.ClientAccept(soxMonitor.Socket);
-            try {
-                while (IsGettingLaser) {
+            try
+            {
+                while (IsGettingLaser)
+                {
 
                     SpinWait.SpinUntil(() => false, 1);//每個執行緒內部的閉環裡面都要加個「短時間」睡眠，使得執行緒佔用資源得到及時釋放
                                                        //Thread.Sleep(1);
@@ -702,26 +705,35 @@ namespace ClientUI
 
                     string[] strArray = strRecvCmd.Split(':');
                     recvBytes = null;
-                    if (CarInfo.TryParse(strRecvCmd, out mCarInfo)) {
+                    if (CarInfo.TryParse(strRecvCmd, out mCarInfo))
+                    {
                         tsprgBattery.Value = mCarInfo.PowerPercent;
                         tslbBattery.Text = string.Format(tslbBattery.Tag.ToString(), mCarInfo.PowerPercent);
                         tslbStatus.Text = mCarInfo.Status;
                         DrawLaser(mCarInfo);
                         sRecvCmdTemp.Send(Encoding.UTF8.GetBytes("Get:Car:True:True"));
-                    } else {
+                    }
+                    else
+                    {
                         sRecvCmdTemp.Send(Encoding.UTF8.GetBytes("Get:Car:False"));
                     }
 
                     strRecvCmd = null;
                     strArray = null;
                 }
-            } catch (SocketException se) {
+            }
+            catch (SocketException se)
+            {
                 System.Console.WriteLine("[Status Recv] : " + se.ToString());
                 MessageBox.Show("目標拒絕連線");
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 System.Console.Write(ex.Message);
                 //throw ex;
-            } finally {
+            }
+            finally
+            {
                 sRecvCmdTemp?.Close();
                 sRecvCmdTemp = null;
             }
@@ -895,9 +907,11 @@ namespace ClientUI
         /// <returns>True:發送中/False:停止發送</returns>
         public bool ChangeSendInfo()
         {
-            try {
+            try
+            {
                 IsGettingLaser = !IsGettingLaser;
-                if (IsGettingLaser) {
+                if (IsGettingLaser)
+                {
                     /*-- 開啟車子資訊讀取執行緒 --*/
                     mSoxMonitorCmd.Start();
 
@@ -906,18 +920,23 @@ namespace ClientUI
                     IsGettingLaser = mBypassSocket || (rtnMsg.Count() > 2 && "True" == rtnMsg[2]);
 
                     /*-- 車子未發送資料則關閉Socket --*/
-                    if (!IsGettingLaser) {
+                    if (!IsGettingLaser)
+                    {
                         mSoxMonitorCmd.Socket.Shutdown(SocketShutdown.Both);
                         mSoxMonitorCmd.Socket.Close();
                     }
-                } else {
+                }
+                else
+                {
                     SendMsg("Get:Car:False");
                 }
                 ITest.SetLaserStt(IsGettingLaser);
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 System.Console.WriteLine(ex.Message);
             }
-            
+
             return IsGettingLaser;
         }
 
@@ -942,14 +961,14 @@ namespace ClientUI
         private void DrawLaser(CarInfo info)
         {
             double angle = 0D, Laserangle = 0D;
-            ILaserPoints points = Factory.FMuti.LaserPoints();
+            ILaserPoints points = FactoryMode.Factory.LaserPoints();
             int idx = 0;
             foreach (int dist in info.LaserData)
             {
                 if (dist >= 30 && dist < 15000)
                 {
                     int[] pos = Transformation.LaserPoleToCartesian(dist, -135, 0.25, idx++, 43, 416.75, 43, info.x, info.y, info.theta, out angle, out Laserangle);//, out dataAngle, out laserAngle);
-                    points.DataList.Add(Geometry.Factory.Pair(pos[0], pos[1]));
+                    points.DataList.Add(FactoryMode.Factory.Pair(pos[0], pos[1]));
                     pos = null;
                 }
             }
@@ -1098,10 +1117,13 @@ namespace ClientUI
         /// <returns>Server端回應</returns>
         private string[] SendMsg(string sendMseeage, bool passChkConn = true)
         {
-            if (mBypassSocket) {
+            if (mBypassSocket)
+            {
                 /*-- Bypass略過不傳 --*/
                 return new string[] { "True" };
-            } else if (passChkConn && !IsServerAlive) {
+            }
+            else if (passChkConn && !IsServerAlive)
+            {
                 /*-- 略過連線檢查且Server端未運作 --*/
                 return new string[] { "False" };
             }
@@ -1136,7 +1158,8 @@ namespace ClientUI
             //3.XML編碼--重量
             int state;
             byte[] recvBytes = new byte[8192];//開啟一個緩衝區，存儲接收到的資訊
-            try {
+            try
+            {
 
                 byte[] sendContents = Encoding.UTF8.GetBytes(sendMseeage + "\r\n");
                 state = mSoxCmd.Send(sendContents, sendContents.Length, 0);//發送二進位資料
@@ -1145,16 +1168,24 @@ namespace ClientUI
                 strRecvCmd = strRecvCmd.Split(new char[] { '\0' })[0];
                 sendContents = null;
                 return strRecvCmd;
-            } catch (SocketException se) {
+            }
+            catch (SocketException se)
+            {
                 System.Console.WriteLine("SocketException : {0}", se.ToString());
                 return "False";
-            } catch (ArgumentNullException ane) {
+            }
+            catch (ArgumentNullException ane)
+            {
                 System.Console.WriteLine("ArgumentNullException : {0}", ane.ToString());
                 return "False";
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 System.Console.Write(ex.Message);
                 return "False";
-            } finally {
+            }
+            finally
+            {
                 recvBytes = null;
             }
 
@@ -1162,30 +1193,30 @@ namespace ClientUI
 
         private IObstacleLines ConvertToObstacleLines(List<MapLine> lines)
         {
-            IObstacleLines obstacleLines = Factory.FMuti.ObstacleLines();
+            IObstacleLines obstacleLines = FactoryMode.Factory.ObstacleLines();
             foreach (var item in lines)
             {
-                obstacleLines.DataList.Add(Geometry.Factory.Line(item.start.x, item.start.y, item.end.x, item.end.y));
+                obstacleLines.DataList.Add(FactoryMode.Factory.Line(item.start.x, item.start.y, item.end.x, item.end.y));
             }
             return obstacleLines;
         }
 
         private IObstaclePoints ConvertToObstaclePoints(List<CartesianPos> points)
         {
-            IObstaclePoints obstaclePoints = Factory.FMuti.ObstaclePoints();
+            IObstaclePoints obstaclePoints = FactoryMode.Factory.ObstaclePoints();
             foreach (var item in points)
             {
-                obstaclePoints.DataList.Add(Geometry.Factory.Pair(item.x, item.y));
+                obstaclePoints.DataList.Add(FactoryMode.Factory.Pair(item.x, item.y));
             }
             return obstaclePoints;
         }
 
         private ILaserPoints ConvertToLaserPoints(List<CartesianPos> points)
         {
-            ILaserPoints laserPoints = Factory.FMuti.LaserPoints();
+            ILaserPoints laserPoints = FactoryMode.Factory.LaserPoints();
             foreach (var item in points)
             {
-                laserPoints.DataList.Add(Geometry.Factory.Pair(item.x, item.y));
+                laserPoints.DataList.Add(FactoryMode.Factory.Pair(item.x, item.y));
             }
             return laserPoints;
         }
@@ -1258,7 +1289,7 @@ namespace ClientUI
 
             for (int i = 0; i < goalList.Count; i++)
             {
-                Database.GoalGM.Add(goalList[i].id, Factory.FSingle.FTowardPair.Goal((int)goalList[i].x, (int)goalList[i].y, goalList[i].theta, goalList[i].name));
+                Database.GoalGM.Add(goalList[i].id, FactoryMode.Factory.Goal((int)goalList[i].x, (int)goalList[i].y, goalList[i].theta, goalList[i].name));
             }
             prog.UpdateStep(nowProg++);
 
@@ -1282,7 +1313,7 @@ namespace ClientUI
         {
             CurOriPath = oriPath;
             IMapCtrl.NewMap();
-            Database.ObstaclePointsGM.Add(mObstaclePointsID, Factory.FMuti.ObstaclePoints());
+            Database.ObstaclePointsGM.Add(mObstaclePointsID, FactoryMode.Factory.ObstaclePoints());
             MapReading MapReading = null;
             if (!mBypassLoadFile)
             {//無BypassLoadFile
@@ -1300,7 +1331,7 @@ namespace ClientUI
                         for (int n = 0; n < dataLength; n++)
                         {
                             MapReading.ReadScanningInfo(n, out carPos, out laserData);
-                            Database.AGVGM.Add(mAGVID, Factory.FSingle.FTowardPair.AGV((int)carPos.x, (int)carPos.y, carPos.theta, "AGV"));
+                            Database.AGVGM.Add(mAGVID, FactoryMode.Factory.AGV((int)carPos.x, (int)carPos.y, carPos.theta, "AGV"));
                             ILaserPoints points = ConvertToLaserPoints(laserData);
                             Database.LaserPointsGM.Add(mLaserID, points);
                             Database.ObstaclePointsGM.SaftyEdit(mObstaclePointsID, (item) => item.DataList.AddRange(points.DataList.AsReadOnly()));
@@ -1705,8 +1736,8 @@ namespace ClientUI
             CurMapPath = tmpPath[0] + ".map";
             MapSimplication mapSimp = new MapSimplication(CurMapPath);
             mapSimp.Reset();
-            IObstacleLines obstacleLines = Factory.FMuti.ObstacleLines();
-            IObstaclePoints obstaclePoints = Factory.FMuti.ObstaclePoints();
+            IObstacleLines obstacleLines = FactoryMode.Factory.ObstacleLines();
+            IObstaclePoints obstaclePoints = FactoryMode.Factory.ObstaclePoints();
             List<CartesianPos> resultPoints;
             List<MapSimplication.Line> resultlines;
             mapSimp.ReadMapAllTransferToLine(mMapMatch.parseMap, mMapMatch.minimumPos, mMapMatch.maximumPos
@@ -1716,13 +1747,13 @@ namespace ClientUI
                 for (int i = 0; i < resultlines.Count; i++)
                 {
                     obstacleLines.DataList.Add(
-                        Geometry.Factory.Line(resultlines[i].startX, resultlines[i].startY,
+                         FactoryMode.Factory.Line(resultlines[i].startX, resultlines[i].startY,
                         resultlines[i].endX, resultlines[i].endY)
                     );
                 }
                 for (int i = 0; i < resultPoints.Count; i++)
                 {
-                    obstaclePoints.DataList.Add(Geometry.Factory.Pair((int)resultPoints[i].x, (int)resultPoints[i].y));
+                    obstaclePoints.DataList.Add(FactoryMode.Factory.Pair((int)resultPoints[i].x, (int)resultPoints[i].y));
                 }
 
                 Database.ObstaclePointsGM.Add(mObstaclePointsID, obstaclePoints);
@@ -1760,7 +1791,7 @@ namespace ClientUI
         private void CorrectOri()
         {
             IMapCtrl.NewMap();
-            Database.ObstaclePointsGM.Add(mObstaclePointsID, Factory.FMuti.ObstaclePoints());
+            Database.ObstaclePointsGM.Add(mObstaclePointsID, FactoryMode.Factory.ObstaclePoints());
             tsk_FixOriginScanningFile();
             Database.LaserPointsGM.Remove(mLaserID);
         }
@@ -1773,8 +1804,10 @@ namespace ClientUI
         /// </remarks>
         private void tsk_FixOriginScanningFile()
         {
-            try {
-                if (mBypassLoadFile) {
+            try
+            {
+                if (mBypassLoadFile)
+                {
                     SpinWait.SpinUntil(() => false, 1000);
                     return;
                 }
@@ -1803,7 +1836,7 @@ namespace ClientUI
                 #region  1.Read car position and first laser scanning
 
                 MapReading.ReadScanningInfo(0, out carPos, out laserData);
-                Database.AGVGM.Add(mAGVID, Factory.FSingle.FTowardPair.AGV((int)carPos.x, (int)carPos.y, carPos.theta, "AGV"));
+                Database.AGVGM.Add(mAGVID, FactoryMode.Factory.AGV((int)carPos.x, (int)carPos.y, carPos.theta, "AGV"));
                 //mCarInfo.SetPos(carPos);
                 //RaiseMapEventSync(MapEventType.RefreshPosCar, carPos.ToPos());
                 matchSet.AddRange(laserData);
@@ -1813,7 +1846,8 @@ namespace ClientUI
 
                 #endregion
 
-                for (int n = 1; n < dataLength; n++) {
+                for (int n = 1; n < dataLength; n++)
+                {
                     #region 2.Read car position and laser scanning 
 
                     List<CartesianPos> addedSet = new List<CartesianPos>();
@@ -1854,17 +1888,21 @@ namespace ClientUI
                     #region 6.Inspect odometry variation is not too large.Switch to pose tracking mode if too large.
 
                     sw.Restart();
-                    if (Math.Abs(diffOdometry.x) >= 400 || Math.Abs(diffOdometry.y) >= 400 || Math.Abs(diffOdometry.theta) >= 30) {
+                    if (Math.Abs(diffOdometry.x) >= 400 || Math.Abs(diffOdometry.y) >= 400 || Math.Abs(diffOdometry.theta) >= 30)
+                    {
                         mode = 1;
                         gValue = mMapMatch.PairwiseMatching(predataSet, matchSet, 4, 1.5, 0.01, 20, 300, false, transResult);
-                    } else {
+                    }
+                    else
+                    {
                         mode = 0;
                         gValue = mMapMatch.FindClosetMatching(matchSet, 4, 1.5, 0.01, 20, 300, false, transResult);
                         diffLaser.SetPosition(transResult.x, transResult.y, transResult.theta);
                     }
 
                     //If corresponding is too less,truct the odomery variation this time
-                    if (mMapMatch.EstimateCorresponingPoints(matchSet, 10, 10, out corrNum, out addedSet)) {
+                    if (mMapMatch.EstimateCorresponingPoints(matchSet, 10, 10, out corrNum, out addedSet))
+                    {
                         mMapMatch.NewPosTransformation(nowOdometry, transResult.x, transResult.y, transResult.theta);
                         accumError.SetPosition(accumError.x + transResult.x, accumError.y + transResult.y, accumError.theta + transResult.theta);
                     }
@@ -1887,7 +1925,7 @@ namespace ClientUI
                     //Update previous variable
                     preOdometry.SetPosition(nowOdometry.x, nowOdometry.y, nowOdometry.theta);
 
-                    Database.AGVGM.Add(mAGVID, Factory.FSingle.FTowardPair.AGV((int)nowOdometry.x, (int)nowOdometry.y, nowOdometry.theta, "AGV"));
+                    Database.AGVGM.Add(mAGVID, FactoryMode.Factory.AGV((int)nowOdometry.x, (int)nowOdometry.y, nowOdometry.theta, "AGV"));
                     //mCarInfo.SetPos(nowOdometry);
 
                     #endregion
@@ -1904,12 +1942,16 @@ namespace ClientUI
                     //    RaiseMapEventSync(MapEventType.RefreshPosCar, nowOdometry.ToPos());
                 }
                 //RaiseMapEvent(MapEventType.CorrectOriComplete);
-            } catch {
+            }
+            catch
+            {
 
-            } finally {
+            }
+            finally
+            {
             }
         }
-    
+
 
         private async void ITest_CheckIsServerAlive(bool cnn, string hostIP = "")
         {
@@ -1971,7 +2013,7 @@ namespace ClientUI
                 {
                     if (!mBypassSocket && !isAlive)
                     {
-                        CtMsgBox.Show("Failed", "Connect Failed!!",MsgBoxBtn.OK, MsgBoxStyle.Error);
+                        CtMsgBox.Show("Failed", "Connect Failed!!", MsgBoxBtn.OK, MsgBoxStyle.Error);
                     }
                 }
                 IsServerAlive = isAlive;
@@ -2096,7 +2138,7 @@ namespace ClientUI
         {
             if (e.DargTarget.GLSetting.Type == EType.Goal)
             {
-                GoalSetting.AddGoal(new CartesianPosInfo(e.DargTarget.Data.Position.X, e.DargTarget.Data.Position.Y, e.DargTarget.Data.Toward.Theta,e.DargTarget.Name,e.ID));
+                GoalSetting.AddGoal(new CartesianPosInfo(e.DargTarget.Data.Position.X, e.DargTarget.Data.Position.Y, e.DargTarget.Data.Toward.Theta, e.DargTarget.Name, e.ID));
             }
         }
 
@@ -2180,7 +2222,7 @@ namespace ClientUI
         {
             IConsole.AddMsg("[Add Goal] - {0}", goal.ToString());
             IGoalSetting.AddGoal(goal);
-            Database.GoalGM.Add(goal.id, Factory.FSingle.FTowardPair.Goal((int)goal.x, (int)goal.y, goal.theta, goal.name));
+            Database.GoalGM.Add(goal.id, FactoryMode.Factory.Goal((int)goal.x, (int)goal.y, goal.theta, goal.name));
         }
         #endregion
 

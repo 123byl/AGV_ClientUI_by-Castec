@@ -437,25 +437,21 @@
     <None Include="Resources\Zoom.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\AGV.Map\AGV.Map.Common\AGV.Map.Common.csproj">
-      <Project>{d5b19a54-59db-42b0-b7f4-a3af97a1d274}</Project>
-      <Name>AGV.Map.Common</Name>
+    <ProjectReference Include="..\..\AGVBase\FactoryMode\FactoryMode.csproj">
+      <Project>{b66dd409-3bf6-488d-b887-d00a59c6396d}</Project>
+      <Name>FactoryMode</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\AGV.Map\AGV.Map.Core\AGV.Map.Core.csproj">
-      <Project>{abc19e43-75e8-4608-9d4d-6646cda17bf3}</Project>
-      <Name>AGV.Map.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\AGV.Map\AGV.Map.UI\AGV.Map.UI.csproj">
-      <Project>{7762ab26-e84f-45ba-8f87-9fc0acea65df}</Project>
-      <Name>AGV.Map.UI</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\AGV.Map\AGVDefine\AGVDefine.csproj">
-      <Project>{c8a96307-43b9-47f5-a7fe-04356a9f1c8e}</Project>
-      <Name>AGVDefine</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\LiteLib\Geometry\Geometry.csproj">
-      <Project>{A06BB86D-7862-48CC-A10E-3C9437F888DC}</Project>
+    <ProjectReference Include="..\..\AGVBase\Geometry\Geometry.csproj">
+      <Project>{07e11b21-0d87-4446-8ee8-91135dcae089}</Project>
       <Name>Geometry</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\AGVBase\GLCore\GLCore.csproj">
+      <Project>{805B8702-0FAC-4104-8F41-5337130CA0C6}</Project>
+      <Name>GLCore</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\AGVBase\GLUI\GLUI.csproj">
+      <Project>{D2E7804D-ADE5-4C82-AE04-8F505D04711A}</Project>
+      <Name>GLUI</Name>
     </ProjectReference>
     <ProjectReference Include="..\AGVMath\AGVMath.csproj">
       <Project>{68c119fe-7cf4-4828-8745-d9558acd7fab}</Project>

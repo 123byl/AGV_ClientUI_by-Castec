@@ -1,6 +1,4 @@
-﻿using AGV.Map.Common;
-using AGV.Map.Core;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using MapProcessing;
 namespace ClientUI

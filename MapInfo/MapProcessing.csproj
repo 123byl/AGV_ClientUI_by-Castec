@@ -46,9 +46,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\AGV.Map\AGV.Map.Core\AGV.Map.Core.csproj">
-      <Project>{abc19e43-75e8-4608-9d4d-6646cda17bf3}</Project>
-      <Name>AGV.Map.Core</Name>
+    <ProjectReference Include="..\..\AGVBase\GLCore\GLCore.csproj">
+      <Project>{805B8702-0FAC-4104-8F41-5337130CA0C6}</Project>
+      <Name>GLCore</Name>
     </ProjectReference>
     <ProjectReference Include="..\AGVMath\AGVMath.csproj">
       <Project>{68c119fe-7cf4-4828-8745-d9558acd7fab}</Project>

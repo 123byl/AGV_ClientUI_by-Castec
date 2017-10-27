@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading;
 using AGVMathOperation;
 using KDTree;
-using AGV.Map.Core;
+using GLCore;
 
 namespace MapProcessing
 {
@@ -274,9 +274,9 @@ namespace MapProcessing
             {
                 string[] split = data[i].Split(splitChar);
                 if (split.Length == 4)
-                    goalList.Add(new CartesianPosInfo(int.Parse(split[1]), int.Parse(split[2]), double.Parse(split[3]), split[0], Factory.FID.GetID()));
+                    goalList.Add(new CartesianPosInfo(int.Parse(split[1]), int.Parse(split[2]), double.Parse(split[3]), split[0], Database.ID.GenerateID()));
                 else
-                    goalList.Add(new CartesianPosInfo(int.Parse(split[0]), int.Parse(split[1]), double.Parse(split[2]), "Goal" + (i - startIndex), Factory.FID.GetID()));
+                    goalList.Add(new CartesianPosInfo(int.Parse(split[0]), int.Parse(split[1]), double.Parse(split[2]), "Goal" + (i - startIndex), Database.ID.GenerateID()));
             }
             return true;
         }
