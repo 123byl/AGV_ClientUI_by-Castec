@@ -453,6 +453,10 @@
       <Project>{D2E7804D-ADE5-4C82-AE04-8F505D04711A}</Project>
       <Name>GLUI</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\AGVBase\NetFunction\NetFunction.csproj">
+      <Project>{853b5ea0-8387-49aa-b37b-9fa1dd24a72a}</Project>
+      <Name>NetFunction</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AGVMath\AGVMath.csproj">
       <Project>{68c119fe-7cf4-4828-8745-d9558acd7fab}</Project>
       <Name>AGVMath</Name>
