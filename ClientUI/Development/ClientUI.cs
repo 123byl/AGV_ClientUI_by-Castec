@@ -1245,15 +1245,20 @@ namespace ClientUI
             {
                 #region - Retrive information from .map file -
                 sw.Start();
+                CartesianPos min = null, max = null;
                 using (MapReading read = new MapReading(mCurMapPath))
                 {
                     read.OpenFile();
+                    read.ReadMapBoundary(out min, out max);
                     read.ReadMapGoalList(out goalList);
                     read.ReadMapObstacleLines(out obstacleLine);
                     read.ReadMapObstaclePoints(out obstaclePoints);
                 }
                 int total = obstacleLine.Count + 2;
-
+                if (min != null && max != null)
+                {
+                    IMapCtrl.Focus((int)(min.x + max.x) / 2, (int)(min.y + max.y) / 2);
+                }
                 prog = new CtProgress(ProgBarStyle.Percent, "Load Map", $"Loading {mapPath}", total);
                 System.Console.WriteLine($"Read:{sw.ElapsedMilliseconds}ms");
                 sw.Restart();
