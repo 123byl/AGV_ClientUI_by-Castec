@@ -85,7 +85,7 @@ namespace ClientUI
         private bool mIsConnected = false;
 
         /// <summary>Opcode 檔案名稱</summary>
-        private static readonly string FILENAME_OPCODE = "D1703.opc";
+        //private static readonly string FILENAME_OPCODE = "D1703.opc";
 
         /// <summary>CtOpcode Object</summary>
         private CtOpcode mOpcode = new CtOpcode();
@@ -98,7 +98,7 @@ namespace ClientUI
         /// <summary>
         /// 發送圖片的埠
         /// </summary>
-        private static int mFilePort = 600;
+        //private static int mFilePort = 600;
 
         /// <summary>
         /// 接收請求的埠開啟後就一直進行偵聽
@@ -118,7 +118,7 @@ namespace ClientUI
         /// <summary>
         /// 路徑規劃接收埠
         /// </summary>
-        private static int mRecvPathPort = 900;
+        //private static int mRecvPathPort = 900;
 
         /// <summary>
         /// 地圖檔儲存路徑
@@ -149,11 +149,6 @@ namespace ClientUI
         /// 命令發送用<see cref="Socket"/>
         /// </summary>
         private Socket mSoxCmd = null;
-
-        /// <summary>
-        /// 偵測多餘的呼叫
-        /// </summary>
-        private bool disposedValue = false;
 
         /// <summary>
         /// 模組版本集合
@@ -2012,7 +2007,7 @@ namespace ClientUI
                 }
                 catch (Exception ex)
                 {
-                    //Console.WriteLine($"[SocketException] : {ex.Message}");
+                    System.Console.WriteLine($"[SocketException] : {ex.Message}");
                 }
                 finally
                 {

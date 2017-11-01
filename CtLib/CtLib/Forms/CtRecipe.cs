@@ -95,11 +95,6 @@ namespace CtLib.Forms {
 
 		#region Declaration - Fields
 
-		/// <summary>[Ref] 已建立之CtAce</summary>
-		//private List<CtAce> rAce = new List<CtAce>();
-		///// <summary>[Ref] 已建立之CtBeckhoff</summary>
-		//private List<CtBeckhoff> rBkf = new List<CtBeckhoff>();
-
 		/// <summary>處理XML相關事項</summary>
 		private CtXML mXML = new CtXML();
 
@@ -217,10 +212,7 @@ namespace CtLib.Forms {
 			else return Stat.WN_SYS_USRCNC;
 		}
 
-		/// <summary>直接從檔案載入 Recipe 並寫入設備</summary>
-		/// <param name="recipeName">Recipe 名稱，不含路徑與附檔名。如 "Recipe01"</param>
-		/// <param name="ace">此設備所含有之 Adept ACE 裝置</param>
-		/// <param name="bkf">此設備所含有之 Beckhoff PLC 裝置</param>
+
 		/// <returns>Status Code</returns>
 		//public static Stat LoadRecipe(string recipeName, List<CtAce> ace = null, List<CtBeckhoff> bkf = null) {
 		//	Stat stt = Stat.SUCCESS;

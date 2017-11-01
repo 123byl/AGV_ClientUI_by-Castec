@@ -109,8 +109,7 @@ namespace CtLib.Module.Modbus {
 
         /// <summary>暫存接收到的資料</summary>
         private List<byte> mRxData = new List<byte>();
-        ///// <summary>[Flag] 是否收到回傳資料</summary>
-        private bool mFlag_RxData;
+
 
         ///// <summary>用於檢查最後一次命令傳送與接收狀態</summary>
         //private Stat mRxStt = Stat.SUCCESS;
@@ -367,7 +366,6 @@ namespace CtLib.Module.Modbus {
         /// <param name="data">欲傳送的 byte[]</param>
         /// <returns>Status Code</returns>
         private void SendData(byte[] data) {
-            mFlag_RxData = false;
             if (IsConnected) mSocket.Send(data);
         }
 
