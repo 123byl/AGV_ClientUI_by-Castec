@@ -220,6 +220,7 @@ namespace MapProcessing
             {
                 carPos = null;
                 laserData = null;
+                Console.WriteLine(error);
                 return false;
             }
 
@@ -1501,7 +1502,7 @@ namespace MapProcessing
             int minDistance = int.MaxValue;
             int distance;
             bool pointsExist = false;
-            int start = -1, end = -1;
+            //int start = -1, end = -1;
             List<int> xRecord = new List<int>();
             for (int i = y - range; i < y + range; i++)
             {

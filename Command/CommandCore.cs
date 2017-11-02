@@ -7,10 +7,12 @@ using System.Threading.Tasks;
 using System.Net.Sockets;
 using System.Net;
 using System.Threading;
-using CtLib.Library;
 using System.IO;
 using static MapProcessing.MapSimplication;
 using MapProcessing;
+using System.Runtime.InteropServices;
+using CtLib.Library;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace CommandCore {
 
@@ -53,6 +55,13 @@ namespace CommandCore {
             /// </summary>
             /// <param name="path">路徑點集合</param>
             public delegate void DelPathRefresh(List<CartesianPos> path);
+            
+            /// <summary>
+            /// 檔案上傳完畢事件
+            /// </summary>
+            /// <param name="fileName"></param>
+            public delegate void DelUploadFinished(string fileName);
+
         }
 
         /// <summary>
@@ -65,8 +74,8 @@ namespace CommandCore {
             public delegate bool DelSetMapName(string mapNmae);
             public delegate void DelReadMapFile();
             public delegate void DelPathPlan(CartesianPos goal);
-            public delegate CartesianPos DelIdxToGoal(int idxGoal);
-            public delegate CartesianPos DelFindGoal(string goalName);
+            public delegate bool DelIdxToGoal(int idxGoal,out CartesianPos goal);
+            public delegate bool DelNameToGoal(string goalName,out CartesianPos goal);
             public delegate void DelRecordMap();
             public delegate List<string> DelGetGoalNames();
             public delegate string[] DelGetOriNames();
@@ -85,7 +94,7 @@ namespace CommandCore {
     /// <summary>
     /// 通訊埠定義
     /// </summary>
-    public enum SoxPort {
+    internal enum SoxPort {
         /// <summary>
         /// 命令傳遞
         /// </summary>
@@ -131,7 +140,7 @@ namespace CommandCore {
     /// <summary>
     /// 車子運動方向
     /// </summary>
-    public enum MotionDirection {
+    internal enum MotionDirection {
         /// <summary>
         /// 往前
         /// </summary>
@@ -156,12 +165,101 @@ namespace CommandCore {
 
     #endregion Declaration - Enum
 
+    #region Declaration - Constant
+
+    /// <summary>
+    /// 分隔符號常數
+    /// </summary>
+    public static class Separator {
+        /// <summary>
+        /// 參數分隔符
+        /// </summary>
+        public const string Param = ":";
+        /// <summary>
+        /// 資料分隔符
+        /// </summary>
+        public const char Data = ',';
+    }
+
+    /// <summary>
+    /// 主參數常數
+    /// </summary>
+    internal static class MCmd {
+        public const string Get = "Get";
+        public const string Set = "Set";
+        public const string Send = "Send";
+    }
+
+    /// <summary>
+    /// 次參數常數
+    /// </summary>
+    internal static class SCmd {
+        public const string OriList = "oriList";
+        public const string MapList = "mapList";
+        public const string GoalList = "GoalList";
+        public const string Laser = "Laser";
+        public const string Hello = "Hello";
+        public const string Run = "Run";
+        public const string Mode = "mode";
+        public const string OriName = "OriName";
+        public const string Ori = "Ori";
+        public const string Map = "map";
+        public const string MapName = "MapName";
+        public const string DriveVelo = "DriveVelo";
+        public const string IsOpen = "IsOpen";
+        public const string Stop = "Stop";
+        public const string Start = "Start";
+        public const string ServoOn = "ServoOn";
+        public const string ServoOff = "ServoOff";
+        public const string WorkVelo = "WorkVelo";
+        public const string Car = "Car";
+        public const string PathPlan = "PathPlan";
+        public const string POS = "POS";
+        public const string Acce = "Acce";
+        public const string Dece = "Dece";
+        public const string StopMode = "StopMode";
+        public const string ID = "ID";
+        public const string Goto = "Goto";
+        public const string ThreadReset = "ThreadReset";
+        public const string Info = "Info";
+        public const string Velo = "Velo";
+        public const string Encoder = "Encoder";
+
+    }
+
+    /// <summary>
+    /// 回應常數
+    /// </summary>
+    internal static class Ack {
+        public const string Done = "Done";
+        public const string True = "True";
+        public const string False = "False";
+        public static readonly Dictionary<bool, string> Mapping = new Dictionary<bool, string>() {
+            { true,True },
+            { false,False}
+        };
+
+        /// <summary>
+        /// 比對是否為期望回應
+        /// </summary>
+        /// <param name="rtnMsg">回應封包</param>
+        /// <param name="idx">檢查索引</param>
+        /// <param name="ack">期望回應字串</param>
+        /// <returns></returns>
+        public static bool Check(string[] rtnMsg,int idx,string ack = Ack.True) {
+            return rtnMsg.ElementAtOrDefault(idx)?.Equals(ack) ?? false;
+        }
+
+    }
+
+    #endregion Declaration - Constant
+
     #region Declaration - Interface
 
     /// <summary>
     /// Client端通用命令
     /// </summary>
-    public interface IClientCommand {
+    public interface IClientCommand:IDisposable {
 
         /// <summary>
         /// 車子資訊更新事件
@@ -179,16 +277,15 @@ namespace CommandCore {
         event CommandEvents.Client.DelPathRefresh PathRefresh;
 
         /// <summary>
-        /// 傳送檔案
+        /// 檔案上傳完畢事件
         /// </summary>
-        /// <param name="fileName"></param>
-        void SendFile(string fileName);
+        event CommandEvents.Client.DelUploadFinished UploadFinished;
 
         /// <summary>
-        /// 地圖存放路徑
+        /// 預設存放路徑
         /// </summary>
-        string DefMapDir { get; set; }
-
+        Dictionary<FileType, string> DefDirectory { get; }
+       
         /// <summary>
         /// Server端是否運作中
         /// </summary>
@@ -198,7 +295,7 @@ namespace CommandCore {
         /// 是否正在取得雷射資料
         /// </summary>
         bool IsGettingLaser { get; }
-
+       
         /// <summary>
         /// 要求所有Goal點名稱
         /// </summary>
@@ -211,7 +308,7 @@ namespace CommandCore {
         /// <summary>
         /// 激活遠端檔案接收
         /// </summary>
-        void EnableFileRecive();
+        void EnableFileRecive(FileType type,string filePath, string fileName);
 
         /// <summary>
         /// 激活車子資訊回傳(含雷射)
@@ -234,7 +331,14 @@ namespace CommandCore {
         /// <summary>
         /// 伺服馬達停止動作
         /// </summary>
-        void MotorStop();
+        /// <returns>命令是否成功</returns>
+        bool StopMove();
+
+        /// <summary>
+        /// 開始移動
+        /// </summary>
+        /// <returns>命令是否成功</returns>
+        bool StartMove();
 
         /// <summary>
         /// 前進
@@ -256,7 +360,7 @@ namespace CommandCore {
         /// 左轉
         /// </summary>
         /// <param name="velocity"></param>
-        void LeftTrun(int velocity);
+        void LeftTurn(int velocity);
 
         /// <summary>
         /// 取得Server端檔案清單
@@ -294,7 +398,7 @@ namespace CommandCore {
         /// 設定馬達激磁
         /// </summary>
         /// <param name="servoOn"></param>
-        void SetMotor(bool servoOn);
+        bool SetMotor(bool servoOn);
 
         /// <summary>
         /// 發送測試封包，測試Server端是否運作中
@@ -325,7 +429,7 @@ namespace CommandCore {
     /// <summary>
     /// Server端通用命令
     /// </summary>
-    public interface IServerCommand {
+    public interface IServerCommand :IDisposable{
 
         /// <summary>
         /// AGV動作物件參考
@@ -370,7 +474,7 @@ namespace CommandCore {
         /// <summary>
         /// 尋找Goal點
         /// </summary>
-        CommandEvents.Server.DelFindGoal FindGoal { get; set; }
+        CommandEvents.Server.DelNameToGoal NameToGoal { get; set; }
 
         /// <summary>
         /// 地圖掃描
@@ -457,7 +561,12 @@ namespace CommandCore {
         /// <summary>
         /// Create thread for server
         /// </summary>
-        void ServoOn();
+        void Listen();
+
+        /// <summary>
+        /// 停止監聽
+        /// </summary>
+        void StopListen();
     }
 
     /// <summary>
@@ -512,7 +621,7 @@ namespace CommandCore {
         bool DriveConnectState { get; set; }
         bool BrakeMode { get; set; }
         bool f_pathSearching { get; set; }
-        IEnumerable<CartesianPos> WorkPath { get; set; }
+        List<CartesianPos> WorkPath { get; set; }
 
         bool Drive();
         bool StopDrive();
@@ -559,7 +668,16 @@ namespace CommandCore {
     /// <summary>
     /// Client端命令交握方法實作
     /// </summary>
-    public abstract class BaseClientCommand : IClientCommand {
+    internal abstract class BaseClientCommand : IClientCommand {
+
+        #region Declaration - Fields
+
+        /// <summary>
+        /// 檔案接收路徑
+        /// </summary>
+        protected string mRecvPath = string.Empty;
+
+        #endregion Declaration - Fields
 
         #region Implement - IClientCommand
 
@@ -584,10 +702,15 @@ namespace CommandCore {
         public event CommandEvents.Client.DelPathRefresh PathRefresh;
 
         /// <summary>
-        /// 地圖存放路徑
+        /// 檔案上傳完畢事件
         /// </summary>
-        public string DefMapDir { get; set; } = @"D:\MapInfo\";
+        public event CommandEvents.Client.DelUploadFinished UploadFinished;
 
+        public Dictionary<FileType, string> DefDirectory { get; } = new Dictionary<FileType, string>() {
+            { FileType.Ori,@"D:\MapInfo\Ori"},
+            { FileType.Map,@"D:\MapInfo\Map"}
+        };
+        
         /// <summary>
         /// Server端是否正在運作
         /// </summary>
@@ -597,13 +720,7 @@ namespace CommandCore {
         /// 是否正在取得雷射資料
         /// </summary>
         public bool IsGettingLaser { get; protected set; }
-
-        /// <summary>
-        /// 傳送檔案
-        /// </summary>
-        /// <param name="fileName"></param>
-        public abstract void SendFile(string fileName);
-
+        
         #region Get
 
         /// <summary>
@@ -612,7 +729,13 @@ namespace CommandCore {
         /// <param name="type"></param>
         /// <returns></returns>
         public virtual string GetFileNames(FileType type) {
-            string[] rtnMsg = SendMsg($"Get:{type}List");
+            string fileList = string.Empty;
+            switch (type) {
+                case FileType.Ori: fileList = SCmd.OriList;break;
+                case FileType.Map: fileList = SCmd.MapList;break;
+                default: throw new Exception($"未定義{type}類型檔案");
+            }
+            string[] rtnMsg = SendMsg(MCmd.Get,fileList);
             return rtnMsg[3];
         }
 
@@ -624,11 +747,21 @@ namespace CommandCore {
         /// </remarks>
         /// <returns></returns>
         public virtual string GetGoalNames() {
-            string[] rtnMsg = SendMsg($"Get:GoalList");
-            if (rtnMsg.Count() < 4) {
-                throw new Exception("回傳錯誤");
+            string[] rtnMsg = SendMsg(MCmd.Get,SCmd.GoalList);
+            string goals = string.Empty;
+            int len = rtnMsg?.Count() ?? 0;
+            if (len > 2) {
+                if (Ack.Check(rtnMsg, 2)) {
+                    if (len == 4) {
+                        goals = rtnMsg[3];
+                    }else {
+                        throw new Exception("Goal點資料缺失");
+                    }
+                }
+            }else {
+                throw new Exception($"{string.Join(":",rtnMsg)}無法解析");
             }
-            return rtnMsg[3];
+            return goals;
         }
 
         /// <summary>
@@ -637,11 +770,15 @@ namespace CommandCore {
         /// <returns></returns>
         public IEnumerable<int> GetLaser() {
             /*-- 若是雷射資料則更新資料 --*/
-            string[] rtnMsg = SendMsg("Get:Laser");
+            string[] rtnMsg = SendMsg(MCmd.Get,SCmd.Laser);
             if (rtnMsg.Length > 3) {
-                if (rtnMsg[1] == "Laser") {
-                    string[] sreRemoteLaser = rtnMsg[3].Split(',');
-                    return sreRemoteLaser.Select(x => int.Parse(x));
+                if (Ack.Check(rtnMsg,1,SCmd.Laser)) {
+                    string[] sreRemoteLaser = rtnMsg[3].Split(new char[] { Separator.Data },StringSplitOptions.RemoveEmptyEntries);
+                    IEnumerable<int> laser = null;
+                    try {
+                        laser = sreRemoteLaser.Select(x => int.Parse(x));
+                    } catch {}
+                    return laser;
                 }
             }
             throw new Exception("雷射封包格式不正確");
@@ -652,8 +789,9 @@ namespace CommandCore {
         /// </summary>
         /// <returns></returns>
         public bool Ping() {
-            string[] rtnMsg = SendMsg("Get:Hello", false);
-            return rtnMsg.Count() > 2 && rtnMsg[2] == "True";
+            string[] rtnMsg = SendMsg(MCmd.Get + Separator.Param + SCmd.Hello, false);
+            IsServerAlive = rtnMsg.Count() > 2 && Ack.Check(rtnMsg,2);
+            return IsServerAlive;
         }
 
         #endregion Get
@@ -666,10 +804,10 @@ namespace CommandCore {
         /// <param name="idxGoal">目標Goal點索引值</param>
         public void Run(int idxGoal) {
             /*-- 若是路徑資料則開始接收資料 --*/
-            string[] rtnMsg = SendMsg($"Set:Run:{idxGoal}");
+            string[] rtnMsg = SendMsg(MCmd.Send,SCmd.Run,idxGoal.ToString());
             if ((rtnMsg?.Length ?? 0) > 3 &&
-                rtnMsg[1] == "Run" &&
-                rtnMsg[3] == "Done") {
+                Ack.Check(rtnMsg,1,SCmd.Run) &&
+                Ack.Check(rtnMsg,3,Ack.Done)) {
                 StartReciePath();
             }
         }
@@ -679,21 +817,15 @@ namespace CommandCore {
         /// </summary>
         /// <param name="mode"></param>
         public void SetCarMode(WorkMode mode) {
-            SendMsg($"Set:Mode:{mode}");
+            SendMsg(MCmd.Set,SCmd.Mode,mode.ToString());
         }
 
         /// <summary>
         /// 設定掃描的地圖名稱
         /// </summary>
         /// <param name="oriName">掃描的ori檔名</param>
-        public void SetScanName(string oriName) {
-            if (oriName.Contains('.')) {
-                string[] split = oriName.Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
-                if ((split?.Count() ?? 0) > 0) {
-                    oriName = split[0];
-                }
-            }
-            SendMsg($"Set:OriName:{oriName}.Ori");
+        public void SetScanName(string oriName) {            
+            SendMsg(MCmd.Set,SCmd.OriName,oriName);
         }
 
         /// <summary>
@@ -701,7 +833,7 @@ namespace CommandCore {
         /// </summary>
         /// <param name="mapName"></param>
         public void OrderMap(string mapName) {
-            SendMsg($"Set:MapName:{mapName}");
+            SendMsg(MCmd.Set,SCmd.MapName,mapName);
         }
 
         #endregion Set
@@ -721,15 +853,41 @@ namespace CommandCore {
         /// </summary>
         /// <returns></returns>
         public bool IsServoOn() {
-            string[] rtnMsg = SendMsg("Get:IsOpen");
-            return (rtnMsg?.Count() ?? 0) > 2 && bool.Parse(rtnMsg[2]);
+            string[] rtnMsg = SendMsg(MCmd.Get,SCmd.IsOpen);
+            //bool rst = false;
+            //if (rst = (rtnMsg?.Count() ?? 0) == 4) {
+            //    bool suc = bool.TryParse(rtnMsg[2], out rst) ? rst : false;
+            //    bool servoOn = bool.TryParse(rtnMsg[3], out rst) ? rst : false;
+            //    rst = suc && servoOn; 
+            //}
+            //是否成功回傳 && 馬達激磁狀態
+            return Ack.Check(rtnMsg,2) && Ack.Check(rtnMsg,3);
         }
 
         /// <summary>
-        /// 伺服馬達停止動作
+        /// 停止移動
         /// </summary>
-        public void MotorStop() {
-            SendMsg("Set:Stop");
+        /// <returns>命令是否成功</returns>
+        public bool StopMove() {
+            string[] rtnMsg = SendMsg(MCmd.Set,SCmd.Stop);
+            //bool rst = (rtnMsg?.Count() ?? 0) == 3;
+            //if (rst) {
+            //    rst = bool.TryParse(rtnMsg[2], out rst) ? rst : false;
+            //}
+            return Ack.Check(rtnMsg,2);
+        }
+
+        /// <summary>
+        /// 開始移動
+        /// </summary>
+        /// <returns>命令是否成功</returns>
+        public bool StartMove() {
+            string[] rtnMsg = SendMsg(MCmd.Set,SCmd.Start);
+            //bool rst = (rtnMsg?.Count() ?? 0) == 3;
+            //if (rst) {
+            //    rst = bool.TryParse(rtnMsg[2], out rst) ? rst : false;
+            //}
+            return Ack.Check(rtnMsg,2);
         }
 
         /// <summary>
@@ -744,7 +902,7 @@ namespace CommandCore {
         /// 左轉
         /// </summary>
         /// <param name="velocity">移動速度</param>
-        public void LeftTrun(int velocity) {
+        public void LeftTurn(int velocity) {
             MotorControl(MotionDirection.LeftTrun, velocity);
         }
 
@@ -760,8 +918,10 @@ namespace CommandCore {
         /// 設定馬達激磁
         /// </summary>
         /// <param name="servoOn"></param>
-        public void SetMotor(bool servoOn) {
-            SendMsg($"Set:Servo{(servoOn ? "On" : "Off")}");
+        public bool SetMotor(bool servoOn) {
+            string cmd = servoOn ? SCmd.ServoOn : SCmd.ServoOff;
+            string[] rtnMsg = SendMsg(MCmd.Set,cmd);
+            return Ack.Check(rtnMsg, 2, Ack.True);
         }
 
         /// <summary>
@@ -769,7 +929,7 @@ namespace CommandCore {
         /// </summary>
         /// <param name="velocity"></param>
         public void SetVelocity(int velocity) {
-            SendMsg($"Set: WorkVelo:{velocity}:{velocity}");
+            string[] rtnMsg =  SendMsg(MCmd.Set,SCmd.WorkVelo,velocity.ToString(),velocity.ToString());
         }
 
         #endregion MotorControl
@@ -784,15 +944,15 @@ namespace CommandCore {
         public virtual bool EnableCarInfoReturn(bool enb) {
             if (enb) {
                 /*-- 開啟車子資訊讀取執行緒 --*/
-
-                string[] rtnMsg = SendMsg("Get:Car:True:True");
-                IsGettingLaser = (rtnMsg.Count() > 2 && rtnMsg[2] == "True");
+                
+                string[] rtnMsg = SendMsg(MCmd.Get,SCmd.Car,Ack.True,Ack.True);
+                IsGettingLaser = Ack.Check(rtnMsg,2);
                 if (!IsGettingLaser) {
                     EnableCarInfoReturn(false);
                 }
             } else {
                 /*-- 關閉Socket與執行緒 --*/
-                SendMsg("Get:Car:False");
+                SendMsg(MCmd.Get,SCmd.Car,Ack.False);
                 IsGettingLaser = false;
             }
             return IsGettingLaser;
@@ -801,18 +961,40 @@ namespace CommandCore {
         /// <summary>
         /// 激活遠端檔案接收
         /// </summary>
-        public void EnableFileRecive() {
-            SendMsg("Send:map");
+        public virtual async void EnableFileRecive(FileType type,string filePath, string fileName) {
+            string fileType = null;
+            switch (type) {
+                case FileType.Ori: fileType = SCmd.Ori; break;
+                case FileType.Map: fileType = SCmd.Map; break;
+                default: throw new Exception($"未定義{type}傳送命令");
+            }
+            string[] rtnMsg =  SendMsg(MCmd.Send,fileType);
+            if (Ack.Check(rtnMsg, 2)) {
+                /*-- 統一檔名格式為"檔名.副檔名" --*/
+                string name = Path.GetFileName(fileName);
+                await Task.Run(() => {
+                    /*-- 以衍生類實作之通訊方式進行檔案傳輸 --*/
+                    SendFile(filePath,name);
+                    /*-- 傳送完畢後發報事件 --*/
+                    UploadFinished?.Invoke(name);
+                });
+            }
         }
-
+        
         /// <summary>
         /// 要求傳送指定檔案
         /// </summary>
         /// <param name="type">要求的檔案類型</param>
         /// <param name="fileName">要求的檔案名稱</param>
         public virtual void RequireFile(FileType type, string fileName) {
+            string fileType = string.Empty;
+            switch (type) {
+                case FileType.Ori: fileType = SCmd.Ori; break;
+                case FileType.Map: fileType = SCmd.Map; break;
+                default: throw new Exception($"未定義{type}傳送命令");
+            }
             /*-- 向Server端發出檔案請求 --*/
-            SendMsg($"Get:{type}:{fileName}");
+            SendMsg(MCmd.Get,fileType,fileName);
         }
 
         /// <summary>
@@ -821,10 +1003,10 @@ namespace CommandCore {
         /// <param name="idxGoal">目標Goal點索引值</param>
         public void RequirePath(int idxGoal) {
             /*-- 若是路徑資料則開始接收資料 --*/
-            string[] rtnMsg = SendMsg($"Set:PathPlan:{idxGoal}");
+            string[] rtnMsg = SendMsg(MCmd.Set,SCmd.PathPlan,idxGoal.ToString());
             if ((rtnMsg?.Count() ?? 0) > 3 &&
-                rtnMsg[1] == "PathPlan" &&
-                rtnMsg[2] == "True") {
+                Ack.Check(rtnMsg,1,SCmd.PathPlan) &&
+                Ack.Check(rtnMsg,2)){
                 StartReciePath();
             }
         }
@@ -833,7 +1015,78 @@ namespace CommandCore {
 
         #endregion Implement - IClientCommand
 
+        #region Implement - IDisposable
+
+        private bool disposedValue = false; // 偵測多餘的呼叫
+
+        /// <summary>
+        /// [Base] 資源釋放具體行為
+        /// </summary>
+        protected virtual void dispose() {
+
+        }
+
+        protected void Dispose(bool disposing) {
+            if (!disposedValue) {
+                if (disposing) {
+                    // TODO: 處置 Managed 狀態 (Managed 物件)。
+                    dispose();
+                }
+
+                // TODO: 釋放 Unmanaged 資源 (Unmanaged 物件) 並覆寫下方的完成項。
+                // TODO: 將大型欄位設為 null。
+
+                disposedValue = true;
+            }
+        }
+
+        // TODO: 僅當上方的 Dispose(bool disposing) 具有會釋放 Unmanaged 資源的程式碼時，才覆寫完成項。
+        // ~BaseClientCommand() {
+        //   // 請勿變更這個程式碼。請將清除程式碼放入上方的 Dispose(bool disposing) 中。
+        //   Dispose(false);
+        // }
+
+        // 加入這個程式碼的目的在正確實作可處置的模式。
+        public void Dispose() {
+            // 請勿變更這個程式碼。請將清除程式碼放入上方的 Dispose(bool disposing) 中。
+            Dispose(true);
+            // TODO: 如果上方的完成項已被覆寫，即取消下行的註解狀態。
+            GC.SuppressFinalize(this);
+        }
+        #endregion Implement - IDisposable
+
         #region Function - Private Methods
+
+        /// <summary>
+        /// 傳送檔案
+        /// </summary>
+        /// <param name="fileName"></param>
+        protected void SendFile(string filePath,string fileName) {
+            /* File reading operation. */
+            byte[] fileNameByte = Encoding.ASCII.GetBytes(fileName);//將檔名以ASCII進行編碼
+            if (fileNameByte.Length > 1024 * 1024 * 5) {//檔名超出長度則不傳
+                return;
+            }
+            byte[] fileData = File.ReadAllBytes(filePath + "\\" +  fileName);//讀取檔案並轉為位元陣列
+            /* clientData will store complete bytes which will store file name length, 
+            file name & file data. */
+            byte[] fileNameLen = BitConverter.GetBytes(fileNameByte.Length);//將檔名長度(int)轉為4位元Byte陣列
+            /* Read & store file byte data in byte array. */
+            byte[] clientData = new byte[4 + fileNameByte.Length + fileData.Length];//建立資料所需空間
+            /* File name length’s binary data. */
+            fileNameLen.CopyTo(clientData, 0);//寫入檔名長度
+            fileNameByte.CopyTo(clientData, 4);//寫入檔名
+            fileData.CopyTo(clientData, 4 + fileNameByte.Length);//寫入檔案內容
+            /* copy these bytes to a variable with format line [file name length]
+            [file name] [ file content] */
+            SendFile(clientData);            
+        }
+
+        /// <summary>
+        /// 以衍生類實作的通訊進行檔案傳送
+        /// </summary>
+        /// <param name="data"></param>
+        protected abstract void SendFile(byte[] data);
 
         /// <summary>
         /// 開始接收路徑規劃資料
@@ -844,33 +1097,41 @@ namespace CommandCore {
         /// 方向控制
         /// </summary>
         /// <param name="direction">移動方向</param>
-        /// <param name="velocity">移動速度</param>
         protected virtual void MotorControl(MotionDirection direction, int velocity) {
-            string[] rtnMsg = SendMsg("Get:IsOpen");
-
-            if (rtnMsg.Count() > 2 && bool.Parse(rtnMsg[2])) {
+            if (IsServoOn()) {
                 if (direction == MotionDirection.Stop) {
-                    SendMsg("Set:Stop");
+                    StopMove();
                 } else {
                     string cmd = string.Empty;
+                    int lVeol = velocity;
+                    int rVeol = velocity;
                     switch (direction) {
                         case MotionDirection.Forward:
-                            cmd = $"Set:DriveVelo:{velocity}:{velocity}";
                             break;
                         case MotionDirection.Backward:
-                            cmd = $"Set:DriveVelo:-{velocity}:-{velocity}";
+                            lVeol = -velocity;
+                            rVeol = -velocity;
                             break;
                         case MotionDirection.LeftTrun:
-                            cmd = $"Set:DriveVelo:{velocity}:-{velocity}";
+                            rVeol = -velocity;
                             break;
                         case MotionDirection.RightTurn:
-                            cmd = $"Set:DriveVelo:-{velocity}:{velocity}";
+                            lVeol = -velocity;
                             break;
                     }
-                    SendMsg(cmd);
-                    SendMsg("Set:Start");
+                    SendMsg(MCmd.Set,SCmd.DriveVelo,lVeol.ToString(),rVeol.ToString());
+                    StartMove();
                 }
             }
+        }
+
+        /// <summary>
+        /// 訊息傳送
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        protected string[] SendMsg(params string[] param) {
+            return SendMsg(string.Join(Separator.Param, param));
         }
 
         /// <summary>
@@ -920,7 +1181,7 @@ namespace CommandCore {
     /// <summary>
     /// 以Socket進行命令傳送的Client端
     /// </summary>
-    public class CtSoxCmdClient : BaseClientCommand, ISoxCmdClient {
+    internal class CtSoxCmdClient : BaseClientCommand, ISoxCmdClient {
 
         #region Declaration - Fields
 
@@ -978,7 +1239,8 @@ namespace CommandCore {
 
         #region Funciton - Constructors
 
-        public CtSoxCmdClient() {
+        internal CtSoxCmdClient(string ip = "127.0.0.1") {
+            mServerIP = ip;
             mSoxInfoRecive = new SocketMonitor(mInfoRecivePort, tsk_RecvInfo);
             mSoxMonitorFile = new SocketMonitor(mFileRecivePort, tsk_RecvFile);
             mSoxMonitorPath = new SocketMonitor(mPathRecivePort, tsk_RecvPath);
@@ -1054,16 +1316,16 @@ namespace CommandCore {
         /// <returns>是否連線成功</returns>
         public bool Connect() {
             try {
-                if (mSoxCmd != null) {
-                    mSoxCmd.Close();
+                if (!IsConnected) {
+                    mSoxCmd?.Close();
+                    IPEndPoint ipEndPoint = new IPEndPoint(IPAddress.Parse(ServerIP), mCmdSendPort);
+                    mSoxCmd = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                    mSoxCmd.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, 5000);//設置接收資料超時
+                    mSoxCmd.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.SendTimeout, 5000);
+                    mSoxCmd.Connect(ipEndPoint);
                 }
-                IPEndPoint ipEndPoint = new IPEndPoint(IPAddress.Parse(ServerIP), mCmdSendPort);
-                mSoxCmd = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                mSoxCmd.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, 5000);//設置接收資料超時
-                mSoxCmd.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.SendTimeout, 5000);
-                mSoxCmd.Connect(ipEndPoint);
-            } catch {
-
+            } catch(Exception ex) {
+                Console.WriteLine(ex.Message);
             }
             return IsConnected;
         }
@@ -1083,63 +1345,7 @@ namespace CommandCore {
             }
         }
 
-        /// <summary>
-        /// Send file of server to client
-        /// </summary>
-        /// <param name="fileName">File name</param>
-        public override void SendFile(string fileName) {
-            string curMsg = "";
-            try {
-                IPAddress[] ipAddress = Dns.GetHostAddresses(ServerIP);
-                IPEndPoint ipEnd = new IPEndPoint(ipAddress[0], mSendMapPort);
-                /* Make IP end point same as Server. */
-                Socket clientSock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.IP);
-                /* Make a client socket to send data to server. */
-                string filePath = DefMapDir;
-                /* File reading operation. */
-                fileName = fileName.Replace("\\", "/");
-                while (fileName.IndexOf("/") > -1) {
-                    filePath += fileName.Substring(0, fileName.IndexOf("/") + 1);
-                    fileName = fileName.Substring(fileName.IndexOf("/") + 1);
-                }
-                byte[] fileNameByte = Encoding.ASCII.GetBytes(fileName);
-                if (fileNameByte.Length > 1024 * 1024 * 5) {
-                    curMsg = "File size is more than 850kb, please try with small file.";
-                    return;
-                }
-                curMsg = "Buffering ...";
-                byte[] fileData = File.ReadAllBytes(filePath + fileName);
-                /* Read & store file byte data in byte array. */
-                byte[] clientData = new byte[4 + fileNameByte.Length + fileData.Length];
-                /* clientData will store complete bytes which will store file name length, 
-                file name & file data. */
-                byte[] fileNameLen = BitConverter.GetBytes(fileNameByte.Length);
-                /* File name length’s binary data. */
-                fileNameLen.CopyTo(clientData, 0);
-                fileNameByte.CopyTo(clientData, 4);
-                fileData.CopyTo(clientData, 4 + fileNameByte.Length);
-                /* copy these bytes to a variable with format line [file name length]
-                [file name] [ file content] */
-                curMsg = "Connection to server ...";
-                clientSock.Connect(ipEnd);
-                /* Trying to connection with server. */
-                curMsg = "File sending...";
-                clientSock.Send(clientData);
-                /* Now connection established, send client data to server. */
-                curMsg = "Disconnecting...";
-                clientSock.Close();
-                fileNameByte = null;
-                clientData = null;
-                fileNameLen = null;
-                /* Data send complete now close socket. */
-                curMsg = "File transferred.";
-            } catch (Exception ex) {
-                if (ex.Message == "No connection could be made because the target machine actively refused it")
-                    curMsg = "File Sending fail. Because server not running.";
-                else
-                    curMsg = "File Sending fail." + ex.Message;
-            }
-        }
+
 
         #endregion Implement - IScoketCommand
 
@@ -1152,6 +1358,8 @@ namespace CommandCore {
         /// <param name="fileName">要求的檔案名稱</param>
         public override void RequireFile(FileType type, string fileName) {
             /*-- 開啟執行緒準備接收檔案 --*/
+            mRecvPath = DefDirectory[type];
+            mSoxMonitorFile.Listen();
             mSoxMonitorFile.Start();
             if (!Bypass) {
                 base.RequireFile(type, fileName);
@@ -1183,11 +1391,12 @@ namespace CommandCore {
             if (Bypass) {
                 IsGettingLaser = enb;
             } else {
+                IsGettingLaser = enb;
                 if (enb) {//開啟Socket與執行緒準備接收
                     mSoxInfoRecive.Listen();
+                    mSoxInfoRecive.Start();
                     IsGettingLaser = base.EnableCarInfoReturn(enb);
                 } else {//關閉Socket與執行緒
-                    IsGettingLaser = base.EnableCarInfoReturn(enb);
                     mSoxInfoRecive.Stop();
                 }
             }
@@ -1205,12 +1414,48 @@ namespace CommandCore {
 
         #endregion Implement - IClientCommand
 
+        #region Implement - IDisposable
+
+        /// <summary>
+        /// [Sox]資源釋放具體行為
+        /// </summary>
+        protected override void dispose() {
+            base.dispose();
+        }
+
+        #endregion Implement - IDisposable
+
         #region Funciton - Private Methods
+
+        /// <summary>
+        /// Send file of server to client
+        /// </summary>
+        /// <param name="fileName">File name</param>
+        protected override void SendFile(byte[] data) {
+            Socket clientSock = null;
+            try {
+                clientSock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.IP);
+                IPAddress[] ipAddress = Dns.GetHostAddresses(ServerIP);
+                IPEndPoint ipEnd = new IPEndPoint(ipAddress[0], mSendMapPort);
+                /* Make IP end point same as Server. */
+                clientSock.Connect(ipEnd);
+                clientSock.Send(data);
+            } catch(Exception ex) {
+                Console.WriteLine(ex.Message);
+            } finally {
+                if (clientSock != null) {
+                    clientSock.Shutdown(SocketShutdown.Both);
+                    clientSock.Close();
+                    clientSock = null;
+                }
+            }
+        }
 
         /// <summary>
         /// 開始接收路徑資料
         /// </summary>
         protected override void StartReciePath() {
+            mSoxMonitorPath.Listen();
             mSoxMonitorPath.Start();
         }
 
@@ -1230,17 +1475,18 @@ namespace CommandCore {
                 msg = SendStrMsg(sendMseeage);
                 //string rtnMsg = SendStrMsg(mHostIP, mRecvCmdPort, sendMseeage );
 
+                rtnMsg = msg.Trim().Split(':');
+
                 /*-- 顯示Server端回應 --*/
                 msg = $"{DateTime.Now} [Server] : {msg}\r\n";
                 RaiseConsole(msg);
 
-                rtnMsg = msg.Trim().Split(':');
             } else {
                 rtnMsg = sendMseeage.Split(':');
                 if (Bypass) {//Bypass =>不論如何回傳Ture模擬正常運作
-                    rtnMsg[rtnMsg.Length] = "True";
+                    rtnMsg[rtnMsg.Length-1] = Ack.True;
                 } else if (passChkConn) {//連線未建立下的命令皆回傳False
-                    rtnMsg[rtnMsg.Length] = "False";
+                    rtnMsg[rtnMsg.Length-1] = Ack.False;
                 } else {//連線測試
                     rtnMsg = SendStrMsg(sendMseeage).Trim().Split(':');
                 }
@@ -1275,13 +1521,13 @@ namespace CommandCore {
                 return strRecvCmd;
             } catch (SocketException se) {
                 System.Console.WriteLine("SocketException : {0}", se.ToString());
-                return "False";
+                return Ack.False;
             } catch (ArgumentNullException ane) {
                 System.Console.WriteLine("ArgumentNullException : {0}", ane.ToString());
-                return "False";
+                return Ack.False;
             } catch (Exception ex) {
                 System.Console.Write(ex.Message);
-                return "False";
+                return Ack.False;
             } finally {
                 recvBytes = null;
             }
@@ -1302,7 +1548,7 @@ namespace CommandCore {
         /// </summary>
         /// <param name="pack">路徑封包</param>
         private List<Line> PathEncoder(string pack) {
-            string[] pathArray = pack.Split(',');
+            string[] pathArray = pack.Split(Separator.Data);
             List<Line> rtnLine = new List<Line>();
             for (int i = 0; i < pathArray.Length - 5; i += 2) {
                 rtnLine.Add(new Line(
@@ -1317,15 +1563,21 @@ namespace CommandCore {
         }
 
         private List<CartesianPos> Encoder(string pack) {
-            string[] pathArray = pack.Split(',');
-            List<CartesianPos> rtnPoints = new List<CartesianPos>();
-            rtnPoints.Add(new CartesianPos(int.Parse(pathArray[0]), int.Parse(pathArray[1])));
-            for (int i = 0; i < pathArray.Length - 5; i += 4) {
-                rtnPoints.Add(new CartesianPos(
-                    int.Parse(pathArray[i + 2]),
-                    int.Parse(pathArray[i + 3])
-                    )
-                );
+            string[] pathArray = pack.Trim().Split(new char[] { Separator.Data},StringSplitOptions.RemoveEmptyEntries);
+            List<CartesianPos> rtnPoints = null;
+            int len = pathArray?.Count() ?? 0;
+            if (len != 0 && len % 2 == 0) {
+                rtnPoints = new List<CartesianPos>();
+                int x, y;
+                for (int i = 0; i < pathArray.Count() - 1; i += 2) {
+                    if (int.TryParse(pathArray[i], out x) && int.TryParse(pathArray[i+1], out y)) {
+                        rtnPoints.Add(new CartesianPos(x, y));
+                    } else {
+                        rtnPoints.Clear();
+                        rtnPoints = null;
+                        break;
+                    }
+                }
             }
             return rtnPoints;
         }
@@ -1336,6 +1588,7 @@ namespace CommandCore {
         protected void tsk_RecvInfo(object obj) {
             SocketMonitor soxMonitor = obj as SocketMonitor;
             Socket sRecvCmdTemp = soxMonitor.Accept();
+            Console.WriteLine("接受遠端連線請求");
             try {
                 while (IsGettingLaser) {
 
@@ -1355,12 +1608,12 @@ namespace CommandCore {
                     string[] strArray = strRecvCmd.Split(':');
                     recvBytes = null;
                     CarInfo carInfo = null;
-                    if (CarInfo.TryParse(strRecvCmd, out carInfo)) {
+                    bool suc = false;
+                    if (suc = CarInfo.TryParse(strRecvCmd, out carInfo)) {
                         RaiseCarinfoRefresh(carInfo);
-                        sRecvCmdTemp.Send(Encoding.UTF8.GetBytes("Get:Car:True:True"));
-                    } else {
-                        sRecvCmdTemp.Send(Encoding.UTF8.GetBytes("Get:Car:True:False"));
                     }
+                    string data = string.Join(Separator.Param, new object[] { MCmd.Get, SCmd.Car, true, suc });
+                    sRecvCmdTemp.Send(Encoding.UTF8.GetBytes(data));
 
                     strRecvCmd = null;
                     strArray = null;
@@ -1369,9 +1622,11 @@ namespace CommandCore {
                 Console.WriteLine("[Status Recv] : " + se.ToString());
                 //MessageBox.Show("目標拒絕連線");
             } catch (Exception ex) {
-                Console.Write(ex.Message);
+                Assert.Fail(ex.Message);
+                //Console.Write(ex.Message);
                 //throw ex;
             } finally {
+                Console.WriteLine("車子資訊接收執行緒停止");
                 sRecvCmdTemp?.Close();
                 sRecvCmdTemp = null;
             }
@@ -1391,12 +1646,11 @@ namespace CommandCore {
             Socket clientSock = null;
             BinaryWriter bWrite = null;
             //MemoryStream ms = null;
-            string curMsg = "Stopped";
             string fileName = "";
+            string fullName =null;
             try {
                 if (!Bypass) {
                     clientSock = soxMonitor.Accept();
-                    curMsg = "Running and waiting to receive file.";
 
                     //Socket clientSock = sRecvFile.Accept();
                     //clientSock.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, 5000);//設置接收資料超時
@@ -1407,7 +1661,6 @@ namespace CommandCore {
                     byte[] clientData = new byte[1024 * 10000];
                     do {
                         receivedBytesLen = clientSock.Receive(clientData);
-                        curMsg = "Receiving data...";
                         if (first == 1) {
                             fileNameLen = BitConverter.ToInt32(clientData, 0);
                             /* I've sent byte array data from client in that format like 
@@ -1415,13 +1668,14 @@ namespace CommandCore {
                             first how long the file name is. */
                             fileName = Encoding.ASCII.GetString(clientData, 4, fileNameLen);
                             /* Read file name */
-                            if (!Directory.Exists(DefMapDir)) {
-                                Directory.CreateDirectory(DefMapDir);
+                            if (!Directory.Exists(mRecvPath)) {
+                                Directory.CreateDirectory(mRecvPath);
                             }
-                            if (File.Exists(DefMapDir + "/" + fileName)) {
-                                File.Delete(DefMapDir + "/" + fileName);
+                            if (File.Exists(mRecvPath + "/" + fileName)) {
+                                File.Delete(mRecvPath + "/" + fileName);
                             }
-                            bWrite = new BinaryWriter(File.Open(DefMapDir + "/" + fileName, FileMode.OpenOrCreate));
+                            fullName = mRecvPath + "/" + fileName;
+                            bWrite = new BinaryWriter(File.Open(mRecvPath + "/" + fileName, FileMode.OpenOrCreate));
                             /* Make a Binary stream writer to saving the receiving data from client. */
                             // ms = new MemoryStream();
                             bWrite.Write(clientData, 4 + fileNameLen, receivedBytesLen - 4 - fileNameLen);
@@ -1430,9 +1684,7 @@ namespace CommandCore {
                             //寫入資料 ，呈現於BITMAP用
                             /* Read remain data (which is file content) and 
                             save it by using binary writer. */
-                            curMsg = "Saving file...";
                             /* Close binary writer and client socket */
-                            curMsg = "Received & Saved file; Server Stopped.";
                         } else //第二筆接收為資料  
                           {
                             //-----------  
@@ -1464,10 +1716,8 @@ namespace CommandCore {
             } catch (SocketException se) {
                 Console.WriteLine("SocketException : {0}", se.ToString());
                 //MessageBox.Show("檔案傳輸失敗!");
-                curMsg = "File Receiving error.";
             } catch (Exception ex) {
                 Console.WriteLine("[RecvFiles]" + ex.ToString());
-                curMsg = "File Receiving error.";
             } finally {
                 bWrite?.Close();
                 soxMonitor.Stop();
@@ -1529,22 +1779,35 @@ namespace CommandCore {
     /// <summary>
     /// Server端命令交握方法實作
     /// </summary>
-    public abstract class BaseServerCmooand : IServerCommand {
+    internal abstract class BaseServerCmooand : IServerCommand {
 
         #region Declaration - Fields
 
         protected bool bSendStatus = false;
 
         protected IAGV mAGV = null;
-
-        protected Thread t_Work;
-        protected Thread t_ConsoleUptate;
-        protected Thread t_Server;
-        protected Thread t_Recver;
-        protected Thread t_SendPath;
-        protected Thread t_Sender;
+        
+        protected Thread t_Work = null;
+        protected Thread t_ConsoleUptate = null;
+        protected Thread t_Server = null;
+        protected Thread t_Recver = null;
+        protected Thread t_SendPath = null;
+        protected Thread t_Sender = null;
 
         #endregion Declaration - Fields
+
+        #region Declaration - Properteis
+        
+
+        #endregion Declaration - Properties
+
+        #region Function - Constructors
+
+        public BaseServerCmooand() {
+
+        }
+
+        #endregion Function - Constructors
 
         #region Implement - IServerCommand
 
@@ -1588,7 +1851,7 @@ namespace CommandCore {
         /// <summary>
         /// 尋找Goal點
         /// </summary>
-        public CommandEvents.Server.DelFindGoal FindGoal { get; set; }
+        public CommandEvents.Server.DelNameToGoal NameToGoal { get; set; }
 
         /// <summary>
         /// 地圖掃描
@@ -1626,6 +1889,56 @@ namespace CommandCore {
         public CommandEvents.Server.DelGetPower GetPower { get; set; }
 
         #endregion Implement - IServerCommand
+        
+        #region Implement - IDisposable
+
+        private bool disposedValue = false; // 偵測多餘的呼叫
+
+        /// <summary>
+        /// [Base] 資源釋放具體行為
+        /// </summary>
+        protected virtual void dispose() {
+            try {
+                CtThread.KillThread(ref t_Work);
+                CtThread.KillThread(ref t_Server);
+                CtThread.KillThread(ref t_SendPath);
+                CtThread.KillThread(ref t_Sender);
+                CtThread.KillThread(ref t_Recver);
+                CtThread.KillThread(ref t_ConsoleUptate);
+            } catch(Exception ex) {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        protected void Dispose(bool disposing) {
+            if (!disposedValue) {
+                if (disposing) {
+                    // TODO: 處置 Managed 狀態 (Managed 物件)。
+                    dispose();
+                }
+
+                // TODO: 釋放 Unmanaged 資源 (Unmanaged 物件) 並覆寫下方的完成項。
+                // TODO: 將大型欄位設為 null。
+
+                disposedValue = true;
+            }
+        }
+
+        // TODO: 僅當上方的 Dispose(bool disposing) 具有會釋放 Unmanaged 資源的程式碼時，才覆寫完成項。
+        // ~BaseServerCmooand() {
+        //   // 請勿變更這個程式碼。請將清除程式碼放入上方的 Dispose(bool disposing) 中。
+        //   Dispose(false);
+        // }
+
+        // 加入這個程式碼的目的在正確實作可處置的模式。
+        public void Dispose() {
+            // 請勿變更這個程式碼。請將清除程式碼放入上方的 Dispose(bool disposing) 中。
+            Dispose(true);
+            // TODO: 如果上方的完成項已被覆寫，即取消下行的註解狀態。
+            GC.SuppressFinalize(this);
+        }
+
+        #endregion Implement - IDisposable
 
         #region Function - Private Methods
 
@@ -1638,17 +1951,17 @@ namespace CommandCore {
         /// <param name="socket_server"></param>
         protected virtual void AnlsCmd(string[] strArray, ICmdSender socket_server) {
             switch (strArray[0]) {
-                case "Set":
+                case MCmd.Set:
                     AnlsSet(strArray, socket_server);
                     break;
-                case "Get":
+                case MCmd.Get:
                     AnlsGet(strArray, socket_server);
                     break;
-                case "Send":
+                case MCmd.Send:
                     AnlsSend(strArray, socket_server);
                     break;
                 default:
-                    socket_server.Send(string.Join(":", strArray) + "\r\n");
+                    socket_server.Send(string.Join(Separator.Param, strArray) + "\r\n");
                     break;
             }
         }
@@ -1660,145 +1973,146 @@ namespace CommandCore {
         /// <param name="socket_server"></param>
         protected void AnlsSet(string[] strArray, ICmdSender socket_server) {
             bool status = false;
+            string suc = null;
             CartesianPos goal = null;
             switch (strArray[1]) {
-                case "Start":
+                case SCmd.Start:
                     status = mAGV?.Drive() ?? false;
-                    socket_server.Send($"Set:Start:{status}");
+                    socket_server.Send(MCmd.Set,SCmd.Start,Ack.Mapping[status]);
                     break;
-                case "Stop":
+                case SCmd.Stop:
                     status = mAGV?.StopDrive() ?? false;
-                    socket_server.Send($"Set:Stop:{status}");
+                    socket_server.Send(MCmd.Set,SCmd.Stop,Ack.Mapping[status]);
                     break;
-                case "POS":
+                case SCmd.POS:
                     if (mAGV != null) {
                         mAGV.Position = new double[3] { double.Parse(strArray[2]), double.Parse(strArray[3]), double.Parse(strArray[4]) };
                     }
-                    socket_server.Send("Set:POS:True");
+                    socket_server.Send(MCmd.Set,SCmd.POS,Ack.True);
                     break;
-                case "ServoOn":
+                case SCmd.ServoOn:
                     status = mAGV?.DriveOn() ?? false;
-                    socket_server.Send($"Set:ServoOn:{status}");
+                    socket_server.Send(MCmd.Set,SCmd.ServoOn,Ack.Mapping[status]);
                     break;
-                case "ServoOff":
+                case SCmd.ServoOff:
                     status = mAGV?.DriveOff() ?? false;
-                    socket_server.Send($"Set:ServoOff:{status}");
+                    socket_server.Send(MCmd.Set,SCmd.ServoOff,Ack.Mapping[status]);
                     break;
-                case "DriveVelo":
-                    if (mAGV != null) {
-                        mAGV.MotorVelocity = new int[2] { int.Parse(strArray[2]), int.Parse(strArray[3]) };
+                case SCmd.DriveVelo:
+                    if ((mAGV?.MotorVelocity.Count() ?? 0) == 2) {
+                        mAGV.MotorVelocity[0] = int.Parse(strArray[2]);
+                        mAGV.MotorVelocity[1] = int.Parse(strArray[3]);
                     }
-                    socket_server.Send("Set:DriveVelo:True");
+                    socket_server.Send(MCmd.Set,SCmd.DriveVelo,Ack.True);
                     break;
-                case "WorkVelo":
+                case SCmd.WorkVelo:
                     if (mAGV != null) {
                         mAGV.DriveSpeed = int.Parse(strArray[2]);
                     }
-                    socket_server.Send("Set:WorkVelo:True");
+                    socket_server.Send(MCmd.Set,SCmd.WorkVelo,Ack.True);
                     break;
-                case "Acce":
+                case SCmd.Acce:
                     status = mAGV?.SetAcceleration(int.Parse(strArray[2])) ?? false;
-                    socket_server.Send($"Set:Acce:{status}");
+                    socket_server.Send(MCmd.Set,SCmd.Acce,Ack.Mapping[status]);
                     break;
-                case "Dece":
+                case SCmd.Dece :
                     status = mAGV?.SetDcceleration(int.Parse(strArray[2])) ?? false;
-                    socket_server.Send($"Set:Dece:{status}");
+                    socket_server.Send(MCmd.Set,SCmd.Dece,Ack.Mapping[status]);
                     break;
-                case "StopMode":
+                case SCmd.StopMode:
                     bool stop = bool.Parse(strArray[2]);
                     status = mAGV?.SetBrakeMode(stop) ?? false;
-                    socket_server.Send($"Set:StopMode:{status}:{stop}");
+                    socket_server.Send(MCmd.Set,SCmd.StopMode,Ack.Mapping[status],Ack.Mapping[stop]);
                     break;
-                case "ID":
+                case SCmd.ID:
                     //carID = int.Parse(strArray[2]);
                     string id = strArray[2];
                     SetCarID?.Invoke(int.Parse(id));
-                    socket_server.Send($"Set:ID:True:{id}");
+                    socket_server.Send(MCmd.Set,SCmd.ID,id);
                     break;
-                case "OriName":
+                case SCmd.OriName:
                     //oriPath = oriDirectory + strArray[2];
-                    string oriName = strArray[2];
-                    SetOriName?.Invoke(oriName);
-                    socket_server.Send($"Set:OriName:True:{oriName}");
+                    string oriName = strArray.ElementAtOrDefault(2);
+                    if (status =  !string.IsNullOrEmpty(oriName)) SetOriName?.Invoke(oriName);
+                    socket_server.Send(MCmd.Set,SCmd.OriName,status.ToString(),oriName);
                     break;
-                case "MapName":
+                case SCmd.MapName:
                     //mapPath = mapDirectory + strArray[2];
                     //if (File.Exists(mapPath)) {
                     string mapName = strArray[2];
                     if (SetMapName?.Invoke(mapName) ?? false) {
-                        socket_server.Send($"Set:MapName:True:{mapName}");
+                        socket_server.Send(MCmd.Set,SCmd.MapName,Ack.True,mapName);
                         ReadMapFile?.Invoke();
                     } else {
-                        socket_server.Send("Set:MapName:False:Map not exists");
+                        socket_server.Send(MCmd.Set,SCmd.MapName,Ack.False,"Map not exists");
                     }
                     break;
-                case "PathPlan":
-                    socket_server.Send($"Set:PathPlan:True:{strArray[2]}");
-                    int idxGoal = int.Parse(strArray[2]);
-                    StartSendPath(idxGoal, socket_server);
+                case SCmd.PathPlan:
+                    int idx = 0;
+                    if (int.TryParse(strArray[2], out idx) &&
+                        (IdxToGoal?.Invoke(idx,out goal) ?? false)) {
+                        StartSendPath(goal, socket_server);
+                        suc = Ack.True;
+                    } else {
+                        suc = Ack.False;
+                    }
+                    socket_server.Send(MCmd.Set,SCmd.PathPlan,suc,strArray[2]);
                     break;
-                case "Goto":
-                    //CartesianPos goal = null;
-                    //string goalName = strArray[2];
-                    //foreach (CartesianPos item in goalList) {
-                    //    if (item.name == strArray[2]) {
-                    //        goal = item;
-                    //        break;
-                    //    }
-                    //}
+                case SCmd.Goto:
                     string goalName = strArray[2];
-                    goal = FindGoal?.Invoke(goalName);
-                    if (goal != null) {
-                        socket_server.Send($"Set:Goto:True:{goalName}");
+                    if ((NameToGoal?.Invoke(goalName, out goal) ?? false)) {
+                        StartSendPath(goal, socket_server);
+                        mAGV?.DoPathMovement();
+                        suc = Ack.True;
+                    } else {
+                        suc = Ack.False;
+                    }
+                    socket_server.Send(MCmd.Set, SCmd.Goto, suc,goalName);                    
+                    break;
+                case SCmd.Run:
+                    if (int.TryParse(strArray[2], out idx) &&
+                        (IdxToGoal?.Invoke(idx, out goal) ?? false)) {
                         StartSendPath(goal, socket_server);
                         mAGV.DoPathMovement();
-                    } else
-                        socket_server.Send($"Set:Goto:False:{goalName}");
-
-                    break;
-                case "Run":
-                    socket_server.Send($"Set:Run:True:{strArray[2]}");
-                    idxGoal = int.Parse(strArray[2]);
-                    //goal = IdxToGoal(idxGoal);
-                    //mAGV.searchSetting.goal.Clear();
-                    //mAGV.searchSetting.goal.Add(goalList[idxGoal]);
-                    //mAGV.searchSetting.radius = 100;
-                    //mAGV.DoPathPlanning();
-                    //comm_SendPath = new ClientCommunication(socket_server.StrIPAddress, port_sendPath);
-                    //CtThread.CreateThread(ref t_SendPath, "t_SendPath: ", SendPath);
-                    StartSendPath(idxGoal, socket_server);
-                    mAGV.DoPathMovement();
-
-
-                    break;
-                case "Mode":
-                    string mode = strArray[2];
-                    switch (mode) {
-                        case "Idle":
-                            mAGV.mode = WorkMode.Idle;
-                            break;
-                        case "Work":
-                            mAGV.mode = WorkMode.Work;
-                            break;
-                        case "Map":
-                            mAGV.mode = WorkMode.Map;
-                            if (RecordMap != null) {
-                                CtThread.CreateThread(ref t_Work, "Thread_Console Update", () => RecordMap());
-                            }
-                            break;
+                        suc = Ack.True;
+                    } else {
+                        suc = Ack.False;
                     }
-                    socket_server.Send($"Set:Mode:True:{mode}");
+                    break;
+                case SCmd.Mode:
+                    string mode = strArray[2];
+                    WorkMode m = WorkMode.Idle;
+                    if (status =  Enum.TryParse(mode,out m)) {
+                        switch (m) {
+                            case WorkMode.Idle:
+                                mAGV.mode = WorkMode.Idle;
+                                break;
+                            case WorkMode.Work:
+                                mAGV.mode = WorkMode.Work;
+                                break;
+                            case WorkMode.Map:
+                                if (mAGV.mode != WorkMode.Map) {
+                                    mAGV.mode = WorkMode.Map;
+                                    if (RecordMap != null) {
+                                        CtThread.CreateThread(ref t_Work, "Thread_Console Update", () => { RecordMap(); });
+                                    }
+                                }
+                                break;
+                            default:
+                                status = false;
+                                break;
+                        }
+                    }
+                    socket_server.Send(MCmd.Set,SCmd.Mode,Ack.Mapping[status],mode.ToString());
                     break;
 
-                case "ThreadReset":
+                case SCmd.ThreadReset:
                     CtThread.KillThread(ref t_Recver, 500);
                     CtThread.KillThread(ref t_SendPath, 500);
                     CtThread.KillThread(ref t_Sender, 500);
-
                     break;
-
                 default:
-                    socket_server.Send(string.Join(":", strArray) + ":False");
+                    socket_server.Send(string.Join(Separator.Param, strArray),Ack.False);
                     break;
             }
         }
@@ -1811,9 +2125,10 @@ namespace CommandCore {
         protected void AnlsGet(string[] strArray, ICmdSender socket_server) {
             bool Status = false;
             string rtnVal = string.Empty;
+            string suc = null;
             switch (strArray[1]) {
-                case "Hello":
-                    socket_server.Send("Get:Hello:True");
+                case SCmd.Hello:
+                    socket_server.Send(MCmd.Get,SCmd.Hello,Ack.True);
                     break;
                 //case "GoalInfo":
                 //    {
@@ -1829,114 +2144,135 @@ namespace CommandCore {
                 //        }
                 //    }
                 //    break;
-                case "GoalList": {
+                case SCmd.GoalList: {
                         //List<string> data = goalList.ConvertAll(v => v.name);
                         List<string> data = GetGoalNames?.Invoke();
-                        string str = data != null ? string.Join(",", data) : null;
-                        socket_server.Send($"Get:GoalList:True:{str}");
+                        Status = data?.Any() ?? false;
+                        string goals = Status ? string.Join(Separator.Data.ToString(), data) : string.Empty;
+                        socket_server.Send(MCmd.Get,SCmd.GoalList,Status.ToString(),goals);
                     }
                     break;
-                case "OriList": {
+                case SCmd.OriList: {
                         //DirectoryInfo d = new DirectoryInfo(oriDirectory);  //Create directory object 
                         //FileInfo[] Files = d.GetFiles("*.ori");              //Getting Text files
                         //string[] tmp = Array.ConvertAll(Files, v => v.Name);
-                        string[] tmp = GetOriNames?.Invoke();
-                        string str = tmp != null ? string.Join(",", tmp) : null;
-                        socket_server.Send($"Get:OriList:True:{str}");
+                        string[] data = GetOriNames?.Invoke();
+                        Status = data?.Any() ?? false;
+                        string oriList = Status ? string.Join(Separator.Data.ToString(), data) : string.Empty;
+                        socket_server.Send(MCmd.Get,SCmd.OriList,Status.ToString(),oriList);
                     }
                     break;
-                case "MapList": {
+                case SCmd.MapList: {
                         //DirectoryInfo d = new DirectoryInfo(mapDirectory);  //Create directory object 
                         //FileInfo[] Files = d.GetFiles("*.map");              //Getting Text files
                         //string[] tmp = Array.ConvertAll(Files, v => v.Name);
-                        string[] tmp = GetMapNames?.Invoke();
-                        string str = tmp != null ? string.Join(",", tmp) : null;
-                        socket_server.Send($"Get:MapList:True:{str}");
+                        string[] data = GetMapNames?.Invoke();
+                        Status = data?.Any() ?? false;
+                        string mapList = Status ? string.Join(Separator.Data.ToString(), data) : string.Empty;
+                        socket_server.Send(MCmd.Get,SCmd.MapList,Ack.Mapping[Status],mapList);
                     }
                     break;
-                case "Ori": {
-                        string oriName = strArray[2];
+                case SCmd.Ori: {
+                        string oriName = strArray[2] + ".ori";
                         string oriDir = GetOriDirectory?.Invoke();
-                        SendFile(socket_server, oriDir, oriName);
-                        //SendFile(socket_server.StrIPAddress, port_sendFile, oriDirectory, strArray[2]); //發送本機Ori檔
-                        socket_server.Send("Get:Ori:True");
+                        string filePath = oriDir + "\\" + oriName;
+                        if (File.Exists(filePath)) {
+                            SendFile(socket_server, filePath, oriName);
+                            suc = Ack.True;
+                        } else {
+                            suc = Ack.False;
+                        }
+                        socket_server.Send(MCmd.Get, SCmd.Ori, suc);
                     }
                     break;
-                case "Map": {
-                        string mapName = strArray[2];
+                case SCmd.Map: {
+                        string mapName = strArray[2] + ".map";
                         string mapDir = GetMapDirectory?.Invoke();
-                        SendFile(socket_server, mapDir, mapName);
+                        string filePath = mapDir + "\\" + mapName ;
+                        if (File.Exists(filePath)) {
+                            SendFile(socket_server, filePath, mapName);
+                            suc = Ack.True;
+                        }else {
+                            suc = Ack.False;
+                        }
                         //SendFile(socket_server.StrIPAddress, port_sendFile, mapDirectory, strArray[2]); //發送本機Map檔
-                        socket_server.Send("Get:Map:True");
+                        socket_server.Send(MCmd.Get,SCmd.Map,suc);
                     }
                     break;
-                case "Info":
-                    bool[] info;
+                case SCmd.Info:
+                    bool[] info = new bool[3];
                     if (Status = mAGV != null) {
                         mAGV.GetMotorInfo(out info);
-                        rtnVal = $":{info[0]}:{info[1]}:{info[2]}";
                     }
-                    socket_server.Send($"Get:Info:{Status}{rtnVal}");
+                    socket_server.Send(MCmd.Get,SCmd.Info,
+                        Ack.Mapping[Status],
+                        Ack.Mapping[info[0]],Ack.Mapping[info[1]],Ack.Mapping[info[2]]);
                     break;
-                case "Velo":
+                case SCmd.Velo:
                     int lVelo = 0;
                     int rVelo = 0;
-                    if (Status = mAGV?.GetDriveVelocity(out lVelo, out rVelo) ?? false) {
-                        rtnVal = $":{lVelo}:{rVelo}";
-                    }
-                    socket_server.Send($"Get:Velo:{Status}:{rtnVal}");
+                    Status = mAGV?.GetDriveVelocity(out lVelo, out rVelo) ?? false;
+                    socket_server.Send(MCmd.Get,SCmd.Velo,
+                        Ack.Mapping[Status],
+                        lVelo.ToString(),rVelo.ToString());
                     break;
-                case "Acce":
-                    int[] accel = mAGV?.MotorAccel ?? null;
-                    if (Status = (accel?.Count() ?? 0) > 1) {
-                        rtnVal = $":{accel[0]}:{accel[1]}";
+                case SCmd.Acce:
+                    int[] accel = new int[2];
+                    if (Status = ((mAGV?.MotorAccel?.Count() ?? 0) == 2)) {
+                        accel = mAGV.MotorAccel;
                     }
-                    socket_server.Send($"Get:Acce:{Status}:{rtnVal}");
+                    socket_server.Send(MCmd.Get,SCmd.Acce,
+                        Ack.Mapping[Status],
+                        accel[0].ToString(),accel[1].ToString());
                     break;
-                case "Dece":
-                    int[] dccel = mAGV?.MotorDccel ?? null;
-                    if (Status = (dccel?.Count() ?? 0) > 1) {
-                        rtnVal = $":{dccel[0]}:{dccel[1]}";
+                case SCmd.Dece:
+                    int[] dccel = new int[2];
+                    if (Status = ((mAGV?.MotorDccel?.Count() ?? 0) == 2)) {
+                        dccel = mAGV.MotorDccel;
                     }
-                    socket_server.Send($"Get:Dece:{Status}:{rtnVal}");
+                    socket_server.Send(MCmd.Get,SCmd.Dece,
+                        Ack.Mapping[Status],
+                        dccel[0].ToString(),dccel[1].ToString());
                     break;
-                case "IsOpen":
+                case SCmd.IsOpen:
                     Status = mAGV != null;
                     bool cnn = Status ? mAGV.DriveConnectState : false;
-                    socket_server.Send($"Get:IsOpen:{Status}:{cnn}");
+                    socket_server.Send(MCmd.Get,SCmd.IsOpen,Ack.Mapping[Status],Ack.Mapping[cnn]);
                     break;
-                case "Encoder":
-                    long[] encoder = mAGV?.EncoderValue;
-                    if (Status = (encoder?.Count() ?? 0) > 1) {
+                case SCmd.Encoder:
+                    long[] encoder = new long[2] ;
+                    if (Status = (mAGV?.EncoderValue?.Count() ?? 0) == 2) {
+                        encoder = mAGV.EncoderValue;
                         rtnVal = $":{encoder[0]}:{encoder[1]}";
                     }
-                    socket_server.Send($"Get:Encoder:{Status}:{rtnVal}");
+                    socket_server.Send(MCmd.Get,SCmd.Encoder,
+                        Ack.Mapping[Status],
+                        encoder[0].ToString(),encoder[1].ToString());
                     break;
-                case "StopMode":
+                case SCmd.StopMode:
                     bool stop = (Status = mAGV != null) ? mAGV.BrakeMode : false;
-                    socket_server.Send($"Get:StopMode:{Status}:{stop}");
+                    socket_server.Send(MCmd.Get,SCmd.StopMode,Ack.Mapping[Status],Ack.Mapping[stop]);
                     break;
-                case "Laser":
+                case SCmd.Laser:
                     List<int> laserData = mAGV.LaserDistanceData;
-                    string laserVar = string.Join(",", laserData);
-                    byte[] byteData = Encoding.UTF8.GetBytes("Get:Laser:True:" + laserVar + "\r\n");
-                    socket_server.Send(byteData);
+                    string laserVar = string.Join(Separator.Data.ToString(), laserData);
+                    suc = string.IsNullOrEmpty(laserVar) ? Ack.True : Ack.False;
+                    socket_server.Send(MCmd.Get,SCmd.Laser, Ack.True,laserVar + "\r\n");
                     laserData = null;
                     break;
-                case "Car":
-                    if (strArray[2] == "True" && t_Sender == null) {
+                case SCmd.Car:
+                    if (Ack.Check(strArray,2) && t_Sender == null) {
                         bool getLaser = bool.Parse(strArray[3]);
                         StartSendCarStatus(getLaser, socket_server);
-                    } else if (strArray[2] == "False" && t_Sender != null) {
+                    } else if (Ack.Check(strArray,2,Ack.False) && t_Sender != null) {
                         bSendStatus = false;
                         CtThread.KillThread(ref t_Sender);
                     }
-
-                    socket_server.Send(Encoding.UTF8.GetBytes("Get:Car:True:" + bSendStatus.ToString() + "\r\n"));
+                    socket_server.Send(MCmd.Get,SCmd.Car,Ack.True,bSendStatus + "\r\n");
                     break;
 
                 default:
-                    socket_server.Send(string.Join(":", strArray) + ":False\r\n");
+                    socket_server.Send(string.Join(Separator.Param , strArray),Ack.False+ "\r\n");
                     break;
             }
         }
@@ -1949,21 +2285,21 @@ namespace CommandCore {
         protected void AnlsSend(string[] strArray, ICmdSender socket_server) {
             bool correct;
             string directory = "";
-            string strRecvCmd = string.Join(",", strArray);
+            string strRecvCmd = string.Join(Separator.Param, strArray);
             switch (strArray[1]) {
-                case "ori":
+                case SCmd.Ori:
                     correct = true;
                     directory = GetOriDirectory?.Invoke();
-                    socket_server.Send(strRecvCmd + ":True\r\n");
+                    socket_server.Send(strRecvCmd ,Ack.True + "\r\n");
                     break;
-                case "map":
+                case SCmd.Map:
                     correct = true;
                     directory = GetMapDirectory?.Invoke();
-                    socket_server.Send(strRecvCmd + ":True\r\n");
+                    socket_server.Send(strRecvCmd ,Ack.True + "\r\n");
                     break;
                 default:
                     correct = false;
-                    socket_server.Send(strRecvCmd + ":Format Fault\r\n");
+                    socket_server.Send(strRecvCmd ,"Format Fault\r\n");
                     break;
             }
             if (correct) {
@@ -1973,24 +2309,6 @@ namespace CommandCore {
         }
 
         #endregion CmdAnls
-
-        /// <summary>
-        /// 以Goal點名稱進行路徑規劃並傳送
-        /// </summary>
-        /// <param name="goalName"></param>
-        /// <param name="sender"></param>
-        private void StartSendPath(string goalName, ICmdSender sender) {
-            StartSendPath(FindGoal?.Invoke(goalName), sender);
-        }
-
-        /// <summary>
-        /// 以Goal點索引進行路徑規劃並傳送
-        /// </summary>
-        /// <param name="idxGoal"></param>
-        /// <param name="sender"></param>
-        private void StartSendPath(int idxGoal, ICmdSender sender) {
-            StartSendPath(IdxToGoal?.Invoke(idxGoal), sender);
-        }
 
         /// <summary>
         /// [Base]開始傳送路徑規劃資料
@@ -2053,7 +2371,6 @@ namespace CommandCore {
             byte[] recvBytes = new byte[1024];
             string laserVar = "";
             string strRecvCmd;
-            string out_data;
             int carID = GetCarID?.Invoke() ?? 0;
             int powerPercent = GetPower?.Invoke() ?? 0;
             while (bSendStatus) {
@@ -2065,10 +2382,10 @@ namespace CommandCore {
                 carPos = mAGV.Position;
                 if ((bool)getLaser) {
                     laserData = mAGV.LaserDistanceData;
-                    laserVar = string.Join(",", laserData);
+                    laserVar = string.Join(Separator.Data.ToString(), laserData);
                 }
-                out_data = $"Get:Car:{carID}:{carPos[0]}:{carPos[1]}:{carPos[2]}:{powerPercent}:{laserVar}:{mAGV.mode}{Environment.NewLine}";
-                SendStatus(out_data);
+                object[] data = new object[] { MCmd.Get, SCmd.Car, carID, carPos[0], carPos[1], carPos[2], powerPercent, laserVar, mAGV.mode + Environment.NewLine };
+                SendStatus(string.Join(Separator.Param,data));
                 //comm_SendAGVInfo.SendString(out_data, Encoding.UTF8);
 
                 //Receive client reply
@@ -2134,11 +2451,13 @@ namespace CommandCore {
             fileName = Encoding.ASCII.GetString(clientData, 4, fileNameLen);
 
             if (!Directory.Exists(savePath)) Directory.CreateDirectory(savePath);
-            if (File.Exists(savePath + "/" + fileName)) File.Delete(savePath + "/" + fileName);
-
-            using (BinaryWriter bWrite = new BinaryWriter(File.Open(savePath + "/" + fileName, FileMode.OpenOrCreate))) {
+            if (File.Exists(savePath + "\\" + fileName)) File.Delete(savePath + "\\" + fileName);
+            string fullPath = savePath + "\\" + fileName;
+            FileStream fileStream = new FileStream(fullPath, FileMode.OpenOrCreate);
+            BinaryWriter bWrite = new BinaryWriter(fileStream);
+            try {
                 bWrite.Write(clientData, 4 + fileNameLen, receivedBytesLen - 4 - fileNameLen);
-                do {
+                while (socket_map.BufferLength != 0) {
                     receivedBytesLen = socket_map.Receive(out clientData);
                     fileName = Encoding.ASCII.GetString(clientData, 0, receivedBytesLen);
                     bWrite.Write(clientData, 0, receivedBytesLen);
@@ -2148,7 +2467,11 @@ namespace CommandCore {
                     cal_size = Math.Round(cal_size, 2);
                     clientData = null;
                     SpinWait.SpinUntil(() => false, 10);
-                } while (socket_map.BufferLength != 0);
+                }
+            } catch(Exception ex) {
+                Console.WriteLine(ex.Message);
+            } finally {
+                bWrite?.Close();
             }
         }
 
@@ -2158,7 +2481,7 @@ namespace CommandCore {
     /// <summary>
     /// 以Socket進行命令傳送的Server端
     /// </summary>
-    public class CtSoxCmdServer : BaseServerCmooand, ISoxCmdServer {
+    internal class CtSoxCmdServer : BaseServerCmooand, ISoxCmdServer {
 
         #region Declaration - Fields
 
@@ -2235,20 +2558,64 @@ namespace CommandCore {
         /// <summary>
         /// Create thread for server
         /// </summary>
-        public void ServoOn() {
-            //Start waiting client connection for map sending
-            comm_ReceiveMap = new ServerCommunication(port_receiveFile);
-            comm_ReceiveMap.StartListen();
+        public void Listen() {
+            if (!IsListening) {
+                //Start waiting client connection for map sending
+                comm_ReceiveMap = new ServerCommunication(port_receiveFile);
+                comm_ReceiveMap.StartListen();
 
-            //Start waiting client connection for command sending
-            comm_Cmd = new ServerCommunication(port_receiveCmd);
-            comm_Cmd.StartListen();
-            IsListening = true;
+                //Start waiting client connection for command sending
+                comm_Cmd = new ServerCommunication(port_receiveCmd);
+                comm_Cmd.StartListen();
+                IsListening = true;
 
-            CtThread.CreateThread(ref t_Server, "mTdServer: ", Server);
+                CtThread.CreateThread(ref t_Server, "mTdServer: ", Server);
+            }
+        }
+
+        /// <summary>
+        /// 停止監聽
+        /// </summary>
+        public void StopListen() {
+            if (IsListening) {
+                /*-- 若是檔案傳輸中，則先停止傳輸執行緒 --*/
+                if (t_Sender?.IsAlive ?? false) {
+                    CtThread.KillThread(ref t_Sender);
+                }
+                comm_ReceiveMap?.Close();
+
+                /*-- 若是命令接收中，則先停止接收執行緒 --*/
+                if (t_Server?.IsAlive ?? false) {
+                    CtThread.KillThread(ref t_Server);
+                }
+                comm_Cmd?.Close();
+            }
         }
 
         #endregion Implement - ISoxCmdServer
+
+        #region Implement - IDisposable
+
+        /// <summary>
+        /// [Sox] 資源釋放具體行為
+        /// </summary>
+        protected override void dispose() {
+            comm_Cmd?.Close();
+            comm_ReceiveMap?.Close();
+            comm_SendAGVInfo?.Close();
+            comm_SendMap?.Close();
+            comm_SendPath?.Close();
+
+            comm_Cmd = null;
+            comm_ReceiveMap = null;
+            comm_SendAGVInfo = null;
+            comm_SendMap = null;
+            comm_SendPath = null;
+
+            base.dispose();
+        }
+
+        #endregion Implement - IDisposable
 
         #region Function - Task
 
@@ -2256,16 +2623,23 @@ namespace CommandCore {
         /// Server operation
         /// </summary>
         protected void Server() {
-            while (true) {
+            bool isAbort = false;            
+            while (!isAbort) {
                 try {
                     Thread t_RecvData = new Thread(ReceiveClientCommand);
                     t_RecvData.Start(comm_Cmd.ClientAccept());
+                } catch (ThreadAbortException exAbort) {
+                    Console.WriteLine(exAbort.Message);
+                    isAbort = true;
+                } catch (ThreadInterruptedException exInterrup) {
+                    Console.WriteLine(exInterrup.Message);
+                    isAbort = true;
                 } catch (Exception ex) {
-                    Console.Write(ex.Message);
+                    Console.WriteLine(ex.Message);
                 }
             }
-        }
-
+        }  
+        
         /// <summary>
         /// [Sox] 命令接收執行緒
         /// </summary>
@@ -2283,7 +2657,7 @@ namespace CommandCore {
                         string strRecvCmd = Encoding.Default.GetString(recvBytes);
                         recvBytes = null;
 
-                        ConsoleRefresh(strRecvCmd);
+                        ConsoleRefresh?.Invoke(strRecvCmd);
                         //txtConsoleInfo.InvokeIfNecessary(() => {
                         //    string strTemp = "[Server] : " + strRecvCmd + txtConsoleInfo.Text;
                         //    if (strTemp.Length > 2048) strTemp = strTemp.Substring(0, 2047);
@@ -2314,8 +2688,10 @@ namespace CommandCore {
             } catch (Exception ex) {
                 Console.WriteLine(ex.ToString());
             } finally {
-                comm_SendPath.Close();
-                comm_SendPath = null;
+                if (comm_SendPath != null) {
+                    comm_SendPath.Close();
+                    comm_SendPath = null;
+                }
             }
         }
 
@@ -2348,6 +2724,7 @@ namespace CommandCore {
         /// <param name="socket_server"></param>
         protected override void StartSendCarStatus(bool getLaser, ICmdSender socket_server) {
             comm_SendAGVInfo = new ClientCommunication((socket_server as TCPSocket).StrIPAddress, port_sendState);
+            bool suc =  comm_SendAGVInfo.Connect();
             base.StartSendCarStatus(getLaser, socket_server);
         }
 
@@ -2362,7 +2739,7 @@ namespace CommandCore {
             } catch (Exception ex) {
                 Console.WriteLine(ex.ToString());
             } finally {
-                comm_SendAGVInfo.Close();
+                comm_SendAGVInfo?.Close();
                 comm_SendAGVInfo = null;
             }
         }
@@ -2402,17 +2779,17 @@ namespace CommandCore {
                 IPAddress[] ipAddress = Dns.GetHostAddresses((socket_server as TCPSocket).StrIPAddress);
                 comm_SendMap = new ClientCommunication(ipAddress[0].ToString(), port_sendFile);
 
-                fileName = fileName.Replace("\\", "/");
-                while (fileName.IndexOf("/") > -1) {
-                    filePath += fileName.Substring(0, fileName.IndexOf("/") + 1);
-                    fileName = fileName.Substring(fileName.IndexOf("/") + 1);
-                }
+                //fileName = fileName.Replace("\\", "/");
+                //while (fileName.IndexOf("/") > -1) {
+                //    filePath += fileName.Substring(0, fileName.IndexOf("/") + 1);
+                //    fileName = fileName.Substring(fileName.IndexOf("/") + 1);
+                //}
                 byte[] fileNameByte = Encoding.ASCII.GetBytes(fileName);
                 if (fileNameByte.Length > 1024 * 1024 * 5) {
                     return;
                 }
 
-                byte[] fileData = File.ReadAllBytes(filePath + fileName);
+                byte[] fileData = File.ReadAllBytes(filePath);
                 byte[] clientData = new byte[4 + fileNameByte.Length + fileData.Length];
                 byte[] fileNameLen = BitConverter.GetBytes(fileNameByte.Length);
                 fileNameLen.CopyTo(clientData, 0);
@@ -2426,11 +2803,11 @@ namespace CommandCore {
                 fileNameByte = null;
                 clientData = null;
                 fileNameLen = null;
-
-            } catch {
+            } catch (Exception ex){
+                Console.WriteLine(ex.Message);
 
             } finally {
-                comm_SendMap.Close();
+                comm_SendMap?.Close();
                 comm_SendMap = null;
             }
         }
@@ -2467,6 +2844,35 @@ namespace CommandCore {
     #endregion Declaration - Implement Class
 
     #region Support - Class
+
+    public static class FileMth {
+        public const int OF_READWRITE = 2;
+        public const int OF_SHARE_DENY_NONE = 0x40;
+        public static IntPtr HFILE_ERROR = new IntPtr(-1);
+
+        /// <summary>
+        /// 確認檔案是否被占用中
+        /// </summary>
+        /// <param name="lpPathName"></param>
+        /// <param name="iReadWrite"></param>
+        /// <returns></returns>
+        [DllImport("kernel32.dll")]
+        private static extern IntPtr _lopen(string lpPathName, int iReadWrite);
+
+        /// <summary>
+        /// 檢查檔案是否可用
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
+        public static bool IsIdleFile(string fileName) {
+            bool rtn = true;
+            if (rtn = File.Exists(fileName)) {
+                rtn = HFILE_ERROR != _lopen(fileName, OF_READWRITE | OF_SHARE_DENY_NONE);
+            }
+            return rtn;
+        }
+
+    }
 
     /// <summary>
     /// Socket監測參數包
@@ -2582,21 +2988,23 @@ namespace CommandCore {
         /// </summary>
         public void Stop() {
             try {
-                Socket.Shutdown(SocketShutdown.Both);
-                Socket.Close();
+                if (Socket?.Connected ?? false)Socket.Shutdown(SocketShutdown.Both);
+                Socket?.Close();
                 Socket = null;
-            } catch {
-
+                this.IsCancel = false;
+                CtThread.KillThread(ref Thread);
+            } catch (Exception ex){
+                Console.WriteLine(ex.Message);
             }
         }
 
         public Socket Accept(int receiveTimeOut = 5000, int sendTimeout = 5000, int sendBuffer = 8192, int receiveBuffer = 1024) {
-            Socket.Accept();
-            Socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, receiveTimeOut);
-            Socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.SendTimeout, sendTimeout);
-            Socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.SendBuffer, sendBuffer);
-            Socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveBuffer, receiveBuffer);
-            return Socket;
+            Socket client =  Socket.Accept();
+            client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, receiveTimeOut);
+            client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.SendTimeout, sendTimeout);
+            client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.SendBuffer, sendBuffer);
+            client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveBuffer, receiveBuffer);
+            return client;
         }
 
         #endregion Function - Public Methods
@@ -2782,8 +3190,7 @@ namespace CommandCore {
         public Socket ClientAccept() {
             return socket.Accept();
         }
-
-
+        
         /// <summary>
         /// Disconnect
         /// </summary>
@@ -2940,26 +3347,46 @@ namespace CommandCore {
     /// <summary>
     /// 車子狀態資訊
     /// </summary>
-    public class CarInfo : CartesianPosInfo {
-        /// <summary>
-        /// 雷射掃描資料
-        /// </summary>
-        public IEnumerable<int> LaserData;
+    public class CarInfo {
 
-        public CarInfo(double x, double y, double theta, string name, uint id) : base(x, y, theta, name, id) {
+        #region Properteis
+
+        public int CarID { get; private set; }
+
+        public double X { get; private set; }
+
+        public double Y { get; private set; }
+
+        public double Theta { get; private set; }
+
+        public int PowerPercent { get; private set; }
+
+        public List<int> LaserData { get; private set; }
+
+        public WorkMode Mode { get; private set; }
+
+        #endregion Properties
+
+        #region Function - Constructors
+
+        private CarInfo() {
+
         }
 
-        /// <summary>
-        /// 電池電量百分比
-        /// </summary>
-        public int PowerPercent { get; set; }
+        public CarInfo(int id ,double x,double y,double theta, int power,List<int> laser,WorkMode mode) {
+            this.CarID = id;
+            this.X = x;
+            this.Y = y;
+            this.Theta = theta;
+            this.PowerPercent = power;
+            this.LaserData = laser;
+            this.Mode = mode;
+        }
 
-        /// <summary>
-        /// 當前訊息
-        /// </summary>
-        public string Status { get; set; }
+        #endregion Function - Constructors
 
-
+        #region Function - Public Methods
+        
         /// <summary>
         /// 嘗試將字串轉換為<see cref="CarInfo"/>
         /// </summary>
@@ -2976,30 +3403,138 @@ namespace CommandCore {
         /// </summary>
         /// <param name="src">來源字串，格式為"Get:Car:Name:X:Y:Toward:Power:LaserData1,2,3..,n:Status"</param>
         public static bool TryParse(string src, out CarInfo info, out IEnumerable<int> laserData) {
-            info = new CarInfo(0, 0, 0, "", 0);
-            string[] strArray = src.Split(':');
+            int carID = 0;
+            int x = 0, y = 0, power = 0;
+            double theta = 0;
+            List<int> laser = null;
+            WorkMode mode = WorkMode.Idle;
+            info = new CarInfo();
             laserData = null;
-            if (strArray.Length != 9) return false;
-            if (strArray[0] != "Get") return false;
-            if (strArray[1] != "Car") return false;
+            string[] strArray = src.Split(Separator.Param.ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
 
-            info.name = strArray[2];
-            int x; int.TryParse(strArray[3], out x);
-            int y; int.TryParse(strArray[4], out y);
-            double toward; double.TryParse(strArray[5], out toward);
-            int powerPercent; int.TryParse(strArray[6], out powerPercent);
-            info.x = x;
-            info.y = y;
-            info.theta = toward;
-            info.PowerPercent = powerPercent;
-            string[] sreRemoteLaser = strArray[7].Split(',');
-            info.LaserData = sreRemoteLaser.Select(item => int.Parse(item));
-            info.Status = strArray[8];
-            laserData = info.LaserData;
-            return true;
+            bool suc =
+                ((strArray?.Count() ?? 0) == 9) &&
+                strArray[0] == MCmd.Get &&
+                strArray[1] == SCmd.Car &&
+                int.TryParse(strArray[2], out carID) &&
+                int.TryParse(strArray[3], out x) &&
+                int.TryParse(strArray[4], out y) &&
+                double.TryParse(strArray[5], out theta) &&
+                int.TryParse(strArray[6], out power) &&
+                TryLaser(strArray[7], out laser) && 
+                Enum.TryParse(strArray[8],out mode) ;
+            if (suc) {
+                info.CarID = carID;
+                info.X = x;
+                info.Y = y;
+                info.Theta = theta;
+                info.PowerPercent = power;
+                info.LaserData = laser;
+                laserData = laser;
+                info.Mode = mode;
+                }
+            return suc;
+        }
+
+        /// <summary>
+        /// 嘗試將字串轉為雷射資料
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="laser"></param>
+        /// <returns></returns>
+        public static bool TryLaser(string context,out List<int> laser) {
+            string[] sreRemoteLaser = context.Split(new char[] {Separator.Data },StringSplitOptions.RemoveEmptyEntries);
+            bool suc = true;
+            laser = null;
+            if (suc = (sreRemoteLaser?.Count() ?? 0) > 0) {
+                int iVal = 0;
+                laser = sreRemoteLaser.Select(item => { return int.TryParse(item,out iVal) ? iVal : 0; }).ToList();
+            }
+            return suc;
+        }
+
+        #endregion Function - Public Methods
+    }
+
+    /// <summary>
+    /// 命令擴充方法
+    /// </summary>
+    public static class CmdExtension {
+
+        public static IEnumerable<IEnumerable<T>> ChunkBy<T>(this IEnumerable<T> source, int chunkSize) {
+            return source.Select((x, i) => new { Index = i, Value = x }).
+                GroupBy(x => x.Index / chunkSize).
+                Select(x => x.Select(v => v.Value));
+        }
+
+        /// <summary>
+        /// 以固定格式傳送命令
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="param"></param>
+        public static void Send(this ICmdSender sender,params string[] param) {
+            sender.Send(string.Join(Separator.Param, param));
         }
     }
 
     #endregion Support - Class
+
+    #region Class - Factory
+
+    /// <summary>
+    /// 單例模式 - 命令核心物件工廠實例供應類
+    /// </summary>
+    public static class CommandCoreFactory {
+        
+        /// <summary>
+        /// 工廠實例
+        /// </summary>
+        private static Factory mInstance = null;
+
+        /// <summary>
+        /// 取得工廠實例
+        /// </summary>
+        /// <returns></returns>
+        public static Factory GetInstance() {
+            if (mInstance == null) mInstance = new Factory();
+            return mInstance;
+        }
+
+    }
+
+    /// <summary>
+    /// 命令核心物件工廠
+    /// </summary>
+    /// <remarks>
+    /// 僅定義命令核心物件工廠，但不宣告為靜態立刻實例化
+    /// 使用者透過單例模式來取得命令核心物件工廠實例
+    /// </remarks>
+    public class Factory {
+
+        /// <summary>
+        /// 不允許外部建立實例
+        /// </summary>
+        internal Factory() {}
+
+        /// <summary>
+        /// 取得Client端命令核心
+        /// </summary>
+        /// <param name="ip"></param>
+        /// <returns></returns>
+        public ISoxCmdClient Client(string ip = "127.0.0.1") {
+            return new CtSoxCmdClient(ip);
+        }
+
+        /// <summary>
+        /// 取得Server端命令核心
+        /// </summary>
+        /// <returns></returns>
+        public ISoxCmdServer Server() {
+            return new CtSoxCmdServer();
+        }
+
+    }
+
+    #endregion Class - Facotry
 
 }

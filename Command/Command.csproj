@@ -4,12 +4,12 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{C33505BD-7481-44D1-9CFC-193BB3F9D92F}</ProjectGuid>
+    <ProjectGuid>{1CABEB43-7C54-4BE5-A828-08D65AA7593F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MapProcessing</RootNamespace>
-    <AssemblyName>MapProcessing</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <RootNamespace>Command</RootNamespace>
+    <AssemblyName>Command</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -31,9 +32,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -42,21 +43,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MapInfo.cs" />
+    <Compile Include="CommandCore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\AGVBase\GLCore\GLCore.csproj">
-      <Project>{3fdbe27f-1307-4908-b864-9b39da253b46}</Project>
-      <Name>GLCore</Name>
+    <ProjectReference Include="..\CtLib\CtLib\CtLib.csproj">
+      <Project>{a9bed8b3-2f9d-42a8-90bd-9fae0522eb09}</Project>
+      <Name>CtLib</Name>
     </ProjectReference>
-    <ProjectReference Include="..\AGVMath\AGVMath.csproj">
-      <Project>{68c119fe-7cf4-4828-8745-d9558acd7fab}</Project>
-      <Name>AGVMath</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\KDTree\KDTree.csproj">
-      <Project>{33a00a90-c02e-474b-a8c0-3b0559873ea0}</Project>
-      <Name>KDTree</Name>
+    <ProjectReference Include="..\MapInfo\MapProcessing.csproj">
+      <Project>{c33505bd-7481-44d1-9cfc-193bb3f9d92f}</Project>
+      <Name>MapProcessing</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
