@@ -34,14 +34,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="SharpGL">
-      <HintPath>..\AGVMapUI\bin\Debug\SharpGL.dll</HintPath>
+    <Reference Include="SharpGL, Version=2.4.0.0, Culture=neutral, PublicKeyToken=27fc851303210b27, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>OpenGLDLL\SharpGL.dll</HintPath>
     </Reference>
-    <Reference Include="SharpGL.SceneGraph">
-      <HintPath>..\AGVMapUI\bin\Debug\SharpGL.SceneGraph.dll</HintPath>
+    <Reference Include="SharpGL.SceneGraph, Version=2.4.0.0, Culture=neutral, PublicKeyToken=27fc851303210b27, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>OpenGLDLL\SharpGL.SceneGraph.dll</HintPath>
     </Reference>
-    <Reference Include="SharpGL.WinForms">
-      <HintPath>..\AGVMapUI\bin\Debug\SharpGL.WinForms.dll</HintPath>
+    <Reference Include="SharpGL.WinForms, Version=2.4.0.0, Culture=neutral, PublicKeyToken=27fc851303210b27, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>OpenGLDLL\SharpGL.WinForms.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -480,6 +483,11 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Dynamic Link Libraries\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="OpenGLDLL\SharpGL.dll" />
+    <Content Include="OpenGLDLL\SharpGL.SceneGraph.dll" />
+    <Content Include="OpenGLDLL\SharpGL.WinForms.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
