@@ -47,7 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\AGVBase\GLCore\GLCore.csproj">
-      <Project>{3fdbe27f-1307-4908-b864-9b39da253b46}</Project>
+      <Project>{805B8702-0FAC-4104-8F41-5337130CA0C6}</Project>
       <Name>GLCore</Name>
     </ProjectReference>
     <ProjectReference Include="..\AGVMath\AGVMath.csproj">

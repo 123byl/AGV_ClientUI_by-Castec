@@ -431,36 +431,20 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\AGVBase\FactoryMode\FactoryMode.csproj">
-      <Project>{62234811-826b-4dbe-b534-c1e4a388c7bb}</Project>
+      <Project>{b66dd409-3bf6-488d-b887-d00a59c6396d}</Project>
       <Name>FactoryMode</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\AGVBase\Geometry\Geometry.csproj">
-      <Project>{010b185c-f2c0-4c69-9bc6-8e8d3d6c0f2f}</Project>
+      <Project>{07e11b21-0d87-4446-8ee8-91135dcae089}</Project>
       <Name>Geometry</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\AGVBase\GLCore\GLCore.csproj">
-      <Project>{3fdbe27f-1307-4908-b864-9b39da253b46}</Project>
+      <Project>{805B8702-0FAC-4104-8F41-5337130CA0C6}</Project>
       <Name>GLCore</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\AGVBase\GLUI\GLUI.csproj">
-      <Project>{3b629f68-d4b8-4a28-9159-150ca7750823}</Project>
+      <Project>{D2E7804D-ADE5-4C82-AE04-8F505D04711A}</Project>
       <Name>GLUI</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\AGVBase\NetExtention\NetExtention.csproj">
-      <Project>{cfcc1d01-fd8d-4885-9181-7c6750395d84}</Project>
-      <Name>NetExtention</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\AGVBase\NetFunction\NetFunction.csproj">
-      <Project>{e6bf51a3-8aca-43bc-9cbb-a2b800a01812}</Project>
-      <Name>NetFunction</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\AGVBase\SerialCommunicationData\SerialCommunicationData.csproj">
-      <Project>{7eafe444-e185-4d5e-acfe-65c7e1016425}</Project>
-      <Name>SerialCommunicationData</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\AGVBase\SerialCommunication\SerialCommunication.csproj">
-      <Project>{2e90a64e-9a09-4950-8b65-aedd47f8f6d4}</Project>
-      <Name>SerialCommunication</Name>
     </ProjectReference>
     <ProjectReference Include="..\AGVMath\AGVMath.csproj">
       <Project>{68c119fe-7cf4-4828-8745-d9558acd7fab}</Project>
