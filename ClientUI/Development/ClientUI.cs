@@ -401,7 +401,7 @@ namespace ClientUI
         /// </summary>
         private IIConsole IConsole { get { return Console; } }
         private IIGoalSetting IGoalSetting { get { return GoalSetting; } }
-        private IUIBaseCtrl IMapCtrl { get { return MapGL != null ? MapGL.Ctrl : null; } }
+        private IScene IMapCtrl { get { return MapGL != null ? MapGL.Ctrl : null; } }
         private IITesting ITest { get { return Testing; } }
 
 

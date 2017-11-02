@@ -30,28 +30,17 @@ namespace ClientUI.Development
         /// </summary>
         private void InitializeComponent()
         {
-            this.uiControl = new UIControl();
-            ((System.ComponentModel.ISupportInitialize)(this.uiControl)).BeginInit();
+            this.uiControl = new GLUI.GLUserControl();
             this.SuspendLayout();
             // 
             // uiControl
             // 
-            this.uiControl.AllowEdit = true;
             this.uiControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.uiControl.DrawFPS = false;
-            this.uiControl.Location = new System.Drawing.Point(13, 12);
-            this.uiControl.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.uiControl.Location = new System.Drawing.Point(12, 12);
             this.uiControl.Name = "uiControl";
-            this.uiControl.OpenGLVersion = SharpGL.Version.OpenGLVersion.OpenGL2_1;
-            this.uiControl.RenderContextType = SharpGL.RenderContextType.DIBSection;
-            this.uiControl.RenderTrigger = SharpGL.RenderTrigger.TimerBased;
-            this.uiControl.ShowAxis = true;
-            this.uiControl.ShowFPS = false;
-            this.uiControl.ShowGrid = true;
-            this.uiControl.ShowNames = true;
-            this.uiControl.Size = new System.Drawing.Size(256, 229);
+            this.uiControl.Size = new System.Drawing.Size(258, 229);
             this.uiControl.TabIndex = 0;
             // 
             // AGVMapUI
@@ -60,15 +49,15 @@ namespace ClientUI.Development
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(282, 253);
             this.Controls.Add(this.uiControl);
+            this.Font = new System.Drawing.Font("新細明體", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.Name = "AGVMapUI";
             this.Text = "AGVMapUI";
-            ((System.ComponentModel.ISupportInitialize)(this.uiControl)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private UIControl uiControl;
+        private GLUserControl uiControl;
     }
 }
