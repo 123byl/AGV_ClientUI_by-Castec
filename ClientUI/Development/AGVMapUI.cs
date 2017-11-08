@@ -28,5 +28,6 @@ namespace ClientUI.Development
         /// 獲得地圖控制器控制
         /// </summary>
         public IScene Ctrl { get { return uiControl.BaseCtrl; } }
+
     }
 }

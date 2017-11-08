@@ -245,6 +245,7 @@
             this.btnClrMap.TabIndex = 41;
             this.btnClrMap.Text = "Clear Map";
             this.btnClrMap.UseVisualStyleBackColor = true;
+            this.btnClrMap.Click += new System.EventHandler(this.btnClrMap_Click);
             // 
             // grbMap
             // 

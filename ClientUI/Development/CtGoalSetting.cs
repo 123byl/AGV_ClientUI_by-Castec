@@ -91,6 +91,11 @@ namespace ClientUI
         public event DelAddNewGoal AddNewGoalEvent;
 
         /// <summary>
+        /// 加入充電站
+        /// </summary>
+        public event DelAddNewPower AddNewPowerEvent;
+
+        /// <summary>
         /// 刪除
         /// </summary>
         public event DelDeleteGoals DeleteGoalsEvent;
@@ -169,6 +174,28 @@ namespace ClientUI
         }
 
         /// <summary>
+        /// 加入 Goal 點
+        /// </summary>
+        public void AddPower(CartesianPosInfo power) {
+            lock (mKey) {
+                int index = FindIndexByID(power.id);
+                if (index == -1) {
+                    dgvGoalPoint.InvokeIfNecessary(
+                        () => dgvGoalPoint.Rows.Add(new object[] { new CheckBox().Checked = false, power.id, power.name, power.x, power.y, power.theta.ToString("F2") }));
+                } else {
+                    dgvGoalPoint.InvokeIfNecessary(
+                        () => {
+                            if ((uint)dgvGoalPoint[IDColumn, index].Value != power.id) dgvGoalPoint[IDColumn, index].Value = power.id;
+                            if ((string)dgvGoalPoint[NameColumn, index].Value != power.name) dgvGoalPoint[NameColumn, index].Value = power.name;
+                            if ((double)dgvGoalPoint[XColumn, index].Value != power.x) dgvGoalPoint[XColumn, index].Value = power.x;
+                            if ((double)dgvGoalPoint[YColumn, index].Value != power.y) dgvGoalPoint[YColumn, index].Value = power.y;
+                            if ((string)dgvGoalPoint[TowardColumn, index].Value != power.theta.ToString("F2")) dgvGoalPoint[TowardColumn, index].Value = power.theta.ToString("F2");
+                        });
+                }
+            }
+        }
+
+        /// <summary>
         /// 移除目前 Goal 點並加入新的 goal 點
         /// </summary>
         public void ClearAndAddGoals(IEnumerable<CartesianPosInfo> goals)
@@ -193,7 +220,7 @@ namespace ClientUI
                 dgvGoalPoint.InvokeIfNecessary(() => dgvGoalPoint.Rows.Clear());
             }
         }
-
+        
         /// <summary>
         /// 根據 ID 移除 Goal 點
         /// </summary>
@@ -285,16 +312,15 @@ namespace ClientUI
                 {
                     uint id = 0;
                     string name = string.Empty;
-                    int x = 0;
-                    int y = 0;
-                    double toward = 0.0;
+                    double x=0d,y=0d, toward = 0.0;
                     dgvGoalPoint.InvokeIfNecessary(() =>
                     {
+                        string type = dgvGoalPoint[TowardColumn, row].Value.GetType().Name;
                         id = (uint)dgvGoalPoint[IDColumn, row].Value;
                         name = (string)dgvGoalPoint[NameColumn, row].Value;
-                        x = (int)dgvGoalPoint[XColumn, row].Value;
-                        y = (int)dgvGoalPoint[YColumn, row].Value;
-                        toward = (double)dgvGoalPoint[TowardColumn, row].Value;
+                        x = (double)dgvGoalPoint[XColumn, row].Value;
+                        y = (double)dgvGoalPoint[YColumn, row].Value;
+                        toward = double.Parse(dgvGoalPoint[TowardColumn, row].Value.ToString());
                     });
                     if (id != 0) list.Add(new CartesianPosInfo(x, y, toward, name, id));
                 }
@@ -443,8 +469,16 @@ namespace ClientUI
                 }
             }
         }
+
         #endregion UI Event
 
-
+        private void btnAddNewPower_Click(object sender, EventArgs e) {
+            uint id = Database.ID.GenerateID();
+            int x; int.TryParse(txtAddPx.Text, out x);
+            int y; int.TryParse(txtAddPy.Text, out y);
+            double toward; double.TryParse(txtAddPtheta.Text, out toward);
+            CartesianPosInfo power = new CartesianPosInfo(x, y, toward, "Power" + id, id);
+            AddNewPowerEvent?.Invoke(power);
+        }
     }
 }

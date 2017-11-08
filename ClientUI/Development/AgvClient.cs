@@ -12,6 +12,7 @@ using CtLib.Library;
 
 using MapProcessing;
 using static MapProcessing.MapSimplication;
+using GLUI;
 
 namespace ClientUI
 {
@@ -43,6 +44,16 @@ namespace ClientUI
         /// <returns></returns>
         public static string ToStr(this CartesianPos point) {
             return $"{point.x:F0},{point.y:F0},{point.theta:F0}";
+        }
+
+        public static CartesianPosInfo ToCarTesianPosinfo(this DragTowerPairEventArgs e) {
+            return new CartesianPosInfo(
+                e.DargTarget.Data.Position.X,
+                e.DargTarget.Data.Position.Y,
+                e.DargTarget.Data.Toward.Theta,
+                e.DargTarget.Name,
+                e.ID
+            );
         }
 
     }

@@ -66,8 +66,12 @@ namespace ClientUI
         ///         \ 更新部分語法以符合新版本CtLib
         ///     0.0.4   Jay [2017/10/23]
         ///         \ 命令傳送用Socket連線方式修改，改為持續連接
+        ///     0.0.5   Jay [2017/11/08]
+        ///         \ 加入Power點相關操作
+        ///         \ 補上ClearMap功能
+        ///         \ Map檔格式修改
         /// </remarks>
-        public CtVersion Version { get { return new CtVersion(0, 0, 4, "2017/10/23", "Jay Chang"); } }
+        public CtVersion Version { get { return new CtVersion(0, 0, 5, "2017/11/08", "Jay Chang"); } }
 
         #endregion Version - Information
 
@@ -1223,6 +1227,7 @@ namespace ClientUI
         private void LoadMap(string mapPath)
         {
             List<CartesianPosInfo> goalList = null;
+            List<CartesianPosInfo> powerList = null;
             List<CartesianPos> obstaclePoints = null;
             List<MapLine> obstacleLine = null;
             mCurMapPath = mapPath;
@@ -1246,6 +1251,7 @@ namespace ClientUI
                     read.OpenFile();
                     read.ReadMapBoundary(out min, out max);
                     read.ReadMapGoalList(out goalList);
+                    read.ReadMapPowerList(out powerList);
                     read.ReadMapObstacleLines(out obstacleLine);
                     read.ReadMapObstaclePoints(out obstaclePoints);
                 }
@@ -1290,6 +1296,10 @@ namespace ClientUI
             for (int i = 0; i < goalList.Count; i++)
             {
                 Database.GoalGM.Add(goalList[i].id, FactoryMode.Factory.Goal((int)goalList[i].x, (int)goalList[i].y, goalList[i].theta, goalList[i].name));
+            }
+
+            foreach(CartesianPosInfo power in powerList) {
+                Database.PowerGM.Add(power.id,FactoryMode.Factory.Power((int)power.x,(int)power.y,power.theta,power.name));
             }
             prog.UpdateStep(nowProg++);
 
@@ -1679,6 +1689,7 @@ namespace ClientUI
         {
             #region IGoalSetting 事件連結     
             IGoalSetting.AddNewGoalEvent += IGoalSetting_AddNewGoalEvent;
+            IGoalSetting.AddNewPowerEvent += IGoalSetting_AddNewPowerEvent;
             IGoalSetting.ClearGoalsEvent += IGoalSetting_ClearGoalsEvent;
             IGoalSetting.DeleteGoalsEvent += IGoalSetting_DeleteGoalsEvent;
             IGoalSetting.FindPathEvent += IGoalSetting_FindPathEvent;
@@ -1693,6 +1704,7 @@ namespace ClientUI
 
             #region IMapGL 事件連結
             IMapCtrl.DragTowerPairEvent += IMapCtrl_DragEvent;
+            IMapCtrl.GLClickEvent += IMapCtrl_GLClickEvent;
             #endregion
 
             #region ITesting 事件連結
@@ -1711,7 +1723,13 @@ namespace ClientUI
             ITest.Connect += ITest_CheckIsServerAlive;
             ITest.MotorServoOn += ITest_MotorServoOn;
             ITest.SimplifyOri += ITest_SimplifyOri;
+            ITest.ClearMap += ITest_ClearMap;
             #endregion 
+        }
+
+
+        private void IMapCtrl_GLClickEvent(object sender, GLMouseEventArgs e) {
+            IGoalSetting.SetCurrentRealPos(new CartesianPos(e.Position.X,e.Position.Y));
         }
 
         /// <summary>
@@ -1772,7 +1790,14 @@ namespace ClientUI
         }
 
         #region ITest 事件連結
-
+        
+        private void ITest_ClearMap() {
+            IGoalSetting.ClearGoal();
+            Database.GoalGM.Clear();
+            Database.PowerGM.Clear();
+            Database.ObstacleLinesGM.Clear();
+            Database.ObstaclePointsGM.Clear();
+        }
 
         private void ITest_MotorServoOn(bool servoOn)
         {
@@ -1782,9 +1807,7 @@ namespace ClientUI
             IConsole.AddMsg($"Motor Servo {(servoOn ? "ON" : "OFF")}");
             IConsole.AddMsg($"Spend:{WatchDog.ElapsedMilliseconds}(ms)");
         }
-
-
-
+        
         /// <summary>
         /// 地圖修正
         /// </summary>
@@ -2132,13 +2155,16 @@ namespace ClientUI
         #endregion
 
         #region IMapGL事件連結
-
-
+        
         private void IMapCtrl_DragEvent(object sender, DragTowerPairEventArgs e)
         {
-            if (e.DargTarget.GLSetting.Type == EType.Goal)
-            {
-                GoalSetting.AddGoal(new CartesianPosInfo(e.DargTarget.Data.Position.X, e.DargTarget.Data.Position.Y, e.DargTarget.Data.Toward.Theta, e.DargTarget.Name, e.ID));
+            switch (e.DargTarget.GLSetting.Type) {
+                case EType.Goal:
+                    GoalSetting.AddGoal(e.ToCarTesianPosinfo());
+                    break;
+                case EType.Power:
+                    GoalSetting.AddPower(e.ToCarTesianPosinfo());
+                    break;
             }
         }
 
@@ -2154,10 +2180,11 @@ namespace ClientUI
         private void IGoalSetting_SaveGoalEvent()
         {
             IConsole.AddMsg("[Save {0} Goals]", IGoalSetting.GoalCount);
-            List<CartesianPos> goals = IGoalSetting.GetGoals().ConvertAll(v =>
-                new CartesianPos(v.x, v.y, v.theta)
-                );
+            List<CartesianPosInfo> points = IGoalSetting.GetGoals();
+            IEnumerable<CartesianPosInfo> goals = points.Where(v => Database.GoalGM.ContainsID(v.id));
+            IEnumerable<CartesianPosInfo> powers = points.Where(v => Database.PowerGM.ContainsID(v.id));
             MapRecording.OverWriteGoal(goals, CurMapPath);
+            MapRecording.OverWritePower(powers, CurMapPath);
         }
 
         private void IGoalSetting_RunLoopEvent(IEnumerable<CartesianPosInfo> goal)
@@ -2200,13 +2227,23 @@ namespace ClientUI
 
         private void IGoalSetting_DeleteGoalsEvent(IEnumerable<CartesianPosInfo> goal)
         {
-            IConsole.AddMsg("[Delete {0} Goals]", goal.Count());
+            IEnumerable<CartesianPosInfo> goals = goal.Where(v => Database.GoalGM.ContainsID(v.id));
+            IEnumerable<CartesianPosInfo> powers = goal.Where(v => Database.PowerGM.ContainsID(v.id));
             List<uint> ID = new List<uint>();
-            foreach (var item in goal)
-            {
-                Database.GoalGM.Remove(item.id);
-                ID.Add(item.id);
-                IConsole.AddMsg("[Delete Goal] - {0}", item.ToString());
+            if (goals?.Any() ?? false) {
+                IConsole.AddMsg($"Delete {goals.Count()}");
+                foreach(var item in goals) {
+                    Database.GoalGM.Remove(item.id);
+                    ID.Add(item.id);
+                    IConsole.AddMsg($"[Delete Goal] - {item.ToString()}");
+                }
+            }
+            if (powers?.Any() ?? false) {
+                foreach(var item in powers) {
+                    Database.PowerGM.Remove(item.id);
+                    ID.Add(item.id);
+                    IConsole.AddMsg($"[Delete Power - {item.ToString()}]");
+                }
             }
             IGoalSetting.DeleteGoals(ID);
         }
@@ -2215,6 +2252,10 @@ namespace ClientUI
         {
             IConsole.AddMsg("[Clear Goal]");
             Database.GoalGM.Clear();
+
+            IConsole.AddMsg("[Clear Power]");
+            Database.PowerGM.Clear();
+            
             IGoalSetting.ClearGoal();
         }
 
@@ -2223,6 +2264,12 @@ namespace ClientUI
             IConsole.AddMsg("[Add Goal] - {0}", goal.ToString());
             IGoalSetting.AddGoal(goal);
             Database.GoalGM.Add(goal.id, FactoryMode.Factory.Goal((int)goal.x, (int)goal.y, goal.theta, goal.name));
+        }
+
+        private void IGoalSetting_AddNewPowerEvent(CartesianPosInfo power) {
+            IConsole.AddMsg("[Add Power] - {0}", power.ToString());
+            IGoalSetting.AddPower(power);
+            Database.PowerGM.Add(power.id, FactoryMode.Factory.Power((int)power.x, (int)power.y, power.theta, power.name));
         }
         #endregion
 

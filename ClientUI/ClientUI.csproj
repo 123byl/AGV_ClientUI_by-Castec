@@ -446,6 +446,22 @@
       <Project>{D2E7804D-ADE5-4C82-AE04-8F505D04711A}</Project>
       <Name>GLUI</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\AGVBase\NetExtention\NetExtention.csproj">
+      <Project>{cfcc1d01-fd8d-4885-9181-7c6750395d84}</Project>
+      <Name>NetExtention</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\AGVBase\NetFunction\NetFunction.csproj">
+      <Project>{853b5ea0-8387-49aa-b37b-9fa1dd24a72a}</Project>
+      <Name>NetFunction</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\AGVBase\SerialCommunicationData\SerialCommunicationData.csproj">
+      <Project>{7eafe444-e185-4d5e-acfe-65c7e1016425}</Project>
+      <Name>SerialCommunicationData</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\AGVBase\SerialCommunication\SerialCommunication.csproj">
+      <Project>{2e90a64e-9a09-4950-8b65-aedd47f8f6d4}</Project>
+      <Name>SerialCommunication</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AGVMath\AGVMath.csproj">
       <Project>{68c119fe-7cf4-4828-8745-d9558acd7fab}</Project>
       <Name>AGVMath</Name>

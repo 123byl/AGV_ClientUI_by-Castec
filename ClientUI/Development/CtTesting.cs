@@ -40,7 +40,8 @@ namespace ClientUI
         public event Events.TestingEvents.DelSimplifyOri SimplifyOri;
         public event Events.TestingEvents.DelSetVelocity SetVelocity;
         public event Events.TestingEvents.DelConnect Connect;
-        public event Events.TestingEvents.DelMotorServoOn MotorServoOn; 
+        public event Events.TestingEvents.DelMotorServoOn MotorServoOn;
+        public event Events.TestingEvents.DelClearMap ClearMap;
 
         private void btnConnect_Click(object sender, EventArgs e) {
             if (btnConnect.Tag == null || (btnConnect.Tag is bool && !(bool)btnConnect.Tag)) {
@@ -134,6 +135,10 @@ namespace ClientUI
             if (int.TryParse(txtVelocity.Text, out velocity)){
                 SetVelocity?.Invoke(velocity);
             }
+        }
+
+        private void btnClrMap_Click(object sender, EventArgs e) {
+            ClearMap?.Invoke();
         }
 
         public void SetServerStt(bool isConnect) {
@@ -240,6 +245,8 @@ namespace ClientUI
         private void btnPosConfirm_Click(object sender, EventArgs e) {
 
         }
+
+
     }
 
     /// <summary>

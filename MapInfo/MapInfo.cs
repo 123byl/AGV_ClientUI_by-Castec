@@ -88,7 +88,7 @@ namespace MapProcessing
         /// <summary>
         /// Write the goal into file
         /// </summary>
-        public static bool OverWriteGoal(List<CartesianPos> goalList, string filePath)
+        public static bool OverWriteGoal(IEnumerable<CartesianPosInfo> goalList, string filePath)
         {
             if (!File.Exists(filePath)) return false;
             List<string> info = File.ReadAllLines(filePath).ToList();
@@ -99,13 +99,42 @@ namespace MapProcessing
                 info.RemoveRange(startIndex, endIndex - startIndex);
                 endIndex = info.IndexOf("Obstacle Lines");
             }
-            if (goalList.Count > 0)
+            if (goalList != null && goalList.Count() > 0)
             {
-                for (int i = goalList.Count - 1; i >= 0; i--)
-                {
-                    info.Insert(endIndex, string.Format("{0},{1},{2}", goalList[i].x, goalList[i].y, goalList[i].theta));
+                foreach(CartesianPosInfo goal in goalList.Reverse()) {
+                    info.Insert(endIndex, goal.ToString());
                 }
                 info.Insert(endIndex, "GoalList");
+            }
+            File.WriteAllLines(filePath, info);
+            info = null;
+            return true;
+        }
+
+        /// <summary>
+        /// Write the Power into file
+        /// </summary>
+        public static bool OverWritePower(IEnumerable<CartesianPosInfo> powerList, string filePath) {
+            if (!File.Exists(filePath)) return false;
+            List<string> info = File.ReadAllLines(filePath).ToList();
+            int startIndex = info.IndexOf("PowerList");
+            string endStr = "GoalList";
+            int endIndex = info.IndexOf(endStr);
+
+            if (endIndex == -1) {//取得資料插入點
+                endStr = "Obstacle Lines";
+                endIndex = info.IndexOf(endStr);
+            }
+            if (startIndex != -1) {//清除原有Power紀錄                
+                info.RemoveRange(startIndex, endIndex - startIndex);
+                endIndex = info.IndexOf(endStr);//更新資料插入點
+            }
+
+            if ( powerList != null && powerList.Count() > 0) {
+                foreach(CartesianPosInfo power in powerList.Reverse()) {
+                    info.Insert(endIndex, power.ToString());
+                }
+                info.Insert(endIndex, "PowerList");
             }
             File.WriteAllLines(filePath, info);
             info = null;
@@ -274,10 +303,49 @@ namespace MapProcessing
             for (int i = startIndex; i < endIndex; i++)
             {
                 string[] split = data[i].Split(splitChar);
-                if (split.Length == 4)
-                    goalList.Add(new CartesianPosInfo(int.Parse(split[1]), int.Parse(split[2]), double.Parse(split[3]), split[0], Database.ID.GenerateID()));
-                else
-                    goalList.Add(new CartesianPosInfo(int.Parse(split[0]), int.Parse(split[1]), double.Parse(split[2]), "Goal" + (i - startIndex), Database.ID.GenerateID()));
+                CartesianPosInfo goal = null;
+                if (split.Length == 4) {
+                    if (!CartesianPosInfo.GetInstance(split, out goal)) {
+                        return false;
+                    }
+                    goalList.Add(goal);
+                }else{
+                    if (!CartesianPosInfo.GetInstance(split, "Goal" + (i - startIndex), out goal)) {
+                        return false;
+                    }
+                    goalList.Add(goal);
+
+                }
+            }
+            return true;
+        }
+
+        public bool ReadMapPowerList(out List<CartesianPosInfo> powerList) {
+            powerList = new List<CartesianPosInfo>();
+
+            if (!FileIsExist()) return false;
+            int startIndex = data.IndexOf("PowerList");
+            if (startIndex == -1)
+                return false;
+            else
+                startIndex++;
+
+            int endIndex = data.IndexOf("GoalList");
+            if (endIndex == -1) endIndex = data.IndexOf("Obstacle Lines");
+            for (int i = startIndex; i < endIndex; i++) {
+                string[] split = data[i].Split(splitChar);
+                CartesianPosInfo goal = null;
+                if (split.Length == 4) {
+                    if (!CartesianPosInfo.GetInstance(split, out goal)) {
+                        return false;
+                    }
+                    powerList.Add(goal);
+                } else {
+                    if (!CartesianPosInfo.GetInstance(split, "Power" + (i - startIndex), out goal)) {
+                        return false;
+                    }
+                    powerList.Add(goal);
+                }
             }
             return true;
         }
@@ -2141,6 +2209,34 @@ namespace MapProcessing
 
     public class CartesianPosInfo : CartesianPos
     {
+
+        public static bool GetInstance(string[] data,out CartesianPosInfo pos) {
+            pos = null;
+            int x = 0, y = 0;
+            double theta = 0;
+            
+            if (data != null && data.Count() != 4) return false;
+            string name = data[0];
+            if (!int.TryParse(data[1], out x) ||
+                !int.TryParse(data[2], out y) ||
+                !double.TryParse(data[3], out theta)) return false;
+            pos = new CartesianPosInfo(x, y, theta, name, Database.ID.GenerateID());
+            return true;
+        }
+
+        public static bool GetInstance(string[] data,string name, out CartesianPosInfo pos) {
+            pos = null;
+            int x = 0, y = 0;
+            double theta = 0;
+
+            if (data != null && data.Count() != 3) return false;
+            if (!int.TryParse(data[0], out x) ||
+                !int.TryParse(data[1], out y) ||
+                !double.TryParse(data[2], out theta)) return false;
+            pos = new CartesianPosInfo(x, y, theta, name, Database.ID.GenerateID());
+            return true;
+        }
+
         public CartesianPosInfo(double x, double y, double theta, string name, uint id)
         {
             this.x = x;
@@ -2151,6 +2247,10 @@ namespace MapProcessing
         }
         public string name;
         public uint id;
+
+        public override string ToString() {
+            return $"{this.name},{this.x},{this.y},{this.theta}";
+        }
     }
 
     public class MapLine

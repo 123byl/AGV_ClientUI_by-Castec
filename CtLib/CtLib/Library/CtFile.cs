@@ -161,6 +161,7 @@ namespace CtLib.Library {
 		#endregion
 
 		#region Declaration - Windows API
+
 		/// <summary>寫入 INI 資料</summary>
 		/// <param name="section">Section</param>
 		/// <param name="key">Key</param>

@@ -48,6 +48,11 @@ namespace ClientUI
         event DelAddNewGoal AddNewGoalEvent;
 
         /// <summary>
+        /// 加入充電站
+        /// </summary>
+        event DelAddNewPower AddNewPowerEvent;
+
+        /// <summary>
         /// 清除所有目標點
         /// </summary>
         event DelClearGoals ClearGoalsEvent;
@@ -113,6 +118,12 @@ namespace ClientUI
         void AddGoal(CartesianPosInfo goal);
 
         /// <summary>
+        /// 加入充電站點
+        /// </summary>
+        /// <param name="power"></param>
+        void AddPower(CartesianPosInfo power);
+
+        /// <summary>
         /// 移除目前 Goal 點並加入新的 goal 點
         /// </summary>
         void ClearAndAddGoals(IEnumerable<CartesianPosInfo> goals);
@@ -121,7 +132,7 @@ namespace ClientUI
         /// 移除所有 Goal 點
         /// </summary>
         void ClearGoal();
-
+        
         /// <summary>
         /// 根據 ID 移除 Goal 點
         /// </summary>
@@ -200,6 +211,8 @@ namespace ClientUI
 
         event DelSimplifyOri SimplifyOri;
 
+        event DelClearMap ClearMap;
+
         void ChangedMotorStt(bool servoOn);
 
         void SetLaserStt(bool isGettingLaser);
@@ -239,6 +252,12 @@ namespace ClientUI
             /// 加入 Goal 點
             /// </summary>
             public delegate void DelAddNewGoal(CartesianPosInfo goal);
+
+            /// <summary>
+            /// 加入充電站
+            /// </summary>
+            /// <param name="power"></param>
+            public delegate void DelAddNewPower(CartesianPosInfo power);
 
             /// <summary>
             /// 清除所有目標點
@@ -328,6 +347,8 @@ namespace ClientUI
             public delegate void DelSetVelocity(int velocity);
 
             public delegate void DelSimplifyOri();
+
+            public delegate void DelClearMap();
         }
     }
 }
