@@ -178,11 +178,6 @@ namespace ClientUI
         private Communication serverComm = new Communication(400, 600, 800);
 
         /// <summary>
-        /// Laser ID
-        /// </summary>
-        private uint mLaserID = 1;
-
-        /// <summary>
         /// AGV ID
         /// </summary>
         private uint mAGVID = 1;
@@ -960,18 +955,18 @@ namespace ClientUI
         private void DrawLaser(CarInfo info)
         {
             double angle = 0D, Laserangle = 0D;
-            ILaserPoints points = FactoryMode.Factory.LaserPoints();
+            List<IPair> points = new List<IPair>();
             int idx = 0;
             foreach (int dist in info.LaserData)
             {
                 if (dist >= 30 && dist < 15000)
                 {
                     int[] pos = Transformation.LaserPoleToCartesian(dist, -135, 0.25, idx++, 43, 416.75, 43, info.x, info.y, info.theta, out angle, out Laserangle);//, out dataAngle, out laserAngle);
-                    points.DataList.Add(FactoryMode.Factory.Pair(pos[0], pos[1]));
+                    points.Add(FactoryMode.Factory.Pair(pos[0], pos[1]));
                     pos = null;
                 }
             }
-            Database.LaserPointsGM.Add(mLaserID, points);
+            Database.AGVGM[mAGVID]?.LaserPoints.DataList.Replace(points);
         }
 
 
@@ -1200,24 +1195,14 @@ namespace ClientUI
             return obstacleLines;
         }
 
-        private IObstaclePoints ConvertToObstaclePoints(List<CartesianPos> points)
+        private List<IPair> ConvertToPairs(List<CartesianPos> points)
         {
-            IObstaclePoints obstaclePoints = FactoryMode.Factory.ObstaclePoints();
+            List<IPair> pairs = new List<IPair>();
             foreach (var item in points)
             {
-                obstaclePoints.DataList.Add(FactoryMode.Factory.Pair(item.x, item.y));
+                pairs.Add(FactoryMode.Factory.Pair(item.x, item.y));
             }
-            return obstaclePoints;
-        }
-
-        private ILaserPoints ConvertToLaserPoints(List<CartesianPos> points)
-        {
-            ILaserPoints laserPoints = FactoryMode.Factory.LaserPoints();
-            foreach (var item in points)
-            {
-                laserPoints.DataList.Add(FactoryMode.Factory.Pair(item.x, item.y));
-            }
-            return laserPoints;
+            return pairs;
         }
 
         /// <summary>
@@ -1289,7 +1274,7 @@ namespace ClientUI
 
             IMapCtrl.NewMap();
             Database.ObstacleLinesGM.Add(mObstacleLinesID, ConvertToObstacleLines(obstacleLine));
-            Database.ObstaclePointsGM.Add(mObstaclePointsID, ConvertToObstaclePoints(obstaclePoints));
+            Database.ObstaclePointsGM.Add(mObstaclePointsID, FactoryMode.Factory.ObstaclePoints(ConvertToPairs(obstaclePoints)));
             System.Console.WriteLine($"Draw:{sw.ElapsedMilliseconds}ms");
             sw.Restart();
 
@@ -1298,8 +1283,9 @@ namespace ClientUI
                 Database.GoalGM.Add(goalList[i].id, FactoryMode.Factory.Goal((int)goalList[i].x, (int)goalList[i].y, goalList[i].theta, goalList[i].name));
             }
 
-            foreach(CartesianPosInfo power in powerList) {
-                Database.PowerGM.Add(power.id,FactoryMode.Factory.Power((int)power.x,(int)power.y,power.theta,power.name));
+            foreach (CartesianPosInfo power in powerList)
+            {
+                Database.PowerGM.Add(power.id, FactoryMode.Factory.Power((int)power.x, (int)power.y, power.theta, power.name));
             }
             prog.UpdateStep(nowProg++);
 
@@ -1342,9 +1328,9 @@ namespace ClientUI
                         {
                             MapReading.ReadScanningInfo(n, out carPos, out laserData);
                             Database.AGVGM.Add(mAGVID, FactoryMode.Factory.AGV((int)carPos.x, (int)carPos.y, carPos.theta, "AGV"));
-                            ILaserPoints points = ConvertToLaserPoints(laserData);
-                            Database.LaserPointsGM.Add(mLaserID, points);
-                            Database.ObstaclePointsGM.SaftyEdit(mObstaclePointsID, (item) => item.DataList.AddRange(points.DataList.AsReadOnly()));
+                            List<IPair> points = ConvertToPairs(laserData);
+                            Database.AGVGM[mAGVID]?.LaserPoints.DataList.Replace(points);
+                            Database.ObstaclePointsGM.SaftyEdit(mObstaclePointsID, (item) => item.DataList.AddRange(points));
                             IMapCtrl.Focus((int)carPos.x, (int)carPos.y);
                             Thread.Sleep(10);
                             System.Console.WriteLine(n);
@@ -1388,7 +1374,7 @@ namespace ClientUI
                     {
                         case FileType.Ori:
                             await Task.Run(() => LoadOri(openMap.FileName));
-                            Database.LaserPointsGM.Remove(mLaserID);
+                            Database.AGVGM[mAGVID]?.LaserPoints.DataList.Clear();
                             ITest.UnLockOriOperator(true);
                             //RaiseTestingEvent(TestingEventType.CurOriPath);
                             break;
@@ -1728,8 +1714,9 @@ namespace ClientUI
         }
 
 
-        private void IMapCtrl_GLClickEvent(object sender, GLMouseEventArgs e) {
-            IGoalSetting.SetCurrentRealPos(new CartesianPos(e.Position.X,e.Position.Y));
+        private void IMapCtrl_GLClickEvent(object sender, GLMouseEventArgs e)
+        {
+            IGoalSetting.SetCurrentRealPos(new CartesianPos(e.Position.X, e.Position.Y));
         }
 
         /// <summary>
@@ -1790,8 +1777,9 @@ namespace ClientUI
         }
 
         #region ITest 事件連結
-        
-        private void ITest_ClearMap() {
+
+        private void ITest_ClearMap()
+        {
             IGoalSetting.ClearGoal();
             Database.GoalGM.Clear();
             Database.PowerGM.Clear();
@@ -1807,7 +1795,7 @@ namespace ClientUI
             IConsole.AddMsg($"Motor Servo {(servoOn ? "ON" : "OFF")}");
             IConsole.AddMsg($"Spend:{WatchDog.ElapsedMilliseconds}(ms)");
         }
-        
+
         /// <summary>
         /// 地圖修正
         /// </summary>
@@ -1816,7 +1804,7 @@ namespace ClientUI
             IMapCtrl.NewMap();
             Database.ObstaclePointsGM.Add(mObstaclePointsID, FactoryMode.Factory.ObstaclePoints());
             tsk_FixOriginScanningFile();
-            Database.LaserPointsGM.Remove(mLaserID);
+            Database.AGVGM[mAGVID]?.LaserPoints.DataList.Clear();
         }
 
         /// <summary>
@@ -1954,9 +1942,9 @@ namespace ClientUI
                     #endregion
 
 
-                    ILaserPoints points = ConvertToLaserPoints(addedSet);
-                    Database.LaserPointsGM.Add(mLaserID, points);
-                    Database.ObstaclePointsGM.SaftyEdit(mObstaclePointsID, (item) => item.DataList.AddRange(points.DataList.AsReadOnly()));
+                    List<IPair> points = ConvertToPairs(addedSet);
+                    Database.AGVGM[mAGVID]?.LaserPoints.DataList.Replace(points);
+                    Database.ObstaclePointsGM.SaftyEdit(mObstaclePointsID, (item) => item.DataList.AddRange(points));
                     //IMapCtrl.Focus((int)nowOdometry.x, (int)nowOdometry.y);
                     //Display added new points                     
                     //    RaiseMapEventSync(MapEventType.DrawScanMap, addedSet);
@@ -2155,10 +2143,11 @@ namespace ClientUI
         #endregion
 
         #region IMapGL事件連結
-        
+
         private void IMapCtrl_DragEvent(object sender, DragTowerPairEventArgs e)
         {
-            switch (e.DargTarget.GLSetting.Type) {
+            switch (e.DargTarget.GLSetting.Type)
+            {
                 case EType.Goal:
                     GoalSetting.AddGoal(e.ToCarTesianPosinfo());
                     break;
@@ -2230,16 +2219,20 @@ namespace ClientUI
             IEnumerable<CartesianPosInfo> goals = goal.Where(v => Database.GoalGM.ContainsID(v.id));
             IEnumerable<CartesianPosInfo> powers = goal.Where(v => Database.PowerGM.ContainsID(v.id));
             List<uint> ID = new List<uint>();
-            if (goals?.Any() ?? false) {
+            if (goals?.Any() ?? false)
+            {
                 IConsole.AddMsg($"Delete {goals.Count()}");
-                foreach(var item in goals) {
+                foreach (var item in goals)
+                {
                     Database.GoalGM.Remove(item.id);
                     ID.Add(item.id);
                     IConsole.AddMsg($"[Delete Goal] - {item.ToString()}");
                 }
             }
-            if (powers?.Any() ?? false) {
-                foreach(var item in powers) {
+            if (powers?.Any() ?? false)
+            {
+                foreach (var item in powers)
+                {
                     Database.PowerGM.Remove(item.id);
                     ID.Add(item.id);
                     IConsole.AddMsg($"[Delete Power - {item.ToString()}]");
@@ -2255,7 +2248,7 @@ namespace ClientUI
 
             IConsole.AddMsg("[Clear Power]");
             Database.PowerGM.Clear();
-            
+
             IGoalSetting.ClearGoal();
         }
 
@@ -2266,7 +2259,8 @@ namespace ClientUI
             Database.GoalGM.Add(goal.id, FactoryMode.Factory.Goal((int)goal.x, (int)goal.y, goal.theta, goal.name));
         }
 
-        private void IGoalSetting_AddNewPowerEvent(CartesianPosInfo power) {
+        private void IGoalSetting_AddNewPowerEvent(CartesianPosInfo power)
+        {
             IConsole.AddMsg("[Add Power] - {0}", power.ToString());
             IGoalSetting.AddPower(power);
             Database.PowerGM.Add(power.id, FactoryMode.Factory.Power((int)power.x, (int)power.y, power.theta, power.name));
