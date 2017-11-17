@@ -1273,8 +1273,6 @@ namespace ClientUI
             }
 
             IMapCtrl.NewMap();
-            Database.ObstacleLinesGM.Add(mObstacleLinesID, ConvertToObstacleLines(obstacleLine));
-            Database.ObstaclePointsGM.Add(mObstaclePointsID, FactoryMode.Factory.ObstaclePoints(ConvertToPairs(obstaclePoints)));
             System.Console.WriteLine($"Draw:{sw.ElapsedMilliseconds}ms");
             sw.Restart();
 
@@ -1309,7 +1307,6 @@ namespace ClientUI
         {
             CurOriPath = oriPath;
             IMapCtrl.NewMap();
-            Database.ObstaclePointsGM.Add(mObstaclePointsID, FactoryMode.Factory.ObstaclePoints());
             MapReading MapReading = null;
             if (!mBypassLoadFile)
             {//無BypassLoadFile
@@ -1330,7 +1327,7 @@ namespace ClientUI
                             Database.AGVGM.Add(mAGVID, FactoryMode.Factory.AGV((int)carPos.x, (int)carPos.y, carPos.theta, "AGV"));
                             List<IPair> points = ConvertToPairs(laserData);
                             Database.AGVGM[mAGVID]?.LaserAPoints.DataList.Replace(points);
-                            Database.ObstaclePointsGM.SaftyEdit(mObstaclePointsID, (item) => item.DataList.AddRange(points));
+                            Database.ObstaclePointsGM.DataList.AddRange(points);
                             IMapCtrl.Focus((int)carPos.x, (int)carPos.y);
                             Thread.Sleep(10);
                             System.Console.WriteLine(n);
@@ -1741,8 +1738,8 @@ namespace ClientUI
             CurMapPath = tmpPath[0] + ".map";
             MapSimplication mapSimp = new MapSimplication(CurMapPath);
             mapSimp.Reset();
-            IObstacleLines obstacleLines = FactoryMode.Factory.ObstacleLines();
-            IObstaclePoints obstaclePoints = FactoryMode.Factory.ObstaclePoints();
+            List<ILine> obstacleLines = new List<ILine>();
+            List<IPair> obstaclePoints = new List<IPair>();
             List<CartesianPos> resultPoints;
             List<MapSimplication.Line> resultlines;
             mapSimp.ReadMapAllTransferToLine(mMapMatch.parseMap, mMapMatch.minimumPos, mMapMatch.maximumPos
@@ -1751,18 +1748,18 @@ namespace ClientUI
             {
                 for (int i = 0; i < resultlines.Count; i++)
                 {
-                    obstacleLines.DataList.Add(
+                    obstacleLines.Add(
                          FactoryMode.Factory.Line(resultlines[i].startX, resultlines[i].startY,
                         resultlines[i].endX, resultlines[i].endY)
                     );
                 }
                 for (int i = 0; i < resultPoints.Count; i++)
                 {
-                    obstaclePoints.DataList.Add(FactoryMode.Factory.Pair((int)resultPoints[i].x, (int)resultPoints[i].y));
+                    obstaclePoints.Add(FactoryMode.Factory.Pair((int)resultPoints[i].x, (int)resultPoints[i].y));
                 }
 
-                Database.ObstaclePointsGM.Add(mObstaclePointsID, obstaclePoints);
-                Database.ObstacleLinesGM.Add(mObstacleLinesID, obstacleLines);
+                Database.ObstaclePointsGM.DataList.AddRange(obstaclePoints);
+                Database.ObstacleLinesGM.DataList.AddRange(obstacleLines);
             }
             catch (Exception ex)
             {
@@ -1783,8 +1780,8 @@ namespace ClientUI
             IGoalSetting.ClearGoal();
             Database.GoalGM.Clear();
             Database.PowerGM.Clear();
-            Database.ObstacleLinesGM.Clear();
-            Database.ObstaclePointsGM.Clear();
+            Database.ObstacleLinesGM.DataList.Clear();
+            Database.ObstaclePointsGM.DataList.Clear();
         }
 
         private void ITest_MotorServoOn(bool servoOn)
@@ -1802,7 +1799,6 @@ namespace ClientUI
         private void CorrectOri()
         {
             IMapCtrl.NewMap();
-            Database.ObstaclePointsGM.Add(mObstaclePointsID, FactoryMode.Factory.ObstaclePoints());
             tsk_FixOriginScanningFile();
             Database.AGVGM[mAGVID]?.LaserAPoints.DataList.Clear();
         }
@@ -1944,7 +1940,7 @@ namespace ClientUI
 
                     List<IPair> points = ConvertToPairs(addedSet);
                     Database.AGVGM[mAGVID]?.LaserAPoints.DataList.Replace(points);
-                    Database.ObstaclePointsGM.SaftyEdit(mObstaclePointsID, (item) => item.DataList.AddRange(points));
+                    Database.ObstaclePointsGM.DataList.AddRange(points);
                     //IMapCtrl.Focus((int)nowOdometry.x, (int)nowOdometry.y);
                     //Display added new points                     
                     //    RaiseMapEventSync(MapEventType.DrawScanMap, addedSet);
