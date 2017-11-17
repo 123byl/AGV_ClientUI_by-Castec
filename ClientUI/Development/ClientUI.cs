@@ -966,7 +966,7 @@ namespace ClientUI
                     pos = null;
                 }
             }
-            Database.AGVGM[mAGVID]?.LaserPoints.DataList.Replace(points);
+            Database.AGVGM[mAGVID]?.LaserAPoints.DataList.Replace(points);
         }
 
 
@@ -1329,7 +1329,7 @@ namespace ClientUI
                             MapReading.ReadScanningInfo(n, out carPos, out laserData);
                             Database.AGVGM.Add(mAGVID, FactoryMode.Factory.AGV((int)carPos.x, (int)carPos.y, carPos.theta, "AGV"));
                             List<IPair> points = ConvertToPairs(laserData);
-                            Database.AGVGM[mAGVID]?.LaserPoints.DataList.Replace(points);
+                            Database.AGVGM[mAGVID]?.LaserAPoints.DataList.Replace(points);
                             Database.ObstaclePointsGM.SaftyEdit(mObstaclePointsID, (item) => item.DataList.AddRange(points));
                             IMapCtrl.Focus((int)carPos.x, (int)carPos.y);
                             Thread.Sleep(10);
@@ -1374,7 +1374,7 @@ namespace ClientUI
                     {
                         case FileType.Ori:
                             await Task.Run(() => LoadOri(openMap.FileName));
-                            Database.AGVGM[mAGVID]?.LaserPoints.DataList.Clear();
+                            Database.AGVGM[mAGVID]?.LaserAPoints.DataList.Clear();
                             ITest.UnLockOriOperator(true);
                             //RaiseTestingEvent(TestingEventType.CurOriPath);
                             break;
@@ -1804,7 +1804,7 @@ namespace ClientUI
             IMapCtrl.NewMap();
             Database.ObstaclePointsGM.Add(mObstaclePointsID, FactoryMode.Factory.ObstaclePoints());
             tsk_FixOriginScanningFile();
-            Database.AGVGM[mAGVID]?.LaserPoints.DataList.Clear();
+            Database.AGVGM[mAGVID]?.LaserAPoints.DataList.Clear();
         }
 
         /// <summary>
@@ -1943,7 +1943,7 @@ namespace ClientUI
 
 
                     List<IPair> points = ConvertToPairs(addedSet);
-                    Database.AGVGM[mAGVID]?.LaserPoints.DataList.Replace(points);
+                    Database.AGVGM[mAGVID]?.LaserAPoints.DataList.Replace(points);
                     Database.ObstaclePointsGM.SaftyEdit(mObstaclePointsID, (item) => item.DataList.AddRange(points));
                     //IMapCtrl.Focus((int)nowOdometry.x, (int)nowOdometry.y);
                     //Display added new points                     
