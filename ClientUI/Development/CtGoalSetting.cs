@@ -7,6 +7,7 @@ using static ClientUI.Events.GoalSettingEvents;
 using MapProcessing;
 using CtLib.Library;
 using GLCore;
+using Geometry;
 
 namespace ClientUI
 {
@@ -105,6 +106,8 @@ namespace ClientUI
         /// </summary>
         public event DelFindPath FindPathEvent;
 
+        public event DelCharging Charging;
+
         /// <summary>
         /// 載入地圖
         /// </summary>
@@ -153,6 +156,10 @@ namespace ClientUI
             lock (mKey)
             {
                 int index = FindIndexByID(goal.id);
+                if (!cmbGoalList.Items.Contains(goal.name)) {
+                    cmbGoalList.InvokeIfNecessary(() => cmbGoalList.Items.Add(goal.name));
+                }
+
                 if (index == -1)
                 {
                     dgvGoalPoint.InvokeIfNecessary(
@@ -218,6 +225,18 @@ namespace ClientUI
             lock (mKey)
             {
                 dgvGoalPoint.InvokeIfNecessary(() => dgvGoalPoint.Rows.Clear());
+                cmbGoalList.InvokeIfNecessary(() => cmbGoalList.Items.Clear());
+            }
+        }
+
+        /// <summary>
+        /// 重新載入標示物
+        /// </summary>
+        public void ReloadSingle() {
+            lock(mKey){
+                ClearGoal();                
+                Database.GoalGM.SaftyForLoop(LoadSingle);
+                Database.PowerGM.SaftyForLoop(LoadSingle);
             }
         }
         
@@ -292,9 +311,9 @@ namespace ClientUI
                 {
                     id = (uint)dgvGoalPoint[IDColumn, row].Value;
                     name = (string)dgvGoalPoint[NameColumn, row].Value;
-                    x = (int)dgvGoalPoint[XColumn, row].Value;
-                    y = (int)dgvGoalPoint[YColumn, row].Value;
-                    toward = (double)dgvGoalPoint[TowardColumn, row].Value;
+                    x = Convert.ToInt32(dgvGoalPoint[XColumn, row].Value);
+                    y = Convert.ToInt32(dgvGoalPoint[YColumn, row].Value);
+                    toward = Convert.ToDouble(dgvGoalPoint[TowardColumn, row].Value);
                 });
                 return new CartesianPosInfo(x, y, toward, name, id);
             }
@@ -316,11 +335,11 @@ namespace ClientUI
                     dgvGoalPoint.InvokeIfNecessary(() =>
                     {
                         string type = dgvGoalPoint[TowardColumn, row].Value.GetType().Name;
-                        id = (uint)dgvGoalPoint[IDColumn, row].Value;
+                        id = Convert.ToUInt32(dgvGoalPoint[IDColumn, row].Value);
                         name = (string)dgvGoalPoint[NameColumn, row].Value;
-                        x = (double)dgvGoalPoint[XColumn, row].Value;
-                        y = (double)dgvGoalPoint[YColumn, row].Value;
-                        toward = double.Parse(dgvGoalPoint[TowardColumn, row].Value.ToString());
+                        x = Convert.ToDouble(dgvGoalPoint[XColumn, row].Value);
+                        y = Convert.ToDouble(dgvGoalPoint[YColumn, row].Value);
+                        toward = Convert.ToDouble(dgvGoalPoint[TowardColumn, row].Value.ToString());
                     });
                     if (id != 0) list.Add(new CartesianPosInfo(x, y, toward, name, id));
                 }
@@ -348,9 +367,9 @@ namespace ClientUI
                         {
                             id = (uint)dgvGoalPoint[IDColumn, row].Value;
                             name = (string)dgvGoalPoint[NameColumn, row].Value;
-                            x = (double)dgvGoalPoint[XColumn, row].Value;
-                            y = (double)dgvGoalPoint[YColumn, row].Value;
-                            toward = double.Parse((string)dgvGoalPoint[TowardColumn, row].Value);
+                            x = Convert.ToDouble(dgvGoalPoint[XColumn, row].Value);
+                            y = Convert.ToDouble(dgvGoalPoint[YColumn, row].Value);
+                            toward = Convert.ToDouble(dgvGoalPoint[TowardColumn, row].Value);
                         }
                     });
                     if (id != 0) list.Add(new CartesianPosInfo(x, y, toward, name, id));
@@ -367,6 +386,8 @@ namespace ClientUI
         /// 取得所有Goal點名稱
         /// </summary>
         public event DelGetGoalNames GetGoalNames;
+
+        public event Events.TestingEvents.DelClearMap ClearMap;
 
         #endregion IIGoalSetting
 
@@ -407,9 +428,13 @@ namespace ClientUI
 
         private void btnPath_Click(object sender, EventArgs e)
         {
-
             CartesianPosInfo goal = GetGoalByIndex(cmbGoalList.SelectedIndex);
-            if (goal.id != 0) FindPathEvent?.Invoke(goal, cmbGoalList.SelectedIndex);
+            if (goal != null) {
+                int index = Database.GoalGM.IndexOf(goal.id);
+                if (index >= 0) {
+                    FindPathEvent?.Invoke(goal, index);
+                }
+            }
         }
 
         private void btnSendMap_Click(object sender, EventArgs e)
@@ -419,12 +444,16 @@ namespace ClientUI
 
         private void btnGoGoal_Click(object sender, EventArgs e)
         {
-            CartesianPosInfo goal = null;
             lock (mKey)
             {
-                goal = GetGoalByIndex(cmbGoalList.SelectedIndex);
+                CartesianPosInfo goal = GetGoalByIndex(cmbGoalList.SelectedIndex);
+                if (goal != null) {
+                    int index = Database.GoalGM.IndexOf(goal.id);
+                    if (index >= 0) {
+                        RunGoalEvent?.Invoke(goal, index);
+                    }
+                }
             }
-            if (goal.id != 0) RunGoalEvent?.Invoke(goal, cmbGoalList.SelectedIndex);
         }
         private void btnRunAll_Click(object sender, EventArgs e)
         {
@@ -480,5 +509,47 @@ namespace ClientUI
             CartesianPosInfo power = new CartesianPosInfo(x, y, toward, "Power" + id, id);
             AddNewPowerEvent?.Invoke(power);
         }
+
+        private void btnCharging_Click(object sender, EventArgs e) {
+            CartesianPosInfo power = GetGoalByIndex(cmbGoalList.SelectedIndex);
+            if (power != null) {
+                int index = Database.PowerGM.IndexOf(power.id);
+                if (index >= 0) {
+                    Charging?.Invoke(power, index);
+                }
+            }
+        }
+
+        private void btnClear_Click(object sender, EventArgs e) {
+            ClearMap?.Invoke();
+        }
+
+        /// <summary>
+        /// 載入標示物
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="uid"></param>
+        /// <param name="goal"></param>
+        private void LoadSingle<T>(uint uid, ISingle<T> goal) where T : ITowardPair {
+            int index = FindIndexByID(uid);
+            if (!cmbGoalList.Items.Contains(goal.Name)) {
+                cmbGoalList.InvokeIfNecessary(() => cmbGoalList.Items.Add(goal.Name));
+            }
+
+            if (index == -1) {
+                dgvGoalPoint.InvokeIfNecessary(
+                    () => dgvGoalPoint.Rows.Add(new object[] { new CheckBox().Checked = false, uid, goal.Name, goal.Data.Position.X, goal.Data.Position.Y, goal.Data.Toward.Theta.ToString("F2") }));
+            } else {
+                dgvGoalPoint.InvokeIfNecessary(
+                    () => {
+                        if ((uint)dgvGoalPoint[IDColumn, index].Value != uid) dgvGoalPoint[IDColumn, index].Value = uid;
+                        if ((string)dgvGoalPoint[NameColumn, index].Value != goal.Name) dgvGoalPoint[NameColumn, index].Value = goal.Name;
+                        if ((double)dgvGoalPoint[XColumn, index].Value != goal.Data.Position.X) dgvGoalPoint[XColumn, index].Value = goal.Data.Position.X;
+                        if ((double)dgvGoalPoint[YColumn, index].Value != goal.Data.Position.X) dgvGoalPoint[YColumn, index].Value = goal.Data.Position.Y;
+                        if ((string)dgvGoalPoint[TowardColumn, index].Value != goal.Data.Toward.Theta.ToString("F2")) dgvGoalPoint[TowardColumn, index].Value = goal.Data.Toward.Theta.ToString("F2");
+                    });
+            }
+        }
+
     }
 }

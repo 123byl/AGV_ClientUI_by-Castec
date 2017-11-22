@@ -13,6 +13,9 @@ using CtLib.Library;
 using MapProcessing;
 using static MapProcessing.MapSimplication;
 using GLUI;
+using GLCore;
+using Geometry;
+using static FactoryMode;
 
 namespace ClientUI
 {
@@ -54,6 +57,39 @@ namespace ClientUI
                 e.DargTarget.Name,
                 e.ID
             );
+        }
+
+        public static void SetPosition(this CartesianPos pos, IAGV agv) {
+            pos.x = agv.Data.Position.X;
+            pos.y = agv.Data.Position.Y;
+            pos.theta = agv.Data.Toward.Theta * Math.PI / 180;
+        }
+
+        public static IEnumerable<IPair> ToIPair(this IEnumerable<CartesianPos> data) {
+            return data.Select(v => FactoryMode.Factory.Pair(v.x,v.y));
+        }
+
+        public static void SetLocation(this IAGV agv,CartesianPos location) {
+            agv.Data.Position.X = (int)location.x;
+            agv.Data.Position.Y = (int)location.y;
+            agv.Data.Toward.Theta = location.theta;
+        }
+
+        public static CartesianPos ToCartesianPos(this IPair pair) {
+            return new CartesianPos(pair.X, pair.Y);
+        }
+
+        public static MapLine ToMapLine(this ILine line) {
+            return new MapLine(line.Begin.X, line.Begin.Y, line.End.X, line.End.Y);
+        }
+
+        public static CartesianPosInfo CartesianPosInfo(this IFactory factory,uint uid,ISingle<ITowardPair> single) {
+            return new CartesianPosInfo(
+                single.Data.Position.X,
+                single.Data.Position.Y,
+                single.Data.Toward.Theta,
+                single.Name,
+                uid);
         }
 
     }
@@ -2248,115 +2284,115 @@ namespace ClientUI
 
     #region Support Class
 
-    /// <summary>
-    /// Socket監測參數包
-    /// </summary>
-    public class SocketMonitor {
+    ///// <summary>
+    ///// Socket監測參數包
+    ///// </summary>
+    //public class SocketMonitor {
 
-        #region Declaration - Fileds
+    //    #region Declaration - Fileds
 
-        /// <summary>
-        /// 執行緒物件
-        /// </summary>
-        public Thread Thread = null;
+    //    /// <summary>
+    //    /// 執行緒物件
+    //    /// </summary>
+    //    public Thread Thread = null;
 
-        #endregion Declaration - Fields
+    //    #endregion Declaration - Fields
 
-        #region Declaration - Porperties
+    //    #region Declaration - Porperties
 
-        /// <summary>
-        /// 要監測的Socket物件
-        /// </summary>
-        public Socket Socket { get; private set; }
+    //    /// <summary>
+    //    /// 要監測的Socket物件
+    //    /// </summary>
+    //    public Socket Socket { get; private set; }
 
-        /// <summary>
-        /// 取消旗標
-        /// </summary>
-        public bool IsCancel { get; private set; }
+    //    /// <summary>
+    //    /// 取消旗標
+    //    /// </summary>
+    //    public bool IsCancel { get; private set; }
 
-        /// <summary>
-        /// 執行緒方法
-        /// </summary>
-        public Action<object> Task { get; private set; }
+    //    /// <summary>
+    //    /// 執行緒方法
+    //    /// </summary>
+    //    public Action<object> Task { get; private set; }
 
-        /// <summary>
-        /// 通訊埠號
-        /// </summary>
-        public int Port { get; private set; }
+    //    /// <summary>
+    //    /// 通訊埠號
+    //    /// </summary>
+    //    public int Port { get; private set; }
 
-        #endregion Declaration - Properties
+    //    #endregion Declaration - Properties
 
-        #region Function - Constructors
+    //    #region Function - Constructors
 
-        /// <summary>
-        /// 不開放空白建置
-        /// </summary>
-        private SocketMonitor() { }
+    //    /// <summary>
+    //    /// 不開放空白建置
+    //    /// </summary>
+    //    private SocketMonitor() { }
 
-        /// <summary>
-        /// 共用建構方法
-        /// </summary>
-        /// <param name="socket">要監測的Socket物件</param>
-        /// <param name="port">通訊埠號</param>
-        /// <param name="task">執行緒方法</param>
-        /// <param name="cancel">取消旗標預設狀態</param>
-        private SocketMonitor(Socket socket, int port, Action<object> task, bool cancel) {
-            this.Socket = socket;
-            this.Port = port;
-            this.Task = task;
-            this.IsCancel = cancel;
+    //    /// <summary>
+    //    /// 共用建構方法
+    //    /// </summary>
+    //    /// <param name="socket">要監測的Socket物件</param>
+    //    /// <param name="port">通訊埠號</param>
+    //    /// <param name="task">執行緒方法</param>
+    //    /// <param name="cancel">取消旗標預設狀態</param>
+    //    private SocketMonitor(Socket socket, int port, Action<object> task, bool cancel) {
+    //        this.Socket = socket;
+    //        this.Port = port;
+    //        this.Task = task;
+    //        this.IsCancel = cancel;
 
 
-        }
+    //    }
 
-        /// <summary>
-        /// 一般建構方法
-        /// </summary>
-        /// <param name="socket">要監測的Socket物件</param>
-        /// <param name="thread">執行緒物件</param>
-        /// <param name="task">執行緒方法</param>
-        public SocketMonitor(int port, Action<object> task) : this(
-            new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp),
-            port,
-            task,
-            false
-            ) {
-        }
+    //    /// <summary>
+    //    /// 一般建構方法
+    //    /// </summary>
+    //    /// <param name="socket">要監測的Socket物件</param>
+    //    /// <param name="thread">執行緒物件</param>
+    //    /// <param name="task">執行緒方法</param>
+    //    public SocketMonitor(int port, Action<object> task) : this(
+    //        new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp),
+    //        port,
+    //        task,
+    //        false
+    //        ) {
+    //    }
 
-        #endregion Function - Construcotrs
+    //    #endregion Function - Construcotrs
 
-        #region Function - Public Methods
+    //    #region Function - Public Methods
 
-        /// <summary>
-        /// 開始監聽
-        /// </summary>
-        /// <returns></returns>
-        public SocketMonitor Listen() {
-            if (this.Socket != null) {
-                IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, Port);
-                this.Socket.Bind(endPoint);
-                this.Socket.Listen(10);
-                return this;
-            } else {
-                return null;
-            }
-        }
+    //    /// <summary>
+    //    /// 開始監聽
+    //    /// </summary>
+    //    /// <returns></returns>
+    //    public SocketMonitor Listen() {
+    //        if (this.Socket != null) {
+    //            IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, Port);
+    //            this.Socket.Bind(endPoint);
+    //            this.Socket.Listen(10);
+    //            return this;
+    //        } else {
+    //            return null;
+    //        }
+    //    }
 
-        /// <summary>
-        /// 開始接收資料
-        /// </summary>
-        /// <returns>開始接收的<see cref="SocketMonitor"/>實例回傳</returns>
-        public void Start() {
-            if (Thread?.IsAlive ?? false) {
-                this.IsCancel = true;
-                CtThread.KillThread(ref Thread);
-            }
-            CtThread.CreateThread(ref Thread, "mTdClient: ", Task);
-            Thread?.Start(this);
-        }
+    //    /// <summary>
+    //    /// 開始接收資料
+    //    /// </summary>
+    //    /// <returns>開始接收的<see cref="SocketMonitor"/>實例回傳</returns>
+    //    public void Start() {
+    //        if (Thread?.IsAlive ?? false) {
+    //            this.IsCancel = true;
+    //            CtThread.KillThread(ref Thread);
+    //        }
+    //        CtThread.CreateThread(ref Thread, "mTdClient: ", Task);
+    //        Thread?.Start(this);
+    //    }
 
-        #endregion Function - Public Methods
-    }
+    //    #endregion Function - Public Methods
+    //}
 
     //public class ClientSocket {
 

@@ -100,6 +100,7 @@
             this.btnScan.TabIndex = 61;
             this.btnScan.Text = "Scan";
             this.btnScan.UseVisualStyleBackColor = true;
+            this.btnScan.Click += new System.EventHandler(this.btnScan_Click);
             // 
             // btnCursorMode
             // 
@@ -168,6 +169,7 @@
             this.btnSetCar.TabIndex = 48;
             this.btnSetCar.Text = "Set Car";
             this.btnSetCar.UseVisualStyleBackColor = true;
+            this.btnSetCar.Click += new System.EventHandler(this.btnSetCar_Click);
             // 
             // btnSimplyOri
             // 

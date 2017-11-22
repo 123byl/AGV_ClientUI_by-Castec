@@ -102,6 +102,10 @@ namespace ClientUI
         /// </summary>
         event DelGetGoalNames GetGoalNames;
 
+        event DelCharging Charging;
+
+        event DelClearMap ClearMap;
+
         /// <summary>
         /// 當下車子的位置
         /// </summary>
@@ -177,6 +181,11 @@ namespace ClientUI
         /// 設定表單選擇項目
         /// </summary>
         void SetSelectItem(uint id);
+
+        /// <summary>
+        /// 重新載入標示物
+        /// </summary>
+        void ReloadSingle();
     }
 
     public interface IITesting
@@ -213,6 +222,10 @@ namespace ClientUI
 
         event DelClearMap ClearMap;
 
+        event DelSettingCarPos SettingCarPos;
+
+        event DelCarPosConfirm CarPosConfirm;
+
         void ChangedMotorStt(bool servoOn);
 
         void SetLaserStt(bool isGettingLaser);
@@ -220,6 +233,7 @@ namespace ClientUI
         void SetServerStt(bool isConnect);
 
         void UnLockOriOperator(bool v);
+
     }
 
     /// <summary>
@@ -273,6 +287,13 @@ namespace ClientUI
             /// 尋找路徑
             /// </summary>
             public delegate void DelFindPath(CartesianPosInfo goal, int idxGoal);
+
+            /// <summary>
+            /// 充電
+            /// </summary>
+            /// <param name="goal"></param>
+            /// <param name="idxGoal"></param>
+            public delegate void DelCharging(CartesianPosInfo goal, int idxGoal);
 
             /// <summary>
             /// 載入地圖
@@ -349,6 +370,10 @@ namespace ClientUI
             public delegate void DelSimplifyOri();
 
             public delegate void DelClearMap();
+
+            public delegate void DelSettingCarPos();
+
+            public delegate void DelCarPosConfirm();
         }
     }
 }

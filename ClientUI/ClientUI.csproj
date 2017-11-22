@@ -466,6 +466,10 @@
       <Project>{68c119fe-7cf4-4828-8745-d9558acd7fab}</Project>
       <Name>AGVMath</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Command\Command.csproj">
+      <Project>{1CABEB43-7C54-4BE5-A828-08D65AA7593F}</Project>
+      <Name>Command</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CtLib\CtLib\CtLib.csproj">
       <Project>{a9bed8b3-2f9d-42a8-90bd-9fae0522eb09}</Project>
       <Name>CtLib</Name>

@@ -424,6 +424,14 @@ namespace CommandCore {
         /// <param name="oriName">掃描的ori檔名</param>
         void SetScanName(string oriName);
 
+        /// <summary>
+        /// 設定AGV當前座標
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="theta"></param>
+        void SetPosition(int x,int y,double theta);
+
     }
 
     /// <summary>
@@ -834,6 +842,10 @@ namespace CommandCore {
         /// <param name="mapName"></param>
         public void OrderMap(string mapName) {
             SendMsg(MCmd.Set,SCmd.MapName,mapName);
+        }
+
+        public void SetPosition(int x, int y, double theta) {
+            throw new NotImplementedException();
         }
 
         #endregion Set
@@ -2978,6 +2990,9 @@ namespace CommandCore {
             if (Thread?.IsAlive ?? false) {
                 this.IsCancel = true;
                 CtThread.KillThread(ref Thread);
+            }
+            if (Socket == null) {
+                Listen();
             }
             CtThread.CreateThread(ref Thread, "mTdClient: ", Task);
             Thread?.Start(this);

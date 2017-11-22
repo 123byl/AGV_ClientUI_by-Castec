@@ -42,6 +42,8 @@ namespace ClientUI
         public event Events.TestingEvents.DelConnect Connect;
         public event Events.TestingEvents.DelMotorServoOn MotorServoOn;
         public event Events.TestingEvents.DelClearMap ClearMap;
+        public event Events.TestingEvents.DelSettingCarPos SettingCarPos;
+        public event Events.TestingEvents.DelCarPosConfirm CarPosConfirm;
 
         private void btnConnect_Click(object sender, EventArgs e) {
             if (btnConnect.Tag == null || (btnConnect.Tag is bool && !(bool)btnConnect.Tag)) {
@@ -243,10 +245,29 @@ namespace ClientUI
         }
 
         private void btnPosConfirm_Click(object sender, EventArgs e) {
-
+            CarPosConfirm?.Invoke();
         }
 
+        private void btnSetCar_Click(object sender, EventArgs e) {
+            SettingCarPos?.Invoke();
+        }
 
+        private void btnScan_Click(object sender, EventArgs e) {
+            bool isSacn = btnScan.Tag is bool ? ((bool)btnScan.Tag) : false;
+            if (!isSacn) {
+                btnScan.InvokeIfNecessary(() => {
+                    btnScan.Tag = true;
+                    btnScan.Text = "Stop scan";
+                });
+                SetCarMode?.Invoke(CarMode.Map);
+            } else {
+                btnScan.InvokeIfNecessary(() => {
+                    btnScan.Tag = true;
+                    btnScan.Text = "Scan";
+                });
+                SetCarMode?.Invoke(CarMode.Idle);
+            }
+        }
     }
 
     /// <summary>

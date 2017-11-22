@@ -29,6 +29,7 @@ using System.Text.RegularExpressions;
 using Geometry;
 using GLCore;
 using GLUI;
+using CommandCore;
 
 namespace ClientUI
 {
@@ -70,13 +71,17 @@ namespace ClientUI
         ///         \ 加入Power點相關操作
         ///         \ 補上ClearMap功能
         ///         \ Map檔格式修改
+        ///     0.0.6   Jay [2017/11/22]
+        ///         \ 地圖匹配功能修正
+        ///         \ 路徑規劃、跑點功能修正
+        ///         \ 加入Charging功能
+        ///         \ Map讀檔方法重構
         /// </remarks>
         public CtVersion Version { get { return new CtVersion(0, 0, 5, "2017/11/08", "Jay Chang"); } }
 
         #endregion Version - Information
 
         #region Declaration - Fields
-
 
         /// <summary>
         /// 當前Map檔路徑
@@ -102,7 +107,7 @@ namespace ClientUI
         /// <summary>
         /// 發送圖片的埠
         /// </summary>
-        //private static int mFilePort = 600;
+        private static int mFilePort = 600;
 
         /// <summary>
         /// 接收請求的埠開啟後就一直進行偵聽
@@ -122,7 +127,7 @@ namespace ClientUI
         /// <summary>
         /// 路徑規劃接收埠
         /// </summary>
-        //private static int mRecvPathPort = 900;
+        private static int mRecvPathPort = 900;
 
         /// <summary>
         /// 地圖檔儲存路徑
@@ -235,6 +240,10 @@ namespace ClientUI
         protected string mNotifyCaption = "AGV Client";
         private List<CartesianPosInfo> Goals;
 
+        private bool mIsSetting = false;
+
+        private IPair mNewPos = null;
+        
         #endregion Declaration - Fields
 
         #region Declaration - Properties
@@ -417,6 +426,14 @@ namespace ClientUI
 
             /*-- 車子資訊接收 --*/
             mSoxMonitorCmd = new SocketMonitor(mCmdPort, tsk_RecvCmd).Listen();
+
+            mSoxMonitorFile = new SocketMonitor(mFilePort, RecvFiles).Listen();
+
+            mSoxMonitorPath = new SocketMonitor(mRecvPathPort, tsk_RecvPath).Listen();
+            
+            if (!Database.AGVGM.ContainsID(mAGVID)) {
+                Database.AGVGM.Add(mAGVID, FactoryMode.Factory.AGV(0, 0, 0, "AGV"));
+            }
         }
 
         #endregion Function - Constructors
@@ -670,25 +687,157 @@ namespace ClientUI
         #endregion Function - Public Methdos
 
         #region Function - Private Methods
+        
+        /// <summary>
+        /// 清空Map
+        /// </summary>
+        private void NewMap() {
+            /*-- 保留AGV資料 --*/
+            var agv = Database.AGVGM[mAGVID];
+            /*-- 清除資料 --*/
+            IMapCtrl.NewMap();
+            /*-- 將AGV寫回DataBase --*/
+            Database.AGVGM.Add(mAGVID, agv);
+            /*-- 清除雷射 --*/
+            Database.AGVGM[mAGVID].LaserAPoints.DataList.Clear();
+            /*-- 清除路徑 --*/
+            Database.AGVGM[mAGVID].Path.DataList.Clear();
+        }
+
+        /// <summary>
+        /// 檔案接收執行緒 20170911
+        /// </summary>
+        /// <param name="obj"></param>
+        private void RecvFiles(object obj) {
+
+            int fileNameLen = 0;
+            int recieve_data_size = 0;
+            int first = 1;
+            int receivedBytesLen = 0;
+            double cal_size = 0;
+            SocketMonitor soxMonitor = obj as SocketMonitor;
+            Socket clientSock = null;
+            BinaryWriter bWrite = null;
+            //MemoryStream ms = null;
+            string curMsg = "Stopped";
+            string fileName = "";
+            try {
+                if (!mBypassSocket) {
+                    clientSock = serverComm.ClientAccept(soxMonitor.Socket);
+                    curMsg = "Running and waiting to receive file.";
+
+                    //Socket clientSock = sRecvFile.Accept();
+                    //clientSock.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, 5000);//設置接收資料超時
+                    //clientSock.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.SendTimeout, 5000);//設置發送資料超時
+                    //clientSock.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.SendBuffer, 1024); //設置發送緩衝區大小 1K
+                    /* When request comes from client that accept it and return 
+                    new socket object for handle that client. */
+                    byte[] clientData = new byte[1024 * 10000];
+                    do {
+                        receivedBytesLen = clientSock.Receive(clientData);
+                        curMsg = "Receiving data...";
+                        if (first == 1) {
+                            fileNameLen = BitConverter.ToInt32(clientData, 0);
+                            /* I've sent byte array data from client in that format like 
+                            [file name length in byte][file name] [file data], so need to know 
+                            first how long the file name is. */
+                            fileName = Encoding.ASCII.GetString(clientData, 4, fileNameLen);
+                            /* Read file name */
+                            if (!Directory.Exists(mDefMapDir)) {
+                                Directory.CreateDirectory(mDefMapDir);
+                            }
+                            if (File.Exists(mDefMapDir + "/" + fileName)) {
+                                File.Delete(mDefMapDir + "/" + fileName);
+                            }
+                            bWrite = new BinaryWriter(File.Open(mDefMapDir + "/" + fileName, FileMode.OpenOrCreate));
+                            /* Make a Binary stream writer to saving the receiving data from client. */
+                            // ms = new MemoryStream();
+                            bWrite.Write(clientData, 4 + fileNameLen, receivedBytesLen - 4 - fileNameLen);
+                            //ms.Write(clientData, 4 + fileNameLen, receivedBytesLen - 4 -
+                            //fileNameLen);
+                            //寫入資料 ，呈現於BITMAP用  
+                            /* Read remain data (which is file content) and 
+                            save it by using binary writer. */
+                            curMsg = "Saving file...";
+                            /* Close binary writer and client socket */
+                            curMsg = "Received & Saved file; Server Stopped.";
+                        } else //第二筆接收為資料  
+                          {
+                            //-----------  
+                            fileName = Encoding.ASCII.GetString(clientData, 0,
+                            receivedBytesLen);
+                            //-----------  
+                            bWrite.Write(clientData/*, 4 + fileNameLen, receivedBytesLen - 4 -
+                                  fileNameLen*/, 0, receivedBytesLen);
+                            //每筆接收起始 0 結束為當次Receive長度  
+                            //ms.Write(clientData, 0, receivedBytesLen);
+                            //寫入資料 ，呈現於BITMAP用  
+                        }
+                        recieve_data_size += receivedBytesLen;
+                        //計算資料每筆資料長度並累加，後面可以輸出總值看是否有完整接收  
+                        cal_size = recieve_data_size;
+                        cal_size /= 1024;
+                        cal_size = Math.Round(cal_size, 2);
+
+                        first++;
+                        SpinWait.SpinUntil(() => false, 10); //每次接收不能太快，否則會資料遺失  
+
+                    } while (clientSock.Available != 0);
+                    clientData = null;
+                } else {
+                    SpinWait.SpinUntil(() => false, 1000);
+                    fileName = "FileName";
+                }
+
+
+            } catch (SocketException se) {
+                System.Console.WriteLine("SocketException : {0}", se.ToString());
+                MessageBox.Show("檔案傳輸失敗!");
+                curMsg = "File Receiving error.";
+            } catch (Exception ex) {
+                System.Console.WriteLine("[RecvFiles]" + ex.ToString());
+                curMsg = "File Receiving error.";
+            } finally {
+                bWrite?.Close();
+                clientSock?.Shutdown(SocketShutdown.Both);
+                clientSock?.Close();
+                clientSock = null;
+                //RaiseTestingEvent(TestingEventType.GetFile);
+            }
+        }
+
+        private void SetPosition(int x, int y, double theta) {
+            Database.AGVGM[mAGVID].Data.Position.X = x;
+            Database.AGVGM[mAGVID].Data.Position.Y = y;
+            Database.AGVGM[mAGVID].Data.Toward.Theta = theta;
+            mCarInfo.x = x;
+            mCarInfo.y = y;
+            mCarInfo.theta = theta;
+         
+            SendMsg($"Set:POS:{x:F0}:{y:F0}:{theta}");
+        }
 
         /// <summary>
         /// 車子資訊接收執行緒
         /// </summary>
         public void tsk_RecvCmd(object obj)
         {
+
+            System.Console.WriteLine("Start");
             SocketMonitor soxMonitor = obj as SocketMonitor;
             Socket sRecvCmdTemp = null;
             sRecvCmdTemp = serverComm.ClientAccept(soxMonitor.Socket);
+            string strRecvCmd;
+            System.Console.WriteLine("IsAccept");
             try
             {
                 while (IsGettingLaser)
                 {
-
-                    SpinWait.SpinUntil(() => false, 1);//每個執行緒內部的閉環裡面都要加個「短時間」睡眠，使得執行緒佔用資源得到及時釋放
+                    //SpinWait.SpinUntil(() => false, 1);//每個執行緒內部的閉環裡面都要加個「短時間」睡眠，使得執行緒佔用資源得到及時釋放
                                                        //Thread.Sleep(1);
                     byte[] recvBytes = new byte[1024 * 500];//開啟一個緩衝區，存儲接收到的資訊
                     sRecvCmdTemp.Receive(recvBytes); //將讀得的內容放在recvBytes中
-                    string strRecvCmd = Encoding.Default.GetString(recvBytes);//
+                    strRecvCmd = Encoding.Default.GetString(recvBytes);//
                                                                               //程式運行到這個地方，已經能接收到遠端發過來的命令了
                     strRecvCmd = strRecvCmd.Split(new char[] { '\0' })[0];
                     //Console.WriteLine("[Server] : " + strRecvCmd);
@@ -699,11 +848,19 @@ namespace ClientUI
 
                     string[] strArray = strRecvCmd.Split(':');
                     recvBytes = null;
-                    if (CarInfo.TryParse(strRecvCmd, out mCarInfo))
+
+                    System.Console.WriteLine("Decoder");
+                    if (CarInfo.TryParse(strRecvCmd, ref mCarInfo))
                     {
-                        tsprgBattery.Value = mCarInfo.PowerPercent;
-                        tslbBattery.Text = string.Format(tslbBattery.Tag.ToString(), mCarInfo.PowerPercent);
-                        tslbStatus.Text = mCarInfo.Status;
+
+                        System.Console.WriteLine("Display");
+                        this.InvokeIfNecessary(() => {
+                            tsprgBattery.Value = mCarInfo.PowerPercent;
+                            tslbBattery.Text = string.Format(tslbBattery.Tag.ToString(), mCarInfo.PowerPercent);
+                            tslbStatus.Text = mCarInfo.Status;
+                        });
+                        System.Console.WriteLine("Draw");
+                        Database.AGVGM[mAGVID].SetLocation(mCarInfo);
                         DrawLaser(mCarInfo);
                         sRecvCmdTemp.Send(Encoding.UTF8.GetBytes("Get:Car:True:True"));
                     }
@@ -715,6 +872,8 @@ namespace ClientUI
                     strRecvCmd = null;
                     strArray = null;
                 }
+
+                Thread.Sleep(1);
             }
             catch (SocketException se)
             {
@@ -732,7 +891,55 @@ namespace ClientUI
                 sRecvCmdTemp = null;
             }
         }
+        
+        /// <summary>
+        /// 路徑接收執行緒
+        /// </summary>
+        protected void tsk_RecvPath(object obj) {
+            SocketMonitor soxMonitor = obj as SocketMonitor;
+            //Socket sRecvCmdTemp = sRecvCmd.Accept();//Accept 以同步方式從偵聽通訊端的連接請求佇列中提取第一個掛起的連接請求，然後創建並返回新的 Socket
+            Socket sRecvCmdTemp = soxMonitor.Accept();
+            //sRecvCmdTemp.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, 5000);//設置接收資料超時
+            //sRecvCmdTemp.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.SendTimeout, 5000);//設置發送資料超時
+            //sRecvCmdTemp.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.SendBuffer, 1024); //設置發送緩衝區大小 1K
+            //sRecvCmdTemp.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveBuffer, 9000);//設置接收緩衝區大小1K
 
+            try {
+                sRecvCmdTemp.Send(Encoding.UTF8.GetBytes("Path:Require"));
+                byte[] recvBytes = new byte[1024 * 500];//開啟一個緩衝區，存儲接收到的資訊
+                sRecvCmdTemp.Receive(recvBytes); //將讀得的內容放在recvBytes中
+                string strRecvCmd = Encoding.Default.GetString(recvBytes);
+                //程式運行到這個地方，已經能接收到遠端發過來的命令了
+                //Console.WriteLine("[Server] : " + strRecvCmd);
+                //*************
+                //解碼命令，並執行相應的操作----如下面的發送本機圖片
+                //*************
+                strRecvCmd = strRecvCmd.Split(new char[] { '\0' })[0];
+
+                string[] strArray = strRecvCmd.Split(':');
+                recvBytes = null;
+                if (strArray[0] == "Path" && !string.IsNullOrEmpty(strArray[1])) {
+                    DrawPath(Encoder(strArray[1]));
+                }
+                //else
+                //    sRecvCmdTemp.Send(Encoding.UTF8.GetBytes("Path:False"));
+
+                strRecvCmd = null;
+                strArray = null;
+                sRecvCmdTemp.Close();
+
+            } catch (SocketException se) {
+                System.Console.WriteLine("[Status Recv] : " + se.ToString());
+                //MessageBox.Show("目標拒絕連線");
+            } catch (Exception ex) {
+                System.Console.Write(ex.Message);
+                //throw ex;
+            } finally {
+                sRecvCmdTemp.Close();
+                sRecvCmdTemp = null;
+            }
+        }
+        
         ///<summary>IP驗證</summary>
         ///<param name="ip">要驗證的字串</param>
         ///<returns>True:合法IP/False:非法IP</returns>
@@ -780,7 +987,11 @@ namespace ClientUI
         /// <returns><see cref="Socket"/>連線狀態 True:已連線/False:已斷開</returns>
         public bool DisConnectServer()
         {
-            return serverComm.DisconnectServer(mSoxCmd);
+            if (mBypassSocket) {
+                return false;
+            }else {
+                return serverComm.DisconnectServer(mSoxCmd);
+            }
         }
 
         /// <summary>
@@ -910,18 +1121,19 @@ namespace ClientUI
                     mSoxMonitorCmd.Start();
 
                     /*-- 向Server端要求車子資料 --*/
-                    string[] rtnMsg = SendMsg("Get:Car:True");
+                    string[] rtnMsg = SendMsg("Get:Car:True:True");
                     IsGettingLaser = mBypassSocket || (rtnMsg.Count() > 2 && "True" == rtnMsg[2]);
 
                     /*-- 車子未發送資料則關閉Socket --*/
                     if (!IsGettingLaser)
                     {
-                        mSoxMonitorCmd.Socket.Shutdown(SocketShutdown.Both);
-                        mSoxMonitorCmd.Socket.Close();
+                        Database.AGVGM[mAGVID].LaserAPoints.DataList.Clear();
+                        mSoxMonitorCmd.Stop();
                     }
                 }
-                else
-                {
+                else {
+                    Database.AGVGM[mAGVID].LaserAPoints.DataList.Clear();
+                    mSoxMonitorCmd.Stop();
                     SendMsg("Get:Car:False");
                 }
                 ITest.SetLaserStt(IsGettingLaser);
@@ -950,25 +1162,34 @@ namespace ClientUI
         }
 
         /// <summary>
-        /// 取得雷射
+        /// 繪製雷射
         /// </summary>
         private void DrawLaser(CarInfo info)
         {
             double angle = 0D, Laserangle = 0D;
             List<IPair> points = new List<IPair>();
             int idx = 0;
+
+            
             foreach (int dist in info.LaserData)
             {
                 if (dist >= 30 && dist < 15000)
                 {
-                    int[] pos = Transformation.LaserPoleToCartesian(dist, -135, 0.25, idx++, 43, 416.75, 43, info.x, info.y, info.theta, out angle, out Laserangle);//, out dataAngle, out laserAngle);
+                    int[] pos = Transformation.LaserPoleToCartesian(dist, -135, 0.25, idx++, 43, 416.75, 43, info.x,info.y,info.theta, out angle, out Laserangle);//, out dataAngle, out laserAngle);
                     points.Add(FactoryMode.Factory.Pair(pos[0], pos[1]));
                     pos = null;
                 }
             }
             Database.AGVGM[mAGVID]?.LaserAPoints.DataList.Replace(points);
         }
-
+        
+        /// <summary>
+        /// 繪製路徑路徑
+        /// </summary>
+        /// <param name="points"></param>
+        private void DrawPath(List<CartesianPos> points) {
+            Database.AGVGM[mAGVID].Path.DataList.Replace(points.ToIPair());
+        }
 
         /// <summary>
         /// 移動控制
@@ -1011,8 +1232,7 @@ namespace ClientUI
                 }
             }
         }
-
-
+        
         /// <summary>
         /// 向Server端要求檔案
         /// </summary>
@@ -1069,8 +1289,7 @@ namespace ClientUI
             //RaiseAgvClientEvent(AgvClientEventType.GetFile, type);
 
         }
-
-
+        
         /// <summary>
         /// 前往目標Goal點
         /// </summary>
@@ -1099,6 +1318,16 @@ namespace ClientUI
                 rtnMsg[1] == "PathPlan" &&
                 rtnMsg[2] == "True")
             {
+                mSoxMonitorPath.Start();
+            }
+        }
+
+        private void Charging(int numGoal) {
+            /*-- 若是路徑資料則開始接收資料 --*/
+            string[] rtnMsg = SendMsg($"Set:Charging:{numGoal}");
+            if ((rtnMsg?.Count() ?? 0) > 3 &&
+                rtnMsg[1] == "PathPlan" &&
+                rtnMsg[2] == "True") {
                 mSoxMonitorPath.Start();
             }
         }
@@ -1204,7 +1433,7 @@ namespace ClientUI
             }
             return pairs;
         }
-
+        
         /// <summary>
         /// 載入地圖
         /// </summary>
@@ -1221,83 +1450,115 @@ namespace ClientUI
             Stopwatch sw = new Stopwatch();
             CtProgress prog = null;
             int nowProg = 0;
-            if (mBypassLoadFile)
-            {
+            if (mBypassLoadFile) {
                 /*-- 空跑1秒模擬載入Map檔 --*/
                 SpinWait.SpinUntil(() => false, 1000);
-            }
-            else
-            {
-                #region - Retrive information from .map file -
+            } else {
+                //#region - Retrive information from .map file -
                 sw.Start();
-                CartesianPos min = null, max = null;
-                using (MapReading read = new MapReading(mCurMapPath))
-                {
-                    read.OpenFile();
-                    read.ReadMapBoundary(out min, out max);
-                    read.ReadMapGoalList(out goalList);
-                    read.ReadMapPowerList(out powerList);
-                    read.ReadMapObstacleLines(out obstacleLine);
-                    read.ReadMapObstaclePoints(out obstaclePoints);
-                }
-                int total = obstacleLine.Count + 2;
-                if (min != null && max != null)
-                {
-                    IMapCtrl.Focus((int)(min.x + max.x) / 2, (int)(min.y + max.y) / 2);
-                }
-                prog = new CtProgress(ProgBarStyle.Percent, "Load Map", $"Loading {mapPath}", total);
-                System.Console.WriteLine($"Read:{sw.ElapsedMilliseconds}ms");
-                sw.Restart();
+                /*-- 地圖清空 --*/
+                NewMap();
 
-                Goals = goalList;
+                /*-- 載入Map並取得Map中心點 --*/
+                IPair center = Database.LoadMapToDatabase(mCurMapPath).Center();
 
+                /*-- 移動畫面至Map中心點 --*/
+                IMapCtrl.Focus(center);
+
+                /*-- 重置地圖匹配器的地圖資料 --*/
                 mMapMatch.Reset();
 
-                foreach (var line in obstacleLine)
-                {
-                    mMapMatch.AddLine(line);
-                    prog.UpdateStep(nowProg++);
-                }
+                /*-- 將障礙點寫入地圖匹配器 --*/
+                Database.ObstaclePointsGM.DataList.SaftyForLoop(point => {
+                    mMapMatch.AddPoint(point.ToCartesianPos());
+                });
 
-                System.Console.WriteLine($"Read Line:{sw.ElapsedMilliseconds}ms");
-                sw.Restart();
+                /*-- 將障礙線寫入地圖匹配器 --*/
+                Database.ObstacleLinesGM.DataList.SaftyForLoop(line => {
+                    mMapMatch.AddLine(line.ToMapLine());
+                });
 
-                mMapMatch.AddPoint(obstaclePoints);
-
-                prog.UpdateStep(nowProg++);
-
-                System.Console.WriteLine($"Read Point:{sw.ElapsedMilliseconds}ms");
-                sw.Restart();
-
-                #endregion
+                IGoalSetting.ReloadSingle();
             }
+            //    CartesianPos min = null, max = null;
+            //    using (MapReading read = new MapReading(mCurMapPath))
+            //    {
+            //        read.OpenFile();
+            //        read.ReadMapBoundary(out min, out max);
+            //        read.ReadMapGoalList(out goalList);
+            //        read.ReadMapPowerList(out powerList);
+            //        read.ReadMapObstacleLines(out obstacleLine);
+            //        read.ReadMapObstaclePoints(out obstaclePoints);
+            //    }
+            //    int total = obstacleLine.Count + 2;
+            //    if (min != null && max != null)
+            //    {
+                    
+            //        IMapCtrl.Focus((int)(min.x + max.x) / 2, (int)(min.y + max.y) / 2);
+            //    }
+            //    prog = new CtProgress(ProgBarStyle.Percent, "Load Map", $"Loading {mapPath}", total);
+            //    System.Console.WriteLine($"Read:{sw.ElapsedMilliseconds}ms");
+            //    sw.Restart();
+                
+            //    mMapMatch.Reset();
 
-            IMapCtrl.NewMap();
-            System.Console.WriteLine($"Draw:{sw.ElapsedMilliseconds}ms");
-            sw.Restart();
+            //    //Database.ObstacleLinesGM.DataList.SaftyForLoop(line => {
+            //    //    mMapMatch.AddLine(line.ToMapLine());
+            //    //    prog.UpdateStep(nowProg++);
+            //    //});
+            //    foreach (var line in obstacleLine) {
+            //        mMapMatch.AddLine(line);
+            //        prog.UpdateStep(nowProg++);
+            //    }
 
-            for (int i = 0; i < goalList.Count; i++)
-            {
-                Database.GoalGM.Add(goalList[i].id, FactoryMode.Factory.Goal((int)goalList[i].x, (int)goalList[i].y, goalList[i].theta, goalList[i].name));
-            }
+            //    System.Console.WriteLine($"Read Line:{sw.ElapsedMilliseconds}ms");
+            //    sw.Restart();
 
-            foreach (CartesianPosInfo power in powerList)
-            {
-                Database.PowerGM.Add(power.id, FactoryMode.Factory.Power((int)power.x, (int)power.y, power.theta, power.name));
-            }
-            prog.UpdateStep(nowProg++);
+            //    //Database.ObstaclePointsGM.DataList.SaftyForLoop(point => {
+            //    //    mMapMatch.AddPoint(point.ToCartesianPos());
+            //    //});
+            //    mMapMatch.AddPoint(obstaclePoints);
 
-            System.Console.WriteLine($"GoalList:{sw.ElapsedMilliseconds}ms");
-            sw.Restart();
+            //    prog.UpdateStep(nowProg++);
 
-            prog.Close();
-            prog = null;
-            GoalSetting.LoadGoals(goalList);
+            //    System.Console.WriteLine($"Read Point:{sw.ElapsedMilliseconds}ms");
+            //    sw.Restart();
 
-            goalList = null;
-            obstaclePoints = null;
-            obstacleLine = null;
+            //    #endregion
+            //}
+
+            //NewMap();
+            //System.Console.WriteLine($"Draw:{sw.ElapsedMilliseconds}ms");
+            //sw.Restart();
+
+            //for (int i = 0; i < goalList.Count; i++)
+            //{
+            //    Database.GoalGM.Add(goalList[i].id, FactoryMode.Factory.Goal((int)goalList[i].x, (int)goalList[i].y, goalList[i].theta, goalList[i].name));
+            //}
+
+            //foreach (CartesianPosInfo power in powerList)
+            //{
+            //    Database.PowerGM.Add(power.id, FactoryMode.Factory.Power((int)power.x, (int)power.y, power.theta, power.name));
+            //}
+
+            //List<IPair> points = ConvertToPairs(obstaclePoints);
+            //Database.ObstaclePointsGM.DataList.AddRange(points);
+
+            //prog.UpdateStep(nowProg++);
+
+            //System.Console.WriteLine($"GoalList:{sw.ElapsedMilliseconds}ms");
+            //sw.Restart();
+
+            //prog.Close();
+            //prog = null;
+            //goalList.AddRange(powerList);
+            //GoalSetting.LoadGoals(goalList);
+
+            //goalList = null;
+            //obstaclePoints = null;
+            //obstacleLine = null;
         }
+
         /// <summary>
         /// 載入Ori檔
         /// </summary>
@@ -1306,7 +1567,7 @@ namespace ClientUI
         private void LoadOri(string oriPath)
         {
             CurOriPath = oriPath;
-            IMapCtrl.NewMap();
+            NewMap();
             MapReading MapReading = null;
             if (!mBypassLoadFile)
             {//無BypassLoadFile
@@ -1324,7 +1585,7 @@ namespace ClientUI
                         for (int n = 0; n < dataLength; n++)
                         {
                             MapReading.ReadScanningInfo(n, out carPos, out laserData);
-                            Database.AGVGM.Add(mAGVID, FactoryMode.Factory.AGV((int)carPos.x, (int)carPos.y, carPos.theta, "AGV"));
+                            Database.AGVGM[mAGVID].SetLocation(carPos);
                             List<IPair> points = ConvertToPairs(laserData);
                             Database.AGVGM[mAGVID]?.LaserAPoints.DataList.Replace(points);
                             Database.ObstaclePointsGM.DataList.AddRange(points);
@@ -1376,7 +1637,10 @@ namespace ClientUI
                             //RaiseTestingEvent(TestingEventType.CurOriPath);
                             break;
                         case FileType.Map:
-                            await Task.Run(() => LoadMap(openMap.FileName));
+                            await Task.Run(() => {
+                                //Database.LoadMapToDatabase(openMap.FileName);
+                                LoadMap(openMap.FileName);
+                            });
                             break;
                         default:
                             throw new ArgumentException($"無法載入未定義的檔案類型{type}");
@@ -1596,7 +1860,7 @@ namespace ClientUI
                 CtInvoke.ToolStripItemEnable(item, visible);
             }
         }
-
+        
         /// <summary>
         /// 車子資訊更新事件
         /// </summary>
@@ -1663,6 +1927,28 @@ namespace ClientUI
             tslbUserName.Text = usrName;
         }
 
+        private List<CartesianPos> Encoder(string pack) {
+            string[] pathArray = pack.Trim().Split(new char[] { Separator.Data }, StringSplitOptions.RemoveEmptyEntries);
+            List<CartesianPos> rtnPoints = null;
+            int len = pathArray?.Count() ?? 0;
+            if (len != 0 && len % 2 == 0) {
+                rtnPoints = new List<CartesianPos>();
+                double x, y;
+                for (int i = 0; i < pathArray.Count() - 1; i += 2) {
+                    string strX = pathArray[i];
+                    string strY = pathArray[i + 1];
+                    if (double.TryParse(pathArray[i], out x) && double.TryParse(pathArray[i + 1], out y)) {
+                        rtnPoints.Add(new CartesianPos(x, y));
+                    } else {
+                        rtnPoints.Clear();
+                        rtnPoints = null;
+                        break;
+                    }
+                }
+            }
+            return rtnPoints;
+        }
+        
         #endregion Function - Private Methods
 
         /// <summary>
@@ -1683,6 +1969,8 @@ namespace ClientUI
             IGoalSetting.SaveGoalEvent += IGoalSetting_SaveGoalEvent;
             IGoalSetting.SendMapToAGVEvent += IGoalSetting_SendMapToAGVEvent;
             IGoalSetting.GetGoalNames += IGoalSetting_GetGoalNames;
+            IGoalSetting.Charging += IGoalSetting_Charging;
+            IGoalSetting.ClearMap += ITest_ClearMap;
             #endregion
 
             #region IMapGL 事件連結
@@ -1707,13 +1995,32 @@ namespace ClientUI
             ITest.MotorServoOn += ITest_MotorServoOn;
             ITest.SimplifyOri += ITest_SimplifyOri;
             ITest.ClearMap += ITest_ClearMap;
+            ITest.SettingCarPos += ITest_SettingCarPos;
+            ITest.CarPosConfirm += ITest_CarPosConfirm;
             #endregion 
         }
 
-
         private void IMapCtrl_GLClickEvent(object sender, GLMouseEventArgs e)
         {
-            IGoalSetting.SetCurrentRealPos(new CartesianPos(e.Position.X, e.Position.Y));
+            if (mIsSetting) {
+                if (Database.AGVGM.ContainsID(mAGVID)) {
+                    if (mNewPos == null) {
+                        mNewPos = e.Position;
+                    } else {
+                        double Calx = e.Position.X - mNewPos.X;
+                        double Caly = e.Position.Y - mNewPos.Y;
+                        double Calt = Math.Atan2(Caly, Calx) * 180 / Math.PI;
+                        Database.AGVGM[mAGVID].Data.Position = mNewPos;
+                        Database.AGVGM[mAGVID].Data.Toward.Theta = Calt;
+                        //Send POS to AGV   
+                        SetPosition(mNewPos.X, mNewPos.Y, Calt);
+                        mNewPos = null;
+                        mIsSetting = false;
+                    }
+                }
+            }else {
+                IGoalSetting.SetCurrentRealPos(new CartesianPos(e.Position.X, e.Position.Y));
+            }
         }
 
         /// <summary>
@@ -1733,7 +2040,7 @@ namespace ClientUI
                 SpinWait.SpinUntil(() => false, 1000);
                 return;
             }
-            IMapCtrl.NewMap();
+            NewMap();
             string[] tmpPath = CurOriPath.Split('.');
             CurMapPath = tmpPath[0] + ".map";
             MapSimplication mapSimp = new MapSimplication(CurMapPath);
@@ -1774,6 +2081,65 @@ namespace ClientUI
         }
 
         #region ITest 事件連結
+        
+        private void ITest_CarPosConfirm() {
+            if (mBypassSocket) {
+                /*-- 空跑模擬CarPosConfirm --*/
+                SpinWait.SpinUntil(() => false, 1000);
+                return;
+            }
+            List<CartesianPos> matchSet = new List<CartesianPos>();
+            List<CartesianPos> modelSet = new List<CartesianPos>();
+            CartesianPos nowOdometry = new CartesianPos();
+            CartesianPos transResult = new CartesianPos();
+            List<Point> scanPoint = new List<Point>();
+            double angle;
+            double Laserangle;
+            double gValue = 0;
+            double similarity = 0;
+            int[] obstaclePos = new int[2];
+            //mAGV.GetPosition(out posX, out posY, out posT);
+            int idx = 0;
+            foreach (int dist in mCarInfo.LaserData) {
+                obstaclePos = Transformation.LaserPoleToCartesian(dist, -135, 0.25, idx++, 43, 416.75, 43, mCarInfo.x, mCarInfo.y, mCarInfo.theta, out angle, out Laserangle);//, out dataAngle, out laserAngle);
+
+                matchSet.Add(new CartesianPos(obstaclePos[0], obstaclePos[1]));
+                obstaclePos = null;
+            }
+            nowOdometry.SetPosition(mCarInfo.x, mCarInfo.y, mCarInfo.theta * Math.PI / 180);
+            gValue = mMapMatch.FindClosetMatching(matchSet, 4, 1.5, 0.01, 50, 2000, false, transResult, out modelSet);
+            //Correct accumulate error this time
+            mMapMatch.NewPosTransformation(nowOdometry, transResult.x, transResult.y, transResult.theta);
+            mMapMatch.NewPosTransformation(matchSet, transResult.x, transResult.y, transResult.theta);
+            double[] Position = new double[3] { nowOdometry.x, nowOdometry.y, nowOdometry.theta * 180 / Math.PI };
+
+            //Display car position
+            //MapUI1.PosCar = new Pos(nowOdometry.x, nowOdometry.y, nowOdometry.theta);
+            //SetPosition(nowOdometry.x, nowOdometry.y, nowOdometry.theta);
+            //Display current scanning information
+            //MapUI1.RemoveGroupPoint("LaserLength");
+            scanPoint.Clear();
+            for (int m = 0; m < matchSet.Count; m++) {
+                scanPoint.Add(new Point((int)matchSet[m].x, (int)matchSet[m].y));
+            }
+            //MapUI1.DrawPoints(scanPoint, Color.Red, "LaserLength", 1);
+            //MapUI1.PosCar = new Pos(Position[0], Position[1], Position[2]);
+
+
+            similarity = mMapMatch.SimilarityEvalute(modelSet, matchSet);
+            //if (similarity > 0.85) {
+            SetPosition((int)Position[0], (int)Position[1], Position[2]);
+            //}
+            Database.AGVGM[mAGVID].LaserAPoints.DataList.Replace(matchSet.ToIPair());
+            //Dictionary<string, object> dic = new Dictionary<string, object>();
+            //dic.Add(matchSet, VarDef.ScanPoint);
+            //dic.Add(mCarInfo.ToPos(), VarDef.PosCar);
+            //RaiseMapEvent(MapEventType.CarPosConfirm, dic);
+        }
+
+        private void ITest_SettingCarPos() {
+            mIsSetting = true;
+        }
 
         private void ITest_ClearMap()
         {
@@ -1798,7 +2164,7 @@ namespace ClientUI
         /// </summary>
         private void CorrectOri()
         {
-            IMapCtrl.NewMap();
+            NewMap();
             tsk_FixOriginScanningFile();
             Database.AGVGM[mAGVID]?.LaserAPoints.DataList.Clear();
         }
@@ -1843,7 +2209,7 @@ namespace ClientUI
                 #region  1.Read car position and first laser scanning
 
                 MapReading.ReadScanningInfo(0, out carPos, out laserData);
-                Database.AGVGM.Add(mAGVID, FactoryMode.Factory.AGV((int)carPos.x, (int)carPos.y, carPos.theta, "AGV"));
+                Database.AGVGM[mAGVID].SetLocation(carPos);
                 //mCarInfo.SetPos(carPos);
                 //RaiseMapEventSync(MapEventType.RefreshPosCar, carPos.ToPos());
                 matchSet.AddRange(laserData);
@@ -1932,7 +2298,7 @@ namespace ClientUI
                     //Update previous variable
                     preOdometry.SetPosition(nowOdometry.x, nowOdometry.y, nowOdometry.theta);
 
-                    Database.AGVGM.Add(mAGVID, FactoryMode.Factory.AGV((int)nowOdometry.x, (int)nowOdometry.y, nowOdometry.theta, "AGV"));
+                    Database.AGVGM[mAGVID].SetLocation(nowOdometry);
                     //mCarInfo.SetPos(nowOdometry);
 
                     #endregion
@@ -2134,8 +2500,7 @@ namespace ClientUI
             MotionContorl(direction, Velocity);
             if (CarMode != CarMode.Map) CarMode = CarMode.Work;
         }
-
-
+        
         #endregion
 
         #region IMapGL事件連結
@@ -2156,18 +2521,52 @@ namespace ClientUI
         #endregion IMapGL 事件連結
 
         #region IGoalSetting 事件連結   
-        private void IGoalSetting_SendMapToAGVEvent()
+
+        private void IGoalSetting_Charging(CartesianPosInfo goal, int idxPower) {
+            IConsole.AddMsg($"Charging to idx{idxPower} {goal.ToString()}");
+            Charging(idxPower);
+        }
+
+        private async void IGoalSetting_SendMapToAGVEvent()
         {
-            IConsole.AddMsg("[Map Update...]");
-            IConsole.AddMsg("[Map Finished Update]");
+            OpenFileDialog openMap = new OpenFileDialog();
+            openMap.InitialDirectory = mDefMapDir;
+            openMap.Filter = "MAP|*.ori;*.map";
+            if (openMap.ShowDialog() == DialogResult.OK) {
+                IConsole.AddMsg("[Map Update...]");
+                CtProgress prog = new CtProgress("Send Map", "The file are being transferred");
+                try {
+                    string fileName = CtFile.GetFileName(openMap.FileName);
+                    string extension = Path.GetExtension(fileName).ToLower().Replace(".", "");
+                    string[] rtnMsg = SendMsg($"Send:{extension}");
+                    if (rtnMsg.Count() > 2 && "True" == rtnMsg[2]) {
+
+                        await Task.Run(() => {
+                            if (!mBypassSocket) {
+                                SendFile(mHostIP, mSendMapPort, fileName);
+                            } else {
+                                /*-- 空跑模擬檔案傳送中 --*/
+                                SpinWait.SpinUntil(() => false, 1000);
+                            }
+                            //RaiseAgvClientEvent(AgvClientEventType.SendFile, fileName);
+                            IConsole.AddMsg("[Map Finished Update]");
+                        });
+                    }
+                } finally {
+                    prog?.Close();
+                    prog = null;
+                }
+            }
         }
 
         private void IGoalSetting_SaveGoalEvent()
         {
             IConsole.AddMsg("[Save {0} Goals]", IGoalSetting.GoalCount);
             List<CartesianPosInfo> points = IGoalSetting.GetGoals();
-            IEnumerable<CartesianPosInfo> goals = points.Where(v => Database.GoalGM.ContainsID(v.id));
-            IEnumerable<CartesianPosInfo> powers = points.Where(v => Database.PowerGM.ContainsID(v.id));
+            List<CartesianPosInfo> goals = new List<CartesianPosInfo>();
+            List<CartesianPosInfo> powers = new List<CartesianPosInfo>();
+            Database.GoalGM.SaftyForLoop((uid, goal) => goals.Add(FactoryMode.Factory.CartesianPosInfo(uid, goal)));
+            Database.PowerGM.SaftyForLoop((uid, power) => powers.Add(FactoryMode.Factory.CartesianPosInfo(uid, power)));
             MapRecording.OverWriteGoal(goals, CurMapPath);
             MapRecording.OverWritePower(powers, CurMapPath);
         }
@@ -2185,8 +2584,8 @@ namespace ClientUI
 
         private void IGoalSetting_RunGoalEvent(CartesianPosInfo goal, int idxGoal)
         {
+            IConsole.AddMsg("[AGV Start Moving...  idx{0} {1}]",idxGoal,goal.ToString());
             Run(idxGoal);
-            IConsole.AddMsg("[AGV Start Moving...]");
             IConsole.AddMsg("[AGV Arrived] - {0}", goal.ToString());
         }
 
@@ -2205,7 +2604,7 @@ namespace ClientUI
 
         private void IGoalSetting_FindPathEvent(CartesianPosInfo goal, int idxGoal)
         {
-            IConsole.AddMsg("[Find Path] - ", goal.ToString());
+            IConsole.AddMsg("[Find Path] - idx{0} {1}",idxGoal, goal.ToString());
             IConsole.AddMsg("[AGV Find A Path]");
             PathPlan(idxGoal);
         }

@@ -11,6 +11,7 @@ using GLCore;
 
 namespace MapProcessing
 {
+    
     public class MapRecording
     {
 
@@ -92,19 +93,17 @@ namespace MapProcessing
         {
             if (!File.Exists(filePath)) return false;
             List<string> info = File.ReadAllLines(filePath).ToList();
-            int startIndex = info.IndexOf("GoalList");
-            int endIndex = info.IndexOf("Obstacle Lines");
-            if (startIndex != -1)
-            {
+            int startIndex = info.IndexOf("Goal List");
+            if (startIndex != -1){
+                int endIndex = FindIndex(info,startIndex+1, "Obstacle Lines");
                 info.RemoveRange(startIndex, endIndex - startIndex);
-                endIndex = info.IndexOf("Obstacle Lines");
             }
-            if (goalList != null && goalList.Count() > 0)
-            {
+            if (goalList != null && goalList.Count() > 0){
+                int insertIdx = info.IndexOf("Obstacle Lines");
                 foreach(CartesianPosInfo goal in goalList.Reverse()) {
-                    info.Insert(endIndex, goal.ToString());
+                    info.Insert(insertIdx, goal.ToString());
                 }
-                info.Insert(endIndex, "GoalList");
+                info.Insert(insertIdx, "Goal List");
             }
             File.WriteAllLines(filePath, info);
             info = null;
@@ -117,28 +116,32 @@ namespace MapProcessing
         public static bool OverWritePower(IEnumerable<CartesianPosInfo> powerList, string filePath) {
             if (!File.Exists(filePath)) return false;
             List<string> info = File.ReadAllLines(filePath).ToList();
-            int startIndex = info.IndexOf("PowerList");
-            string endStr = "GoalList";
-            int endIndex = info.IndexOf(endStr);
-
-            if (endIndex == -1) {//取得資料插入點
-                endStr = "Obstacle Lines";
-                endIndex = info.IndexOf(endStr);
-            }
-            if (startIndex != -1) {//清除原有Power紀錄                
+            int startIndex = info.IndexOf("Power List");
+            if (startIndex != -1) {//清除原有Power紀錄        
+                int endIndex = FindIndex(info, startIndex + 1, "Goal List", "Obstacle Lines");
                 info.RemoveRange(startIndex, endIndex - startIndex);
-                endIndex = info.IndexOf(endStr);//更新資料插入點
             }
 
             if ( powerList != null && powerList.Count() > 0) {
-                foreach(CartesianPosInfo power in powerList.Reverse()) {
-                    info.Insert(endIndex, power.ToString());
+                int insertIdx = info.IndexOf("Obstacle Lines");
+                foreach (CartesianPosInfo power in powerList.Reverse()) {
+                    info.Insert(insertIdx, power.ToString());
                 }
-                info.Insert(endIndex, "PowerList");
+                info.Insert(insertIdx, "Power List");
             }
             File.WriteAllLines(filePath, info);
             info = null;
             return true;
+        }
+
+        private static int FindIndex(List<string> data, int startIdx, params string[] titles) {
+            int idx = 0;
+            foreach (string title in titles) {
+                if ((idx = data.IndexOf(title,startIdx)) >= startIdx) {
+                    return idx;
+                }
+            }
+            return data.Count();
         }
 
         #endregion
@@ -293,13 +296,15 @@ namespace MapProcessing
             goalList = new List<CartesianPosInfo>();
 
             if (!FileIsExist()) return false;
-            int startIndex = data.IndexOf("GoalList");
+            int startIndex = data.IndexOf("Goal List");
             if (startIndex == -1)
                 return false;
             else
                 startIndex++;
 
             int endIndex = data.IndexOf("Obstacle Lines");
+            if (endIndex < 0) endIndex = data.Count;
+
             for (int i = startIndex; i < endIndex; i++)
             {
                 string[] split = data[i].Split(splitChar);
@@ -324,14 +329,16 @@ namespace MapProcessing
             powerList = new List<CartesianPosInfo>();
 
             if (!FileIsExist()) return false;
-            int startIndex = data.IndexOf("PowerList");
+            int startIndex = data.IndexOf("Power List");
             if (startIndex == -1)
                 return false;
             else
                 startIndex++;
 
-            int endIndex = data.IndexOf("GoalList");
-            if (endIndex == -1) endIndex = data.IndexOf("Obstacle Lines");
+            
+            int endIndex = data.IndexOf("Goal List");
+            if (endIndex < 0) endIndex = data.Count;
+
             for (int i = startIndex; i < endIndex; i++) {
                 string[] split = data[i].Split(splitChar);
                 CartesianPosInfo goal = null;
@@ -362,7 +369,10 @@ namespace MapProcessing
             if (!FileIsExist()) return false;
 
             int startIndex = data.IndexOf("Obstacle Lines") + 1;
+
             int endIndex = data.IndexOf("Obstacle Points");
+            if (endIndex < 0) endIndex = data.Count;
+
             for (int i = startIndex; i < endIndex; i++)
             {
                 string[] split = data[i].Split(splitChar);
@@ -384,7 +394,9 @@ namespace MapProcessing
             obstaclePoint = new List<CartesianPos>();
             if (!FileIsExist()) return false;
             int startIndex = data.IndexOf("Obstacle Points") + 1;
-            int endIndex = data.Count - 1;
+            
+            int  endIndex = data.Count;
+            
             for (int i = startIndex; i < endIndex; i++)
             {
                 string[] split = data[i].Split(splitChar);

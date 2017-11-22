@@ -51,6 +51,8 @@
             this.btnCurrPos = new System.Windows.Forms.Button();
             this.btnGetGoalList = new System.Windows.Forms.Button();
             this.btnAddNewPower = new System.Windows.Forms.Button();
+            this.btnClear = new System.Windows.Forms.Button();
+            this.btnCharging = new System.Windows.Forms.Button();
             this.grbMap.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvGoalPoint)).BeginInit();
             this.SuspendLayout();
@@ -373,12 +375,39 @@
             this.btnAddNewPower.UseVisualStyleBackColor = true;
             this.btnAddNewPower.Click += new System.EventHandler(this.btnAddNewPower_Click);
             // 
+            // btnClear
+            // 
+            this.btnClear.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.btnClear.Location = new System.Drawing.Point(565, 712);
+            this.btnClear.Margin = new System.Windows.Forms.Padding(4);
+            this.btnClear.Name = "btnClear";
+            this.btnClear.Size = new System.Drawing.Size(160, 62);
+            this.btnClear.TabIndex = 66;
+            this.btnClear.Text = "Clear Map";
+            this.btnClear.UseVisualStyleBackColor = true;
+            this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
+            // 
+            // btnCharging
+            // 
+            this.btnCharging.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.btnCharging.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnCharging.Location = new System.Drawing.Point(397, 712);
+            this.btnCharging.Margin = new System.Windows.Forms.Padding(4);
+            this.btnCharging.Name = "btnCharging";
+            this.btnCharging.Size = new System.Drawing.Size(160, 62);
+            this.btnCharging.TabIndex = 67;
+            this.btnCharging.Text = "Charging";
+            this.btnCharging.UseVisualStyleBackColor = true;
+            this.btnCharging.Click += new System.EventHandler(this.btnCharging_Click);
+            // 
             // CtGoalSetting
             // 
             this.AutoHidePortion = 206D;
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(752, 726);
+            this.ClientSize = new System.Drawing.Size(752, 776);
+            this.Controls.Add(this.btnCharging);
+            this.Controls.Add(this.btnClear);
             this.Controls.Add(this.btnAddNewPower);
             this.Controls.Add(this.btnGetGoalList);
             this.Controls.Add(this.grbMap);
@@ -441,5 +470,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn cToward;
         private System.Windows.Forms.Button btnGetGoalList;
         private System.Windows.Forms.Button btnAddNewPower;
+        private System.Windows.Forms.Button btnClear;
+        private System.Windows.Forms.Button btnCharging;
     }
 }
