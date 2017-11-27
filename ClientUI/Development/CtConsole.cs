@@ -16,14 +16,22 @@ using static ClientUI.Events.ConsoleEvents;
 
 namespace ClientUI
 {
-
-
+    
     /// <summary>
     /// Console介面
     /// </summary>
     public partial class CtConsole : CtDockContent, IIConsole
     {
+
+        #region Declaration - Fields
+        
+        /// <summary>
+        /// 執行緒鎖
+        /// </summary>
         private readonly object mKey = new object();
+
+        #endregion Declaration - Fields
+
         #region Funciton - Constructors
 
         /// <summary>
@@ -39,6 +47,7 @@ namespace ClientUI
         #endregion Function - Constructors
 
         #region IIConsole
+        
         /// <summary>
         /// 文字已被加入
         /// </summary>

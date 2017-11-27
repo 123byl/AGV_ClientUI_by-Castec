@@ -142,6 +142,9 @@ namespace ClientUI
 
     #region Declaration - Const
 
+    /// <summary>
+    /// 雷射參數
+    /// </summary>
     public struct LaserParam {
         public const double AngleBase = -135;
         public const double Resolution = 0.25;

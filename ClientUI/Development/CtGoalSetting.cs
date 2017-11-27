@@ -16,14 +16,24 @@ namespace ClientUI
     /// </summary>
     public partial class CtGoalSetting : CtDockContent, IIGoalSetting
     {
-        public const int IDColumn = 1;
-        public const int NameColumn = 2;
-        public const int SelectColumn = 0;
-        public const int TowardColumn = 5;
-        public const int XColumn = 3;
-        public const int YColumn = 4;
+
+        #region Declaration - Fields
+
         private readonly object mKey = new object();
 
+        #endregion Declaration - Fiedls
+
+        #region Declaration - Const
+
+        private const int IDColumn = 1;
+        private const int NameColumn = 2;
+        private const int SelectColumn = 0;
+        private const int TowardColumn = 5;
+        private const int XColumn = 3;
+        private const int YColumn = 4;
+
+        #endregion Declaration - Const
+        
         #region Funciton - Construcotrs
 
         /// <summary>
@@ -40,30 +50,9 @@ namespace ClientUI
         }
 
         #endregion Funciton - Construcotrs
-        /// <summary>
-        /// 設定表單選擇項目
-        /// </summary>
-        public void SetSelectItem(uint id)
-        {
-            lock (mKey)
-            {
-                dgvGoalPoint.InvokeIfNecessary(() =>
-                {
-                    for (int row = 0; row < dgvGoalPoint.RowCount; row++)
-                    {
-                        if ((uint)dgvGoalPoint[IDColumn, row].Value == id)
-                        {
-                            dgvGoalPoint.Rows[row].Selected = true;
-                        }
-                        else
-                        {
-                            dgvGoalPoint.Rows[row].Selected = false;
-                        }
-                    }
-                });
-            }
-        }
-        #region IIGoalSetting
+        
+        #region Implement - IIGoalSetting
+
         /// <summary>
         /// 設定真實座標
         /// </summary>
@@ -397,8 +386,7 @@ namespace ClientUI
         {
             GetGoalNames.Invoke();
         }
-
-
+        
         private void btnCurrPos_Click(object sender, EventArgs e)
         {
             uint id = Database.ID.GenerateID();
@@ -455,6 +443,7 @@ namespace ClientUI
                 }
             }
         }
+
         private void btnRunAll_Click(object sender, EventArgs e)
         {
             List<CartesianPosInfo> goal = new List<CartesianPosInfo>();
@@ -464,6 +453,7 @@ namespace ClientUI
             }
             if (goal.Count != 0) RunLoopEvent?.Invoke(goal);
         }
+
         private void btnDelete_Click(object sender, EventArgs e)
         {
             List<CartesianPosInfo> goal = new List<CartesianPosInfo>();
@@ -473,6 +463,7 @@ namespace ClientUI
             }
             if (goal.Count != 0) DeleteGoalsEvent?.Invoke(goal);
         }
+
         private void btnDeleteAll_Click(object sender, EventArgs e)
         {
             ClearGoalsEvent?.Invoke();
@@ -482,24 +473,6 @@ namespace ClientUI
         {
             SaveGoalEvent?.Invoke();
         }
-
-        /// <summary>
-        /// 地圖載入
-        /// </summary>
-        /// <param name="goals"></param>
-        public void LoadGoals(List<CartesianPosInfo> goals)
-        {
-            lock (mKey)
-            {
-                ClearGoal();
-                foreach (var item in goals)
-                {
-                    AddGoal(item);
-                }
-            }
-        }
-
-        #endregion UI Event
 
         private void btnAddNewPower_Click(object sender, EventArgs e) {
             uint id = Database.ID.GenerateID();
@@ -550,6 +523,29 @@ namespace ClientUI
                     });
             }
         }
+
+        #endregion UI Event
+
+        #region Functin - Public Methods
+
+        /// <summary>
+        /// 設定表單選擇項目
+        /// </summary>
+        public void SetSelectItem(uint id) {
+            lock (mKey) {
+                dgvGoalPoint.InvokeIfNecessary(() => {
+                    for (int row = 0; row < dgvGoalPoint.RowCount; row++) {
+                        if ((uint)dgvGoalPoint[IDColumn, row].Value == id) {
+                            dgvGoalPoint.Rows[row].Selected = true;
+                        } else {
+                            dgvGoalPoint.Rows[row].Selected = false;
+                        }
+                    }
+                });
+            }
+        }
+
+        #endregion Funtion - Public Methods
 
     }
 }

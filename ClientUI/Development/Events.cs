@@ -70,7 +70,7 @@ namespace ClientUI
         /// <summary>
         /// 載入地圖
         /// </summary>
-        event Events.GoalSettingEvents.DelLoadMap LoadMapEvent;
+        event DelLoadMap LoadMapEvent;
 
         /// <summary>
         /// 從 AGV 下載地圖
@@ -188,8 +188,12 @@ namespace ClientUI
         void ReloadSingle();
     }
 
+    /// <summary>
+    /// Test視窗公開操作方法
+    /// </summary>
     public interface IITesting
     {
+
         event DelConnect Connect;
         
         event DelGetCar GetCar;
@@ -372,4 +376,5 @@ namespace ClientUI
             public delegate void DelCarPosConfirm();
         }
     }
+
 }

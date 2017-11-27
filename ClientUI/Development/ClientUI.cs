@@ -262,6 +262,11 @@ namespace ClientUI
         /// </summary>
         private bool mIsMotorServoOn = false;
 
+        /// <summary>
+        /// 紀錄鍵盤按下的方向
+        /// </summary>
+        private List<MotionDirection> mDirs = new List<MotionDirection>();
+
         #endregion Declaration - Fields
 
         #region Declaration - Properties
@@ -691,7 +696,13 @@ namespace ClientUI
         private void MKeyboardHook_KeyUpEvent(object sender, KeyEventArgs e) {
             if (mIsMotorServoOn) {
                 if (Enum.IsDefined(typeof(MotionDirection), (int)e.KeyCode)) {
-                    ITest_Motion_Up();
+                    MotionDirection dir = (MotionDirection)e.KeyCode;
+                    mDirs.Remove(dir);
+                    if (mDirs.Any()) {
+                        ITest_Motion_Down(mDirs[0], mVelocity);                        
+                    }else {
+                        ITest_Motion_Up();
+                    }
                 }
             }
         }
@@ -704,7 +715,11 @@ namespace ClientUI
         private void mKeyboardHook_KeyDownEvent(object sender, KeyEventArgs e) {
             if (mIsMotorServoOn) {
                 if (Enum.IsDefined(typeof(MotionDirection), (int)e.KeyCode)) {
-                    ITest_Motion_Down((MotionDirection)e.KeyCode, mVelocity);
+                    MotionDirection dir = (MotionDirection)e.KeyCode;
+                    if (!mDirs.Contains(dir)) {
+                        mDirs.Add(dir);
+                        ITest_Motion_Down((MotionDirection)e.KeyCode, mVelocity);
+                    }
                 }
             }
         }
@@ -714,44 +729,14 @@ namespace ClientUI
         #region ITest
 
         private void ITest_CarPosConfirm() {
+
             if (mBypassSocket) {
                 /*-- 空跑模擬CarPosConfirm --*/
                 SpinWait.SpinUntil(() => false, 1000);
                 return;
             }
-            List<CartesianPos> matchSet = new List<CartesianPos>();
-            List<CartesianPos> modelSet = new List<CartesianPos>();
-            CartesianPos nowOdometry = new CartesianPos();
-            CartesianPos transResult = new CartesianPos();
-            List<Point> scanPoint = new List<Point>();
-            double gValue = 0;
-            double similarity = 0;
-            int[] obstaclePos = new int[2];
-
-            int idx = 0;
-            foreach (int dist in mCarInfo.LaserData) {
-                obstaclePos = CalcLaserPoint(dist,idx++,mCarInfo);//, out dataAngle, out laserAngle);
-
-                matchSet.Add(new CartesianPos(obstaclePos[0], obstaclePos[1]));
-                obstaclePos = null;
-            }
-            nowOdometry.SetPosition(mCarInfo.x, mCarInfo.y, mCarInfo.theta * Math.PI / 180);
-            gValue = mMapMatch.FindClosetMatching(matchSet, 4, 1.5, 0.01, 50, 2000, false, transResult, out modelSet);
-            //Correct accumulate error this time
-            mMapMatch.NewPosTransformation(nowOdometry, transResult.x, transResult.y, transResult.theta);
-            mMapMatch.NewPosTransformation(matchSet, transResult.x, transResult.y, transResult.theta);
-            double[] Position = new double[3] { nowOdometry.x, nowOdometry.y, nowOdometry.theta * 180 / Math.PI };
-
-            scanPoint.Clear();
-            for (int m = 0; m < matchSet.Count; m++) {
-                scanPoint.Add(new Point((int)matchSet[m].x, (int)matchSet[m].y));
-            }
-            
-            similarity = mMapMatch.SimilarityEvalute(modelSet, matchSet);
-            //if (similarity > 0.85) {
-            SetPosition((int)Position[0], (int)Position[1], Position[2]);
-            //}
-            Database.AGVGM[mAGVID].LaserAPoints.DataList.Replace(matchSet.ToIPair());
+            string[] rtnMsg = SendMsg("Set:ConfirmPos");
+            double similarity = double.Parse(rtnMsg[2]);
         }
 
         private void ITest_SettingCarPos() {
@@ -1260,13 +1245,8 @@ namespace ClientUI
         /// </summary>
         protected void tsk_RecvPath(object obj) {
             SocketMonitor soxMonitor = obj as SocketMonitor;
-            //Socket sRecvCmdTemp = sRecvCmd.Accept();//Accept 以同步方式從偵聽通訊端的連接請求佇列中提取第一個掛起的連接請求，然後創建並返回新的 Socket
             Socket sRecvCmdTemp = soxMonitor.Accept();
-            //sRecvCmdTemp.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, 5000);//設置接收資料超時
-            //sRecvCmdTemp.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.SendTimeout, 5000);//設置發送資料超時
-            //sRecvCmdTemp.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.SendBuffer, 1024); //設置發送緩衝區大小 1K
-            //sRecvCmdTemp.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveBuffer, 9000);//設置接收緩衝區大小1K
-
+            
             try {
                 sRecvCmdTemp.Send(Encoding.UTF8.GetBytes("Path:Require"));
                 byte[] recvBytes = new byte[1024 * 500];//開啟一個緩衝區，存儲接收到的資訊
@@ -1282,7 +1262,7 @@ namespace ClientUI
                 string[] strArray = strRecvCmd.Split(':');
                 recvBytes = null;
                 if (strArray[0] == "Path" && !string.IsNullOrEmpty(strArray[1])) {
-                    DrawPath(Encoder(strArray[1]));
+                    DrawPath(PathEncoder(strArray[1]));
                 }
                 //else
                 //    sRecvCmdTemp.Send(Encoding.UTF8.GetBytes("Path:False"));
@@ -2296,18 +2276,13 @@ namespace ClientUI
         {
             return Regex.IsMatch(ip, @"^((2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(2[0-4]\d|25[0-5]|[01]?\d\d?)$");
         }
-
-        private IObstacleLines ConvertToObstacleLines(List<MapLine> lines)
-        {
-            IObstacleLines obstacleLines = FactoryMode.Factory.ObstacleLines();
-            foreach (var item in lines)
-            {
-                obstacleLines.DataList.Add(FactoryMode.Factory.Line(item.start.x, item.start.y, item.end.x, item.end.y));
-            }
-            return obstacleLines;
-        }
         
-        private List<CartesianPos> Encoder(string pack) {
+        /// <summary>
+        /// 路徑資料分析
+        /// </summary>
+        /// <param name="pack"></param>
+        /// <returns></returns>
+        private List<CartesianPos> PathEncoder(string pack) {
             string[] pathArray = pack.Trim().Split(new char[] { Separator.Data }, StringSplitOptions.RemoveEmptyEntries);
             List<CartesianPos> rtnPoints = null;
             int len = pathArray?.Count() ?? 0;
