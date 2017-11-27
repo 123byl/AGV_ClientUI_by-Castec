@@ -307,11 +307,11 @@ namespace ClientUI
         /// <summary>
         /// 左旋
         /// </summary>
-        LeftTrun = 37,
+        LeftTrun = 39,
         /// <summary>
         /// 右璇
         /// </summary>
-        RightTurn = 39,
+        RightTurn = 37,
         /// <summary>
         /// 停止
         /// </summary>

@@ -895,7 +895,7 @@ namespace ClientUI
 
         #region IMapGL事件連結
 
-        private void IMapCtrl_DragEvent(object sender, DragTowerPairEventArgs e) {
+        private void IMapCtrl_DragEvent(object sender, TowerPairEventArgs e) {
             switch (e.DargTarget.GLSetting.Type) {
                 case EType.Goal:
                     GoalSetting.AddGoal(e.ToCarTesianPosinfo());
@@ -1043,16 +1043,12 @@ namespace ClientUI
             IGoalSetting.ClearGoal();
         }
 
-        private void IGoalSetting_AddNewGoalEvent(CartesianPosInfo goal) {
-            IConsole.AddMsg("[Add Goal] - {0}", goal.ToString());
-            IGoalSetting.AddGoal(goal);
-            Database.GoalGM.Add(goal.id, FactoryMode.Factory.Goal((int)goal.x, (int)goal.y, goal.theta, goal.name));
+        private void IGoalSetting_AddNewGoalEvent() {
+            IMapCtrl.SetAddMode(FactoryMode.Factory.Goal($"Goal{Database.GoalGM.Count}"));
         }
 
-        private void IGoalSetting_AddNewPowerEvent(CartesianPosInfo power) {
-            IConsole.AddMsg("[Add Power] - {0}", power.ToString());
-            IGoalSetting.AddPower(power);
-            Database.PowerGM.Add(power.id, FactoryMode.Factory.Power((int)power.x, (int)power.y, power.theta, power.name));
+        private void IGoalSetting_AddNewPowerEvent() {
+            IMapCtrl.SetAddMode(FactoryMode.Factory.Power($"Power{Database.PowerGM.Count}"));
         }
 
         /// <summary>

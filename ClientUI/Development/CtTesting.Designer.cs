@@ -530,7 +530,7 @@
             this.btnRight.Name = "btnRight";
             this.btnRight.Size = new System.Drawing.Size(67, 62);
             this.btnRight.TabIndex = 1;
-            this.btnRight.Tag = "37";
+            this.btnRight.Tag = "39";
             this.btnRight.UseVisualStyleBackColor = true;
             this.btnRight.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Motion_MouseDown);
             this.btnRight.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Motion_MouseUp);
@@ -545,7 +545,7 @@
             this.btnLeft.Name = "btnLeft";
             this.btnLeft.Size = new System.Drawing.Size(67, 62);
             this.btnLeft.TabIndex = 1;
-            this.btnLeft.Tag = "39";
+            this.btnLeft.Tag = "37";
             this.btnLeft.UseVisualStyleBackColor = true;
             this.btnLeft.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Motion_MouseDown);
             this.btnLeft.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Motion_MouseUp);

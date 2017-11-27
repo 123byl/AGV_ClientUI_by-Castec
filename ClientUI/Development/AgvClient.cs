@@ -69,7 +69,7 @@ namespace ClientUI
             return pairs;
         }
 
-        public static CartesianPosInfo ToCarTesianPosinfo(this DragTowerPairEventArgs e) {
+        public static CartesianPosInfo ToCarTesianPosinfo(this TowerPairEventArgs e) {
             return new CartesianPosInfo(
                 e.DargTarget.Data.Position.X,
                 e.DargTarget.Data.Position.Y,

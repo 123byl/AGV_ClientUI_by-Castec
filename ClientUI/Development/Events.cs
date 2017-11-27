@@ -267,13 +267,13 @@ namespace ClientUI
             /// <summary>
             /// 加入 Goal 點
             /// </summary>
-            public delegate void DelAddNewGoal(CartesianPosInfo goal);
+            public delegate void DelAddNewGoal();
 
             /// <summary>
             /// 加入充電站
             /// </summary>
             /// <param name="power"></param>
-            public delegate void DelAddNewPower(CartesianPosInfo power);
+            public delegate void DelAddNewPower();
 
             /// <summary>
             /// 清除所有目標點
@@ -336,6 +336,8 @@ namespace ClientUI
             /// 取得所有Goal點名稱
             /// </summary>
             public delegate void DelGetGoalNames();
+
+            public delegate void DelSwitchCursor();
         }
 
         /// <summary>

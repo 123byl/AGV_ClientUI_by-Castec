@@ -391,7 +391,7 @@ namespace ClientUI
         {
             uint id = Database.ID.GenerateID();
             CartesianPosInfo goal = new CartesianPosInfo(CurrentCar.x, CurrentCar.y, CurrentCar.theta, "Goal" + id, id);
-            AddNewGoalEvent?.Invoke(goal);
+            AddNewGoalEvent?.Invoke();
         }
 
         private void btnGetMap_Click(object sender, EventArgs e)
@@ -406,12 +406,7 @@ namespace ClientUI
 
         private void btnNewPoint_Click(object sender, EventArgs e)
         {
-            uint id = Database.ID.GenerateID();
-            int x; int.TryParse(txtAddPx.Text, out x);
-            int y; int.TryParse(txtAddPy.Text, out y);
-            double toward; double.TryParse(txtAddPtheta.Text, out toward);
-            CartesianPosInfo goal = new CartesianPosInfo(x, y, toward, "Goal" + id, id);
-            AddNewGoalEvent?.Invoke(goal);
+            AddNewGoalEvent?.Invoke();
         }
 
         private void btnPath_Click(object sender, EventArgs e)
@@ -475,12 +470,7 @@ namespace ClientUI
         }
 
         private void btnAddNewPower_Click(object sender, EventArgs e) {
-            uint id = Database.ID.GenerateID();
-            int x; int.TryParse(txtAddPx.Text, out x);
-            int y; int.TryParse(txtAddPy.Text, out y);
-            double toward; double.TryParse(txtAddPtheta.Text, out toward);
-            CartesianPosInfo power = new CartesianPosInfo(x, y, toward, "Power" + id, id);
-            AddNewPowerEvent?.Invoke(power);
+            AddNewPowerEvent?.Invoke();
         }
 
         private void btnCharging_Click(object sender, EventArgs e) {
@@ -547,5 +537,8 @@ namespace ClientUI
 
         #endregion Funtion - Public Methods
 
+        private void btnSelectMode_Click(object sender, EventArgs e) {
+
+        }
     }
 }
