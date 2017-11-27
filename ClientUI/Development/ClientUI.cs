@@ -724,12 +724,10 @@ namespace ClientUI
             CartesianPos nowOdometry = new CartesianPos();
             CartesianPos transResult = new CartesianPos();
             List<Point> scanPoint = new List<Point>();
-            double angle;
-            double Laserangle;
             double gValue = 0;
             double similarity = 0;
             int[] obstaclePos = new int[2];
-            //mAGV.GetPosition(out posX, out posY, out posT);
+
             int idx = 0;
             foreach (int dist in mCarInfo.LaserData) {
                 obstaclePos = CalcLaserPoint(dist,idx++,mCarInfo);//, out dataAngle, out laserAngle);
@@ -744,28 +742,16 @@ namespace ClientUI
             mMapMatch.NewPosTransformation(matchSet, transResult.x, transResult.y, transResult.theta);
             double[] Position = new double[3] { nowOdometry.x, nowOdometry.y, nowOdometry.theta * 180 / Math.PI };
 
-            //Display car position
-            //MapUI1.PosCar = new Pos(nowOdometry.x, nowOdometry.y, nowOdometry.theta);
-            //SetPosition(nowOdometry.x, nowOdometry.y, nowOdometry.theta);
-            //Display current scanning information
-            //MapUI1.RemoveGroupPoint("LaserLength");
             scanPoint.Clear();
             for (int m = 0; m < matchSet.Count; m++) {
                 scanPoint.Add(new Point((int)matchSet[m].x, (int)matchSet[m].y));
             }
-            //MapUI1.DrawPoints(scanPoint, Color.Red, "LaserLength", 1);
-            //MapUI1.PosCar = new Pos(Position[0], Position[1], Position[2]);
-
-
+            
             similarity = mMapMatch.SimilarityEvalute(modelSet, matchSet);
             //if (similarity > 0.85) {
             SetPosition((int)Position[0], (int)Position[1], Position[2]);
             //}
             Database.AGVGM[mAGVID].LaserAPoints.DataList.Replace(matchSet.ToIPair());
-            //Dictionary<string, object> dic = new Dictionary<string, object>();
-            //dic.Add(matchSet, VarDef.ScanPoint);
-            //dic.Add(mCarInfo.ToPos(), VarDef.PosCar);
-            //RaiseMapEvent(MapEventType.CarPosConfirm, dic);
         }
 
         private void ITest_SettingCarPos() {
