@@ -238,18 +238,31 @@ namespace ClientUI
         /// 系統列圖示標題
         /// </summary>
         protected string mNotifyCaption = "AGV Client";
-        private List<CartesianPosInfo> Goals;
-
+        
+        /// <summary>
+        /// 是否正在設定Car Position
+        /// </summary>
         private bool mIsSetting = false;
 
+        /// <summary>
+        /// Car Position 設定位置
+        /// </summary>
         private IPair mNewPos = null;
-        
+
+        /// <summary>
+        /// 全域鍵盤鉤子
+        /// </summary>
+        private KeyboardHook mKeyboardHook = new KeyboardHook();
+
+        /// <summary>
+        /// 伺服馬達激磁狀態
+        /// </summary>
+        private bool mIsMotorServoOn = false;
+
         #endregion Declaration - Fields
 
         #region Declaration - Properties
-
-        public Stopwatch WatchDog { get; } = new Stopwatch();
-
+        
         /// <summary>
         /// 伺服端是否還有在運作
         /// </summary>
@@ -427,13 +440,16 @@ namespace ClientUI
             /*-- 車子資訊接收 --*/
             mSoxMonitorCmd = new SocketMonitor(mCmdPort, tsk_RecvCmd).Listen();
 
-            mSoxMonitorFile = new SocketMonitor(mFilePort, RecvFiles).Listen();
+            mSoxMonitorFile = new SocketMonitor(mFilePort, tsk_RecvFiles).Listen();
 
             mSoxMonitorPath = new SocketMonitor(mRecvPathPort, tsk_RecvPath).Listen();
             
             if (!Database.AGVGM.ContainsID(mAGVID)) {
                 Database.AGVGM.Add(mAGVID, FactoryMode.Factory.AGV(0, 0, 0, "AGV"));
             }
+            mKeyboardHook.KeyDownEvent += mKeyboardHook_KeyDownEvent;
+            mKeyboardHook.KeyUpEvent += MKeyboardHook_KeyUpEvent;
+            mKeyboardHook.Start();
         }
 
         #endregion Function - Constructors
@@ -582,6 +598,26 @@ namespace ClientUI
             }
         }
 
+        /// <summary>
+        /// Socket Bypass
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void miBypassSocket_Click(object sender, EventArgs e) {
+            IsBypassSocket = !IsBypassSocket;
+            CtInvoke.ToolStripItemChecked(miBypassSocket, IsBypassSocket);
+        }
+
+        /// <summary>
+        /// Load File Bypass
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void miLoadFile_Click(object sender, EventArgs e) {
+            IsBypassLoadFile = !IsBypassLoadFile;
+            CtInvoke.ToolStripItemChecked(miLoadFile, IsBypassLoadFile);
+        }
+        
         #endregion MenuItem
 
         #region DockContent
@@ -605,45 +641,7 @@ namespace ClientUI
         }
 
         #endregion DockContent
-
-        #region AgvClient
-
-        /// <summary>
-        /// AGV客戶端事件處理
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void rAgvClient_OnAgvClientEventTrigger(object sender, AgvClientEventArgs e)
-        {
-            switch (e.Type)
-            {
-                case AgvClientEventType.CarInfoRefresh:
-                    CarInfoRefresh((CarInfo)e.Value);
-                    break;
-                case AgvClientEventType.GetLaser:
-
-                    break;
-                case AgvClientEventType.UserChanged:
-                    UserChanged(e.Value as UserData);
-                    break;
-                case AgvClientEventType.Mode:
-                    ChangedMode((CarMode)e.Value);
-                    break;
-                case AgvClientEventType.SendFile:
-                    SetBalloonTip("Send File", e.Value as string, ToolTipIcon.Info, 10);
-                    break;
-                case AgvClientEventType.LoadFile:
-                    SetBalloonTip($"Load { (FileType)e.Value}", $"The { (FileType)e.Value} is loaded", ToolTipIcon.Info, 10);
-                    break;
-                case AgvClientEventType.GetFile:
-                    SetBalloonTip($"Get{(FileType)e.Value}", $"The {(FileType)e.Value} is downloaded", ToolTipIcon.Info, 10);
-                    break;
-            }
-        }
-
-
-        #endregion AgvClient
-
+        
         #region NotityIcon
 
         /// <summary>
@@ -680,6 +678,432 @@ namespace ClientUI
 
         #endregion NotifyIcon
 
+        #region KeyboardHook
+        
+        /// <summary>
+        /// 鍵盤放開事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MKeyboardHook_KeyUpEvent(object sender, KeyEventArgs e) {
+            if (mIsMotorServoOn) {
+                if (Enum.IsDefined(typeof(MotionDirection), (int)e.KeyCode)) {
+                    ITest_Motion_Up();
+                }
+            }
+        }
+
+        /// <summary>
+        /// 鍵盤按下事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void mKeyboardHook_KeyDownEvent(object sender, KeyEventArgs e) {
+            if (mIsMotorServoOn) {
+                if (Enum.IsDefined(typeof(MotionDirection), (int)e.KeyCode)) {
+                    ITest_Motion_Down((MotionDirection)e.KeyCode, mVelocity);
+                }
+            }
+        }
+
+        #endregion KeyboardHook
+
+        #region ITest
+
+        private void ITest_CarPosConfirm() {
+            if (mBypassSocket) {
+                /*-- 空跑模擬CarPosConfirm --*/
+                SpinWait.SpinUntil(() => false, 1000);
+                return;
+            }
+            List<CartesianPos> matchSet = new List<CartesianPos>();
+            List<CartesianPos> modelSet = new List<CartesianPos>();
+            CartesianPos nowOdometry = new CartesianPos();
+            CartesianPos transResult = new CartesianPos();
+            List<Point> scanPoint = new List<Point>();
+            double angle;
+            double Laserangle;
+            double gValue = 0;
+            double similarity = 0;
+            int[] obstaclePos = new int[2];
+            //mAGV.GetPosition(out posX, out posY, out posT);
+            int idx = 0;
+            foreach (int dist in mCarInfo.LaserData) {
+                obstaclePos = Transformation.LaserPoleToCartesian(dist, -135, 0.25, idx++, 43, 416.75, 43, mCarInfo.x, mCarInfo.y, mCarInfo.theta, out angle, out Laserangle);//, out dataAngle, out laserAngle);
+
+                matchSet.Add(new CartesianPos(obstaclePos[0], obstaclePos[1]));
+                obstaclePos = null;
+            }
+            nowOdometry.SetPosition(mCarInfo.x, mCarInfo.y, mCarInfo.theta * Math.PI / 180);
+            gValue = mMapMatch.FindClosetMatching(matchSet, 4, 1.5, 0.01, 50, 2000, false, transResult, out modelSet);
+            //Correct accumulate error this time
+            mMapMatch.NewPosTransformation(nowOdometry, transResult.x, transResult.y, transResult.theta);
+            mMapMatch.NewPosTransformation(matchSet, transResult.x, transResult.y, transResult.theta);
+            double[] Position = new double[3] { nowOdometry.x, nowOdometry.y, nowOdometry.theta * 180 / Math.PI };
+
+            //Display car position
+            //MapUI1.PosCar = new Pos(nowOdometry.x, nowOdometry.y, nowOdometry.theta);
+            //SetPosition(nowOdometry.x, nowOdometry.y, nowOdometry.theta);
+            //Display current scanning information
+            //MapUI1.RemoveGroupPoint("LaserLength");
+            scanPoint.Clear();
+            for (int m = 0; m < matchSet.Count; m++) {
+                scanPoint.Add(new Point((int)matchSet[m].x, (int)matchSet[m].y));
+            }
+            //MapUI1.DrawPoints(scanPoint, Color.Red, "LaserLength", 1);
+            //MapUI1.PosCar = new Pos(Position[0], Position[1], Position[2]);
+
+
+            similarity = mMapMatch.SimilarityEvalute(modelSet, matchSet);
+            //if (similarity > 0.85) {
+            SetPosition((int)Position[0], (int)Position[1], Position[2]);
+            //}
+            Database.AGVGM[mAGVID].LaserAPoints.DataList.Replace(matchSet.ToIPair());
+            //Dictionary<string, object> dic = new Dictionary<string, object>();
+            //dic.Add(matchSet, VarDef.ScanPoint);
+            //dic.Add(mCarInfo.ToPos(), VarDef.PosCar);
+            //RaiseMapEvent(MapEventType.CarPosConfirm, dic);
+        }
+
+        private void ITest_SettingCarPos() {
+            mIsSetting = true;
+        }
+
+        private void ITest_ClearMap() {
+            IGoalSetting.ClearGoal();
+            Database.GoalGM.Clear();
+            Database.PowerGM.Clear();
+            Database.ObstacleLinesGM.DataList.Clear();
+            Database.ObstaclePointsGM.DataList.Clear();
+        }
+
+        private void ITest_MotorServoOn(bool servoOn) {
+            mIsMotorServoOn = servoOn;
+            SendMsg($"Set:Servo{(servoOn ? "On" : "Off")}");
+            ITest.ChangedMotorStt(servoOn);
+            IConsole.AddMsg($"Motor Servo {(servoOn ? "ON" : "OFF")}");
+        }
+
+        private void ITest_SimplifyOri() {
+            if (mBypassLoadFile) {
+                /*-- 空跑模擬SimplifyOri --*/
+                SpinWait.SpinUntil(() => false, 1000);
+                return;
+            }
+            NewMap();
+            string[] tmpPath = CurOriPath.Split('.');
+            CurMapPath = tmpPath[0] + ".map";
+            MapSimplication mapSimp = new MapSimplication(CurMapPath);
+            mapSimp.Reset();
+            List<ILine> obstacleLines = new List<ILine>();
+            List<IPair> obstaclePoints = new List<IPair>();
+            List<CartesianPos> resultPoints;
+            List<MapSimplication.Line> resultlines;
+            mapSimp.ReadMapAllTransferToLine(mMapMatch.parseMap, mMapMatch.minimumPos, mMapMatch.maximumPos
+                , 100, 0, out resultlines, out resultPoints);
+            try {
+                for (int i = 0; i < resultlines.Count; i++) {
+                    obstacleLines.Add(
+                         FactoryMode.Factory.Line(resultlines[i].startX, resultlines[i].startY,
+                        resultlines[i].endX, resultlines[i].endY)
+                    );
+                }
+                for (int i = 0; i < resultPoints.Count; i++) {
+                    obstaclePoints.Add(FactoryMode.Factory.Pair((int)resultPoints[i].x, (int)resultPoints[i].y));
+                }
+
+                Database.ObstaclePointsGM.DataList.AddRange(obstaclePoints);
+                Database.ObstacleLinesGM.DataList.AddRange(obstacleLines);
+            } catch (Exception ex) {
+                System.Console.WriteLine(ex.Message);
+            }
+
+
+            obstacleLines = null;
+            obstaclePoints = null;
+            resultPoints = null;
+            resultlines = null;
+        }
+
+        private async void ITest_CheckIsServerAlive(bool cnn, string hostIP = "") {
+            if (cnn != IsConnected) {
+                CtProgress prog = new CtProgress("Connect", "Connecting...");
+                try {
+                    if (cnn) {
+                        if (VerifyIP(hostIP)) {
+                            if (mHostIP != hostIP) mHostIP = hostIP;
+                            IsConnected = await Task<bool>.Run(() => CheckIsServerAlive());
+                        }
+                    } else {
+                        IsConnected = DisConnectServer();
+                    }
+                    ITest.SetServerStt(IsConnected);
+                    IConsole.AddMsg($"Is {(cnn ? "Connected" : "Disconnected")}");
+                } finally {
+                    prog?.Close();
+                    prog = null;
+                }
+            }
+        }
+
+        private void ITest_SetVelocity(int velocity) {
+            mVelocity = velocity;
+            IConsole.AddMsg($"Set Velocity {velocity}");
+            SendMsg($"Set: WorkVelo:{velocity}:{velocity}");
+        }
+
+        private async void ITest_CorrectOri() {
+            CtProgress prog = new CtProgress("CorrectOri", "Correcting Ori...");
+            try {
+                /*-- 底層觸發事件 --*/
+                await Task.Run(() => CorrectOri());
+                IConsole.AddMsg("CorrectOri");
+            } catch {
+            } finally {
+                prog?.Close();
+                prog = null;
+            }
+        }
+
+        private void ITest_SetCarMode(CarMode mode) {
+            if (mode == CarMode.Map) {
+                string oriName = string.Empty;
+                if (Stat.SUCCESS == CtInput.Text(out oriName, "MAP Name", "Set Map File Name")) {
+                    SendMsg($"Set:OriName:{oriName}.Ori");
+                } else {
+                    return;
+                }
+            }
+            if (mode != CarMode.OffLine) {
+                SendMsg($"Set:Mode:{mode}");
+                IConsole.AddMsg($"Set:Mode {mode}");
+            }
+            if (mode != mCarMode) {
+                mode = mCarMode;
+                ChangedMode(mCarMode);
+            }
+        }
+
+        private void ITest_SendMap() {
+            SendFile();
+        }
+
+        private void ITest_GetCar() {
+            ChangeSendInfo();
+            IConsole.AddMsg($"{IsGettingLaser}");
+        }
+
+        private void ITest_GetLaser() {
+            IConsole.AddMsg("Get Laser");
+            GetLaser();
+        }
+
+        private void ITest_GetMap() {
+            IConsole.AddMsg("[Get Map]");
+            GetFile(FileType.Map);
+        }
+
+        private void ITest_GetORi() {
+            IConsole.AddMsg("[Get Ori]");
+            GetFile(FileType.Ori);
+        }
+
+        private void ITest_LoadMap() {
+            IConsole.AddMsg("[Loaded Map]");
+            LoadFile(FileType.Map);
+        }
+
+        private void ITest_LoadOri() {
+            IConsole.AddMsg("[Loaded Ori]");
+            LoadFile(FileType.Ori);
+        }
+
+        private void ITest_Motion_Up() {
+            IConsole.AddMsg($"[Stop]");
+            MotionContorl(MotionDirection.Stop);
+            if (CarMode != CarMode.Map) CarMode = CarMode.Idle;
+        }
+
+        private void ITest_Motion_Down(MotionDirection direction, int velocity = 0) {
+            IConsole.AddMsg($"[{direction} Velocity:{velocity}]");
+            MotionContorl(direction, Velocity);
+            if (CarMode != CarMode.Map) CarMode = CarMode.Work;
+        }
+
+        #endregion
+
+        #region IMapGL事件連結
+
+        private void IMapCtrl_DragEvent(object sender, DragTowerPairEventArgs e) {
+            switch (e.DargTarget.GLSetting.Type) {
+                case EType.Goal:
+                    GoalSetting.AddGoal(e.ToCarTesianPosinfo());
+                    break;
+                case EType.Power:
+                    GoalSetting.AddPower(e.ToCarTesianPosinfo());
+                    break;
+            }
+        }
+
+        private void IMapCtrl_GLClickEvent(object sender, GLMouseEventArgs e) {
+            if (mIsSetting) {
+                if (Database.AGVGM.ContainsID(mAGVID)) {
+                    if (mNewPos == null) {
+                        mNewPos = e.Position;
+                    } else {
+                        double Calx = e.Position.X - mNewPos.X;
+                        double Caly = e.Position.Y - mNewPos.Y;
+                        double Calt = Math.Atan2(Caly, Calx) * 180 / Math.PI;
+                        Database.AGVGM[mAGVID].Data.Position = mNewPos;
+                        Database.AGVGM[mAGVID].Data.Toward.Theta = Calt;
+                        //Send POS to AGV   
+                        SetPosition(mNewPos.X, mNewPos.Y, Calt);
+                        mNewPos = null;
+                        mIsSetting = false;
+                    }
+                }
+            } else {
+                IGoalSetting.SetCurrentRealPos(new CartesianPos(e.Position.X, e.Position.Y));
+            }
+        }
+
+        #endregion IMapGL 事件連結
+
+        #region IGoalSetting 事件連結   
+
+        private void IGoalSetting_Charging(CartesianPosInfo goal, int idxPower) {
+            IConsole.AddMsg($"Charging to idx{idxPower} {goal.ToString()}");
+            Charging(idxPower);
+        }
+
+        private async void IGoalSetting_SendMapToAGVEvent() {
+            OpenFileDialog openMap = new OpenFileDialog();
+            openMap.InitialDirectory = mDefMapDir;
+            openMap.Filter = "MAP|*.ori;*.map";
+            if (openMap.ShowDialog() == DialogResult.OK) {
+                IConsole.AddMsg("[Map Update...]");
+                CtProgress prog = new CtProgress("Send Map", "The file are being transferred");
+                try {
+                    string fileName = CtFile.GetFileName(openMap.FileName);
+                    string extension = Path.GetExtension(fileName).ToLower().Replace(".", "");
+                    string[] rtnMsg = SendMsg($"Send:{extension}");
+                    if (rtnMsg.Count() > 2 && "True" == rtnMsg[2]) {
+
+                        await Task.Run(() => {
+                            if (!mBypassSocket) {
+                                SendFile(mHostIP, mSendMapPort, fileName);
+                            } else {
+                                /*-- 空跑模擬檔案傳送中 --*/
+                                SpinWait.SpinUntil(() => false, 1000);
+                            }
+                            //RaiseAgvClientEvent(AgvClientEventType.SendFile, fileName);
+                            IConsole.AddMsg("[Map Finished Update]");
+                        });
+                    }
+                } finally {
+                    prog?.Close();
+                    prog = null;
+                }
+            }
+        }
+
+        private void IGoalSetting_SaveGoalEvent() {
+            IConsole.AddMsg("[Save {0} Goals]", IGoalSetting.GoalCount);
+            List<CartesianPosInfo> points = IGoalSetting.GetGoals();
+            List<CartesianPosInfo> goals = new List<CartesianPosInfo>();
+            List<CartesianPosInfo> powers = new List<CartesianPosInfo>();
+            Database.GoalGM.SaftyForLoop((uid, goal) => goals.Add(FactoryMode.Factory.CartesianPosInfo(uid, goal)));
+            Database.PowerGM.SaftyForLoop((uid, power) => powers.Add(FactoryMode.Factory.CartesianPosInfo(uid, power)));
+            MapRecording.OverWriteGoal(goals, CurMapPath);
+            MapRecording.OverWritePower(powers, CurMapPath);
+        }
+
+        private void IGoalSetting_RunLoopEvent(IEnumerable<CartesianPosInfo> goal) {
+            IConsole.AddMsg("[AGV Start Moving...]");
+            foreach (var item in goal) {
+                IConsole.AddMsg("[AGV Move To] - {0}", item.ToString());
+                IConsole.AddMsg("[AGV Arrived] - {0}", item.ToString());
+            }
+            IConsole.AddMsg("[AGV Move Finished]");
+        }
+
+        private void IGoalSetting_RunGoalEvent(CartesianPosInfo goal, int idxGoal) {
+            IConsole.AddMsg("[AGV Start Moving...  idx{0} {1}]", idxGoal, goal.ToString());
+            Run(idxGoal);
+            IConsole.AddMsg("[AGV Arrived] - {0}", goal.ToString());
+        }
+
+        private void IGoalSetting_LoadMapFromAGVEvent() {
+            IConsole.AddMsg("[Map Loading... From Remote] - ");
+            IConsole.AddMsg("[Map Loaded]");
+        }
+
+        private void IGoalSetting_LoadMapEvent() {
+            IConsole.AddMsg("[Map Loading...]");
+            IConsole.AddMsg("[Map Loaded]");
+            LoadFile(FileType.Map);
+        }
+
+        private void IGoalSetting_FindPathEvent(CartesianPosInfo goal, int idxGoal) {
+            IConsole.AddMsg("[Find Path] - idx{0} {1}", idxGoal, goal.ToString());
+            IConsole.AddMsg("[AGV Find A Path]");
+            PathPlan(idxGoal);
+        }
+
+        private void IGoalSetting_DeleteGoalsEvent(IEnumerable<CartesianPosInfo> goal) {
+            IEnumerable<CartesianPosInfo> goals = goal.Where(v => Database.GoalGM.ContainsID(v.id));
+            IEnumerable<CartesianPosInfo> powers = goal.Where(v => Database.PowerGM.ContainsID(v.id));
+            List<uint> ID = new List<uint>();
+            if (goals?.Any() ?? false) {
+                IConsole.AddMsg($"Delete {goals.Count()}");
+                foreach (var item in goals) {
+                    Database.GoalGM.Remove(item.id);
+                    ID.Add(item.id);
+                    IConsole.AddMsg($"[Delete Goal] - {item.ToString()}");
+                }
+            }
+            if (powers?.Any() ?? false) {
+                foreach (var item in powers) {
+                    Database.PowerGM.Remove(item.id);
+                    ID.Add(item.id);
+                    IConsole.AddMsg($"[Delete Power - {item.ToString()}]");
+                }
+            }
+            IGoalSetting.DeleteGoals(ID);
+        }
+
+        private void IGoalSetting_ClearGoalsEvent() {
+            IConsole.AddMsg("[Clear Goal]");
+            Database.GoalGM.Clear();
+
+            IConsole.AddMsg("[Clear Power]");
+            Database.PowerGM.Clear();
+
+            IGoalSetting.ClearGoal();
+        }
+
+        private void IGoalSetting_AddNewGoalEvent(CartesianPosInfo goal) {
+            IConsole.AddMsg("[Add Goal] - {0}", goal.ToString());
+            IGoalSetting.AddGoal(goal);
+            Database.GoalGM.Add(goal.id, FactoryMode.Factory.Goal((int)goal.x, (int)goal.y, goal.theta, goal.name));
+        }
+
+        private void IGoalSetting_AddNewPowerEvent(CartesianPosInfo power) {
+            IConsole.AddMsg("[Add Power] - {0}", power.ToString());
+            IGoalSetting.AddPower(power);
+            Database.PowerGM.Add(power.id, FactoryMode.Factory.Power((int)power.x, (int)power.y, power.theta, power.name));
+        }
+
+        /// <summary>
+        /// 取得所有Goal點名稱
+        /// </summary>
+        private void IGoalSetting_GetGoalNames() {
+            string goalNames = GetGoalNames();
+            IConsole.AddMsg($"Goal Names:{goalNames}");
+        }
+
+        #endregion
+
         #endregion Function - Events
 
         #region Functoin - Public Methods
@@ -687,28 +1111,158 @@ namespace ClientUI
         #endregion Function - Public Methdos
 
         #region Function - Private Methods
-        
+
+        #region  Task
+
         /// <summary>
-        /// 清空Map
+        /// 地圖修正執行緒
         /// </summary>
-        private void NewMap() {
-            /*-- 保留AGV資料 --*/
-            var agv = Database.AGVGM[mAGVID];
-            /*-- 清除資料 --*/
-            IMapCtrl.NewMap();
-            /*-- 將AGV寫回DataBase --*/
-            Database.AGVGM.Add(mAGVID, agv);
-            /*-- 清除雷射 --*/
-            Database.AGVGM[mAGVID].LaserAPoints.DataList.Clear();
-            /*-- 清除路徑 --*/
-            Database.AGVGM[mAGVID].Path.DataList.Clear();
+        /// <remarks>
+        /// Modified by Jay 2017/09/13
+        /// </remarks>
+        private void tsk_FixOriginScanningFile() {
+            try {
+                if (mBypassLoadFile) {
+                    SpinWait.SpinUntil(() => false, 1000);
+                    return;
+                }
+                MapReading MapReading = new MapReading(CurOriPath);
+                CartesianPos carPos;
+                List<CartesianPos> laserData;
+                List<CartesianPos> filterData = new List<CartesianPos>();
+                int dataLength = MapReading.OpenFile();
+                if (dataLength == 0) return;
+
+                List<CartesianPos> dataSet = new List<CartesianPos>();
+                List<CartesianPos> predataSet = new List<CartesianPos>();
+                List<CartesianPos> matchSet = new List<CartesianPos>();
+                CartesianPos transResult = new CartesianPos();
+                CartesianPos nowOdometry = new CartesianPos();
+                CartesianPos preOdometry = new CartesianPos();
+                CartesianPos accumError = new CartesianPos();
+                CartesianPos diffOdometry = new CartesianPos();
+                CartesianPos diffLaser = new CartesianPos();
+                Stopwatch sw = new Stopwatch();
+                double gValue = 0;
+                int mode = 0;
+                int corrNum = 0;
+
+                mMapMatch.Reset();
+                #region  1.Read car position and first laser scanning
+
+                MapReading.ReadScanningInfo(0, out carPos, out laserData);
+                Database.AGVGM[mAGVID].SetLocation(carPos);
+                //mCarInfo.SetPos(carPos);
+                //RaiseMapEventSync(MapEventType.RefreshPosCar, carPos.ToPos());
+                matchSet.AddRange(laserData);
+                predataSet.AddRange(laserData);
+                mMapMatch.GlobalMapUpdate(matchSet);                            //Initial environment model
+                preOdometry.SetPosition(carPos.x, carPos.y, carPos.theta);
+
+                #endregion
+
+                for (int n = 1; n < dataLength; n++) {
+                    #region 2.Read car position and laser scanning 
+
+                    List<CartesianPos> addedSet = new List<CartesianPos>();
+                    transResult.SetPosition(0, 0, 0);
+                    carPos = null;
+                    laserData = null;
+                    MapReading.ReadScanningInfo(n, out carPos, out laserData);
+                    nowOdometry.SetPosition(carPos.x, carPos.y, carPos.theta);
+
+                    #endregion
+
+                    #region 3.Correct accumulate error of odometry so far
+
+                    mMapMatch.NewPosTransformation(nowOdometry, accumError.x, accumError.y, accumError.theta);
+                    mMapMatch.NewPosTransformation(laserData, accumError.x, accumError.y, accumError.theta);
+                    matchSet.Clear();
+                    matchSet.AddRange(laserData);
+
+                    #endregion
+
+                    #region 4.Compute movement from last time to current time;
+
+                    if (nowOdometry.theta - preOdometry.theta < -200)
+                        diffOdometry.SetPosition(nowOdometry.x - preOdometry.x, nowOdometry.y - preOdometry.y, nowOdometry.theta + 360 - preOdometry.theta);
+                    else if (nowOdometry.theta - preOdometry.theta > 200)
+                        diffOdometry.SetPosition(nowOdometry.x - preOdometry.x, nowOdometry.y - preOdometry.y, -(preOdometry.theta + 360 - nowOdometry.theta));
+                    else
+                        diffOdometry.SetPosition(nowOdometry.x - preOdometry.x, nowOdometry.y - preOdometry.y, nowOdometry.theta - preOdometry.theta);
+                    System.Console.WriteLine("Odometry varition:{0:F3} {1:F3} {2:F3}", diffOdometry.x, diffOdometry.y, diffOdometry.theta);
+
+                    #endregion
+
+                    #region 5.Display current scanning information
+                    //RaiseMapEventSync(MapEventType.RefreshScanPoint, matchSet);
+
+                    #endregion
+
+                    #region 6.Inspect odometry variation is not too large.Switch to pose tracking mode if too large.
+
+                    sw.Restart();
+                    if (Math.Abs(diffOdometry.x) >= 400 || Math.Abs(diffOdometry.y) >= 400 || Math.Abs(diffOdometry.theta) >= 30) {
+                        mode = 1;
+                        gValue = mMapMatch.PairwiseMatching(predataSet, matchSet, 4, 1.5, 0.01, 20, 300, false, transResult);
+                    } else {
+                        mode = 0;
+                        gValue = mMapMatch.FindClosetMatching(matchSet, 4, 1.5, 0.01, 20, 300, false, transResult);
+                        diffLaser.SetPosition(transResult.x, transResult.y, transResult.theta);
+                    }
+
+                    //If corresponding is too less,truct the odomery variation this time
+                    if (mMapMatch.EstimateCorresponingPoints(matchSet, 10, 10, out corrNum, out addedSet)) {
+                        mMapMatch.NewPosTransformation(nowOdometry, transResult.x, transResult.y, transResult.theta);
+                        accumError.SetPosition(accumError.x + transResult.x, accumError.y + transResult.y, accumError.theta + transResult.theta);
+                    }
+                    sw.Stop();
+
+                    if (mode == 0)
+                        System.Console.WriteLine("[SLAM-Matching Mode]Corresponding Points:{0} Map Size:{1} Matching Time:{2:F3} Error{3:F3}",
+                             corrNum, mMapMatch.parseMap.Count, sw.Elapsed.TotalMilliseconds, gValue);
+                    else
+                        System.Console.WriteLine("[SLAM-Tracking Mode]Matching Time:{0:F3} Error{1:F3}", sw.Elapsed.TotalMilliseconds, gValue);
+
+                    #endregion
+
+                    #region 7.Update variation
+
+                    //Pairwise update
+                    predataSet.Clear();
+                    predataSet.AddRange(laserData);
+
+                    //Update previous variable
+                    preOdometry.SetPosition(nowOdometry.x, nowOdometry.y, nowOdometry.theta);
+
+                    Database.AGVGM[mAGVID].SetLocation(nowOdometry);
+                    //mCarInfo.SetPos(nowOdometry);
+
+                    #endregion
+
+
+                    List<IPair> points = addedSet.ToPairs();
+                    Database.AGVGM[mAGVID]?.LaserAPoints.DataList.Replace(points);
+                    Database.ObstaclePointsGM.DataList.AddRange(points);
+                    //IMapCtrl.Focus((int)nowOdometry.x, (int)nowOdometry.y);
+                    //Display added new points                     
+                    //    RaiseMapEventSync(MapEventType.DrawScanMap, addedSet);
+
+                    //    //Display car position
+                    //    RaiseMapEventSync(MapEventType.RefreshPosCar, nowOdometry.ToPos());
+                }
+                //RaiseMapEvent(MapEventType.CorrectOriComplete);
+            } catch {
+
+            } finally {
+            }
         }
 
         /// <summary>
-        /// 檔案接收執行緒 20170911
+        /// 檔案接收執行緒
         /// </summary>
         /// <param name="obj"></param>
-        private void RecvFiles(object obj) {
+        private void tsk_RecvFiles(object obj) {
 
             int fileNameLen = 0;
             int recieve_data_size = 0;
@@ -806,22 +1360,10 @@ namespace ClientUI
             }
         }
 
-        private void SetPosition(int x, int y, double theta) {
-            Database.AGVGM[mAGVID].Data.Position.X = x;
-            Database.AGVGM[mAGVID].Data.Position.Y = y;
-            Database.AGVGM[mAGVID].Data.Toward.Theta = theta;
-            mCarInfo.x = x;
-            mCarInfo.y = y;
-            mCarInfo.theta = theta;
-         
-            SendMsg($"Set:POS:{x:F0}:{y:F0}:{theta}");
-        }
-
         /// <summary>
         /// 車子資訊接收執行緒
         /// </summary>
-        public void tsk_RecvCmd(object obj)
-        {
+        public void tsk_RecvCmd(object obj) {
 
             System.Console.WriteLine("Start");
             SocketMonitor soxMonitor = obj as SocketMonitor;
@@ -829,16 +1371,14 @@ namespace ClientUI
             sRecvCmdTemp = serverComm.ClientAccept(soxMonitor.Socket);
             string strRecvCmd;
             System.Console.WriteLine("IsAccept");
-            try
-            {
-                while (IsGettingLaser)
-                {
+            try {
+                while (IsGettingLaser) {
                     //SpinWait.SpinUntil(() => false, 1);//每個執行緒內部的閉環裡面都要加個「短時間」睡眠，使得執行緒佔用資源得到及時釋放
-                                                       //Thread.Sleep(1);
+                    //Thread.Sleep(1);
                     byte[] recvBytes = new byte[1024 * 500];//開啟一個緩衝區，存儲接收到的資訊
                     sRecvCmdTemp.Receive(recvBytes); //將讀得的內容放在recvBytes中
                     strRecvCmd = Encoding.Default.GetString(recvBytes);//
-                                                                              //程式運行到這個地方，已經能接收到遠端發過來的命令了
+                                                                       //程式運行到這個地方，已經能接收到遠端發過來的命令了
                     strRecvCmd = strRecvCmd.Split(new char[] { '\0' })[0];
                     //Console.WriteLine("[Server] : " + strRecvCmd);
 
@@ -850,8 +1390,7 @@ namespace ClientUI
                     recvBytes = null;
 
                     System.Console.WriteLine("Decoder");
-                    if (CarInfo.TryParse(strRecvCmd, ref mCarInfo))
-                    {
+                    if (CarInfo.TryParse(strRecvCmd, ref mCarInfo)) {
 
                         System.Console.WriteLine("Display");
                         this.InvokeIfNecessary(() => {
@@ -863,9 +1402,7 @@ namespace ClientUI
                         Database.AGVGM[mAGVID].SetLocation(mCarInfo);
                         DrawLaser(mCarInfo);
                         sRecvCmdTemp.Send(Encoding.UTF8.GetBytes("Get:Car:True:True"));
-                    }
-                    else
-                    {
+                    } else {
                         sRecvCmdTemp.Send(Encoding.UTF8.GetBytes("Get:Car:False"));
                     }
 
@@ -874,24 +1411,18 @@ namespace ClientUI
                 }
 
                 Thread.Sleep(1);
-            }
-            catch (SocketException se)
-            {
+            } catch (SocketException se) {
                 System.Console.WriteLine("[Status Recv] : " + se.ToString());
                 MessageBox.Show("目標拒絕連線");
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 System.Console.Write(ex.Message);
                 //throw ex;
-            }
-            finally
-            {
+            } finally {
                 sRecvCmdTemp?.Close();
                 sRecvCmdTemp = null;
             }
         }
-        
+
         /// <summary>
         /// 路徑接收執行緒
         /// </summary>
@@ -939,13 +1470,47 @@ namespace ClientUI
                 sRecvCmdTemp = null;
             }
         }
+
+        #endregion Task
+
+        #region Communication
         
-        ///<summary>IP驗證</summary>
-        ///<param name="ip">要驗證的字串</param>
-        ///<returns>True:合法IP/False:非法IP</returns>
-        private bool VerifyIP(string ip)
-        {
-            return Regex.IsMatch(ip, @"^((2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(2[0-4]\d|25[0-5]|[01]?\d\d?)$");
+        /// <summary>
+        /// 檢查Server是否在運作中
+        /// </summary>
+        /// <returns></returns>
+        private bool CheckIsServerAlive() {
+            if (mBypassSocket) {
+                IsServerAlive = true;
+                Thread.Sleep(1000);
+            } else {
+                bool isAlive = false;
+                try {
+                    if (isAlive = ConnectServer()) {
+                        string[] rtnMsg = SendMsg("Get:Hello", false);
+                        isAlive = rtnMsg.Count() > 2 && rtnMsg[2] == "True";
+                    }
+                } catch (Exception ex) {
+                    System.Console.WriteLine($"[SocketException] : {ex.Message}");
+                } finally {
+                    if (!mBypassSocket && !isAlive) {
+                        CtMsgBox.Show("Failed", "Connect Failed!!", MsgBoxBtn.OK, MsgBoxStyle.Error);
+                    }
+                }
+                IsServerAlive = isAlive;
+            }
+            return IsServerAlive;
+        }
+
+        private void SetPosition(int x, int y, double theta) {
+            Database.AGVGM[mAGVID].Data.Position.X = x;
+            Database.AGVGM[mAGVID].Data.Position.Y = y;
+            Database.AGVGM[mAGVID].Data.Toward.Theta = theta;
+            mCarInfo.x = x;
+            mCarInfo.y = y;
+            mCarInfo.theta = theta;
+
+            SendMsg($"Set:POS:{x:F0}:{y:F0}:{theta}");
         }
 
         /// <summary>
@@ -953,19 +1518,14 @@ namespace ClientUI
         /// </summary>
         /// <returns>Goal List:"{goal1},{goal2},{goal3}..."</returns>
         /// <remarks>用來模擬iS向AGV要求所有Goal點名稱</remarks> 
-        private string GetGoalNames()
-        {
+        private string GetGoalNames() {
             string goalList = "Empty";
-            if (mBypassSocket)
-            {
+            if (mBypassSocket) {
                 /*-- 模擬用資料 --*/
                 goalList = "GoalA,GoalB,GoalC";
-            }
-            else
-            {
+            } else {
                 string[] rtnMsg = SendMsg($"Get:GoalList");
-                if (rtnMsg.Count() > 3)
-                {
+                if (rtnMsg.Count() > 3) {
                     goalList = rtnMsg[3];
                 }
             }
@@ -976,8 +1536,7 @@ namespace ClientUI
         /// 連接至Server端(AGV)
         /// </summary>
         /// <returns><see cref="Socket"/>連線狀態 True:已連線/False:已斷開</returns>
-        private bool ConnectServer()
-        {
+        private bool ConnectServer() {
             return serverComm.ConnectServer(ref mSoxCmd, mHostIP, mRecvCmdPort);
         }
 
@@ -985,11 +1544,10 @@ namespace ClientUI
         /// 與Server端(AGV)斷開連線
         /// </summary>
         /// <returns><see cref="Socket"/>連線狀態 True:已連線/False:已斷開</returns>
-        public bool DisConnectServer()
-        {
+        public bool DisConnectServer() {
             if (mBypassSocket) {
                 return false;
-            }else {
+            } else {
                 return serverComm.DisconnectServer(mSoxCmd);
             }
         }
@@ -1001,11 +1559,9 @@ namespace ClientUI
         /// <param name="clientPort">Communication port</param>
         /// <param name="fileName">File name</param>
         /// 
-        private void SendFile(string clientIP, int clientPort, string fileName)
-        {
+        private void SendFile(string clientIP, int clientPort, string fileName) {
             string curMsg = "";
-            try
-            {
+            try {
                 IPAddress[] ipAddress = Dns.GetHostAddresses(clientIP);
                 IPEndPoint ipEnd = new IPEndPoint(ipAddress[0], clientPort);
                 /* Make IP end point same as Server. */
@@ -1014,14 +1570,12 @@ namespace ClientUI
                 string filePath = "D:\\MapInfo\\";
                 /* File reading operation. */
                 fileName = fileName.Replace("\\", "/");
-                while (fileName.IndexOf("/") > -1)
-                {
+                while (fileName.IndexOf("/") > -1) {
                     filePath += fileName.Substring(0, fileName.IndexOf("/") + 1);
                     fileName = fileName.Substring(fileName.IndexOf("/") + 1);
                 }
                 byte[] fileNameByte = Encoding.ASCII.GetBytes(fileName);
-                if (fileNameByte.Length > 1024 * 1024 * 5)
-                {
+                if (fileNameByte.Length > 1024 * 1024 * 5) {
                     curMsg = "File size is more than 850kb, please try with small file.";
                     return;
                 }
@@ -1051,9 +1605,7 @@ namespace ClientUI
                 fileNameLen = null;
                 /* Data send complete now close socket. */
                 curMsg = "File transferred.";
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 if (ex.Message == "No connection could be made because the target machine actively refused it")
                     curMsg = "File Sending fail. Because server not running.";
                 else
@@ -1064,37 +1616,27 @@ namespace ClientUI
         /// <summary>
         /// 傳送檔案
         /// </summary>
-        private async void SendFile()
-        {
+        private async void SendFile() {
             string[] rtnMsg = SendMsg("Send:map");
-            if (mBypassSocket || rtnMsg.Count() > 2 && "True" == rtnMsg[2])
-            {
+            if (mBypassSocket || rtnMsg.Count() > 2 && "True" == rtnMsg[2]) {
                 OpenFileDialog openMap = new OpenFileDialog();
                 openMap.InitialDirectory = mDefMapDir;
                 openMap.Filter = "MAP|*.ori;*.map";
-                if (openMap.ShowDialog() == DialogResult.OK)
-                {
+                if (openMap.ShowDialog() == DialogResult.OK) {
                     CtProgress prog = new CtProgress("Send Map", "The file are being transferred");
-                    try
-                    {
-                        await Task.Run(() =>
-                        {
+                    try {
+                        await Task.Run(() => {
                             string fileName = CtFile.GetFileName(openMap.FileName);
-                            if (!mBypassSocket)
-                            {
+                            if (!mBypassSocket) {
                                 SendFile(mHostIP, mSendMapPort, fileName);
-                            }
-                            else
-                            {
+                            } else {
                                 /*-- 空跑模擬檔案傳送中 --*/
                                 SpinWait.SpinUntil(() => false, 1000);
                             }
                             IConsole.AddMsg($"Send File {fileName}");
                             SetBalloonTip("Send File", fileName, ToolTipIcon.Info, 10);
                         });
-                    }
-                    finally
-                    {
+                    } finally {
                         prog?.Close();
                         prog = null;
                     }
@@ -1110,13 +1652,10 @@ namespace ClientUI
         /// modify by Jay 2017/09/08
         /// </remarks>
         /// <returns>True:發送中/False:停止發送</returns>
-        public bool ChangeSendInfo()
-        {
-            try
-            {
+        public bool ChangeSendInfo() {
+            try {
                 IsGettingLaser = !IsGettingLaser;
-                if (IsGettingLaser)
-                {
+                if (IsGettingLaser) {
                     /*-- 開啟車子資訊讀取執行緒 --*/
                     mSoxMonitorCmd.Start();
 
@@ -1125,35 +1664,28 @@ namespace ClientUI
                     IsGettingLaser = mBypassSocket || (rtnMsg.Count() > 2 && "True" == rtnMsg[2]);
 
                     /*-- 車子未發送資料則關閉Socket --*/
-                    if (!IsGettingLaser)
-                    {
+                    if (!IsGettingLaser) {
                         Database.AGVGM[mAGVID].LaserAPoints.DataList.Clear();
                         mSoxMonitorCmd.Stop();
                     }
-                }
-                else {
+                } else {
                     Database.AGVGM[mAGVID].LaserAPoints.DataList.Clear();
                     mSoxMonitorCmd.Stop();
                     SendMsg("Get:Car:False");
                 }
                 ITest.SetLaserStt(IsGettingLaser);
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 System.Console.WriteLine(ex.Message);
             }
 
             return IsGettingLaser;
         }
 
-        private void GetLaser()
-        {
+        private void GetLaser() {
             /*-- 若是雷射資料則更新資料 --*/
             string[] rtnMsg = SendMsg("Get:Laser");
-            if (rtnMsg.Length > 3)
-            {
-                if (rtnMsg[1] == "Laser")
-                {
+            if (rtnMsg.Length > 3) {
+                if (rtnMsg[1] == "Laser") {
                     string[] sreRemoteLaser = rtnMsg[3].Split(',');
                     mCarInfo.LaserData = sreRemoteLaser.Select(x => int.Parse(x));
                     DrawLaser(mCarInfo);
@@ -1162,58 +1694,22 @@ namespace ClientUI
         }
 
         /// <summary>
-        /// 繪製雷射
-        /// </summary>
-        private void DrawLaser(CarInfo info)
-        {
-            double angle = 0D, Laserangle = 0D;
-            List<IPair> points = new List<IPair>();
-            int idx = 0;
-
-            
-            foreach (int dist in info.LaserData)
-            {
-                if (dist >= 30 && dist < 15000)
-                {
-                    int[] pos = Transformation.LaserPoleToCartesian(dist, -135, 0.25, idx++, 43, 416.75, 43, info.x,info.y,info.theta, out angle, out Laserangle);//, out dataAngle, out laserAngle);
-                    points.Add(FactoryMode.Factory.Pair(pos[0], pos[1]));
-                    pos = null;
-                }
-            }
-            Database.AGVGM[mAGVID]?.LaserAPoints.DataList.Replace(points);
-        }
-        
-        /// <summary>
-        /// 繪製路徑路徑
-        /// </summary>
-        /// <param name="points"></param>
-        private void DrawPath(List<CartesianPos> points) {
-            Database.AGVGM[mAGVID].Path.DataList.Replace(points.ToIPair());
-        }
-
-        /// <summary>
         /// 移動控制
         /// </summary>
         /// <param name="direction">移動方向</param>
         /// <param name="velocity">移動速度</param>
-        private void MotionContorl(MotionDirection direction, int velocity = 0)
-        {
+        private void MotionContorl(MotionDirection direction, int velocity = 0) {
             string[] rtnMsg = SendMsg("Get:IsOpen");
 
 
-            if (rtnMsg.Count() > 2 && bool.Parse(rtnMsg[2]))
-            {
+            if (rtnMsg.Count() > 2 && bool.Parse(rtnMsg[2])) {
 
-                if (direction == MotionDirection.Stop)
-                {
+                if (direction == MotionDirection.Stop) {
                     SendMsg("Set:Stop");
-                }
-                else
-                {
+                } else {
 
                     string cmd = string.Empty;
-                    switch (direction)
-                    {
+                    switch (direction) {
                         case MotionDirection.Forward:
                             cmd = $"Set:DriveVelo:{mVelocity}:{mVelocity}";
                             break;
@@ -1232,37 +1728,29 @@ namespace ClientUI
                 }
             }
         }
-        
+
         /// <summary>
         /// 向Server端要求檔案
         /// </summary>
         /// <param name="type">檔案類型</param>
         /// <remarks>modified by Jay 2017/09/20</remarks>
-        private bool GetFileList(FileType type, out string fileList)
-        {
+        private bool GetFileList(FileType type, out string fileList) {
             bool ret = true;
             fileList = string.Empty;
-            if (mBypassSocket)
-            {
+            if (mBypassSocket) {
                 fileList = $"{type}1,{type}2,{type}3";
-            }
-            else
-            {
+            } else {
                 string[] rtnMsg = SendMsg($"Get:{type}List");
                 fileList = rtnMsg[3];
             }
             return ret;
         }
 
-        private void GetFile(FileType type)
-        {
+        private void GetFile(FileType type) {
             string fileList = string.Empty;
-            if (GetFileList(type, out fileList))
-            {
-                using (MapList f = new MapList(fileList))
-                {
-                    if (f.ShowDialog() == DialogResult.OK)
-                    {
+            if (GetFileList(type, out fileList)) {
+                using (MapList f = new MapList(fileList)) {
+                    if (f.ShowDialog() == DialogResult.OK) {
                         FileDownload(f.strMapList, type);
                     }
                 }
@@ -1274,8 +1762,7 @@ namespace ClientUI
         /// </summary>
         /// <param name="fileName"></param>
         /// <param name="type"></param>
-        public void FileDownload(string fileName, FileType type)
-        {
+        public void FileDownload(string fileName, FileType type) {
             /*-- 開啟執行緒準備接收檔案 --*/
             mSoxMonitorFile.Start();
 
@@ -1289,19 +1776,17 @@ namespace ClientUI
             //RaiseAgvClientEvent(AgvClientEventType.GetFile, type);
 
         }
-        
+
         /// <summary>
         /// 前往目標Goal點
         /// </summary>
         /// <param name="numGoal">目標Goal點</param>
-        private void Run(int numGoal)
-        {
+        private void Run(int numGoal) {
             /*-- 若是路徑資料則開始接收資料 --*/
             string[] rtnMsg = SendMsg($"Set:Run:{numGoal}");
             if ((rtnMsg?.Length ?? 0) > 3 &&
                 rtnMsg[1] == "Run" &&
-                rtnMsg[3] == "Done")
-            {
+                rtnMsg[3] == "Done") {
                 mSoxMonitorPath.Start();
             }
         }
@@ -1310,14 +1795,12 @@ namespace ClientUI
         /// 路徑規劃
         /// </summary>
         /// <param name="no">目標Goal點編號</param>
-        private void PathPlan(int numGoal)
-        {
+        private void PathPlan(int numGoal) {
             /*-- 若是路徑資料則開始接收資料 --*/
             string[] rtnMsg = SendMsg($"Set:PathPlan:{numGoal}");
             if ((rtnMsg?.Count() ?? 0) > 3 &&
                 rtnMsg[1] == "PathPlan" &&
-                rtnMsg[2] == "True")
-            {
+                rtnMsg[2] == "True") {
                 mSoxMonitorPath.Start();
             }
         }
@@ -1338,15 +1821,11 @@ namespace ClientUI
         /// <param name="sendMseeage">傳送訊息內容</param>
         /// <param name="passChkConn">是否略過檢查連線狀態</param>
         /// <returns>Server端回應</returns>
-        private string[] SendMsg(string sendMseeage, bool passChkConn = true)
-        {
-            if (mBypassSocket)
-            {
+        private string[] SendMsg(string sendMseeage, bool passChkConn = true) {
+            if (mBypassSocket) {
                 /*-- Bypass略過不傳 --*/
                 return new string[] { "True" };
-            }
-            else if (passChkConn && !IsServerAlive)
-            {
+            } else if (passChkConn && !IsServerAlive) {
                 /*-- 略過連線檢查且Server端未運作 --*/
                 return new string[] { "False" };
             }
@@ -1373,16 +1852,14 @@ namespace ClientUI
         /// <param name="requerPort">通訊埠號</param>
         /// <param name="sendMseeage">傳送訊息內容</param>
         /// <returns>Server端回應</returns>
-        private string SendStrMsg(string sendMseeage)
-        {
+        private string SendStrMsg(string sendMseeage) {
             //可以在字串編碼上做文章，可以傳送各種資訊內容，目前主要有三種編碼方式：
             //1.自訂連接字串編碼－－微量
             //2.JSON編碼--輕量
             //3.XML編碼--重量
             int state;
             byte[] recvBytes = new byte[8192];//開啟一個緩衝區，存儲接收到的資訊
-            try
-            {
+            try {
 
                 byte[] sendContents = Encoding.UTF8.GetBytes(sendMseeage + "\r\n");
                 state = mSoxCmd.Send(sendContents, sendContents.Length, 0);//發送二進位資料
@@ -1391,55 +1868,218 @@ namespace ClientUI
                 strRecvCmd = strRecvCmd.Split(new char[] { '\0' })[0];
                 sendContents = null;
                 return strRecvCmd;
-            }
-            catch (SocketException se)
-            {
+            } catch (SocketException se) {
                 System.Console.WriteLine("SocketException : {0}", se.ToString());
                 return "False";
-            }
-            catch (ArgumentNullException ane)
-            {
+            } catch (ArgumentNullException ane) {
                 System.Console.WriteLine("ArgumentNullException : {0}", ane.ToString());
                 return "False";
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 System.Console.Write(ex.Message);
                 return "False";
-            }
-            finally
-            {
+            } finally {
                 recvBytes = null;
             }
 
         }
 
-        private IObstacleLines ConvertToObstacleLines(List<MapLine> lines)
-        {
-            IObstacleLines obstacleLines = FactoryMode.Factory.ObstacleLines();
-            foreach (var item in lines)
-            {
-                obstacleLines.DataList.Add(FactoryMode.Factory.Line(item.start.x, item.start.y, item.end.x, item.end.y));
-            }
-            return obstacleLines;
+        #endregion Communication 
+
+        #region UI
+
+        /// <summary>
+        /// 車子模式切換時
+        /// </summary>
+        /// <param name="mode"></param>
+        private void ChangedMode(CarMode mode) {
+            tslbStatus.Text = $"{mode}";
         }
 
-        private List<IPair> ConvertToPairs(List<CartesianPos> points)
-        {
-            List<IPair> pairs = new List<IPair>();
-            foreach (var item in points)
-            {
-                pairs.Add(FactoryMode.Factory.Pair(item.x, item.y));
-            }
-            return pairs;
+        /// <summary>
+        /// 顯示主介面
+        /// </summary>
+        private void ShowWindow() {
+            mNotifyIcon.HideIcon();
+            this.Show();
+            this.TopMost = true;
+            #region 把DocDocument切回來
+            ///由於主介面關閉的時候會觸發到DockDocument的FormCloseing事件
+            ///導致子介面被隱藏
+            ///這邊在手動把他切回來一次
+            #endregion 
+            MapGL.Show();
+            this.TopMost = false;
         }
-        
+
+        /// <summary>
+        /// 離開程式
+        /// </summary>
+        private void Exit() {
+            this.Dispose();
+        }
+
+        /// <summary>
+        /// 車子資訊更新事件
+        /// </summary>
+        ///<param name="info">車子資訊</param>
+        private void CarInfoRefresh(CarInfo info) {
+            int battery = info.PowerPercent;
+            tsprgBattery.Value = battery;
+            tslbBattery.Text = string.Format(tslbBattery.Tag.ToString(), battery);
+            tslbStatus.Text = info.Status;
+        }
+
+        /// <summary>
+        /// 依照使用者權限切換介面配置
+        /// </summary>
+        /// <param name="usrLv"></param>
+        private void UserChanged(UserData usrData) {
+            AccessLevel usrLv = usrData.Level;
+            string title = string.Empty;//工具列選項標題
+            string usrName = string.Empty;//狀態列帳號名稱
+            bool allowUsrMan = usrLv < AccessLevel.Operator;
+
+            /*-- 依照權限切換模組可視層級 --*/
+            switch (usrLv) {
+                case AccessLevel.None:
+                    DockContentVisible(miMapGL, false);
+                    DockContentVisible(miConsole, true);
+                    DockContentVisible(miTesting, false);
+                    DockContentVisible(miGoalSetting, false);
+                    miBypass.Visible = false;
+                    break;
+                case AccessLevel.Operator:
+                    DockContentVisible(miMapGL, true);
+                    DockContentVisible(miConsole, true);
+                    DockContentVisible(miGoalSetting, true);
+                    break;
+                case AccessLevel.Engineer:
+                case AccessLevel.Administrator:
+                    DockContentVisible(miMapGL, true);
+                    DockContentVisible(miConsole, true);
+                    DockContentVisible(miGoalSetting, true);
+                    DockContentVisible(miTesting, true);
+                    miBypass.Visible = true;
+
+                    break;
+            }
+
+            /*-- 顯示帳號相關資訊 --*/
+            if (usrLv == AccessLevel.None) {
+                title = "Login";
+                usrName = "No account";
+            } else {
+                title = "Logout";
+                usrName = usrData.Account;
+            }
+            CtInvoke.ToolStripItemText(miLogin, title);
+            CtInvoke.ToolStripItemVisible(miUserManager, allowUsrMan);
+            tslbAccessLv.Text = usrLv.ToString();
+            tslbUserName.Text = usrName;
+        }
+
+        #endregion UI
+
+        #region DockContent
+
+        /// <summary>
+        /// 統計<see cref="mDockContent"/>中相同停靠區域最大區塊大小，並寫入<see cref="DockPanel"/>設定
+        /// </summary>
+        /// <param name="panel">要設定的<see cref="DockPanel"/></param>控制項
+        /// <param name="area">要統計的停靠區域</param>
+        private void CalculateFixedPortion(DockPanel panel, DockAreas area) {
+            /*-- 取得相同停靠區域的DockContent集合 --*/
+            var dockContents = mDockContent.Where(kvp =>
+               kvp.Value.DefaultDockState.ToAreas() == area
+            );
+
+            /*-- 沒有DockContent存在則離開 --*/
+            if (!dockContents.Any()) return;
+
+            /*-- 計算集合中最大的Width與Height值 --*/
+            Size dockSize = new Size();
+            dockSize.Width = dockContents.Max(v => v.Value.FixedSize.Width);
+            dockSize.Height = dockContents.Max(v => v.Value.FixedSize.Height);
+
+            /*-- 依照停靠區域計算所需顯示大小 --*/
+            double portion = 0;
+            if (DockMth.CalculatePortion(area, dockSize, out portion)) {
+                switch (area) {
+                    case DockAreas.DockBottom:
+                        panel.DockBottomPortion = portion;
+                        break;
+                    case DockAreas.DockLeft:
+                        panel.DockLeftPortion = portion;
+                        break;
+                    case DockAreas.DockRight:
+                        panel.DockRightPortion = portion;
+                        break;
+                    case DockAreas.DockTop:
+                        panel.DockTopPortion = portion;
+                        break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 切換CtDockContemt可視狀態
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="dockContent">CtDockContent物件</param>
+        /// <param name="vis">可視狀態</param>
+        private void DockContentVisible(ICtDockContent dockContent, bool vis) {
+            try {
+                if (vis) {
+                    dockContent.ShowWindow();
+                } else {
+                    dockContent.HideWindow();
+                }
+            } catch (Exception ex) {
+                string msg = ex.Message;
+            }
+
+        }
+
+        /// <summary>
+        /// 控制DockContent物件致能
+        /// </summary>
+        /// <param name="mapGL"></param>
+        /// <param name="console"></param>
+        /// <param name="testing"></param>
+        /// <param name="goalSetting"></param>
+        private void DockContentEnable(bool mapGL, bool console, bool testing, bool goalSetting) {
+            CtInvoke.ToolStripItemEnable(miMapGL, mapGL);
+            CtInvoke.ToolStripItemEnable(miConsole, console);
+            CtInvoke.ToolStripItemEnable(miTesting, testing);
+            CtInvoke.ToolStripItemEnable(miGoalSetting, goalSetting);
+
+            DockContentVisible(MapGL, mapGL);
+            DockContentVisible(Console, console);
+            DockContentVisible(GoalSetting, goalSetting);
+            DockContentVisible(Testing, testing);
+        }
+
+        /// <summary>
+        /// 設定DockContent以及與之相關ToolStripMenuItem控制項之Visible屬性
+        /// </summary>
+        /// <param name="item">相關<see cref="ToolStripMenuItem"/>控制項</param>
+        /// <param name="visible">是否可視</param>
+        private void DockContentVisible(ToolStripMenuItem item, bool visible) {
+            if (mDockContent.ContainsKey(item)) {
+                DockContentVisible(mDockContent[item], visible);
+                CtInvoke.ToolStripItemEnable(item, visible);
+            }
+        }
+
+        #endregion DockContent
+
+        #region Draw
+
         /// <summary>
         /// 載入地圖
         /// </summary>
         /// <param name="mapPath">Map檔路徑</param>
-        private void LoadMap(string mapPath)
-        {
+        private void LoadMap(string mapPath) {
             List<CartesianPosInfo> goalList = null;
             List<CartesianPosInfo> powerList = null;
             List<CartesianPos> obstaclePoints = null;
@@ -1493,13 +2133,13 @@ namespace ClientUI
             //    int total = obstacleLine.Count + 2;
             //    if (min != null && max != null)
             //    {
-                    
+
             //        IMapCtrl.Focus((int)(min.x + max.x) / 2, (int)(min.y + max.y) / 2);
             //    }
             //    prog = new CtProgress(ProgBarStyle.Percent, "Load Map", $"Loading {mapPath}", total);
             //    System.Console.WriteLine($"Read:{sw.ElapsedMilliseconds}ms");
             //    sw.Restart();
-                
+
             //    mMapMatch.Reset();
 
             //    //Database.ObstacleLinesGM.DataList.SaftyForLoop(line => {
@@ -1564,29 +2204,24 @@ namespace ClientUI
         /// </summary>
         /// <param name="oriPath"></param>
         /// <returns></returns>
-        private void LoadOri(string oriPath)
-        {
+        private void LoadOri(string oriPath) {
             CurOriPath = oriPath;
             NewMap();
             MapReading MapReading = null;
-            if (!mBypassLoadFile)
-            {//無BypassLoadFile
+            if (!mBypassLoadFile) {//無BypassLoadFile
                 MapReading = new MapReading(CurOriPath);
                 CartesianPos carPos = null;
                 List<CartesianPos> laserData = null;
                 //List<Point> listMap = new List<Point>();
                 int dataLength = MapReading.OpenFile();
-                if (dataLength != 0)
-                {
+                if (dataLength != 0) {
                     CtProgress prog = new CtProgress(ProgBarStyle.Percent, $"Load Ori", $"Loading {oriPath}...", dataLength - 1);
-                    try
-                    {
+                    try {
                         IMapCtrl.Zoom = 100;
-                        for (int n = 0; n < dataLength; n++)
-                        {
+                        for (int n = 0; n < dataLength; n++) {
                             MapReading.ReadScanningInfo(n, out carPos, out laserData);
                             Database.AGVGM[mAGVID].SetLocation(carPos);
-                            List<IPair> points = ConvertToPairs(laserData);
+                            List<IPair> points = laserData.ToPairs();
                             Database.AGVGM[mAGVID]?.LaserAPoints.DataList.Replace(points);
                             Database.ObstaclePointsGM.DataList.AddRange(points);
                             IMapCtrl.Focus((int)carPos.x, (int)carPos.y);
@@ -1594,22 +2229,15 @@ namespace ClientUI
                             System.Console.WriteLine(n);
                             prog.UpdateStep(n);
                         }
-                    }
-                    catch (Exception ex)
-                    {
+                    } catch (Exception ex) {
                         System.Console.WriteLine(ex.Message);
-                    }
-                    finally
-                    {
+                    } finally {
                         prog?.Close();
                         prog = null;
                     }
-
                 }
-            }
-            else
-            {//Bypass LoadFile功能
-             /*-- 空跑一秒，模擬檔案載入 --*/
+            } else {//Bypass LoadFile功能
+                    /*-- 空跑一秒，模擬檔案載入 --*/
                 SpinWait.SpinUntil(() => false, 1000);
             }
             MapReading = null;
@@ -1619,17 +2247,13 @@ namespace ClientUI
         /// 載入檔案
         /// </summary>
         /// <param name="type">載入檔案類型</param>
-        public async void LoadFile(FileType type)
-        {
+        public async void LoadFile(FileType type) {
             OpenFileDialog openMap = new OpenFileDialog();
             openMap.InitialDirectory = mDefMapDir;
             openMap.Filter = $"MAP|*.{type.ToString().ToLower()}";
-            if (openMap.ShowDialog() == DialogResult.OK)
-            {
-                try
-                {
-                    switch (type)
-                    {
+            if (openMap.ShowDialog() == DialogResult.OK) {
+                try {
+                    switch (type) {
                         case FileType.Ori:
                             await Task.Run(() => LoadOri(openMap.FileName));
                             Database.AGVGM[mAGVID]?.LaserAPoints.DataList.Clear();
@@ -1646,9 +2270,7 @@ namespace ClientUI
                             throw new ArgumentException($"無法載入未定義的檔案類型{type}");
                     }
                     SetBalloonTip($"Load { type}", $"The { type} is loaded", ToolTipIcon.Info, 10);
-                }
-                catch (Exception ex)
-                {
+                } catch (Exception ex) {
                     CtMsgBox.Show("Error", ex.Message);
                 }
             }
@@ -1656,306 +2278,66 @@ namespace ClientUI
         }
 
         /// <summary>
-        /// 車子模式切換時
+        /// 地圖修正
         /// </summary>
-        /// <param name="mode"></param>
-        private void ChangedMode(CarMode mode)
-        {
-            tslbStatus.Text = $"{mode}";
+        private void CorrectOri() {
+            NewMap();
+            tsk_FixOriginScanningFile();
+            Database.AGVGM[mAGVID]?.LaserAPoints.DataList.Clear();
         }
 
         /// <summary>
-        /// 載入ICtDockContent物件
+        /// 清空Map
         /// </summary>
-        private void LoadICtDockContent()
-        {
-            if (mDockContent != null) return;
-            /*-- 載入DockContent --*/
-            mDockContent = new Dictionary<ToolStripMenuItem, ICtDockContent>() {
-                { miConsole,new CtConsole(DockState.DockBottomAutoHide)},
-                { miGoalSetting,new CtGoalSetting(DockState.DockLeft)},
-                { miTesting,new CtTesting(DockState.DockLeft)},
-                { miMapGL,new AGVMapUI( DockState.Document)}
-            };
-            SetEvents();
-
-            /*-- 計算每個固定停靠區域所需的顯示大小 --*/
-            foreach (var area in Enum.GetValues(typeof(DockAreas)))
-            {
-                CalculateFixedPortion(dockPanel, (DockAreas)area);
-            }
-
-            /*-- 遍歷所有DockContent與MenuItem物件 --*/
-            foreach (var kvp in mDockContent)
-            {
-                ToolStripMenuItem item = kvp.Key;
-                ICtDockContent dokContent = kvp.Value as ICtDockContent;
-
-                /*-- 參考分配 --*/
-                dokContent.AssignmentDockPanel(dockPanel);
-
-                /*-- 顯示視窗 --*/
-                dokContent.ShowWindow();
-
-                /*-- 訂閱DockDockStateCHanged事件 --*/
-                dokContent.DockStateChanged += Value_DockStateChanged;
-
-                /*-- 依照DockState狀態顯示MenuItem的Check狀態 --*/
-                item.Checked = dokContent.DockState != DockState.Hidden;
-
-                /*-- MenuItem顯示DockContent標題文字(Text) --*/
-                item.Text = dokContent.Text;
-
-            }
+        private void NewMap() {
+            /*-- 保留AGV資料 --*/
+            var agv = Database.AGVGM[mAGVID];
+            /*-- 清除資料 --*/
+            IMapCtrl.NewMap();
+            /*-- 將AGV寫回DataBase --*/
+            Database.AGVGM.Add(mAGVID, agv);
+            /*-- 清除雷射 --*/
+            Database.AGVGM[mAGVID].LaserAPoints.DataList.Clear();
+            /*-- 清除路徑 --*/
+            Database.AGVGM[mAGVID].Path.DataList.Clear();
         }
 
-        /// <summary>
-        /// 載入CtNotifyIcon物件
-        /// </summary>
-        private void LoadCtNotifyIcon()
-        {
-            if (mNotifyIcon == null)
-            {
-                mNotifyIcon = new CtNotifyIcon(this, mNotifyCaption);
-                mNotifyIcon.OnMouseDoubleClick += mNotifyIcon_OnMouseDoubleClick;
-                mNotifyIcon.Visible = true;
-                mMenuItems = new MenuItems();
-
-                mMenuItems.AddMenuItem(
-                    "Show Window",
-                    ShowWindow_OnClick
-                );
-
-                mMenuItems.AddMenuItem(
-                    "Exit",
-                    (sender, e) => Exit()
-                    );
-                mNotifyIcon.MenuItems = mMenuItems;
-            }
-        }
 
         /// <summary>
-        /// 統計<see cref="mDockContent"/>中相同停靠區域最大區塊大小，並寫入<see cref="DockPanel"/>設定
+        /// 繪製雷射
         /// </summary>
-        /// <param name="panel">要設定的<see cref="DockPanel"/></param>控制項
-        /// <param name="area">要統計的停靠區域</param>
-        private void CalculateFixedPortion(DockPanel panel, DockAreas area)
-        {
-            /*-- 取得相同停靠區域的DockContent集合 --*/
-            var dockContents = mDockContent.Where(kvp =>
-               kvp.Value.DefaultDockState.ToAreas() == area
-            );
+        private void DrawLaser(CarInfo info) {
+            double angle = 0D, Laserangle = 0D;
+            List<IPair> points = new List<IPair>();
+            int idx = 0;
 
-            /*-- 沒有DockContent存在則離開 --*/
-            if (!dockContents.Any()) return;
 
-            /*-- 計算集合中最大的Width與Height值 --*/
-            Size dockSize = new Size();
-            dockSize.Width = dockContents.Max(v => v.Value.FixedSize.Width);
-            dockSize.Height = dockContents.Max(v => v.Value.FixedSize.Height);
-
-            /*-- 依照停靠區域計算所需顯示大小 --*/
-            double portion = 0;
-            if (DockMth.CalculatePortion(area, dockSize, out portion))
-            {
-                switch (area)
-                {
-                    case DockAreas.DockBottom:
-                        panel.DockBottomPortion = portion;
-                        break;
-                    case DockAreas.DockLeft:
-                        panel.DockLeftPortion = portion;
-                        break;
-                    case DockAreas.DockRight:
-                        panel.DockRightPortion = portion;
-                        break;
-                    case DockAreas.DockTop:
-                        panel.DockTopPortion = portion;
-                        break;
+            foreach (int dist in info.LaserData) {
+                if (dist >= 30 && dist < 15000) {
+                    int[] pos = Transformation.LaserPoleToCartesian(dist, -135, 0.25, idx++, 43, 416.75, 43, info.x, info.y, info.theta, out angle, out Laserangle);//, out dataAngle, out laserAngle);
+                    points.Add(FactoryMode.Factory.Pair(pos[0], pos[1]));
+                    pos = null;
                 }
             }
+            Database.AGVGM[mAGVID]?.LaserAPoints.DataList.Replace(points);
         }
 
         /// <summary>
-        /// 顯示主介面
+        /// 繪製路徑路徑
         /// </summary>
-        private void ShowWindow()
-        {
-            mNotifyIcon.HideIcon();
-            this.Show();
-            this.TopMost = true;
-            #region 把DocDocument切回來
-            ///由於主介面關閉的時候會觸發到DockDocument的FormCloseing事件
-            ///導致子介面被隱藏
-            ///這邊在手動把他切回來一次
-            #endregion 
-            MapGL.Show();
-            this.TopMost = false;
+        /// <param name="points"></param>
+        private void DrawPath(List<CartesianPos> points) {
+            Database.AGVGM[mAGVID].Path.DataList.Replace(points.ToIPair());
         }
 
-        /// <summary>
-        /// 離開程式
-        /// </summary>
-        private void Exit()
-        {
-            this.Dispose();
-        }
+        #endregion Draw
 
-        /// <summary>
-        /// 切換CtDockContemt可視狀態
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="dockContent">CtDockContent物件</param>
-        /// <param name="vis">可視狀態</param>
-        private void DockContentVisible(ICtDockContent dockContent, bool vis)
-        {
-            try
-            {
-                if (vis)
-                {
-                    dockContent.ShowWindow();
-                }
-                else
-                {
-                    dockContent.HideWindow();
-                }
-            }
-            catch (Exception ex)
-            {
-                string msg = ex.Message;
-            }
-
-        }
-
-        /// <summary>
-        /// 控制DockContent物件致能
-        /// </summary>
-        /// <param name="mapGL"></param>
-        /// <param name="console"></param>
-        /// <param name="testing"></param>
-        /// <param name="goalSetting"></param>
-        private void DockContentEnable(bool mapGL, bool console, bool testing, bool goalSetting)
-        {
-            CtInvoke.ToolStripItemEnable(miMapGL, mapGL);
-            CtInvoke.ToolStripItemEnable(miConsole, console);
-            CtInvoke.ToolStripItemEnable(miTesting, testing);
-            CtInvoke.ToolStripItemEnable(miGoalSetting, goalSetting);
-
-            DockContentVisible(MapGL, mapGL);
-            DockContentVisible(Console, console);
-            DockContentVisible(GoalSetting, goalSetting);
-            DockContentVisible(Testing, testing);
-        }
-
-        /// <summary>
-        /// 設定DockContent以及與之相關ToolStripMenuItem控制項之Visible屬性
-        /// </summary>
-        /// <param name="item">相關<see cref="ToolStripMenuItem"/>控制項</param>
-        /// <param name="visible">是否可視</param>
-        private void DockContentVisible(ToolStripMenuItem item, bool visible)
-        {
-            if (mDockContent.ContainsKey(item))
-            {
-                DockContentVisible(mDockContent[item], visible);
-                CtInvoke.ToolStripItemEnable(item, visible);
-            }
-        }
-        
-        /// <summary>
-        /// 車子資訊更新事件
-        /// </summary>
-        ///<param name="info">車子資訊</param>
-        private void CarInfoRefresh(CarInfo info)
-        {
-            int battery = info.PowerPercent;
-            tsprgBattery.Value = battery;
-            tslbBattery.Text = string.Format(tslbBattery.Tag.ToString(), battery);
-            tslbStatus.Text = info.Status;
-        }
-
-        /// <summary>
-        /// 依照使用者權限切換介面配置
-        /// </summary>
-        /// <param name="usrLv"></param>
-        private void UserChanged(UserData usrData)
-        {
-            AccessLevel usrLv = usrData.Level;
-            string title = string.Empty;//工具列選項標題
-            string usrName = string.Empty;//狀態列帳號名稱
-            bool allowUsrMan = usrLv < AccessLevel.Operator;
-
-            /*-- 依照權限切換模組可視層級 --*/
-            switch (usrLv)
-            {
-                case AccessLevel.None:
-                    DockContentVisible(miMapGL, false);
-                    DockContentVisible(miConsole, true);
-                    DockContentVisible(miTesting, false);
-                    DockContentVisible(miGoalSetting, false);
-                    miBypass.Visible = false;
-                    break;
-                case AccessLevel.Operator:
-                    DockContentVisible(miMapGL, true);
-                    DockContentVisible(miConsole, true);
-                    DockContentVisible(miGoalSetting, true);
-                    break;
-                case AccessLevel.Engineer:
-                case AccessLevel.Administrator:
-                    DockContentVisible(miMapGL, true);
-                    DockContentVisible(miConsole, true);
-                    DockContentVisible(miGoalSetting, true);
-                    DockContentVisible(miTesting, true);
-                    miBypass.Visible = true;
-
-                    break;
-            }
-
-            /*-- 顯示帳號相關資訊 --*/
-            if (usrLv == AccessLevel.None)
-            {
-                title = "Login";
-                usrName = "No account";
-            }
-            else
-            {
-                title = "Logout";
-                usrName = usrData.Account;
-            }
-            CtInvoke.ToolStripItemText(miLogin, title);
-            CtInvoke.ToolStripItemVisible(miUserManager, allowUsrMan);
-            tslbAccessLv.Text = usrLv.ToString();
-            tslbUserName.Text = usrName;
-        }
-
-        private List<CartesianPos> Encoder(string pack) {
-            string[] pathArray = pack.Trim().Split(new char[] { Separator.Data }, StringSplitOptions.RemoveEmptyEntries);
-            List<CartesianPos> rtnPoints = null;
-            int len = pathArray?.Count() ?? 0;
-            if (len != 0 && len % 2 == 0) {
-                rtnPoints = new List<CartesianPos>();
-                double x, y;
-                for (int i = 0; i < pathArray.Count() - 1; i += 2) {
-                    string strX = pathArray[i];
-                    string strY = pathArray[i + 1];
-                    if (double.TryParse(pathArray[i], out x) && double.TryParse(pathArray[i + 1], out y)) {
-                        rtnPoints.Add(new CartesianPos(x, y));
-                    } else {
-                        rtnPoints.Clear();
-                        rtnPoints = null;
-                        break;
-                    }
-                }
-            }
-            return rtnPoints;
-        }
-        
-        #endregion Function - Private Methods
+        #region Load
 
         /// <summary>
         /// 設定事件連結
         /// </summary>
-        private void SetEvents()
-        {
+        private void SetEvents() {
             #region IGoalSetting 事件連結     
             IGoalSetting.AddNewGoalEvent += IGoalSetting_AddNewGoalEvent;
             IGoalSetting.AddNewPowerEvent += IGoalSetting_AddNewPowerEvent;
@@ -2000,679 +2382,115 @@ namespace ClientUI
             #endregion 
         }
 
-        private void IMapCtrl_GLClickEvent(object sender, GLMouseEventArgs e)
-        {
-            if (mIsSetting) {
-                if (Database.AGVGM.ContainsID(mAGVID)) {
-                    if (mNewPos == null) {
-                        mNewPos = e.Position;
-                    } else {
-                        double Calx = e.Position.X - mNewPos.X;
-                        double Caly = e.Position.Y - mNewPos.Y;
-                        double Calt = Math.Atan2(Caly, Calx) * 180 / Math.PI;
-                        Database.AGVGM[mAGVID].Data.Position = mNewPos;
-                        Database.AGVGM[mAGVID].Data.Toward.Theta = Calt;
-                        //Send POS to AGV   
-                        SetPosition(mNewPos.X, mNewPos.Y, Calt);
-                        mNewPos = null;
-                        mIsSetting = false;
-                    }
-                }
-            }else {
-                IGoalSetting.SetCurrentRealPos(new CartesianPos(e.Position.X, e.Position.Y));
+        /// <summary>
+        /// 載入ICtDockContent物件
+        /// </summary>
+        private void LoadICtDockContent() {
+            if (mDockContent != null) return;
+            /*-- 載入DockContent --*/
+            mDockContent = new Dictionary<ToolStripMenuItem, ICtDockContent>() {
+                { miConsole,new CtConsole(DockState.DockBottomAutoHide)},
+                { miGoalSetting,new CtGoalSetting(DockState.DockLeft)},
+                { miTesting,new CtTesting(DockState.DockLeft)},
+                { miMapGL,new AGVMapUI( DockState.Document)}
+            };
+            SetEvents();
+
+            /*-- 計算每個固定停靠區域所需的顯示大小 --*/
+            foreach (var area in Enum.GetValues(typeof(DockAreas))) {
+                CalculateFixedPortion(dockPanel, (DockAreas)area);
+            }
+
+            /*-- 遍歷所有DockContent與MenuItem物件 --*/
+            foreach (var kvp in mDockContent) {
+                ToolStripMenuItem item = kvp.Key;
+                ICtDockContent dokContent = kvp.Value as ICtDockContent;
+
+                /*-- 參考分配 --*/
+                dokContent.AssignmentDockPanel(dockPanel);
+
+                /*-- 顯示視窗 --*/
+                dokContent.ShowWindow();
+
+                /*-- 訂閱DockDockStateCHanged事件 --*/
+                dokContent.DockStateChanged += Value_DockStateChanged;
+
+                /*-- 依照DockState狀態顯示MenuItem的Check狀態 --*/
+                item.Checked = dokContent.DockState != DockState.Hidden;
+
+                /*-- MenuItem顯示DockContent標題文字(Text) --*/
+                item.Text = dokContent.Text;
+
             }
         }
 
         /// <summary>
-        /// 取得所有Goal點名稱
+        /// 載入CtNotifyIcon物件
         /// </summary>
-        private void IGoalSetting_GetGoalNames()
-        {
-            string goalNames = GetGoalNames();
-            IConsole.AddMsg($"Goal Names:{goalNames}");
-        }
+        private void LoadCtNotifyIcon() {
+            if (mNotifyIcon == null) {
+                mNotifyIcon = new CtNotifyIcon(this, mNotifyCaption);
+                mNotifyIcon.OnMouseDoubleClick += mNotifyIcon_OnMouseDoubleClick;
+                mNotifyIcon.Visible = true;
+                mMenuItems = new MenuItems();
 
-        private void ITest_SimplifyOri()
-        {
-            if (mBypassLoadFile)
-            {
-                /*-- 空跑模擬SimplifyOri --*/
-                SpinWait.SpinUntil(() => false, 1000);
-                return;
-            }
-            NewMap();
-            string[] tmpPath = CurOriPath.Split('.');
-            CurMapPath = tmpPath[0] + ".map";
-            MapSimplication mapSimp = new MapSimplication(CurMapPath);
-            mapSimp.Reset();
-            List<ILine> obstacleLines = new List<ILine>();
-            List<IPair> obstaclePoints = new List<IPair>();
-            List<CartesianPos> resultPoints;
-            List<MapSimplication.Line> resultlines;
-            mapSimp.ReadMapAllTransferToLine(mMapMatch.parseMap, mMapMatch.minimumPos, mMapMatch.maximumPos
-                , 100, 0, out resultlines, out resultPoints);
-            try
-            {
-                for (int i = 0; i < resultlines.Count; i++)
-                {
-                    obstacleLines.Add(
-                         FactoryMode.Factory.Line(resultlines[i].startX, resultlines[i].startY,
-                        resultlines[i].endX, resultlines[i].endY)
+                mMenuItems.AddMenuItem(
+                    "Show Window",
+                    ShowWindow_OnClick
+                );
+
+                mMenuItems.AddMenuItem(
+                    "Exit",
+                    (sender, e) => Exit()
                     );
-                }
-                for (int i = 0; i < resultPoints.Count; i++)
-                {
-                    obstaclePoints.Add(FactoryMode.Factory.Pair((int)resultPoints[i].x, (int)resultPoints[i].y));
-                }
-
-                Database.ObstaclePointsGM.DataList.AddRange(obstaclePoints);
-                Database.ObstacleLinesGM.DataList.AddRange(obstacleLines);
+                mNotifyIcon.MenuItems = mMenuItems;
             }
-            catch (Exception ex)
+        }
+
+        #endregion Load
+
+        ///<summary>IP驗證</summary>
+        ///<param name="ip">要驗證的字串</param>
+        ///<returns>True:合法IP/False:非法IP</returns>
+        private bool VerifyIP(string ip)
+        {
+            return Regex.IsMatch(ip, @"^((2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(2[0-4]\d|25[0-5]|[01]?\d\d?)$");
+        }
+
+        private IObstacleLines ConvertToObstacleLines(List<MapLine> lines)
+        {
+            IObstacleLines obstacleLines = FactoryMode.Factory.ObstacleLines();
+            foreach (var item in lines)
             {
-                System.Console.WriteLine(ex.Message);
+                obstacleLines.DataList.Add(FactoryMode.Factory.Line(item.start.x, item.start.y, item.end.x, item.end.y));
             }
-
-
-            obstacleLines = null;
-            obstaclePoints = null;
-            resultPoints = null;
-            resultlines = null;
-        }
-
-        #region ITest 事件連結
-        
-        private void ITest_CarPosConfirm() {
-            if (mBypassSocket) {
-                /*-- 空跑模擬CarPosConfirm --*/
-                SpinWait.SpinUntil(() => false, 1000);
-                return;
-            }
-            List<CartesianPos> matchSet = new List<CartesianPos>();
-            List<CartesianPos> modelSet = new List<CartesianPos>();
-            CartesianPos nowOdometry = new CartesianPos();
-            CartesianPos transResult = new CartesianPos();
-            List<Point> scanPoint = new List<Point>();
-            double angle;
-            double Laserangle;
-            double gValue = 0;
-            double similarity = 0;
-            int[] obstaclePos = new int[2];
-            //mAGV.GetPosition(out posX, out posY, out posT);
-            int idx = 0;
-            foreach (int dist in mCarInfo.LaserData) {
-                obstaclePos = Transformation.LaserPoleToCartesian(dist, -135, 0.25, idx++, 43, 416.75, 43, mCarInfo.x, mCarInfo.y, mCarInfo.theta, out angle, out Laserangle);//, out dataAngle, out laserAngle);
-
-                matchSet.Add(new CartesianPos(obstaclePos[0], obstaclePos[1]));
-                obstaclePos = null;
-            }
-            nowOdometry.SetPosition(mCarInfo.x, mCarInfo.y, mCarInfo.theta * Math.PI / 180);
-            gValue = mMapMatch.FindClosetMatching(matchSet, 4, 1.5, 0.01, 50, 2000, false, transResult, out modelSet);
-            //Correct accumulate error this time
-            mMapMatch.NewPosTransformation(nowOdometry, transResult.x, transResult.y, transResult.theta);
-            mMapMatch.NewPosTransformation(matchSet, transResult.x, transResult.y, transResult.theta);
-            double[] Position = new double[3] { nowOdometry.x, nowOdometry.y, nowOdometry.theta * 180 / Math.PI };
-
-            //Display car position
-            //MapUI1.PosCar = new Pos(nowOdometry.x, nowOdometry.y, nowOdometry.theta);
-            //SetPosition(nowOdometry.x, nowOdometry.y, nowOdometry.theta);
-            //Display current scanning information
-            //MapUI1.RemoveGroupPoint("LaserLength");
-            scanPoint.Clear();
-            for (int m = 0; m < matchSet.Count; m++) {
-                scanPoint.Add(new Point((int)matchSet[m].x, (int)matchSet[m].y));
-            }
-            //MapUI1.DrawPoints(scanPoint, Color.Red, "LaserLength", 1);
-            //MapUI1.PosCar = new Pos(Position[0], Position[1], Position[2]);
-
-
-            similarity = mMapMatch.SimilarityEvalute(modelSet, matchSet);
-            //if (similarity > 0.85) {
-            SetPosition((int)Position[0], (int)Position[1], Position[2]);
-            //}
-            Database.AGVGM[mAGVID].LaserAPoints.DataList.Replace(matchSet.ToIPair());
-            //Dictionary<string, object> dic = new Dictionary<string, object>();
-            //dic.Add(matchSet, VarDef.ScanPoint);
-            //dic.Add(mCarInfo.ToPos(), VarDef.PosCar);
-            //RaiseMapEvent(MapEventType.CarPosConfirm, dic);
-        }
-
-        private void ITest_SettingCarPos() {
-            mIsSetting = true;
-        }
-
-        private void ITest_ClearMap()
-        {
-            IGoalSetting.ClearGoal();
-            Database.GoalGM.Clear();
-            Database.PowerGM.Clear();
-            Database.ObstacleLinesGM.DataList.Clear();
-            Database.ObstaclePointsGM.DataList.Clear();
-        }
-
-        private void ITest_MotorServoOn(bool servoOn)
-        {
-            WatchDog.Restart();
-            SendMsg($"Set:Servo{(servoOn ? "On" : "Off")}");
-            ITest.ChangedMotorStt(servoOn);
-            IConsole.AddMsg($"Motor Servo {(servoOn ? "ON" : "OFF")}");
-            IConsole.AddMsg($"Spend:{WatchDog.ElapsedMilliseconds}(ms)");
-        }
-
-        /// <summary>
-        /// 地圖修正
-        /// </summary>
-        private void CorrectOri()
-        {
-            NewMap();
-            tsk_FixOriginScanningFile();
-            Database.AGVGM[mAGVID]?.LaserAPoints.DataList.Clear();
-        }
-
-        /// <summary>
-        /// 地圖修正執行緒
-        /// </summary>
-        /// <remarks>
-        /// Modified by Jay 2017/09/13
-        /// </remarks>
-        private void tsk_FixOriginScanningFile()
-        {
-            try
-            {
-                if (mBypassLoadFile)
-                {
-                    SpinWait.SpinUntil(() => false, 1000);
-                    return;
-                }
-                MapReading MapReading = new MapReading(CurOriPath);
-                CartesianPos carPos;
-                List<CartesianPos> laserData;
-                List<CartesianPos> filterData = new List<CartesianPos>();
-                int dataLength = MapReading.OpenFile();
-                if (dataLength == 0) return;
-
-                List<CartesianPos> dataSet = new List<CartesianPos>();
-                List<CartesianPos> predataSet = new List<CartesianPos>();
-                List<CartesianPos> matchSet = new List<CartesianPos>();
-                CartesianPos transResult = new CartesianPos();
-                CartesianPos nowOdometry = new CartesianPos();
-                CartesianPos preOdometry = new CartesianPos();
-                CartesianPos accumError = new CartesianPos();
-                CartesianPos diffOdometry = new CartesianPos();
-                CartesianPos diffLaser = new CartesianPos();
-                Stopwatch sw = new Stopwatch();
-                double gValue = 0;
-                int mode = 0;
-                int corrNum = 0;
-
-                mMapMatch.Reset();
-                #region  1.Read car position and first laser scanning
-
-                MapReading.ReadScanningInfo(0, out carPos, out laserData);
-                Database.AGVGM[mAGVID].SetLocation(carPos);
-                //mCarInfo.SetPos(carPos);
-                //RaiseMapEventSync(MapEventType.RefreshPosCar, carPos.ToPos());
-                matchSet.AddRange(laserData);
-                predataSet.AddRange(laserData);
-                mMapMatch.GlobalMapUpdate(matchSet);                            //Initial environment model
-                preOdometry.SetPosition(carPos.x, carPos.y, carPos.theta);
-
-                #endregion
-
-                for (int n = 1; n < dataLength; n++)
-                {
-                    #region 2.Read car position and laser scanning 
-
-                    List<CartesianPos> addedSet = new List<CartesianPos>();
-                    transResult.SetPosition(0, 0, 0);
-                    carPos = null;
-                    laserData = null;
-                    MapReading.ReadScanningInfo(n, out carPos, out laserData);
-                    nowOdometry.SetPosition(carPos.x, carPos.y, carPos.theta);
-
-                    #endregion
-
-                    #region 3.Correct accumulate error of odometry so far
-
-                    mMapMatch.NewPosTransformation(nowOdometry, accumError.x, accumError.y, accumError.theta);
-                    mMapMatch.NewPosTransformation(laserData, accumError.x, accumError.y, accumError.theta);
-                    matchSet.Clear();
-                    matchSet.AddRange(laserData);
-
-                    #endregion
-
-                    #region 4.Compute movement from last time to current time;
-
-                    if (nowOdometry.theta - preOdometry.theta < -200)
-                        diffOdometry.SetPosition(nowOdometry.x - preOdometry.x, nowOdometry.y - preOdometry.y, nowOdometry.theta + 360 - preOdometry.theta);
-                    else if (nowOdometry.theta - preOdometry.theta > 200)
-                        diffOdometry.SetPosition(nowOdometry.x - preOdometry.x, nowOdometry.y - preOdometry.y, -(preOdometry.theta + 360 - nowOdometry.theta));
-                    else
-                        diffOdometry.SetPosition(nowOdometry.x - preOdometry.x, nowOdometry.y - preOdometry.y, nowOdometry.theta - preOdometry.theta);
-                    System.Console.WriteLine("Odometry varition:{0:F3} {1:F3} {2:F3}", diffOdometry.x, diffOdometry.y, diffOdometry.theta);
-
-                    #endregion
-
-                    #region 5.Display current scanning information
-                    //RaiseMapEventSync(MapEventType.RefreshScanPoint, matchSet);
-
-                    #endregion
-
-                    #region 6.Inspect odometry variation is not too large.Switch to pose tracking mode if too large.
-
-                    sw.Restart();
-                    if (Math.Abs(diffOdometry.x) >= 400 || Math.Abs(diffOdometry.y) >= 400 || Math.Abs(diffOdometry.theta) >= 30)
-                    {
-                        mode = 1;
-                        gValue = mMapMatch.PairwiseMatching(predataSet, matchSet, 4, 1.5, 0.01, 20, 300, false, transResult);
-                    }
-                    else
-                    {
-                        mode = 0;
-                        gValue = mMapMatch.FindClosetMatching(matchSet, 4, 1.5, 0.01, 20, 300, false, transResult);
-                        diffLaser.SetPosition(transResult.x, transResult.y, transResult.theta);
-                    }
-
-                    //If corresponding is too less,truct the odomery variation this time
-                    if (mMapMatch.EstimateCorresponingPoints(matchSet, 10, 10, out corrNum, out addedSet))
-                    {
-                        mMapMatch.NewPosTransformation(nowOdometry, transResult.x, transResult.y, transResult.theta);
-                        accumError.SetPosition(accumError.x + transResult.x, accumError.y + transResult.y, accumError.theta + transResult.theta);
-                    }
-                    sw.Stop();
-
-                    if (mode == 0)
-                        System.Console.WriteLine("[SLAM-Matching Mode]Corresponding Points:{0} Map Size:{1} Matching Time:{2:F3} Error{3:F3}",
-                             corrNum, mMapMatch.parseMap.Count, sw.Elapsed.TotalMilliseconds, gValue);
-                    else
-                        System.Console.WriteLine("[SLAM-Tracking Mode]Matching Time:{0:F3} Error{1:F3}", sw.Elapsed.TotalMilliseconds, gValue);
-
-                    #endregion
-
-                    #region 7.Update variation
-
-                    //Pairwise update
-                    predataSet.Clear();
-                    predataSet.AddRange(laserData);
-
-                    //Update previous variable
-                    preOdometry.SetPosition(nowOdometry.x, nowOdometry.y, nowOdometry.theta);
-
-                    Database.AGVGM[mAGVID].SetLocation(nowOdometry);
-                    //mCarInfo.SetPos(nowOdometry);
-
-                    #endregion
-
-
-                    List<IPair> points = ConvertToPairs(addedSet);
-                    Database.AGVGM[mAGVID]?.LaserAPoints.DataList.Replace(points);
-                    Database.ObstaclePointsGM.DataList.AddRange(points);
-                    //IMapCtrl.Focus((int)nowOdometry.x, (int)nowOdometry.y);
-                    //Display added new points                     
-                    //    RaiseMapEventSync(MapEventType.DrawScanMap, addedSet);
-
-                    //    //Display car position
-                    //    RaiseMapEventSync(MapEventType.RefreshPosCar, nowOdometry.ToPos());
-                }
-                //RaiseMapEvent(MapEventType.CorrectOriComplete);
-            }
-            catch
-            {
-
-            }
-            finally
-            {
-            }
-        }
-
-
-        private async void ITest_CheckIsServerAlive(bool cnn, string hostIP = "")
-        {
-            if (cnn != IsConnected)
-            {
-                CtProgress prog = new CtProgress("Connect", "Connecting...");
-                try
-                {
-                    if (cnn)
-                    {
-                        if (VerifyIP(hostIP))
-                        {
-                            if (mHostIP != hostIP) mHostIP = hostIP;
-                            IsConnected = await Task<bool>.Run(() => CheckIsServerAlive());
-                        }
-                    }
-                    else
-                    {
-                        IsConnected = DisConnectServer();
-                    }
-                    ITest.SetServerStt(IsConnected);
-                    IConsole.AddMsg($"Is {(cnn ? "Connected" : "Disconnected")}");
-                }
-                finally
-                {
-                    prog?.Close();
-                    prog = null;
-                }
-            }
-        }
-
-        /// <summary>
-        /// 檢查Server是否在運作中
-        /// </summary>
-        /// <returns></returns>
-        private bool CheckIsServerAlive()
-        {
-            if (mBypassSocket)
-            {
-                IsServerAlive = true;
-                Thread.Sleep(1000);
-            }
-            else
-            {
-                bool isAlive = false;
-                try
-                {
-                    if (isAlive = ConnectServer())
-                    {
-                        string[] rtnMsg = SendMsg("Get:Hello", false);
-                        isAlive = rtnMsg.Count() > 2 && rtnMsg[2] == "True";
-                    }
-                }
-                catch (Exception ex)
-                {
-                    System.Console.WriteLine($"[SocketException] : {ex.Message}");
-                }
-                finally
-                {
-                    if (!mBypassSocket && !isAlive)
-                    {
-                        CtMsgBox.Show("Failed", "Connect Failed!!", MsgBoxBtn.OK, MsgBoxStyle.Error);
-                    }
-                }
-                IsServerAlive = isAlive;
-            }
-            return IsServerAlive;
-        }
-
-
-        private void ITest_SetVelocity(int velocity)
-        {
-            IConsole.AddMsg($"Set Velocity {velocity}");
-            SendMsg($"Set: WorkVelo:{velocity}:{velocity}");
-        }
-
-        private async void ITest_CorrectOri()
-        {
-            CtProgress prog = new CtProgress("CorrectOri", "Correcting Ori...");
-            try
-            {
-                /*-- 底層觸發事件 --*/
-                await Task.Run(() => CorrectOri());
-                IConsole.AddMsg("CorrectOri");
-            }
-            catch
-            {
-            }
-            finally
-            {
-                prog?.Close();
-                prog = null;
-            }
-        }
-
-        private void ITest_SetCarMode(CarMode mode)
-        {
-            if (mode == CarMode.Map)
-            {
-                string oriName = string.Empty;
-                if (Stat.SUCCESS == CtInput.Text(out oriName, "MAP Name", "Set Map File Name"))
-                {
-                    SendMsg($"Set:OriName:{oriName}.Ori");
-                }
-                else
-                {
-                    return;
-                }
-            }
-            if (mode != CarMode.OffLine)
-            {
-                SendMsg($"Set:Mode:{mode}");
-                IConsole.AddMsg($"Set:Mode {mode}");
-            }
-            if (mode != mCarMode)
-            {
-                mode = mCarMode;
-                ChangedMode(mCarMode);
-            }
-        }
-
-        private void ITest_SendMap()
-        {
-            SendFile();
-        }
-
-        private void ITest_GetCar()
-        {
-            ChangeSendInfo();
-            IConsole.AddMsg($"{IsGettingLaser}");
-        }
-
-        private void ITest_GetLaser()
-        {
-            IConsole.AddMsg("Get Laser");
-            GetLaser();
-        }
-
-        private void ITest_GetMap()
-        {
-            IConsole.AddMsg("[Get Map]");
-            GetFile(FileType.Map);
-        }
-
-        private void ITest_GetORi()
-        {
-            IConsole.AddMsg("[Get Ori]");
-            GetFile(FileType.Ori);
-        }
-
-        private void ITest_LoadMap()
-        {
-            IConsole.AddMsg("[Loaded Map]");
-            LoadFile(FileType.Map);
-        }
-
-        private void ITest_LoadOri()
-        {
-            IConsole.AddMsg("[Loaded Ori]");
-            LoadFile(FileType.Ori);
-        }
-
-        private void ITest_Motion_Up()
-        {
-            IConsole.AddMsg($"[Stop]");
-            MotionContorl(MotionDirection.Stop);
-            if (CarMode != CarMode.Map) CarMode = CarMode.Idle;
-        }
-
-        private void ITest_Motion_Down(MotionDirection direction, int velocity = 0)
-        {
-            IConsole.AddMsg($"[{direction} Velocity:{velocity}]");
-            MotionContorl(direction, Velocity);
-            if (CarMode != CarMode.Map) CarMode = CarMode.Work;
+            return obstacleLines;
         }
         
-        #endregion
-
-        #region IMapGL事件連結
-
-        private void IMapCtrl_DragEvent(object sender, DragTowerPairEventArgs e)
-        {
-            switch (e.DargTarget.GLSetting.Type)
-            {
-                case EType.Goal:
-                    GoalSetting.AddGoal(e.ToCarTesianPosinfo());
-                    break;
-                case EType.Power:
-                    GoalSetting.AddPower(e.ToCarTesianPosinfo());
-                    break;
-            }
-        }
-
-        #endregion IMapGL 事件連結
-
-        #region IGoalSetting 事件連結   
-
-        private void IGoalSetting_Charging(CartesianPosInfo goal, int idxPower) {
-            IConsole.AddMsg($"Charging to idx{idxPower} {goal.ToString()}");
-            Charging(idxPower);
-        }
-
-        private async void IGoalSetting_SendMapToAGVEvent()
-        {
-            OpenFileDialog openMap = new OpenFileDialog();
-            openMap.InitialDirectory = mDefMapDir;
-            openMap.Filter = "MAP|*.ori;*.map";
-            if (openMap.ShowDialog() == DialogResult.OK) {
-                IConsole.AddMsg("[Map Update...]");
-                CtProgress prog = new CtProgress("Send Map", "The file are being transferred");
-                try {
-                    string fileName = CtFile.GetFileName(openMap.FileName);
-                    string extension = Path.GetExtension(fileName).ToLower().Replace(".", "");
-                    string[] rtnMsg = SendMsg($"Send:{extension}");
-                    if (rtnMsg.Count() > 2 && "True" == rtnMsg[2]) {
-
-                        await Task.Run(() => {
-                            if (!mBypassSocket) {
-                                SendFile(mHostIP, mSendMapPort, fileName);
-                            } else {
-                                /*-- 空跑模擬檔案傳送中 --*/
-                                SpinWait.SpinUntil(() => false, 1000);
-                            }
-                            //RaiseAgvClientEvent(AgvClientEventType.SendFile, fileName);
-                            IConsole.AddMsg("[Map Finished Update]");
-                        });
+        private List<CartesianPos> Encoder(string pack) {
+            string[] pathArray = pack.Trim().Split(new char[] { Separator.Data }, StringSplitOptions.RemoveEmptyEntries);
+            List<CartesianPos> rtnPoints = null;
+            int len = pathArray?.Count() ?? 0;
+            if (len != 0 && len % 2 == 0) {
+                rtnPoints = new List<CartesianPos>();
+                double x, y;
+                for (int i = 0; i < pathArray.Count() - 1; i += 2) {
+                    string strX = pathArray[i];
+                    string strY = pathArray[i + 1];
+                    if (double.TryParse(pathArray[i], out x) && double.TryParse(pathArray[i + 1], out y)) {
+                        rtnPoints.Add(new CartesianPos(x, y));
+                    } else {
+                        rtnPoints.Clear();
+                        rtnPoints = null;
+                        break;
                     }
-                } finally {
-                    prog?.Close();
-                    prog = null;
                 }
             }
+            return rtnPoints;
         }
+        
+        #endregion Function - Private Methods
 
-        private void IGoalSetting_SaveGoalEvent()
-        {
-            IConsole.AddMsg("[Save {0} Goals]", IGoalSetting.GoalCount);
-            List<CartesianPosInfo> points = IGoalSetting.GetGoals();
-            List<CartesianPosInfo> goals = new List<CartesianPosInfo>();
-            List<CartesianPosInfo> powers = new List<CartesianPosInfo>();
-            Database.GoalGM.SaftyForLoop((uid, goal) => goals.Add(FactoryMode.Factory.CartesianPosInfo(uid, goal)));
-            Database.PowerGM.SaftyForLoop((uid, power) => powers.Add(FactoryMode.Factory.CartesianPosInfo(uid, power)));
-            MapRecording.OverWriteGoal(goals, CurMapPath);
-            MapRecording.OverWritePower(powers, CurMapPath);
-        }
-
-        private void IGoalSetting_RunLoopEvent(IEnumerable<CartesianPosInfo> goal)
-        {
-            IConsole.AddMsg("[AGV Start Moving...]");
-            foreach (var item in goal)
-            {
-                IConsole.AddMsg("[AGV Move To] - {0}", item.ToString());
-                IConsole.AddMsg("[AGV Arrived] - {0}", item.ToString());
-            }
-            IConsole.AddMsg("[AGV Move Finished]");
-        }
-
-        private void IGoalSetting_RunGoalEvent(CartesianPosInfo goal, int idxGoal)
-        {
-            IConsole.AddMsg("[AGV Start Moving...  idx{0} {1}]",idxGoal,goal.ToString());
-            Run(idxGoal);
-            IConsole.AddMsg("[AGV Arrived] - {0}", goal.ToString());
-        }
-
-        private void IGoalSetting_LoadMapFromAGVEvent()
-        {
-            IConsole.AddMsg("[Map Loading... From Remote] - ");
-            IConsole.AddMsg("[Map Loaded]");
-        }
-
-        private void IGoalSetting_LoadMapEvent()
-        {
-            IConsole.AddMsg("[Map Loading...]");
-            IConsole.AddMsg("[Map Loaded]");
-            LoadFile(FileType.Map);
-        }
-
-        private void IGoalSetting_FindPathEvent(CartesianPosInfo goal, int idxGoal)
-        {
-            IConsole.AddMsg("[Find Path] - idx{0} {1}",idxGoal, goal.ToString());
-            IConsole.AddMsg("[AGV Find A Path]");
-            PathPlan(idxGoal);
-        }
-
-        private void IGoalSetting_DeleteGoalsEvent(IEnumerable<CartesianPosInfo> goal)
-        {
-            IEnumerable<CartesianPosInfo> goals = goal.Where(v => Database.GoalGM.ContainsID(v.id));
-            IEnumerable<CartesianPosInfo> powers = goal.Where(v => Database.PowerGM.ContainsID(v.id));
-            List<uint> ID = new List<uint>();
-            if (goals?.Any() ?? false)
-            {
-                IConsole.AddMsg($"Delete {goals.Count()}");
-                foreach (var item in goals)
-                {
-                    Database.GoalGM.Remove(item.id);
-                    ID.Add(item.id);
-                    IConsole.AddMsg($"[Delete Goal] - {item.ToString()}");
-                }
-            }
-            if (powers?.Any() ?? false)
-            {
-                foreach (var item in powers)
-                {
-                    Database.PowerGM.Remove(item.id);
-                    ID.Add(item.id);
-                    IConsole.AddMsg($"[Delete Power - {item.ToString()}]");
-                }
-            }
-            IGoalSetting.DeleteGoals(ID);
-        }
-
-        private void IGoalSetting_ClearGoalsEvent()
-        {
-            IConsole.AddMsg("[Clear Goal]");
-            Database.GoalGM.Clear();
-
-            IConsole.AddMsg("[Clear Power]");
-            Database.PowerGM.Clear();
-
-            IGoalSetting.ClearGoal();
-        }
-
-        private void IGoalSetting_AddNewGoalEvent(CartesianPosInfo goal)
-        {
-            IConsole.AddMsg("[Add Goal] - {0}", goal.ToString());
-            IGoalSetting.AddGoal(goal);
-            Database.GoalGM.Add(goal.id, FactoryMode.Factory.Goal((int)goal.x, (int)goal.y, goal.theta, goal.name));
-        }
-
-        private void IGoalSetting_AddNewPowerEvent(CartesianPosInfo power)
-        {
-            IConsole.AddMsg("[Add Power] - {0}", power.ToString());
-            IGoalSetting.AddPower(power);
-            Database.PowerGM.Add(power.id, FactoryMode.Factory.Power((int)power.x, (int)power.y, power.theta, power.name));
-        }
-        #endregion
-
-        private void miBypassSocket_Click(object sender, EventArgs e)
-        {
-            IsBypassSocket = !IsBypassSocket;
-            CtInvoke.ToolStripItemChecked(miBypassSocket, IsBypassSocket);
-        }
-
-        private void miLoadFile_Click(object sender, EventArgs e)
-        {
-            IsBypassLoadFile = !IsBypassLoadFile;
-            CtInvoke.ToolStripItemChecked(miLoadFile, IsBypassLoadFile);
-        }
     }
 
     #region Suppor - Class

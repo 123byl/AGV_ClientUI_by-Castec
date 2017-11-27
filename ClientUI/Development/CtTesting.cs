@@ -11,20 +11,28 @@ namespace ClientUI
     /// 測試功能介面
     /// </summary>
     public partial class CtTesting : CtDockContent ,IITesting{
+
+        #region Declaration - Fields
+
         private readonly object mKey = new object();
+
+        #endregion Declaration - Fields
 
         #region Function - Construcotrs
 
         /// <summary>
         /// 共用建構方法
         /// </summary>
+
         public CtTesting(DockState defState = DockState.Float)
             :base(defState) {
             InitializeComponent();
             FixedSize = new Size(718, 814);       
         }
-        
-        
+
+        #endregion Function - Constructors
+
+        #region Implement - ITest
 
         public event Events.GoalSettingEvents.DelLoadMap LoadMap;
         public event Events.TestingEvents.DelLoadOri LoadOri;
@@ -44,15 +52,100 @@ namespace ClientUI
         public event Events.TestingEvents.DelClearMap ClearMap;
         public event Events.TestingEvents.DelSettingCarPos SettingCarPos;
         public event Events.TestingEvents.DelCarPosConfirm CarPosConfirm;
+        
+        /// <summary>
+        /// 依照伺服馬達激磁狀態變更UI介面狀態
+        /// </summary>
+        /// <param name="isConnect"></param>
+        public void SetServerStt(bool isConnect) {
+            string btnTxt = "Connect AGV";
+            Bitmap btnImg = Properties.Resources.Disconnect;
+            if (isConnect) {
+                btnImg = Properties.Resources.Connect;
+                btnTxt = "AGV Connected";
+            }
+            CtInvoke.ControlTag(btnConnect, isConnect);
+            CtInvoke.ControlText(btnConnect, btnTxt);
+            CtInvoke.ButtonImage(btnConnect, btnImg);
+            CtInvoke.ControlEnabled(btnGetLaser, isConnect);
+            CtInvoke.ControlEnabled(btnGetOri, isConnect);
+            CtInvoke.ControlEnabled(btnIdleMode, isConnect);
+            CtInvoke.ControlEnabled(btnWorkMode, isConnect);
+            CtInvoke.ControlEnabled(btnMapMode, isConnect);
+            CtInvoke.ControlEnabled(btnGetCarStatus, isConnect);
+            CtInvoke.ControlEnabled(btnPosConfirm, isConnect);
+            CtInvoke.ControlEnabled(btnServoOnOff, isConnect);
+
+            CtInvoke.ControlEnabled(btnSetVelo, isConnect);
+            CtInvoke.ControlEnabled(btnGetMap, isConnect);
+            CtInvoke.ControlEnabled(btnSendMap, isConnect);
+            CtInvoke.ControlEnabled(txtVelocity, isConnect);
+
+            if (!isConnect) {
+                //CarMode = CarMode.OffLine;
+                CtInvoke.ControlEnabled(btnUp, false);
+                CtInvoke.ControlEnabled(btnStartStop, false);
+                CtInvoke.ControlEnabled(btnLeft, false);
+                CtInvoke.ControlEnabled(btnRight, false);
+                CtInvoke.ControlEnabled(btnDown, false);
+                //} else if (CarMode == CarMode.OffLine) {
+                //    CarMode = CarMode.Idle;
+            }
+        }
+
+        /// <summary>
+        /// 依照雷射自動取得狀態變更UI介面
+        /// </summary>
+        /// <param name="isGettingLaser"></param>
+        public void SetLaserStt(bool isGettingLaser) {
+            CtInvoke.ControlBackColor(btnGetCarStatus, isGettingLaser ? Color.Green : Color.Transparent);
+        }
+
+        /// <summary>
+        /// 是否解鎖Ori檔操作
+        /// </summary>
+        /// <param name="isUnLock"></param>
+        public void UnLockOriOperator(bool isUnLock) {
+            CtInvoke.ControlEnabled(btnCorrectOri, isUnLock);
+            CtInvoke.ControlEnabled(btnSimplyOri, isUnLock);
+        }
+
+        /// <summary>
+        /// 依照馬達狀態變更UI介面
+        /// </summary>
+        /// <param name="isOn"></param>
+        public void ChangedMotorStt(bool isOn) {
+            Color color = Color.Empty;
+            string content = string.Empty;
+            if (isOn) {
+                color = Color.Green;
+                content = "ON";
+            } else {
+                color = Color.Red;
+                content = "OFF";
+            }
+            CtInvoke.ControlTag(btnServoOnOff, isOn);
+            CtInvoke.ControlEnabled(btnUp, isOn);
+            CtInvoke.ControlEnabled(btnDown, isOn);
+            CtInvoke.ControlEnabled(btnLeft, isOn);
+            CtInvoke.ControlEnabled(btnRight, isOn);
+            CtInvoke.ControlEnabled(btnStartStop, isOn);
+            CtInvoke.ControlBackColor(btnServoOnOff, color);
+            CtInvoke.ControlText(btnServoOnOff, content);
+        }
+
+        #endregion Implement - ITest
+
+        #region Function  - UI Events
 
         private void btnConnect_Click(object sender, EventArgs e) {
             if (btnConnect.Tag == null || (btnConnect.Tag is bool && !(bool)btnConnect.Tag)) {
-                Connect.Invoke(true,cboHostIP.Text);
+                Connect.Invoke(true, cboHostIP.Text);
             } else {
                 Connect.Invoke(false);
             }
         }
-        
+
         /// <summary>
         /// 移動控制按下
         /// </summary>
@@ -64,8 +157,8 @@ namespace ClientUI
             int velocity = 0;
             if (int.TryParse(sDirection, out iDirection) &&
                 Enum.IsDefined(typeof(MotionDirection), iDirection) &&
-                int.TryParse(txtVelocity.Text,out velocity)) {
-                Motion_Down?.Invoke((MotionDirection)iDirection,velocity);
+                int.TryParse(txtVelocity.Text, out velocity)) {
+                Motion_Down?.Invoke((MotionDirection)iDirection, velocity);
             }
         }
 
@@ -77,8 +170,6 @@ namespace ClientUI
         private void Motion_MouseUp(object sender, MouseEventArgs e) {
             Motion_Up?.Invoke();
         }
-        
-        #endregion Function - Constructors
 
         private void btnLoadOri_Click(object sender, EventArgs e) {
             LoadOri?.Invoke();
@@ -106,10 +197,6 @@ namespace ClientUI
 
         private void btnGetCarStatus_Click(object sender, EventArgs e) {
             GetCar?.Invoke();
-        }
-
-        public void SetLaserStt(bool isGettingLaser) {
-            CtInvoke.ControlBackColor(btnGetCarStatus, isGettingLaser ? Color.Green : Color.Transparent);
         }
 
         private void btnSendMap_Click(object sender, EventArgs e) {
@@ -143,42 +230,6 @@ namespace ClientUI
             ClearMap?.Invoke();
         }
 
-        public void SetServerStt(bool isConnect) {
-            string btnTxt = "Connect AGV";
-            Bitmap btnImg = Properties.Resources.Disconnect;
-            if (isConnect) {
-                btnImg = Properties.Resources.Connect;
-                btnTxt = "AGV Connected";
-            }
-            CtInvoke.ControlTag(btnConnect, isConnect);
-            CtInvoke.ControlText(btnConnect, btnTxt);
-            CtInvoke.ButtonImage(btnConnect, btnImg);
-            CtInvoke.ControlEnabled(btnGetLaser, isConnect);
-            CtInvoke.ControlEnabled(btnGetOri, isConnect);
-            CtInvoke.ControlEnabled(btnIdleMode, isConnect);
-            CtInvoke.ControlEnabled(btnWorkMode, isConnect);
-            CtInvoke.ControlEnabled(btnMapMode, isConnect);
-            CtInvoke.ControlEnabled(btnGetCarStatus, isConnect);
-            CtInvoke.ControlEnabled(btnPosConfirm, isConnect);
-            CtInvoke.ControlEnabled(btnServoOnOff, isConnect);
-
-            CtInvoke.ControlEnabled(btnSetVelo, isConnect);
-            CtInvoke.ControlEnabled(btnGetMap, isConnect);
-            CtInvoke.ControlEnabled(btnSendMap, isConnect);
-            CtInvoke.ControlEnabled(txtVelocity, isConnect);
-
-            if (!isConnect) {
-                //CarMode = CarMode.OffLine;
-                CtInvoke.ControlEnabled(btnUp, false);
-                CtInvoke.ControlEnabled(btnStartStop, false);
-                CtInvoke.ControlEnabled(btnLeft, false);
-                CtInvoke.ControlEnabled(btnRight, false);
-                CtInvoke.ControlEnabled(btnDown, false);
-            //} else if (CarMode == CarMode.OffLine) {
-            //    CarMode = CarMode.Idle;
-            }
-        }
-
         /// <summary>
         /// 依照連線狀態切換介面控制項致能
         /// </summary>
@@ -207,41 +258,12 @@ namespace ClientUI
             }
         }
 
-        /// <summary>
-        /// 是否解鎖Ori檔操作
-        /// </summary>
-        /// <param name="isUnLock"></param>
-        public void UnLockOriOperator(bool isUnLock) {
-            CtInvoke.ControlEnabled(btnCorrectOri, isUnLock);
-            CtInvoke.ControlEnabled(btnSimplyOri, isUnLock);
-        }
-
         private void btnServoOnOff_Click(object sender, EventArgs e) {
             if (btnServoOnOff.Tag == null || (btnServoOnOff.Tag is bool && !(bool)btnServoOnOff.Tag)) {
                 MotorServoOn.Invoke(true);
             } else {
                 MotorServoOn.Invoke(false);
             }
-        }
-        
-        public void ChangedMotorStt(bool isOn) {
-            Color color = Color.Empty;
-            string content = string.Empty;
-            if (isOn) {
-                color = Color.Green;
-                content = "ON";
-            } else {
-                color = Color.Red;
-                content = "OFF";
-            }
-            CtInvoke.ControlTag(btnServoOnOff, isOn);
-            CtInvoke.ControlEnabled(btnUp, isOn);
-            CtInvoke.ControlEnabled(btnDown, isOn);
-            CtInvoke.ControlEnabled(btnLeft, isOn);
-            CtInvoke.ControlEnabled(btnRight, isOn);
-            CtInvoke.ControlEnabled(btnStartStop, isOn);
-            CtInvoke.ControlBackColor(btnServoOnOff, color);
-            CtInvoke.ControlText(btnServoOnOff, content);
         }
 
         private void btnPosConfirm_Click(object sender, EventArgs e) {
@@ -268,28 +290,34 @@ namespace ClientUI
                 SetCarMode?.Invoke(CarMode.Idle);
             }
         }
+
+        #endregion Funciton - UI Events
     }
 
     /// <summary>
     /// 車子運動方向
     /// </summary>
+    /// <remarks>
+    /// 前後左右列舉值為鍵盤方向鍵之對應值
+    /// 若是任意更改則會造成鍵盤控制發生例外
+    /// </remarks>
     public enum MotionDirection {
         /// <summary>
         /// 往前
         /// </summary>
-        Forward = 0,
+        Forward = 38,
         /// <summary>
         /// 往後
         /// </summary>
-        Backward = 1,
+        Backward = 40,
         /// <summary>
         /// 左旋
         /// </summary>
-        LeftTrun = 2,
+        LeftTrun = 37,
         /// <summary>
         /// 右璇
         /// </summary>
-        RightTurn = 3,
+        RightTurn = 39,
         /// <summary>
         /// 停止
         /// </summary>
@@ -519,6 +547,5 @@ namespace ClientUI
         }
 
     }
-
-   
+    
 }

@@ -2215,8 +2215,7 @@ namespace MapProcessing
         }
 
         #endregion
-
-
+        
     }
 
     public class CartesianPosInfo : CartesianPos

@@ -529,7 +529,7 @@
             this.btnUp.Name = "btnUp";
             this.btnUp.Size = new System.Drawing.Size(67, 62);
             this.btnUp.TabIndex = 1;
-            this.btnUp.Tag = "0";
+            this.btnUp.Tag = "38";
             this.btnUp.UseVisualStyleBackColor = true;
             this.btnUp.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Motion_MouseDown);
             this.btnUp.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Motion_MouseUp);
@@ -544,7 +544,7 @@
             this.btnRight.Name = "btnRight";
             this.btnRight.Size = new System.Drawing.Size(67, 62);
             this.btnRight.TabIndex = 1;
-            this.btnRight.Tag = "2";
+            this.btnRight.Tag = "39";
             this.btnRight.UseVisualStyleBackColor = true;
             this.btnRight.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Motion_MouseDown);
             this.btnRight.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Motion_MouseUp);
@@ -559,7 +559,7 @@
             this.btnLeft.Name = "btnLeft";
             this.btnLeft.Size = new System.Drawing.Size(67, 62);
             this.btnLeft.TabIndex = 1;
-            this.btnLeft.Tag = "3";
+            this.btnLeft.Tag = "37";
             this.btnLeft.UseVisualStyleBackColor = true;
             this.btnLeft.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Motion_MouseDown);
             this.btnLeft.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Motion_MouseUp);
@@ -574,7 +574,7 @@
             this.btnDown.Name = "btnDown";
             this.btnDown.Size = new System.Drawing.Size(67, 62);
             this.btnDown.TabIndex = 1;
-            this.btnDown.Tag = "1";
+            this.btnDown.Tag = "40";
             this.btnDown.UseVisualStyleBackColor = true;
             this.btnDown.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Motion_MouseDown);
             this.btnDown.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Motion_MouseUp);
