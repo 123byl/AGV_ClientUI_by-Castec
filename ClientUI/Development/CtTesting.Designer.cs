@@ -34,7 +34,6 @@
             this.btnPosConfirm = new System.Windows.Forms.Button();
             this.btnSetCar = new System.Windows.Forms.Button();
             this.btnSimplyOri = new System.Windows.Forms.Button();
-            this.btnCorrectOri = new System.Windows.Forms.Button();
             this.btnConnect = new System.Windows.Forms.Button();
             this.btnGetOri = new System.Windows.Forms.Button();
             this.btnLoadOri = new System.Windows.Forms.Button();
@@ -88,7 +87,7 @@
             this.cboHostIP.Name = "cboHostIP";
             this.cboHostIP.Size = new System.Drawing.Size(184, 33);
             this.cboHostIP.TabIndex = 63;
-            this.cboHostIP.Text = "192.168.31.217";
+            this.cboHostIP.Text = "192.168.50.152";
             // 
             // btnScan
             // 
@@ -183,19 +182,6 @@
             this.btnSimplyOri.Text = "Simplify Ori";
             this.btnSimplyOri.UseVisualStyleBackColor = true;
             this.btnSimplyOri.Click += new System.EventHandler(this.btnSimplyOri_Click);
-            // 
-            // btnCorrectOri
-            // 
-            this.btnCorrectOri.Enabled = false;
-            this.btnCorrectOri.Font = new System.Drawing.Font("微軟正黑體", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.btnCorrectOri.Location = new System.Drawing.Point(122, 351);
-            this.btnCorrectOri.Margin = new System.Windows.Forms.Padding(4);
-            this.btnCorrectOri.Name = "btnCorrectOri";
-            this.btnCorrectOri.Size = new System.Drawing.Size(90, 85);
-            this.btnCorrectOri.TabIndex = 46;
-            this.btnCorrectOri.Text = "Correct Ori";
-            this.btnCorrectOri.UseVisualStyleBackColor = true;
-            this.btnCorrectOri.Click += new System.EventHandler(this.btnCorrectOri_Click);
             // 
             // btnConnect
             // 
@@ -544,7 +530,7 @@
             this.btnRight.Name = "btnRight";
             this.btnRight.Size = new System.Drawing.Size(67, 62);
             this.btnRight.TabIndex = 1;
-            this.btnRight.Tag = "39";
+            this.btnRight.Tag = "37";
             this.btnRight.UseVisualStyleBackColor = true;
             this.btnRight.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Motion_MouseDown);
             this.btnRight.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Motion_MouseUp);
@@ -559,7 +545,7 @@
             this.btnLeft.Name = "btnLeft";
             this.btnLeft.Size = new System.Drawing.Size(67, 62);
             this.btnLeft.TabIndex = 1;
-            this.btnLeft.Tag = "37";
+            this.btnLeft.Tag = "39";
             this.btnLeft.UseVisualStyleBackColor = true;
             this.btnLeft.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Motion_MouseDown);
             this.btnLeft.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Motion_MouseUp);
@@ -609,7 +595,6 @@
             this.Controls.Add(this.btnPosConfirm);
             this.Controls.Add(this.btnSetCar);
             this.Controls.Add(this.btnSimplyOri);
-            this.Controls.Add(this.btnCorrectOri);
             this.Controls.Add(this.btnConnect);
             this.Controls.Add(this.btnGetOri);
             this.Controls.Add(this.btnLoadOri);
@@ -646,7 +631,6 @@
         private System.Windows.Forms.Button btnLeft;
         private System.Windows.Forms.Button btnDown;
         private System.Windows.Forms.Button btnConnect;
-        private System.Windows.Forms.Button btnCorrectOri;
         private System.Windows.Forms.Button btnSimplyOri;
         private System.Windows.Forms.Button btnSetCar;
         private System.Windows.Forms.Button btnPosConfirm;

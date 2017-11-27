@@ -44,7 +44,6 @@ namespace ClientUI
         public event Events.TestingEvents.DelGetCar GetCar;
         public event Events.TestingEvents.DelSendMap SendMap;
         public event Events.TestingEvents.DelSetCarMode SetCarMode;
-        public event Events.TestingEvents.DelCorrectOri CorrectOri;
         public event Events.TestingEvents.DelSimplifyOri SimplifyOri;
         public event Events.TestingEvents.DelSetVelocity SetVelocity;
         public event Events.TestingEvents.DelConnect Connect;
@@ -106,7 +105,6 @@ namespace ClientUI
         /// </summary>
         /// <param name="isUnLock"></param>
         public void UnLockOriOperator(bool isUnLock) {
-            CtInvoke.ControlEnabled(btnCorrectOri, isUnLock);
             CtInvoke.ControlEnabled(btnSimplyOri, isUnLock);
         }
 
@@ -174,11 +172,7 @@ namespace ClientUI
         private void btnLoadOri_Click(object sender, EventArgs e) {
             LoadOri?.Invoke();
         }
-
-        private void btnCorrectOri_Click(object sender, EventArgs e) {
-            CorrectOri?.Invoke();
-        }
-
+        
         private void btnGetMap_Click(object sender, EventArgs e) {
             GetMap?.Invoke();
         }
@@ -313,11 +307,11 @@ namespace ClientUI
         /// <summary>
         /// 左旋
         /// </summary>
-        LeftTrun = 37,
+        LeftTrun = 39,
         /// <summary>
         /// 右璇
         /// </summary>
-        RightTurn = 39,
+        RightTurn = 37,
         /// <summary>
         /// 停止
         /// </summary>

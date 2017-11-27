@@ -191,9 +191,7 @@ namespace ClientUI
     public interface IITesting
     {
         event DelConnect Connect;
-
-        event DelCorrectOri CorrectOri;
-
+        
         event DelGetCar GetCar;
 
         event DelGetLaser GetLaser;
@@ -342,9 +340,7 @@ namespace ClientUI
         public static class TestingEvents
         {
             public delegate void DelConnect(bool cnn,string hostIP = "");
-
-            public delegate void DelCorrectOri();
-
+           
             public delegate void DelGetCar();
 
             public delegate void DelGetLaser();

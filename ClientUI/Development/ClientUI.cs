@@ -76,8 +76,11 @@ namespace ClientUI
         ///         \ 路徑規劃、跑點功能修正
         ///         \ 加入Charging功能
         ///         \ Map讀檔方法重構
+        ///     0.0.7   Jay [2017/11/27]
+        ///         \ 加入鍵盤控制AGV移動功能
+        ///         \ 移除Ori修正功能
         /// </remarks>
-        public CtVersion Version { get { return new CtVersion(0, 0, 5, "2017/11/08", "Jay Chang"); } }
+        public CtVersion Version { get { return new CtVersion(0, 0, 7, "2017/11/27", "Jay Chang"); } }
 
         #endregion Version - Information
 
@@ -729,7 +732,7 @@ namespace ClientUI
             //mAGV.GetPosition(out posX, out posY, out posT);
             int idx = 0;
             foreach (int dist in mCarInfo.LaserData) {
-                obstaclePos = Transformation.LaserPoleToCartesian(dist, -135, 0.25, idx++, 43, 416.75, 43, mCarInfo.x, mCarInfo.y, mCarInfo.theta, out angle, out Laserangle);//, out dataAngle, out laserAngle);
+                obstaclePos = CalcLaserPoint(dist,idx++,mCarInfo);//, out dataAngle, out laserAngle);
 
                 matchSet.Add(new CartesianPos(obstaclePos[0], obstaclePos[1]));
                 obstaclePos = null;
@@ -838,7 +841,7 @@ namespace ClientUI
                         IsConnected = DisConnectServer();
                     }
                     ITest.SetServerStt(IsConnected);
-                    IConsole.AddMsg($"Is {(cnn ? "Connected" : "Disconnected")}");
+                    IConsole.AddMsg($"{hostIP} Is {(cnn ? "Connected" : "Disconnected")}");
                 } finally {
                     prog?.Close();
                     prog = null;
@@ -851,20 +854,7 @@ namespace ClientUI
             IConsole.AddMsg($"Set Velocity {velocity}");
             SendMsg($"Set: WorkVelo:{velocity}:{velocity}");
         }
-
-        private async void ITest_CorrectOri() {
-            CtProgress prog = new CtProgress("CorrectOri", "Correcting Ori...");
-            try {
-                /*-- 底層觸發事件 --*/
-                await Task.Run(() => CorrectOri());
-                IConsole.AddMsg("CorrectOri");
-            } catch {
-            } finally {
-                prog?.Close();
-                prog = null;
-            }
-        }
-
+        
         private void ITest_SetCarMode(CarMode mode) {
             if (mode == CarMode.Map) {
                 string oriName = string.Empty;
@@ -1113,150 +1103,6 @@ namespace ClientUI
         #region Function - Private Methods
 
         #region  Task
-
-        /// <summary>
-        /// 地圖修正執行緒
-        /// </summary>
-        /// <remarks>
-        /// Modified by Jay 2017/09/13
-        /// </remarks>
-        private void tsk_FixOriginScanningFile() {
-            try {
-                if (mBypassLoadFile) {
-                    SpinWait.SpinUntil(() => false, 1000);
-                    return;
-                }
-                MapReading MapReading = new MapReading(CurOriPath);
-                CartesianPos carPos;
-                List<CartesianPos> laserData;
-                List<CartesianPos> filterData = new List<CartesianPos>();
-                int dataLength = MapReading.OpenFile();
-                if (dataLength == 0) return;
-
-                List<CartesianPos> dataSet = new List<CartesianPos>();
-                List<CartesianPos> predataSet = new List<CartesianPos>();
-                List<CartesianPos> matchSet = new List<CartesianPos>();
-                CartesianPos transResult = new CartesianPos();
-                CartesianPos nowOdometry = new CartesianPos();
-                CartesianPos preOdometry = new CartesianPos();
-                CartesianPos accumError = new CartesianPos();
-                CartesianPos diffOdometry = new CartesianPos();
-                CartesianPos diffLaser = new CartesianPos();
-                Stopwatch sw = new Stopwatch();
-                double gValue = 0;
-                int mode = 0;
-                int corrNum = 0;
-
-                mMapMatch.Reset();
-                #region  1.Read car position and first laser scanning
-
-                MapReading.ReadScanningInfo(0, out carPos, out laserData);
-                Database.AGVGM[mAGVID].SetLocation(carPos);
-                //mCarInfo.SetPos(carPos);
-                //RaiseMapEventSync(MapEventType.RefreshPosCar, carPos.ToPos());
-                matchSet.AddRange(laserData);
-                predataSet.AddRange(laserData);
-                mMapMatch.GlobalMapUpdate(matchSet);                            //Initial environment model
-                preOdometry.SetPosition(carPos.x, carPos.y, carPos.theta);
-
-                #endregion
-
-                for (int n = 1; n < dataLength; n++) {
-                    #region 2.Read car position and laser scanning 
-
-                    List<CartesianPos> addedSet = new List<CartesianPos>();
-                    transResult.SetPosition(0, 0, 0);
-                    carPos = null;
-                    laserData = null;
-                    MapReading.ReadScanningInfo(n, out carPos, out laserData);
-                    nowOdometry.SetPosition(carPos.x, carPos.y, carPos.theta);
-
-                    #endregion
-
-                    #region 3.Correct accumulate error of odometry so far
-
-                    mMapMatch.NewPosTransformation(nowOdometry, accumError.x, accumError.y, accumError.theta);
-                    mMapMatch.NewPosTransformation(laserData, accumError.x, accumError.y, accumError.theta);
-                    matchSet.Clear();
-                    matchSet.AddRange(laserData);
-
-                    #endregion
-
-                    #region 4.Compute movement from last time to current time;
-
-                    if (nowOdometry.theta - preOdometry.theta < -200)
-                        diffOdometry.SetPosition(nowOdometry.x - preOdometry.x, nowOdometry.y - preOdometry.y, nowOdometry.theta + 360 - preOdometry.theta);
-                    else if (nowOdometry.theta - preOdometry.theta > 200)
-                        diffOdometry.SetPosition(nowOdometry.x - preOdometry.x, nowOdometry.y - preOdometry.y, -(preOdometry.theta + 360 - nowOdometry.theta));
-                    else
-                        diffOdometry.SetPosition(nowOdometry.x - preOdometry.x, nowOdometry.y - preOdometry.y, nowOdometry.theta - preOdometry.theta);
-                    System.Console.WriteLine("Odometry varition:{0:F3} {1:F3} {2:F3}", diffOdometry.x, diffOdometry.y, diffOdometry.theta);
-
-                    #endregion
-
-                    #region 5.Display current scanning information
-                    //RaiseMapEventSync(MapEventType.RefreshScanPoint, matchSet);
-
-                    #endregion
-
-                    #region 6.Inspect odometry variation is not too large.Switch to pose tracking mode if too large.
-
-                    sw.Restart();
-                    if (Math.Abs(diffOdometry.x) >= 400 || Math.Abs(diffOdometry.y) >= 400 || Math.Abs(diffOdometry.theta) >= 30) {
-                        mode = 1;
-                        gValue = mMapMatch.PairwiseMatching(predataSet, matchSet, 4, 1.5, 0.01, 20, 300, false, transResult);
-                    } else {
-                        mode = 0;
-                        gValue = mMapMatch.FindClosetMatching(matchSet, 4, 1.5, 0.01, 20, 300, false, transResult);
-                        diffLaser.SetPosition(transResult.x, transResult.y, transResult.theta);
-                    }
-
-                    //If corresponding is too less,truct the odomery variation this time
-                    if (mMapMatch.EstimateCorresponingPoints(matchSet, 10, 10, out corrNum, out addedSet)) {
-                        mMapMatch.NewPosTransformation(nowOdometry, transResult.x, transResult.y, transResult.theta);
-                        accumError.SetPosition(accumError.x + transResult.x, accumError.y + transResult.y, accumError.theta + transResult.theta);
-                    }
-                    sw.Stop();
-
-                    if (mode == 0)
-                        System.Console.WriteLine("[SLAM-Matching Mode]Corresponding Points:{0} Map Size:{1} Matching Time:{2:F3} Error{3:F3}",
-                             corrNum, mMapMatch.parseMap.Count, sw.Elapsed.TotalMilliseconds, gValue);
-                    else
-                        System.Console.WriteLine("[SLAM-Tracking Mode]Matching Time:{0:F3} Error{1:F3}", sw.Elapsed.TotalMilliseconds, gValue);
-
-                    #endregion
-
-                    #region 7.Update variation
-
-                    //Pairwise update
-                    predataSet.Clear();
-                    predataSet.AddRange(laserData);
-
-                    //Update previous variable
-                    preOdometry.SetPosition(nowOdometry.x, nowOdometry.y, nowOdometry.theta);
-
-                    Database.AGVGM[mAGVID].SetLocation(nowOdometry);
-                    //mCarInfo.SetPos(nowOdometry);
-
-                    #endregion
-
-
-                    List<IPair> points = addedSet.ToPairs();
-                    Database.AGVGM[mAGVID]?.LaserAPoints.DataList.Replace(points);
-                    Database.ObstaclePointsGM.DataList.AddRange(points);
-                    //IMapCtrl.Focus((int)nowOdometry.x, (int)nowOdometry.y);
-                    //Display added new points                     
-                    //    RaiseMapEventSync(MapEventType.DrawScanMap, addedSet);
-
-                    //    //Display car position
-                    //    RaiseMapEventSync(MapEventType.RefreshPosCar, nowOdometry.ToPos());
-                }
-                //RaiseMapEvent(MapEventType.CorrectOriComplete);
-            } catch {
-
-            } finally {
-            }
-        }
 
         /// <summary>
         /// 檔案接收執行緒
@@ -2276,16 +2122,7 @@ namespace ClientUI
             }
             openMap = null;
         }
-
-        /// <summary>
-        /// 地圖修正
-        /// </summary>
-        private void CorrectOri() {
-            NewMap();
-            tsk_FixOriginScanningFile();
-            Database.AGVGM[mAGVID]?.LaserAPoints.DataList.Clear();
-        }
-
+        
         /// <summary>
         /// 清空Map
         /// </summary>
@@ -2307,14 +2144,11 @@ namespace ClientUI
         /// 繪製雷射
         /// </summary>
         private void DrawLaser(CarInfo info) {
-            double angle = 0D, Laserangle = 0D;
             List<IPair> points = new List<IPair>();
             int idx = 0;
-
-
             foreach (int dist in info.LaserData) {
                 if (dist >= 30 && dist < 15000) {
-                    int[] pos = Transformation.LaserPoleToCartesian(dist, -135, 0.25, idx++, 43, 416.75, 43, info.x, info.y, info.theta, out angle, out Laserangle);//, out dataAngle, out laserAngle);
+                    int[] pos = CalcLaserPoint(dist,idx++,info);
                     points.Add(FactoryMode.Factory.Pair(pos[0], pos[1]));
                     pos = null;
                 }
@@ -2328,6 +2162,27 @@ namespace ClientUI
         /// <param name="points"></param>
         private void DrawPath(List<CartesianPos> points) {
             Database.AGVGM[mAGVID].Path.DataList.Replace(points.ToIPair());
+        }
+
+        /// <summary>
+        /// 計算雷射點座標
+        /// </summary>
+        /// <param name="dist"></param>
+        /// <param name="idx"></param>
+        /// <param name="carPos"></param>
+        /// <returns></returns>
+        private int[] CalcLaserPoint(int dist,int idx,CartesianPos carPos) {
+            double angle, Laserangle;
+            return Transformation.LaserPoleToCartesian(
+                dist,
+                LaserParam.AngleBase,
+                LaserParam.Resolution,
+                idx++,
+                LaserParam.AngleOffset,
+                LaserParam.OffsetLen,
+                LaserParam.OffsetTheta,
+                carPos.x,carPos.y, carPos.theta,
+                out angle, out Laserangle);
         }
 
         #endregion Draw
@@ -2371,7 +2226,6 @@ namespace ClientUI
             ITest.GetCar += ITest_GetCar;
             ITest.SendMap += ITest_SendMap;
             ITest.SetCarMode += ITest_SetCarMode;
-            ITest.CorrectOri += ITest_CorrectOri;
             ITest.SetVelocity += ITest_SetVelocity;
             ITest.Connect += ITest_CheckIsServerAlive;
             ITest.MotorServoOn += ITest_MotorServoOn;
