@@ -29,5 +29,9 @@ namespace ClientUI.Development
         /// </summary>
         public IScene Ctrl { get { return uiControl.BaseCtrl; } }
 
+        protected override void OnFormClosing(FormClosingEventArgs e) {
+            e.Cancel = true;
+        }
+
     }
 }

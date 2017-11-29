@@ -47,6 +47,12 @@ namespace ClientUI
         {
             InitializeComponent();
             FixedSize = new Size(776, 860);
+            cboCursorMode.InvokeIfNecessary(() => {
+                cboCursorMode.Items.Clear();
+                foreach(CursorMode mode in Enum.GetValues(typeof(CursorMode))) {
+                    cboCursorMode.Items.Add(mode.ToString());
+                }
+            });
         }
 
         #endregion Funciton - Construcotrs
@@ -74,6 +80,8 @@ namespace ClientUI
         /// 當下車子的位置
         /// </summary>
         private CartesianPos mCurrentCar = new CartesianPos();
+
+        public event DelSwitchCursor SwitchCursor;
 
         /// <summary>
         /// 加入 Goal 點
@@ -382,6 +390,8 @@ namespace ClientUI
 
         #region UI Event
 
+        #region Button
+
         private void btnGetGoalList_Click(object sender, EventArgs e)
         {
             GetGoalNames.Invoke();
@@ -487,6 +497,42 @@ namespace ClientUI
             ClearMap?.Invoke();
         }
 
+        #endregion Button
+
+        #region ComboBox
+
+        private void cboCursorMode_SelectedIndexChanged(object sender, EventArgs e) {
+            SwitchCursor?.Invoke((CursorMode)cboCursorMode.SelectedIndex);
+        }
+
+        #endregion ConboBox
+
+        #endregion UI Event
+
+        #region Functin - Public Methods
+
+        /// <summary>
+        /// 設定表單選擇項目
+        /// </summary>
+        public void SetSelectItem(uint id) {
+            lock (mKey) {
+                dgvGoalPoint.InvokeIfNecessary(() => {
+                    for (int row = 0; row < dgvGoalPoint.RowCount; row++) {
+                        if ((uint)dgvGoalPoint[IDColumn, row].Value == id) {
+                            dgvGoalPoint.Rows[row].Selected = true;
+                        } else {
+                            dgvGoalPoint.Rows[row].Selected = false;
+                        }
+                    }
+                });
+            }
+        }
+
+
+        #endregion Funtion - Public Methods
+
+        #region Fucnction - Private Methods
+
         /// <summary>
         /// 載入標示物
         /// </summary>
@@ -514,31 +560,44 @@ namespace ClientUI
             }
         }
 
-        #endregion UI Event
+        #endregion Function - Private Methods
+    }
 
-        #region Functin - Public Methods
-
+    /// <summary>
+    /// 鼠標模式
+    /// </summary>
+    public enum CursorMode {
         /// <summary>
-        /// 設定表單選擇項目
+        /// 選擇模式
         /// </summary>
-        public void SetSelectItem(uint id) {
-            lock (mKey) {
-                dgvGoalPoint.InvokeIfNecessary(() => {
-                    for (int row = 0; row < dgvGoalPoint.RowCount; row++) {
-                        if ((uint)dgvGoalPoint[IDColumn, row].Value == id) {
-                            dgvGoalPoint.Rows[row].Selected = true;
-                        } else {
-                            dgvGoalPoint.Rows[row].Selected = false;
-                        }
-                    }
-                });
-            }
-        }
-
-        #endregion Funtion - Public Methods
-
-        private void btnSelectMode_Click(object sender, EventArgs e) {
-
-        }
+        Select,
+        /// <summary>
+        /// 新增Goal點模式
+        /// </summary>
+        Goal,
+        /// <summary>
+        /// 新增充電站模式
+        /// </summary>
+        Power,
+        /// <summary>
+        /// 拖曳模式
+        /// </summary>
+        Draw,
+        /// <summary>
+        /// 畫筆模式
+        /// </summary>
+        Pen,
+        /// <summary>
+        /// 橡皮擦模式
+        /// </summary>
+        Eraser,
+        /// <summary>
+        /// 地圖插入模式
+        /// </summary>
+        Insert,
+        /// <summary>
+        /// 禁止區模式
+        /// </summary>
+        ForbiddenArea
     }
 }

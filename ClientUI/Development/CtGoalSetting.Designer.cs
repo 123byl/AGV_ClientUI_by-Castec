@@ -53,7 +53,7 @@
             this.btnAddNewPower = new System.Windows.Forms.Button();
             this.btnClear = new System.Windows.Forms.Button();
             this.btnCharging = new System.Windows.Forms.Button();
-            this.btnSelectMode = new System.Windows.Forms.Button();
+            this.cboCursorMode = new System.Windows.Forms.ComboBox();
             this.grbMap.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvGoalPoint)).BeginInit();
             this.SuspendLayout();
@@ -401,17 +401,16 @@
             this.btnCharging.UseVisualStyleBackColor = true;
             this.btnCharging.Click += new System.EventHandler(this.btnCharging_Click);
             // 
-            // btnSelectMode
+            // cboCursorMode
             // 
-            this.btnSelectMode.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.btnSelectMode.Location = new System.Drawing.Point(25, 672);
-            this.btnSelectMode.Margin = new System.Windows.Forms.Padding(4);
-            this.btnSelectMode.Name = "btnSelectMode";
-            this.btnSelectMode.Size = new System.Drawing.Size(145, 62);
-            this.btnSelectMode.TabIndex = 68;
-            this.btnSelectMode.Text = "Select Mode";
-            this.btnSelectMode.UseVisualStyleBackColor = true;
-            this.btnSelectMode.Click += new System.EventHandler(this.btnSelectMode_Click);
+            this.cboCursorMode.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.cboCursorMode.FormattingEnabled = true;
+            this.cboCursorMode.Location = new System.Drawing.Point(25, 688);
+            this.cboCursorMode.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.cboCursorMode.Name = "cboCursorMode";
+            this.cboCursorMode.Size = new System.Drawing.Size(160, 33);
+            this.cboCursorMode.TabIndex = 69;
+            this.cboCursorMode.SelectedIndexChanged += new System.EventHandler(this.cboCursorMode_SelectedIndexChanged);
             // 
             // CtGoalSetting
             // 
@@ -419,7 +418,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(752, 776);
-            this.Controls.Add(this.btnSelectMode);
+            this.Controls.Add(this.cboCursorMode);
             this.Controls.Add(this.btnCharging);
             this.Controls.Add(this.btnClear);
             this.Controls.Add(this.btnAddNewPower);
@@ -486,6 +485,6 @@
         private System.Windows.Forms.Button btnAddNewPower;
         private System.Windows.Forms.Button btnClear;
         private System.Windows.Forms.Button btnCharging;
-        private System.Windows.Forms.Button btnSelectMode;
+        private System.Windows.Forms.ComboBox cboCursorMode;
     }
 }

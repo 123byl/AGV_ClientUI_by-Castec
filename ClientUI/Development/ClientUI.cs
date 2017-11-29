@@ -79,8 +79,10 @@ namespace ClientUI
         ///     0.0.7   Jay [2017/11/27]
         ///         \ 加入鍵盤控制AGV移動功能
         ///         \ 移除Ori修正功能
+        ///     0.0.8   Jay [2017/11/29]
+        ///         \ 限定MapGL不可隱藏
         /// </remarks>
-        public CtVersion Version { get { return new CtVersion(0, 0, 7, "2017/11/27", "Jay Chang"); } }
+        public CtVersion Version { get { return new CtVersion(0, 0, 8, "2017/11/29", "Jay Chang"); } }
 
         #endregion Version - Information
 
@@ -1723,6 +1725,7 @@ namespace ClientUI
         /// 離開程式
         /// </summary>
         private void Exit() {
+            mNotifyIcon.HideIcon();
             this.Dispose();
         }
 
@@ -2170,11 +2173,13 @@ namespace ClientUI
             IGoalSetting.GetGoalNames += IGoalSetting_GetGoalNames;
             IGoalSetting.Charging += IGoalSetting_Charging;
             IGoalSetting.ClearMap += ITest_ClearMap;
+            IGoalSetting.SwitchCursor += IGoalSetting_SwitchCursor;
+
             #endregion
 
             #region IMapGL 事件連結
-            IMapCtrl.DragTowerPairEvent += IMapCtrl_DragEvent;
-            IMapCtrl.GLClickEvent += IMapCtrl_GLClickEvent;
+            IMapCtrl.ClickTowerPairEvent += IMapCtrl_DragEvent;
+            IMapCtrl.GLClickEvent += IMapCtrl_GLClickEvent;    
             #endregion
 
             #region ITesting 事件連結
@@ -2198,6 +2203,42 @@ namespace ClientUI
             #endregion 
         }
 
+        private void IGoalSetting_SwitchCursor(CursorMode mode) {
+            switch (mode) {
+                case CursorMode.Draw:
+                    IMapCtrl.SetDragMode();
+                    break;
+                case CursorMode.Goal:
+                    IMapCtrl.SetAddMode(FactoryMode.Factory.Goal($"Goal{Database.GoalGM.Count}"));
+                    break;
+                case CursorMode.Power:
+                    IMapCtrl.SetAddMode(FactoryMode.Factory.Power($"Power{Database.PowerGM.Count}"));
+                    break;
+                case CursorMode.Select:
+                    IMapCtrl.SetSelectMode();
+                    break;
+                case CursorMode.Pen:
+                    IMapCtrl.SetPenMode();
+                    break;
+                case CursorMode.Eraser:
+                    IMapCtrl.SetEraserMode(5);
+                    break;
+                case CursorMode.Insert:
+                    OpenFileDialog old = new OpenFileDialog();
+                    old.Filter = ".Map|*.map";
+                    if (old.ShowDialog() == DialogResult.OK) {
+                        IMapCtrl.SetInsertMapMode(old.FileName);
+                    }
+                    break;
+                case CursorMode.ForbiddenArea:
+                    IMapCtrl.SetAddMode(FactoryMode.Factory.ForbiddenArea("ForbiddenArea"));
+                    break;
+                default:
+                    throw new ArgumentException($"未定義{mode}模式");
+                                    
+            }
+        }
+
         /// <summary>
         /// 載入ICtDockContent物件
         /// </summary>
@@ -2208,7 +2249,7 @@ namespace ClientUI
                 { miConsole,new CtConsole(DockState.DockBottomAutoHide)},
                 { miGoalSetting,new CtGoalSetting(DockState.DockLeft)},
                 { miTesting,new CtTesting(DockState.DockLeft)},
-                { miMapGL,new AGVMapUI( DockState.Document)}
+                { miMapGL,new AGVMapUI( DockState.Document )}
             };
             SetEvents();
 

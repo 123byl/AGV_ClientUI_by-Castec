@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ClientUI.Development;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -24,6 +25,8 @@ namespace ClientUI {
 
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new AgvClientUI());
+            //Application.Run(new CtToolBox());
+
         }
 
         /// <summary>非 UI 執行緒錯誤的處理方法</summary>

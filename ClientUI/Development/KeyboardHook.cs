@@ -143,6 +143,7 @@ namespace ClientUI.Development {
                     Stop();
                     throw new Exception("安装键盘钩子失败");
                 }
+                Console.WriteLine($"KeyboardHook:{hKeyboardHook}");
             }
         }
 
@@ -154,11 +155,12 @@ namespace ClientUI.Development {
 
 
             if (hKeyboardHook != 0) {
+                Console.WriteLine($"Unhook:{hKeyboardHook}");
                 retKeyboard = UnhookWindowsHookEx(hKeyboardHook);
                 hKeyboardHook = 0;
             }
 
-            if (!(retKeyboard)) throw new Exception("卸载钩子失败！");
+            //if (!(retKeyboard)) throw new Exception("卸载钩子失败！");
         }
 
         #endregion Function - Public Methods

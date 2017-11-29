@@ -31,6 +31,8 @@ namespace ClientUI {
                 mMenuItems = null;
 
                 components.Dispose();
+
+                mKeyboardHook.Stop();
             }
             base.Dispose(disposing);
         }
@@ -287,28 +289,29 @@ namespace ClientUI {
             // miMapGL
             // 
             this.miMapGL.Name = "miMapGL";
-            this.miMapGL.Size = new System.Drawing.Size(170, 26);
+            this.miMapGL.Size = new System.Drawing.Size(181, 26);
             this.miMapGL.Text = "MapGL";
+            this.miMapGL.Visible = false;
             this.miMapGL.Click += new System.EventHandler(this.MenuDock_Click);
             // 
             // miTesting
             // 
             this.miTesting.Name = "miTesting";
-            this.miTesting.Size = new System.Drawing.Size(170, 26);
+            this.miTesting.Size = new System.Drawing.Size(181, 26);
             this.miTesting.Text = "Testing";
             this.miTesting.Click += new System.EventHandler(this.MenuDock_Click);
             // 
             // miGoalSetting
             // 
             this.miGoalSetting.Name = "miGoalSetting";
-            this.miGoalSetting.Size = new System.Drawing.Size(170, 26);
+            this.miGoalSetting.Size = new System.Drawing.Size(181, 26);
             this.miGoalSetting.Text = "Goal Setting";
             this.miGoalSetting.Click += new System.EventHandler(this.MenuDock_Click);
             // 
             // miConsole
             // 
             this.miConsole.Name = "miConsole";
-            this.miConsole.Size = new System.Drawing.Size(170, 26);
+            this.miConsole.Size = new System.Drawing.Size(181, 26);
             this.miConsole.Text = "Console";
             this.miConsole.Click += new System.EventHandler(this.MenuDock_Click);
             // 
@@ -324,14 +327,14 @@ namespace ClientUI {
             // miAbout
             // 
             this.miAbout.Name = "miAbout";
-            this.miAbout.Size = new System.Drawing.Size(181, 26);
+            this.miAbout.Size = new System.Drawing.Size(126, 26);
             this.miAbout.Text = "About";
             this.miAbout.Click += new System.EventHandler(this.miAbout_Click);
             // 
             // testToolStripMenuItem
             // 
             this.testToolStripMenuItem.Name = "testToolStripMenuItem";
-            this.testToolStripMenuItem.Size = new System.Drawing.Size(181, 26);
+            this.testToolStripMenuItem.Size = new System.Drawing.Size(126, 26);
             this.testToolStripMenuItem.Text = "Test";
             // 
             // miBypass
@@ -348,21 +351,21 @@ namespace ClientUI {
             // miBypassSocket
             // 
             this.miBypassSocket.Name = "miBypassSocket";
-            this.miBypassSocket.Size = new System.Drawing.Size(181, 26);
+            this.miBypassSocket.Size = new System.Drawing.Size(143, 26);
             this.miBypassSocket.Text = "Socket";
             this.miBypassSocket.Click += new System.EventHandler(this.miBypassSocket_Click);
             // 
             // miLoadFile
             // 
             this.miLoadFile.Name = "miLoadFile";
-            this.miLoadFile.Size = new System.Drawing.Size(181, 26);
+            this.miLoadFile.Size = new System.Drawing.Size(143, 26);
             this.miLoadFile.Text = "LoadFile";
             this.miLoadFile.Click += new System.EventHandler(this.miLoadFile_Click);
             // 
             // miServer
             // 
             this.miServer.Name = "miServer";
-            this.miServer.Size = new System.Drawing.Size(181, 26);
+            this.miServer.Size = new System.Drawing.Size(143, 26);
             this.miServer.Text = "Server";
             // 
             // AgvClientUI

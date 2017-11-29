@@ -106,6 +106,8 @@ namespace ClientUI
 
         event DelClearMap ClearMap;
 
+        event DelSwitchCursor SwitchCursor;
+
         /// <summary>
         /// 當下車子的位置
         /// </summary>
@@ -337,7 +339,7 @@ namespace ClientUI
             /// </summary>
             public delegate void DelGetGoalNames();
 
-            public delegate void DelSwitchCursor();
+            public delegate void DelSwitchCursor(CursorMode mode);
         }
 
         /// <summary>
