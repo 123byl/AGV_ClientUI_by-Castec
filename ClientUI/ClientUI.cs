@@ -85,6 +85,8 @@ namespace ClientUI
         ///     0.0.9   Jay [2017/11/30]
         ///         \ 加入Outlookbar控制項實作工具箱視窗UI
         ///         \ 地圖插入控制面板實作
+        ///         \ 移除KeyboardHook
+        ///         \ 單獨監測Testing視窗之鍵盤事件
         /// </remarks>
         public CtVersion Version { get { return new CtVersion(0, 0, 9, "2017/11/30", "Jay Chang"); } }
 
@@ -259,19 +261,10 @@ namespace ClientUI
         private IPair mNewPos = null;
 
         /// <summary>
-        /// 全域鍵盤鉤子
-        /// </summary>
-        private KeyboardHook mKeyboardHook = new KeyboardHook();
-
-        /// <summary>
         /// 伺服馬達激磁狀態
         /// </summary>
         private bool mIsMotorServoOn = false;
 
-        /// <summary>
-        /// 紀錄鍵盤按下的方向
-        /// </summary>
-        private List<MotionDirection> mDirs = new List<MotionDirection>();
 
         #endregion Declaration - Fields
 
@@ -460,9 +453,7 @@ namespace ClientUI
             if (!Database.AGVGM.ContainsID(mAGVID)) {
                 Database.AGVGM.Add(mAGVID, FactoryMode.Factory.AGV(0, 0, 0, "AGV"));
             }
-            mKeyboardHook.KeyDownEvent += mKeyboardHook_KeyDownEvent;
-            mKeyboardHook.KeyUpEvent += MKeyboardHook_KeyUpEvent;
-            mKeyboardHook.Start();
+
         }
 
         #endregion Function - Constructors
@@ -690,46 +681,6 @@ namespace ClientUI
         }
 
         #endregion NotifyIcon
-
-        #region KeyboardHook
-        
-        /// <summary>
-        /// 鍵盤放開事件
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void MKeyboardHook_KeyUpEvent(object sender, KeyEventArgs e) {
-            if (mIsMotorServoOn) {
-                if (Enum.IsDefined(typeof(MotionDirection), (int)e.KeyCode)) {
-                    MotionDirection dir = (MotionDirection)e.KeyCode;
-                    mDirs.Remove(dir);
-                    if (mDirs.Any()) {
-                        ITest_Motion_Down(mDirs[0], mVelocity);                        
-                    }else {
-                        ITest_Motion_Up();
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// 鍵盤按下事件
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void mKeyboardHook_KeyDownEvent(object sender, KeyEventArgs e) {
-            if (mIsMotorServoOn) {
-                if (Enum.IsDefined(typeof(MotionDirection), (int)e.KeyCode)) {
-                    MotionDirection dir = (MotionDirection)e.KeyCode;
-                    if (!mDirs.Contains(dir)) {
-                        mDirs.Add(dir);
-                        ITest_Motion_Down((MotionDirection)e.KeyCode, mVelocity);
-                    }
-                }
-            }
-        }
-
-        #endregion KeyboardHook
 
         #region ITest
 

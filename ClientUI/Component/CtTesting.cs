@@ -5,6 +5,8 @@ using System.Windows.Forms;
 
 using WeifenLuo.WinFormsUI.Docking;
 using CtLib.Library;
+using System.Linq;
+
 namespace ClientUI
 {
     /// <summary>
@@ -15,6 +17,11 @@ namespace ClientUI
         #region Declaration - Fields
 
         private readonly object mKey = new object();
+
+        /// <summary>
+        /// 紀錄鍵盤按下的方向
+        /// </summary>
+        private List<MotionDirection> mDirs = new List<MotionDirection>();
 
         #endregion Declaration - Fields
 
@@ -28,6 +35,11 @@ namespace ClientUI
             :base(defState) {
             InitializeComponent();
             FixedSize = new Size(718, 814);       
+
+            foreach(Control ctrl in Controls) {
+                ctrl.KeyUp += Ctrl_KeyUp;
+                ctrl.KeyDown += Ctrl_KeyDown;
+            }
         }
 
         #endregion Function - Constructors
@@ -135,6 +147,28 @@ namespace ClientUI
         #endregion Implement - ITest
 
         #region Function  - UI Events
+
+        private void Ctrl_KeyUp(object sender, KeyEventArgs e) {
+            if (Enum.IsDefined(typeof(MotionDirection), (int)e.KeyCode)) {
+                MotionDirection dir = (MotionDirection)e.KeyCode;
+                mDirs.Remove(dir);
+                if (mDirs.Any()) {
+                    Motion_Down?.Invoke(mDirs[0], int.Parse(txtVelocity.Text));
+                } else {
+                    Motion_Up?.Invoke();
+                }
+            }
+        }
+
+        private void Ctrl_KeyDown(object sender, KeyEventArgs e) {
+            if (Enum.IsDefined(typeof(MotionDirection), (int)e.KeyCode)) {
+                MotionDirection dir = (MotionDirection)e.KeyCode;
+                if (!mDirs.Contains(dir)) {
+                    mDirs.Add(dir);
+                    Motion_Down?.Invoke((MotionDirection)e.KeyCode, int.Parse(txtVelocity.Text));
+                }
+            }
+        }
 
         private void btnConnect_Click(object sender, EventArgs e) {
             if (btnConnect.Tag == null || (btnConnect.Tag is bool && !(bool)btnConnect.Tag)) {
