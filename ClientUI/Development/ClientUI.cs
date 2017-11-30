@@ -81,8 +81,10 @@ namespace ClientUI
         ///         \ 移除Ori修正功能
         ///     0.0.8   Jay [2017/11/29]
         ///         \ 限定MapGL不可隱藏
+        ///     0.0.9   Jay [2017/11/30]
+        ///         \ 加入Outlookbar控制項實作工具箱視窗UI
         /// </remarks>
-        public CtVersion Version { get { return new CtVersion(0, 0, 8, "2017/11/29", "Jay Chang"); } }
+        public CtVersion Version { get { return new CtVersion(0, 0, 9, "2017/11/30", "Jay Chang"); } }
 
         #endregion Version - Information
 
@@ -747,10 +749,7 @@ namespace ClientUI
 
         private void ITest_ClearMap() {
             IGoalSetting.ClearGoal();
-            Database.GoalGM.Clear();
-            Database.PowerGM.Clear();
-            Database.ObstacleLinesGM.DataList.Clear();
-            Database.ObstaclePointsGM.DataList.Clear();
+            Database.ClearAllButAGV();
         }
 
         private void ITest_MotorServoOn(bool servoOn) {
@@ -2201,11 +2200,13 @@ namespace ClientUI
             ITest.SettingCarPos += ITest_SettingCarPos;
             ITest.CarPosConfirm += ITest_CarPosConfirm;
             #endregion 
+
+            (mDockContent[miToolBox] as CtToolBox).SwitchCursor += IGoalSetting_SwitchCursor;
         }
 
         private void IGoalSetting_SwitchCursor(CursorMode mode) {
             switch (mode) {
-                case CursorMode.Draw:
+                case CursorMode.Drag:
                     IMapCtrl.SetDragMode();
                     break;
                 case CursorMode.Goal:
@@ -2221,7 +2222,7 @@ namespace ClientUI
                     IMapCtrl.SetPenMode();
                     break;
                 case CursorMode.Eraser:
-                    IMapCtrl.SetEraserMode(5);
+                    IMapCtrl.SetEraserMode(500);
                     break;
                 case CursorMode.Insert:
                     OpenFileDialog old = new OpenFileDialog();
@@ -2249,7 +2250,8 @@ namespace ClientUI
                 { miConsole,new CtConsole(DockState.DockBottomAutoHide)},
                 { miGoalSetting,new CtGoalSetting(DockState.DockLeft)},
                 { miTesting,new CtTesting(DockState.DockLeft)},
-                { miMapGL,new AGVMapUI( DockState.Document )}
+                { miMapGL,new AGVMapUI( DockState.Document )},
+                { miToolBox,new CtToolBox(DockState.DockRightAutoHide)}
             };
             SetEvents();
 

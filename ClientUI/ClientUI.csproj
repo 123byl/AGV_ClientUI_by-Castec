@@ -486,6 +486,10 @@
       <Project>{a9bed8b3-2f9d-42a8-90bd-9fae0522eb09}</Project>
       <Name>CtLib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CtOutLookBar\CtOutLookBar.csproj">
+      <Project>{1bea4f2d-0a48-4a1c-aff2-0b44efa08442}</Project>
+      <Name>CtOutLookBar</Name>
+    </ProjectReference>
     <ProjectReference Include="..\KDTree\KDTree.csproj">
       <Project>{33a00a90-c02e-474b-a8c0-3b0559873ea0}</Project>
       <Name>KDTree</Name>

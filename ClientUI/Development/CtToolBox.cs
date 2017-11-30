@@ -1,44 +1,77 @@
-﻿using System;
+﻿using CtOutLookBar.Public;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using UtilityLibrary.WinControls;
+using WeifenLuo.WinFormsUI.Docking;
+using static ClientUI.Events.GoalSettingEvents;
 
 namespace ClientUI.Development {
-    public partial class CtToolBox : Form {
-        private OutlookBar outlookBar1 = null;  
-        public CtToolBox() {
+    public partial class CtToolBox : CtDockContent {
+
+        public event DelSwitchCursor SwitchCursor;
+
+        /// <summary>
+        /// 共用建構方法
+        /// </summary>
+        public CtToolBox(DockState defState = DockState.Float)
+            : base(defState)
+        {
             InitializeComponent();
-            outlookBar1 = new OutlookBar();
-            
-            #region 销售管理
-            OutlookBarBand outlookShortcutsBand = new OutlookBarBand("销售管理");
-            outlookShortcutsBand.SmallImageList = this.imageList1;
-            outlookShortcutsBand.LargeImageList = this.imageList1;
-            outlookShortcutsBand.Items.Add(new OutlookBarItem("订单管理", 0));
+            FixedSize = new Size(200, 711);
+            //outlookBar2.Dock = DockStyle.Fill;
+            IOutlookCategory mapTool =  outlookBar2.AddCategory("Map Tool");
+            foreach(CursorMode mode in Enum.GetValues(typeof(CursorMode))) {
+                IClickSender sender = mapTool.AddItem(mode, $@"Image\{mode}.png");
+                if (sender != null) {
+                    sender.Click += OutlookItem_OnClick;
+                }
+            }
+            IOutlookCategory otherTool = outlookBar2.AddCategory("Other Tool");
+            foreach (CursorMode mode in Enum.GetValues(typeof(CursorMode))) {
+                otherTool.AddItem(mode.ToString()).Click += OutlookItem_OnClick;
+            }
+            otherTool.BackColor = Color.LightGreen;
+            mapTool.RowCount = 1;
+            outlookBar2.SelectCategory(0);
+            outlookBar2.Dock = DockStyle.Fill;
+            outlookBar2.BackColor = Color.Black;
+        }
 
-            outlookShortcutsBand.Items.Add(new OutlookBarItem("订单管理", 0));
+        private void OutlookItem_OnClick(object sender,EventArgs e) {
+            Control ctrl = sender as Control;
+            IOutlookItem item = ctrl?.Tag as IOutlookItem;
+            if (Enum.IsDefined(typeof(CursorMode), item.EnumIdx)) {
+                CursorMode mode = (CursorMode)item.EnumIdx;
+                Console.WriteLine((CursorMode)item.EnumIdx);
+                SwitchCursor?.Invoke(mode);
 
-            outlookShortcutsBand.Items.Add(new OutlookBarItem("订单管理", 0));
+                this.DockState = DockState.DockRight;
+                this.DockState = DockState.DockRightAutoHide;
+            }
+        }
 
-            outlookShortcutsBand.Items.Add(new OutlookBarItem("订单管理", 0));
+        private void CtToolBox_Resize(object sender, EventArgs e) {
+            //outlookBar2.Size = this.Size;
+        }
 
-            outlookShortcutsBand.Items.Add(new OutlookBarItem("订单管理", 0));
+        
+    }
 
-            outlookShortcutsBand.Items.Add(new OutlookBarItem("订单管理", 0));
+    internal static class OutlockBarExtension {
+        public static IClickSender AddItem(this IOutlookCategory iconPanel, CursorMode mode, Image img=null) {
+            return iconPanel.AddItem(mode.ToString(), img, (int)mode);
+        }
 
-            outlookShortcutsBand.Items.Add(new OutlookBarItem("订单管理", 0));
-            outlookShortcutsBand.Background = SystemColors.AppWorkspace;
-            outlookShortcutsBand.TextColor = Color.White;
-            outlookBar1.Bands.Add(outlookShortcutsBand);
-            outlookBar1.Dock = DockStyle.Fill;
-            #endregion
-            panel1.Controls.Add(outlookBar1);
+        public static IClickSender AddItem(this IOutlookCategory category,CursorMode mode,string imgPath) {
+            Image img = File.Exists(imgPath) ? Image.FromFile(imgPath) : null;
+            return category.AddItem(mode, img);
         }
     }
 }

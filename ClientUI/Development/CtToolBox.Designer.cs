@@ -27,6 +27,8 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CtToolBox));
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.panel1 = new System.Windows.Forms.Panel();
+            this.outlookBar2 = new CtOutLookBar.Public.OutlookBar();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // imageList1
@@ -41,20 +43,37 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.outlookBar2);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(282, 253);
+            this.panel1.Size = new System.Drawing.Size(167, 664);
             this.panel1.TabIndex = 0;
+            // 
+            // outlookBar2
+            // 
+            this.outlookBar2.BackColor = System.Drawing.Color.Black;
+            this.outlookBar2.ButtonHeight = 25;
+            this.outlookBar2.Location = new System.Drawing.Point(0, 0);
+            this.outlookBar2.Name = "outlookBar2";
+            this.outlookBar2.SelectedBand = 0;
+            this.outlookBar2.Size = new System.Drawing.Size(207, 221);
+            this.outlookBar2.TabIndex = 1;
             // 
             // CtToolBox
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(282, 253);
+            this.ClientSize = new System.Drawing.Size(167, 664);
             this.Controls.Add(this.panel1);
+            this.Font = new System.Drawing.Font("新細明體", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "CtToolBox";
             this.Text = "CtToolBox";
+            this.Resize += new System.EventHandler(this.CtToolBox_Resize);
+            this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -63,5 +82,6 @@
 
         private System.Windows.Forms.ImageList imageList1;
         private System.Windows.Forms.Panel panel1;
+        private CtOutLookBar.Public.OutlookBar outlookBar2;
     }
 }

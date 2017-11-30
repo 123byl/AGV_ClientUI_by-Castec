@@ -45,6 +45,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FactoryMode", "..\AGVBase\F
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GLUI", "..\AGVBase\GLUI\GLUI.csproj", "{D2E7804D-ADE5-4C82-AE04-8F505D04711A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CtOutLookBar", "CtOutLookBar\CtOutLookBar.csproj", "{1BEA4F2D-0A48-4A1C-AFF2-0B44EFA08442}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -176,6 +178,14 @@ Global
 		{D2E7804D-ADE5-4C82-AE04-8F505D04711A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D2E7804D-ADE5-4C82-AE04-8F505D04711A}.Release|x86.ActiveCfg = Release|Any CPU
 		{D2E7804D-ADE5-4C82-AE04-8F505D04711A}.Release|x86.Build.0 = Release|Any CPU
+		{1BEA4F2D-0A48-4A1C-AFF2-0B44EFA08442}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1BEA4F2D-0A48-4A1C-AFF2-0B44EFA08442}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1BEA4F2D-0A48-4A1C-AFF2-0B44EFA08442}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1BEA4F2D-0A48-4A1C-AFF2-0B44EFA08442}.Debug|x86.Build.0 = Debug|Any CPU
+		{1BEA4F2D-0A48-4A1C-AFF2-0B44EFA08442}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1BEA4F2D-0A48-4A1C-AFF2-0B44EFA08442}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1BEA4F2D-0A48-4A1C-AFF2-0B44EFA08442}.Release|x86.ActiveCfg = Release|Any CPU
+		{1BEA4F2D-0A48-4A1C-AFF2-0B44EFA08442}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

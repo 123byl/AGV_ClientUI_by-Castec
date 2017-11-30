@@ -582,7 +582,7 @@ namespace ClientUI
         /// <summary>
         /// 拖曳模式
         /// </summary>
-        Draw,
+        Drag,
         /// <summary>
         /// 畫筆模式
         /// </summary>
