@@ -66,85 +66,85 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CtMapInsert.cs">
+    <Compile Include="Component\CtMapInsert.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CtMapInsert.Designer.cs">
+    <Compile Include="Component\CtMapInsert.Designer.cs">
       <DependentUpon>CtMapInsert.cs</DependentUpon>
     </Compile>
-    <Compile Include="Development\AgvClient.cs" />
-    <Compile Include="Development\AGVMapUI.cs">
+    <Compile Include="Component\AgvClient.cs" />
+    <Compile Include="Component\AGVMapUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Development\AGVMapUI.Designer.cs">
+    <Compile Include="Component\AGVMapUI.Designer.cs">
       <DependentUpon>AGVMapUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="Development\ClientUI.cs">
+    <Compile Include="ClientUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Development\ClientUI.Designer.cs">
+    <Compile Include="ClientUI.Designer.cs">
       <DependentUpon>ClientUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="Development\CtConsole.cs">
+    <Compile Include="Component\CtConsole.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Development\CtConsole.Designer.cs">
+    <Compile Include="Component\CtConsole.Designer.cs">
       <DependentUpon>CtConsole.cs</DependentUpon>
     </Compile>
-    <Compile Include="Development\CtDockContent.cs">
+    <Compile Include="Component\CtDockContent.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Development\CtGoalSetting.cs">
+    <Compile Include="Component\CtGoalSetting.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Development\CtGoalSetting.Designer.cs">
+    <Compile Include="Component\CtGoalSetting.Designer.cs">
       <DependentUpon>CtGoalSetting.cs</DependentUpon>
     </Compile>
-    <Compile Include="Development\CtTesting.cs">
+    <Compile Include="Component\CtTesting.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Development\CtTesting.Designer.cs">
+    <Compile Include="Component\CtTesting.Designer.cs">
       <DependentUpon>CtTesting.cs</DependentUpon>
     </Compile>
-    <Compile Include="Development\CtToolBox.cs">
+    <Compile Include="Component\CtToolBox.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Development\CtToolBox.Designer.cs">
+    <Compile Include="Component\CtToolBox.Designer.cs">
       <DependentUpon>CtToolBox.cs</DependentUpon>
     </Compile>
-    <Compile Include="Development\DefStruct.cs" />
-    <Compile Include="Development\Events.cs" />
-    <Compile Include="Development\KeyboardHook.cs" />
-    <Compile Include="Development\MapList.cs">
+    <Compile Include="Component\DefStruct.cs" />
+    <Compile Include="Component\Events.cs" />
+    <Compile Include="Component\KeyboardHook.cs" />
+    <Compile Include="Component\MapList.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Development\MapList.Designer.cs">
+    <Compile Include="Component\MapList.Designer.cs">
       <DependentUpon>MapList.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="CtMapInsert.resx">
+    <EmbeddedResource Include="Component\CtMapInsert.resx">
       <DependentUpon>CtMapInsert.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Development\AGVMapUI.resx">
+    <EmbeddedResource Include="Component\AGVMapUI.resx">
       <DependentUpon>AGVMapUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Development\ClientUI.resx">
+    <EmbeddedResource Include="ClientUI.resx">
       <DependentUpon>ClientUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Development\CtConsole.resx">
+    <EmbeddedResource Include="Component\CtConsole.resx">
       <DependentUpon>CtConsole.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Development\CtDockContent.resx">
+    <EmbeddedResource Include="Component\CtDockContent.resx">
       <DependentUpon>CtDockContent.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Development\CtGoalSetting.resx">
+    <EmbeddedResource Include="Component\CtGoalSetting.resx">
       <DependentUpon>CtGoalSetting.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Development\CtTesting.resx">
+    <EmbeddedResource Include="Component\CtTesting.resx">
       <DependentUpon>CtTesting.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Development\CtToolBox.resx">
+    <EmbeddedResource Include="Component\CtToolBox.resx">
       <DependentUpon>CtToolBox.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -523,13 +523,23 @@
     <Folder Include="Dynamic Link Libraries\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Icon\Drag.png" />
+    <Content Include="Icon\Eraser.png" />
+    <Content Include="Icon\Goal.png" />
+    <Content Include="Icon\Insert.png" />
+    <Content Include="Icon\NarrowLine.bmp" />
+    <Content Include="Icon\Parking.png" />
+    <Content Include="Icon\Pen.png" />
+    <Content Include="Icon\Power.png" />
+    <Content Include="Icon\Select.png" />
     <Content Include="OpenGLDLL\SharpGL.dll" />
     <Content Include="OpenGLDLL\SharpGL.SceneGraph.dll" />
     <Content Include="OpenGLDLL\SharpGL.WinForms.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>copy "$(ProjectDir)D1703.opc" "D:\CASTEC\Config\"</PreBuildEvent>
+    <PreBuildEvent>copy "$(ProjectDir)D1703.opc" "D:\CASTEC\Config\"
+xcopy /i /y /e "$(ProjectDir)Icon\*.*" "$(TargetDir)Icon"</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

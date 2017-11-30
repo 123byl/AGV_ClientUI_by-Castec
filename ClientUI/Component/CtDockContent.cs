@@ -71,6 +71,7 @@ namespace ClientUI {
             /*-- 表單關閉中事件訂閱 --*/
             this.FormClosing += CtDockContent_FormClosing;
             this.AutoScroll = true;
+            
         }
 
         private CtDockContent() { }

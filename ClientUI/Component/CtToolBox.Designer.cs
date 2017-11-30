@@ -1,4 +1,4 @@
-﻿namespace ClientUI.Development {
+﻿namespace ClientUI.Component {
     partial class CtToolBox {
         /// <summary>
         /// Required designer variable.

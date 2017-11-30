@@ -27,10 +27,6 @@
             this.lbHostIP = new System.Windows.Forms.Label();
             this.cboHostIP = new System.Windows.Forms.ComboBox();
             this.btnScan = new System.Windows.Forms.Button();
-            this.btnCursorMode = new System.Windows.Forms.Button();
-            this.btnPower = new System.Windows.Forms.Button();
-            this.btnStop = new System.Windows.Forms.Button();
-            this.btnErase = new System.Windows.Forms.Button();
             this.btnPosConfirm = new System.Windows.Forms.Button();
             this.btnSetCar = new System.Windows.Forms.Button();
             this.btnSimplyOri = new System.Windows.Forms.Button();
@@ -62,7 +58,6 @@
             this.btnRight = new System.Windows.Forms.Button();
             this.btnLeft = new System.Windows.Forms.Button();
             this.btnDown = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
             this.grbMap.SuspendLayout();
             this.grbInfo.SuspendLayout();
             this.grbMode.SuspendLayout();
@@ -100,50 +95,6 @@
             this.btnScan.Text = "Scan";
             this.btnScan.UseVisualStyleBackColor = true;
             this.btnScan.Click += new System.EventHandler(this.btnScan_Click);
-            // 
-            // btnCursorMode
-            // 
-            this.btnCursorMode.Font = new System.Drawing.Font("微軟正黑體", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.btnCursorMode.Location = new System.Drawing.Point(387, 633);
-            this.btnCursorMode.Margin = new System.Windows.Forms.Padding(4);
-            this.btnCursorMode.Name = "btnCursorMode";
-            this.btnCursorMode.Size = new System.Drawing.Size(90, 85);
-            this.btnCursorMode.TabIndex = 56;
-            this.btnCursorMode.Text = "Cursor Mode";
-            this.btnCursorMode.UseVisualStyleBackColor = true;
-            // 
-            // btnPower
-            // 
-            this.btnPower.Font = new System.Drawing.Font("微軟正黑體", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.btnPower.Location = new System.Drawing.Point(583, 546);
-            this.btnPower.Margin = new System.Windows.Forms.Padding(4);
-            this.btnPower.Name = "btnPower";
-            this.btnPower.Size = new System.Drawing.Size(90, 85);
-            this.btnPower.TabIndex = 55;
-            this.btnPower.Text = "Power Area";
-            this.btnPower.UseVisualStyleBackColor = true;
-            // 
-            // btnStop
-            // 
-            this.btnStop.Font = new System.Drawing.Font("微軟正黑體", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.btnStop.Location = new System.Drawing.Point(485, 546);
-            this.btnStop.Margin = new System.Windows.Forms.Padding(4);
-            this.btnStop.Name = "btnStop";
-            this.btnStop.Size = new System.Drawing.Size(90, 85);
-            this.btnStop.TabIndex = 54;
-            this.btnStop.Text = "Stop Area";
-            this.btnStop.UseVisualStyleBackColor = true;
-            // 
-            // btnErase
-            // 
-            this.btnErase.Font = new System.Drawing.Font("微軟正黑體", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.btnErase.Location = new System.Drawing.Point(387, 546);
-            this.btnErase.Margin = new System.Windows.Forms.Padding(4);
-            this.btnErase.Name = "btnErase";
-            this.btnErase.Size = new System.Drawing.Size(90, 85);
-            this.btnErase.TabIndex = 53;
-            this.btnErase.Text = "Erase Tool";
-            this.btnErase.UseVisualStyleBackColor = true;
             // 
             // btnPosConfirm
             // 
@@ -342,6 +293,7 @@
             this.grbMode.TabIndex = 60;
             this.grbMode.TabStop = false;
             this.grbMode.Text = "Car Mode";
+            this.grbMode.Visible = false;
             // 
             // btnIdleMode
             // 
@@ -565,33 +517,17 @@
             this.btnDown.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Motion_MouseDown);
             this.btnDown.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Motion_MouseUp);
             // 
-            // button1
-            // 
-            this.button1.Font = new System.Drawing.Font("微軟正黑體", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.button1.Location = new System.Drawing.Point(387, 401);
-            this.button1.Margin = new System.Windows.Forms.Padding(4);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(90, 85);
-            this.button1.TabIndex = 65;
-            this.button1.Text = "Test";
-            this.button1.UseVisualStyleBackColor = true;
-            // 
             // CtTesting
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(708, 767);
-            this.Controls.Add(this.button1);
             this.Controls.Add(this.lbHostIP);
             this.Controls.Add(this.cboHostIP);
             this.Controls.Add(this.grbMap);
             this.Controls.Add(this.grbInfo);
             this.Controls.Add(this.btnScan);
             this.Controls.Add(this.grbMode);
-            this.Controls.Add(this.btnCursorMode);
-            this.Controls.Add(this.btnPower);
-            this.Controls.Add(this.btnStop);
-            this.Controls.Add(this.btnErase);
             this.Controls.Add(this.btnPosConfirm);
             this.Controls.Add(this.btnSetCar);
             this.Controls.Add(this.btnSimplyOri);
@@ -634,10 +570,6 @@
         private System.Windows.Forms.Button btnSimplyOri;
         private System.Windows.Forms.Button btnSetCar;
         private System.Windows.Forms.Button btnPosConfirm;
-        private System.Windows.Forms.Button btnErase;
-        private System.Windows.Forms.Button btnStop;
-        private System.Windows.Forms.Button btnPower;
-        private System.Windows.Forms.Button btnCursorMode;
         private System.Windows.Forms.RadioButton rdbMap;
         private System.Windows.Forms.RadioButton rdbWork;
         private System.Windows.Forms.RadioButton rdbIdle;
@@ -656,6 +588,5 @@
         private System.Windows.Forms.Button btnSendMap;
         private System.Windows.Forms.ComboBox cboHostIP;
         private System.Windows.Forms.Label lbHostIP;
-        private System.Windows.Forms.Button button1;
     }
 }

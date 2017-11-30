@@ -20,7 +20,7 @@ using System.Threading;
 using ServerOperation;
 using System.Net;
 using System.Net.Sockets;
-using ClientUI.Development;
+using ClientUI.Component;
 using System.IO;
 using AGVMathOperation;
 using System.Diagnostics;
@@ -2282,6 +2282,9 @@ namespace ClientUI
 
                 /*-- MenuItem顯示DockContent標題文字(Text) --*/
                 item.Text = dokContent.Text;
+
+                /*-- 委派工具列點擊事件 --*/
+                item.Click += MenuDock_Click;
 
             }
             mMapInsert.AssignmentDockPanel(dockPanel);

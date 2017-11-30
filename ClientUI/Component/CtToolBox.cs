@@ -12,7 +12,7 @@ using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 using static ClientUI.Events.GoalSettingEvents;
 
-namespace ClientUI.Development {
+namespace ClientUI.Component {
     public partial class CtToolBox : CtDockContent {
 
         public event DelSwitchCursor SwitchCursor;
@@ -28,7 +28,7 @@ namespace ClientUI.Development {
             //outlookBar2.Dock = DockStyle.Fill;
             IOutlookCategory mapTool =  outlookBar2.AddCategory("Map Tool");
             foreach(CursorMode mode in Enum.GetValues(typeof(CursorMode))) {
-                IClickSender sender = mapTool.AddItem(mode, $@"Image\{mode}.png");
+                IClickSender sender = mapTool.AddItem(mode, $@"Icon\{mode}.png");
                 if (sender != null) {
                     sender.Click += OutlookItem_OnClick;
                 }
@@ -37,6 +37,7 @@ namespace ClientUI.Development {
             foreach (CursorMode mode in Enum.GetValues(typeof(CursorMode))) {
                 otherTool.AddItem(mode.ToString()).Click += OutlookItem_OnClick;
             }
+            mapTool.BackColor = Color.LightSlateGray;
             otherTool.BackColor = Color.LightGreen;
             mapTool.RowCount = 1;
             outlookBar2.SelectCategory(0);

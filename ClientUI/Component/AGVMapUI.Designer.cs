@@ -1,6 +1,6 @@
 ﻿using GLUI;
 
-namespace ClientUI.Development
+namespace ClientUI.Component
 {
     partial class AGVMapUI
     {

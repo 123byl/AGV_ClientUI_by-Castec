@@ -296,28 +296,24 @@ namespace ClientUI {
             this.miMapGL.Size = new System.Drawing.Size(181, 26);
             this.miMapGL.Text = "MapGL";
             this.miMapGL.Visible = false;
-            this.miMapGL.Click += new System.EventHandler(this.MenuDock_Click);
             // 
             // miTesting
             // 
             this.miTesting.Name = "miTesting";
             this.miTesting.Size = new System.Drawing.Size(181, 26);
             this.miTesting.Text = "Testing";
-            this.miTesting.Click += new System.EventHandler(this.MenuDock_Click);
             // 
             // miGoalSetting
             // 
             this.miGoalSetting.Name = "miGoalSetting";
             this.miGoalSetting.Size = new System.Drawing.Size(181, 26);
             this.miGoalSetting.Text = "Goal Setting";
-            this.miGoalSetting.Click += new System.EventHandler(this.MenuDock_Click);
             // 
             // miConsole
             // 
             this.miConsole.Name = "miConsole";
             this.miConsole.Size = new System.Drawing.Size(181, 26);
             this.miConsole.Text = "Console";
-            this.miConsole.Click += new System.EventHandler(this.MenuDock_Click);
             // 
             // miToolBox
             // 
