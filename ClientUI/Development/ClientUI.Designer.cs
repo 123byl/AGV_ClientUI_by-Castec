@@ -81,6 +81,8 @@ namespace ClientUI {
             this.miTesting = new System.Windows.Forms.ToolStripMenuItem();
             this.miGoalSetting = new System.Windows.Forms.ToolStripMenuItem();
             this.miConsole = new System.Windows.Forms.ToolStripMenuItem();
+            this.miToolBox = new System.Windows.Forms.ToolStripMenuItem();
+            this.miMapInsert = new System.Windows.Forms.ToolStripMenuItem();
             this.miHelp = new System.Windows.Forms.ToolStripMenuItem();
             this.miAbout = new System.Windows.Forms.ToolStripMenuItem();
             this.testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -88,7 +90,6 @@ namespace ClientUI {
             this.miBypassSocket = new System.Windows.Forms.ToolStripMenuItem();
             this.miLoadFile = new System.Windows.Forms.ToolStripMenuItem();
             this.miServer = new System.Windows.Forms.ToolStripMenuItem();
-            this.miToolBox = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -283,7 +284,8 @@ namespace ClientUI {
             this.miTesting,
             this.miGoalSetting,
             this.miConsole,
-            this.miToolBox});
+            this.miToolBox,
+            this.miMapInsert});
             this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
             this.viewToolStripMenuItem.Size = new System.Drawing.Size(55, 23);
             this.viewToolStripMenuItem.Text = "View";
@@ -316,6 +318,19 @@ namespace ClientUI {
             this.miConsole.Size = new System.Drawing.Size(181, 26);
             this.miConsole.Text = "Console";
             this.miConsole.Click += new System.EventHandler(this.MenuDock_Click);
+            // 
+            // miToolBox
+            // 
+            this.miToolBox.Name = "miToolBox";
+            this.miToolBox.Size = new System.Drawing.Size(181, 26);
+            this.miToolBox.Text = "ToolBox";
+            // 
+            // miMapInsert
+            // 
+            this.miMapInsert.Name = "miMapInsert";
+            this.miMapInsert.Size = new System.Drawing.Size(181, 26);
+            this.miMapInsert.Text = "MapInsert";
+            this.miMapInsert.Visible = false;
             // 
             // miHelp
             // 
@@ -369,12 +384,6 @@ namespace ClientUI {
             this.miServer.Name = "miServer";
             this.miServer.Size = new System.Drawing.Size(143, 26);
             this.miServer.Text = "Server";
-            // 
-            // miToolBox
-            // 
-            this.miToolBox.Name = "miToolBox";
-            this.miToolBox.Size = new System.Drawing.Size(181, 26);
-            this.miToolBox.Text = "ToolBox";
             // 
             // AgvClientUI
             // 
@@ -430,5 +439,6 @@ namespace ClientUI {
         private System.Windows.Forms.ToolStripMenuItem miServer;
         private System.Windows.Forms.ToolStripMenuItem testToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem miToolBox;
+        private System.Windows.Forms.ToolStripMenuItem miMapInsert;
     }
 }

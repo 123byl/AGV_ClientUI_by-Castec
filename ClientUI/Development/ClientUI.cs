@@ -30,6 +30,7 @@ using Geometry;
 using GLCore;
 using GLUI;
 using CommandCore;
+using UIControl;
 
 namespace ClientUI
 {
@@ -83,6 +84,7 @@ namespace ClientUI
         ///         \ 限定MapGL不可隱藏
         ///     0.0.9   Jay [2017/11/30]
         ///         \ 加入Outlookbar控制項實作工具箱視窗UI
+        ///         \ 地圖插入控制面板實作
         /// </remarks>
         public CtVersion Version { get { return new CtVersion(0, 0, 9, "2017/11/30", "Jay Chang"); } }
 
@@ -436,8 +438,7 @@ namespace ClientUI
         private IIGoalSetting IGoalSetting { get { return GoalSetting; } }
         private IScene IMapCtrl { get { return MapGL != null ? MapGL.Ctrl : null; } }
         private IITesting ITest { get { return Testing; } }
-
-
+        private ICtDockContent mMapInsert = new CtMapInsert();
         #endregion Declaration - Properties
 
         #region Functin - Constructors
@@ -2228,7 +2229,7 @@ namespace ClientUI
                     OpenFileDialog old = new OpenFileDialog();
                     old.Filter = ".Map|*.map";
                     if (old.ShowDialog() == DialogResult.OK) {
-                        IMapCtrl.SetInsertMapMode(old.FileName);
+                        IMapCtrl.SetInsertMapMode(old.FileName,mMapInsert as IMouseInsertPanel);
                     }
                     break;
                 case CursorMode.ForbiddenArea:
@@ -2251,7 +2252,9 @@ namespace ClientUI
                 { miGoalSetting,new CtGoalSetting(DockState.DockLeft)},
                 { miTesting,new CtTesting(DockState.DockLeft)},
                 { miMapGL,new AGVMapUI( DockState.Document )},
-                { miToolBox,new CtToolBox(DockState.DockRightAutoHide)}
+                { miToolBox,new CtToolBox(DockState.DockRightAutoHide)},
+               // { miMapInsert,mMapInsert}
+                
             };
             SetEvents();
 
@@ -2281,6 +2284,8 @@ namespace ClientUI
                 item.Text = dokContent.Text;
 
             }
+            mMapInsert.AssignmentDockPanel(dockPanel);
+
         }
 
         /// <summary>

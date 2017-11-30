@@ -25,7 +25,7 @@ namespace ClientUI {
 
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new AgvClientUI());
-            //Application.Run(new CtToolBox());
+            //Application.Run(new CtMapInsert());
 
         }
 

@@ -66,6 +66,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CtMapInsert.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CtMapInsert.Designer.cs">
+      <DependentUpon>CtMapInsert.cs</DependentUpon>
+    </Compile>
     <Compile Include="Development\AgvClient.cs" />
     <Compile Include="Development\AGVMapUI.cs">
       <SubType>Form</SubType>
@@ -117,6 +123,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="CtMapInsert.resx">
+      <DependentUpon>CtMapInsert.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Development\AGVMapUI.resx">
       <DependentUpon>AGVMapUI.cs</DependentUpon>
     </EmbeddedResource>
@@ -125,6 +134,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Development\CtConsole.resx">
       <DependentUpon>CtConsole.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Development\CtDockContent.resx">
+      <DependentUpon>CtDockContent.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Development\CtGoalSetting.resx">
       <DependentUpon>CtGoalSetting.cs</DependentUpon>
@@ -473,6 +485,10 @@
     <ProjectReference Include="..\..\AGVBase\SerialCommunication\SerialCommunication.csproj">
       <Project>{2e90a64e-9a09-4950-8b65-aedd47f8f6d4}</Project>
       <Name>SerialCommunication</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\VehicleManager\UIControl\UIControl.csproj">
+      <Project>{b7d0f648-6962-4596-b164-c777766bba97}</Project>
+      <Name>UIControl</Name>
     </ProjectReference>
     <ProjectReference Include="..\AGVMath\AGVMath.csproj">
       <Project>{68c119fe-7cf4-4828-8745-d9558acd7fab}</Project>

@@ -110,8 +110,17 @@ namespace ClientUI {
         /// 依照預設來顯示視窗
         /// </summary>
         public void ShowWindow() {
-            if (DefaultDockState != DockState.Hidden && rDockPanel != null) {
-                BeginInvoke(() => this.Show(rDockPanel, DefaultDockState));
+            if (rDockPanel != null) {
+                if (DefaultDockState == DockState.Float) {
+                    //rDockPanel.DefaultFloatWindowSize = this.Size;
+                    BeginInvoke(() => this.Show(rDockPanel,new Rectangle(this.Location,this.mFixedSize)));
+                } else if (DefaultDockState < DockState.Float || DefaultDockState >= DockState.Hidden) {
+                    return;
+                }else {
+                    BeginInvoke(() => this.Show(rDockPanel, DefaultDockState));
+                }
+            } else {
+                throw new Exception("找不到DockPanel物件參考");
             }
         }
 
@@ -163,6 +172,17 @@ namespace ClientUI {
 
         #endregion Funciton - Protected Methods
 
+        private void InitializeComponent() {
+            this.SuspendLayout();
+            // 
+            // CtDockContent
+            // 
+            this.ClientSize = new System.Drawing.Size(588, 433);
+            this.Font = new System.Drawing.Font("新細明體", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.Name = "CtDockContent";
+            this.ResumeLayout(false);
+
+        }
     }
 
     /// <summary>
