@@ -47,12 +47,6 @@ namespace ClientUI
         {
             InitializeComponent();
             FixedSize = new Size(776, 860);
-            cboCursorMode.InvokeIfNecessary(() => {
-                cboCursorMode.Items.Clear();
-                foreach(CursorMode mode in Enum.GetValues(typeof(CursorMode))) {
-                    cboCursorMode.Items.Add(mode.ToString());
-                }
-            });
         }
 
         #endregion Funciton - Construcotrs
@@ -413,12 +407,7 @@ namespace ClientUI
         {
             LoadMapEvent?.Invoke();
         }
-
-        private void btnNewPoint_Click(object sender, EventArgs e)
-        {
-            AddNewGoalEvent?.Invoke();
-        }
-
+        
         private void btnPath_Click(object sender, EventArgs e)
         {
             CartesianPosInfo goal = GetGoalByIndex(cmbGoalList.SelectedIndex);
@@ -479,10 +468,6 @@ namespace ClientUI
             SaveGoalEvent?.Invoke();
         }
 
-        private void btnAddNewPower_Click(object sender, EventArgs e) {
-            AddNewPowerEvent?.Invoke();
-        }
-
         private void btnCharging_Click(object sender, EventArgs e) {
             CartesianPosInfo power = GetGoalByIndex(cmbGoalList.SelectedIndex);
             if (power != null) {
@@ -498,15 +483,7 @@ namespace ClientUI
         }
 
         #endregion Button
-
-        #region ComboBox
-
-        private void cboCursorMode_SelectedIndexChanged(object sender, EventArgs e) {
-            SwitchCursor?.Invoke((CursorMode)cboCursorMode.SelectedIndex);
-        }
-
-        #endregion ConboBox
-
+        
         #endregion UI Event
 
         #region Functin - Public Methods
@@ -528,6 +505,16 @@ namespace ClientUI
             }
         }
 
+        /// <summary>
+        /// 解鎖與路徑相關操作
+        /// </summary>
+        /// <param name="enb"></param>
+        public void EnableGo(bool enb = true) {
+            CtInvoke.ControlEnabled(btnPath, enb);
+            CtInvoke.ControlEnabled(btnRunAll, enb);
+            CtInvoke.ControlEnabled(btnRun, enb);
+            CtInvoke.ControlEnabled(btnCharging, enb);
+        }
 
         #endregion Funtion - Public Methods
 

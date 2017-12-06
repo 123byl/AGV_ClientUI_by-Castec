@@ -87,8 +87,10 @@ namespace ClientUI
         ///         \ 地圖插入控制面板實作
         ///         \ 移除KeyboardHook
         ///         \ 單獨監測Testing視窗之鍵盤事件
+        ///     0.0.10  Jay [2017/12/06]
+        ///         \ 加入路徑相關操作鎖定，必須在地圖相似度80%以上才可進行路徑相關操作
         /// </remarks>
-        public CtVersion Version { get { return new CtVersion(0, 0, 9, "2017/11/30", "Jay Chang"); } }
+        public CtVersion Version { get { return new CtVersion(0, 0, 10, "2017/12/06", "Jay Chang"); } }
 
         #endregion Version - Information
 
@@ -685,14 +687,17 @@ namespace ClientUI
         #region ITest
 
         private void ITest_CarPosConfirm() {
-
+            double similarity = 100;
             if (mBypassSocket) {
                 /*-- 空跑模擬CarPosConfirm --*/
                 SpinWait.SpinUntil(() => false, 1000);
-                return;
+            }else {
+                string[] rtnMsg = SendMsg("Set:ConfirmPos");
+                similarity = double.Parse(rtnMsg[2]);
             }
-            string[] rtnMsg = SendMsg("Set:ConfirmPos");
-            double similarity = double.Parse(rtnMsg[2]);
+            IConsole.AddMsg("[Confirm] - Similarity:{0}%",similarity);
+
+            EnableGo(similarity > 80);
         }
 
         private void ITest_SettingCarPos() {
@@ -874,6 +879,7 @@ namespace ClientUI
                         SetPosition(mNewPos.X, mNewPos.Y, Calt);
                         mNewPos = null;
                         mIsSetting = false;
+                        EnableGo(false);
                     }
                 }
             } else {
@@ -1739,6 +1745,15 @@ namespace ClientUI
             tslbAccessLv.Text = usrLv.ToString();
             tslbUserName.Text = usrName;
         }
+            
+        /// <summary>
+        /// 解鎖路徑相關操作(路徑規劃、跑點、充電等功能)
+        /// </summary>
+        /// <param name="enb"></param>
+        private void EnableGo(bool enb = true) {
+            IGoalSetting.EnableGo(enb);
+            IConsole.AddMsg("{0}Go", enb ? "Enable" : "Disable");
+        }
 
         #endregion UI
 
@@ -1882,83 +1897,9 @@ namespace ClientUI
 
                 IGoalSetting.ReloadSingle();
             }
-            //    CartesianPos min = null, max = null;
-            //    using (MapReading read = new MapReading(mCurMapPath))
-            //    {
-            //        read.OpenFile();
-            //        read.ReadMapBoundary(out min, out max);
-            //        read.ReadMapGoalList(out goalList);
-            //        read.ReadMapPowerList(out powerList);
-            //        read.ReadMapObstacleLines(out obstacleLine);
-            //        read.ReadMapObstaclePoints(out obstaclePoints);
-            //    }
-            //    int total = obstacleLine.Count + 2;
-            //    if (min != null && max != null)
-            //    {
 
-            //        IMapCtrl.Focus((int)(min.x + max.x) / 2, (int)(min.y + max.y) / 2);
-            //    }
-            //    prog = new CtProgress(ProgBarStyle.Percent, "Load Map", $"Loading {mapPath}", total);
-            //    System.Console.WriteLine($"Read:{sw.ElapsedMilliseconds}ms");
-            //    sw.Restart();
-
-            //    mMapMatch.Reset();
-
-            //    //Database.ObstacleLinesGM.DataList.SaftyForLoop(line => {
-            //    //    mMapMatch.AddLine(line.ToMapLine());
-            //    //    prog.UpdateStep(nowProg++);
-            //    //});
-            //    foreach (var line in obstacleLine) {
-            //        mMapMatch.AddLine(line);
-            //        prog.UpdateStep(nowProg++);
-            //    }
-
-            //    System.Console.WriteLine($"Read Line:{sw.ElapsedMilliseconds}ms");
-            //    sw.Restart();
-
-            //    //Database.ObstaclePointsGM.DataList.SaftyForLoop(point => {
-            //    //    mMapMatch.AddPoint(point.ToCartesianPos());
-            //    //});
-            //    mMapMatch.AddPoint(obstaclePoints);
-
-            //    prog.UpdateStep(nowProg++);
-
-            //    System.Console.WriteLine($"Read Point:{sw.ElapsedMilliseconds}ms");
-            //    sw.Restart();
-
-            //    #endregion
-            //}
-
-            //NewMap();
-            //System.Console.WriteLine($"Draw:{sw.ElapsedMilliseconds}ms");
-            //sw.Restart();
-
-            //for (int i = 0; i < goalList.Count; i++)
-            //{
-            //    Database.GoalGM.Add(goalList[i].id, FactoryMode.Factory.Goal((int)goalList[i].x, (int)goalList[i].y, goalList[i].theta, goalList[i].name));
-            //}
-
-            //foreach (CartesianPosInfo power in powerList)
-            //{
-            //    Database.PowerGM.Add(power.id, FactoryMode.Factory.Power((int)power.x, (int)power.y, power.theta, power.name));
-            //}
-
-            //List<IPair> points = ConvertToPairs(obstaclePoints);
-            //Database.ObstaclePointsGM.DataList.AddRange(points);
-
-            //prog.UpdateStep(nowProg++);
-
-            //System.Console.WriteLine($"GoalList:{sw.ElapsedMilliseconds}ms");
-            //sw.Restart();
-
-            //prog.Close();
-            //prog = null;
-            //goalList.AddRange(powerList);
-            //GoalSetting.LoadGoals(goalList);
-
-            //goalList = null;
-            //obstaclePoints = null;
-            //obstacleLine = null;
+            /*-- 重新載入Map後須再次進行Confirm --*/
+            EnableGo(false);
         }
 
         /// <summary>

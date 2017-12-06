@@ -541,6 +541,8 @@
             this.Font = new System.Drawing.Font("新細明體", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.Name = "CtTesting";
             this.Text = "Testing";
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Ctrl_KeyDown);
+            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Ctrl_KeyUp);
             this.grbMap.ResumeLayout(false);
             this.grbInfo.ResumeLayout(false);
             this.grbMode.ResumeLayout(false);

@@ -188,6 +188,12 @@ namespace ClientUI
         /// 重新載入標示物
         /// </summary>
         void ReloadSingle();
+
+        /// <summary>
+        /// 解鎖路徑相關操作
+        /// </summary>
+        /// <param name="enb"></param>
+        void EnableGo(bool enb = true);
     }
 
     /// <summary>

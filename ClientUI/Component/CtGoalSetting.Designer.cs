@@ -31,7 +31,7 @@
             this.btnSaveGoal = new System.Windows.Forms.Button();
             this.cmbGoalList = new System.Windows.Forms.ComboBox();
             this.btnRunAll = new System.Windows.Forms.Button();
-            this.btnGoGoal = new System.Windows.Forms.Button();
+            this.btnRun = new System.Windows.Forms.Button();
             this.label14 = new System.Windows.Forms.Label();
             this.txtAddPtheta = new System.Windows.Forms.TextBox();
             this.txtAddPy = new System.Windows.Forms.TextBox();
@@ -45,15 +45,12 @@
             this.cX = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.cY = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.cToward = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.btnNewPoint = new System.Windows.Forms.Button();
             this.btnDeleteAll = new System.Windows.Forms.Button();
             this.btnDelete = new System.Windows.Forms.Button();
             this.btnCurrPos = new System.Windows.Forms.Button();
             this.btnGetGoalList = new System.Windows.Forms.Button();
-            this.btnAddNewPower = new System.Windows.Forms.Button();
             this.btnClear = new System.Windows.Forms.Button();
             this.btnCharging = new System.Windows.Forms.Button();
-            this.cboCursorMode = new System.Windows.Forms.ComboBox();
             this.grbMap.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvGoalPoint)).BeginInit();
             this.SuspendLayout();
@@ -113,6 +110,7 @@
             // 
             // btnPath
             // 
+            this.btnPath.Enabled = false;
             this.btnPath.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.btnPath.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnPath.Location = new System.Drawing.Point(565, 222);
@@ -148,6 +146,7 @@
             // 
             // btnRunAll
             // 
+            this.btnRunAll.Enabled = false;
             this.btnRunAll.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.btnRunAll.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnRunAll.Location = new System.Drawing.Point(565, 362);
@@ -159,18 +158,19 @@
             this.btnRunAll.UseVisualStyleBackColor = true;
             this.btnRunAll.Click += new System.EventHandler(this.btnRunAll_Click);
             // 
-            // btnGoGoal
+            // btnRun
             // 
-            this.btnGoGoal.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.btnGoGoal.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnGoGoal.Location = new System.Drawing.Point(565, 292);
-            this.btnGoGoal.Margin = new System.Windows.Forms.Padding(4);
-            this.btnGoGoal.Name = "btnGoGoal";
-            this.btnGoGoal.Size = new System.Drawing.Size(160, 62);
-            this.btnGoGoal.TabIndex = 55;
-            this.btnGoGoal.Text = "Run";
-            this.btnGoGoal.UseVisualStyleBackColor = true;
-            this.btnGoGoal.Click += new System.EventHandler(this.btnGoGoal_Click);
+            this.btnRun.Enabled = false;
+            this.btnRun.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.btnRun.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnRun.Location = new System.Drawing.Point(565, 292);
+            this.btnRun.Margin = new System.Windows.Forms.Padding(4);
+            this.btnRun.Name = "btnRun";
+            this.btnRun.Size = new System.Drawing.Size(160, 62);
+            this.btnRun.TabIndex = 55;
+            this.btnRun.Text = "Run";
+            this.btnRun.UseVisualStyleBackColor = true;
+            this.btnRun.Click += new System.EventHandler(this.btnGoGoal_Click);
             // 
             // label14
             // 
@@ -251,7 +251,7 @@
             this.cX,
             this.cY,
             this.cToward});
-            this.dgvGoalPoint.Location = new System.Drawing.Point(25, 222);
+            this.dgvGoalPoint.Location = new System.Drawing.Point(25, 152);
             this.dgvGoalPoint.Margin = new System.Windows.Forms.Padding(4);
             this.dgvGoalPoint.Name = "dgvGoalPoint";
             this.dgvGoalPoint.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToFirstHeader;
@@ -304,18 +304,6 @@
             this.cToward.Name = "cToward";
             this.cToward.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             // 
-            // btnNewPoint
-            // 
-            this.btnNewPoint.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.btnNewPoint.Location = new System.Drawing.Point(178, 152);
-            this.btnNewPoint.Margin = new System.Windows.Forms.Padding(4);
-            this.btnNewPoint.Name = "btnNewPoint";
-            this.btnNewPoint.Size = new System.Drawing.Size(145, 62);
-            this.btnNewPoint.TabIndex = 46;
-            this.btnNewPoint.Text = "New Goal";
-            this.btnNewPoint.UseVisualStyleBackColor = true;
-            this.btnNewPoint.Click += new System.EventHandler(this.btnNewPoint_Click);
-            // 
             // btnDeleteAll
             // 
             this.btnDeleteAll.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
@@ -343,7 +331,7 @@
             // btnCurrPos
             // 
             this.btnCurrPos.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.btnCurrPos.Location = new System.Drawing.Point(25, 152);
+            this.btnCurrPos.Location = new System.Drawing.Point(244, 712);
             this.btnCurrPos.Margin = new System.Windows.Forms.Padding(4);
             this.btnCurrPos.Name = "btnCurrPos";
             this.btnCurrPos.Size = new System.Drawing.Size(145, 62);
@@ -364,18 +352,6 @@
             this.btnGetGoalList.UseVisualStyleBackColor = true;
             this.btnGetGoalList.Click += new System.EventHandler(this.btnGetGoalList_Click);
             // 
-            // btnAddNewPower
-            // 
-            this.btnAddNewPower.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.btnAddNewPower.Location = new System.Drawing.Point(331, 152);
-            this.btnAddNewPower.Margin = new System.Windows.Forms.Padding(4);
-            this.btnAddNewPower.Name = "btnAddNewPower";
-            this.btnAddNewPower.Size = new System.Drawing.Size(145, 62);
-            this.btnAddNewPower.TabIndex = 65;
-            this.btnAddNewPower.Text = "New Power";
-            this.btnAddNewPower.UseVisualStyleBackColor = true;
-            this.btnAddNewPower.Click += new System.EventHandler(this.btnAddNewPower_Click);
-            // 
             // btnClear
             // 
             this.btnClear.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
@@ -390,6 +366,7 @@
             // 
             // btnCharging
             // 
+            this.btnCharging.Enabled = false;
             this.btnCharging.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.btnCharging.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnCharging.Location = new System.Drawing.Point(397, 712);
@@ -401,34 +378,21 @@
             this.btnCharging.UseVisualStyleBackColor = true;
             this.btnCharging.Click += new System.EventHandler(this.btnCharging_Click);
             // 
-            // cboCursorMode
-            // 
-            this.cboCursorMode.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.cboCursorMode.FormattingEnabled = true;
-            this.cboCursorMode.Location = new System.Drawing.Point(25, 688);
-            this.cboCursorMode.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.cboCursorMode.Name = "cboCursorMode";
-            this.cboCursorMode.Size = new System.Drawing.Size(160, 33);
-            this.cboCursorMode.TabIndex = 69;
-            this.cboCursorMode.SelectedIndexChanged += new System.EventHandler(this.cboCursorMode_SelectedIndexChanged);
-            // 
             // CtGoalSetting
             // 
             this.AutoHidePortion = 206D;
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(752, 776);
-            this.Controls.Add(this.cboCursorMode);
             this.Controls.Add(this.btnCharging);
             this.Controls.Add(this.btnClear);
-            this.Controls.Add(this.btnAddNewPower);
             this.Controls.Add(this.btnGetGoalList);
             this.Controls.Add(this.grbMap);
             this.Controls.Add(this.btnPath);
             this.Controls.Add(this.btnSaveGoal);
             this.Controls.Add(this.cmbGoalList);
             this.Controls.Add(this.btnRunAll);
-            this.Controls.Add(this.btnGoGoal);
+            this.Controls.Add(this.btnRun);
             this.Controls.Add(this.label14);
             this.Controls.Add(this.txtAddPtheta);
             this.Controls.Add(this.txtAddPy);
@@ -437,7 +401,6 @@
             this.Controls.Add(this.label16);
             this.Controls.Add(this.dgvGoalPoint);
             this.Controls.Add(this.btnCurrPos);
-            this.Controls.Add(this.btnNewPoint);
             this.Controls.Add(this.btnDeleteAll);
             this.Controls.Add(this.btnDelete);
             this.DockAreas = ((WeifenLuo.WinFormsUI.Docking.DockAreas)(((WeifenLuo.WinFormsUI.Docking.DockAreas.Float | WeifenLuo.WinFormsUI.Docking.DockAreas.DockLeft) 
@@ -456,7 +419,7 @@
         #endregion
 
         private System.Windows.Forms.Button btnRunAll;
-        private System.Windows.Forms.Button btnGoGoal;
+        private System.Windows.Forms.Button btnRun;
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.TextBox txtAddPtheta;
         private System.Windows.Forms.TextBox txtAddPy;
@@ -464,7 +427,6 @@
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.DataGridView dgvGoalPoint;
-        private System.Windows.Forms.Button btnNewPoint;
         private System.Windows.Forms.Button btnDeleteAll;
         private System.Windows.Forms.Button btnDelete;
         private System.Windows.Forms.ComboBox cmbGoalList;
@@ -482,9 +444,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn cY;
         private System.Windows.Forms.DataGridViewTextBoxColumn cToward;
         private System.Windows.Forms.Button btnGetGoalList;
-        private System.Windows.Forms.Button btnAddNewPower;
         private System.Windows.Forms.Button btnClear;
         private System.Windows.Forms.Button btnCharging;
-        private System.Windows.Forms.ComboBox cboCursorMode;
     }
 }
