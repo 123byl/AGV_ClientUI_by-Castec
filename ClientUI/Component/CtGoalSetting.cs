@@ -412,23 +412,24 @@ namespace ClientUI
         }
 
         public void RefreshSingle() {
-            Dictionary<uint, int> uidMapping = new Dictionary<uint, int>();
-            for (int idx = 0; idx < dgvGoalPoint.RowCount; idx++) {
-                uidMapping.Add(Convert.ToUInt32(dgvGoalPoint[IDColumn, idx].Value), idx);
-            }
-            Database.GoalGM.SaftyForLoop((uid, goal) => {
-                UpdataSingle(uid, goal, uidMapping);
-                uidMapping.Remove(uid);
-            });
-            Database.PowerGM.SaftyForLoop((uid, power) => {
-                UpdataSingle(uid, power, uidMapping);
-                uidMapping.Remove(uid);
-            });
+            lock (mKey) {
+                Dictionary<uint, int> uidMapping = new Dictionary<uint, int>();
+                for (int idx = 0; idx < dgvGoalPoint.RowCount; idx++) {
+                    uidMapping.Add(Convert.ToUInt32(dgvGoalPoint[IDColumn, idx].Value), idx);
+                }
+                Database.GoalGM.SaftyForLoop((uid, goal) => {
+                    UpdataSingle(uid, goal, uidMapping);
+                    uidMapping.Remove(uid);
+                });
+                Database.PowerGM.SaftyForLoop((uid, power) => {
+                    UpdataSingle(uid, power, uidMapping);
+                    uidMapping.Remove(uid);
+                });
 
-            foreach (uint uid in uidMapping.Keys) {
-                DeleteGoal(uid);
+                foreach (uint uid in uidMapping.Keys) {
+                    DeleteGoal(uid);
+                }
             }
-
         }
 
         #endregion IIGoalSetting
@@ -552,19 +553,19 @@ namespace ClientUI
         private void LoadSingle<T>(uint uid, ISingle<T> goal) where T : ITowardPair {
             int index = FindIndexByID(uid);
             if (!cmbGoalList.Items.Contains(goal.Name)) {
-                cmbGoalList.InvokeIfNecessary(() => cmbGoalList.Items.Add(goal.Name));
+                cmbGoalList.BeginInvokeIfNecessary(() => cmbGoalList.Items.Add(goal.Name));
             }
 
             if (index == -1) {
-                dgvGoalPoint.InvokeIfNecessary(
+                dgvGoalPoint.BeginInvokeIfNecessary(
                     () => dgvGoalPoint.Rows.Add(new object[] { new CheckBox().Checked = false, uid, goal.Name, goal.Data.Position.X, goal.Data.Position.Y, goal.Data.Toward.Theta.ToString("F2") }));
             } else {
-                dgvGoalPoint.InvokeIfNecessary(
+                dgvGoalPoint.BeginInvokeIfNecessary(
                     () => {
                         if ((uint)dgvGoalPoint[IDColumn, index].Value != uid) dgvGoalPoint[IDColumn, index].Value = uid;
                         if ((string)dgvGoalPoint[NameColumn, index].Value != goal.Name) dgvGoalPoint[NameColumn, index].Value = goal.Name;
                         if ((double)dgvGoalPoint[XColumn, index].Value != goal.Data.Position.X) dgvGoalPoint[XColumn, index].Value = goal.Data.Position.X;
-                        if ((double)dgvGoalPoint[YColumn, index].Value != goal.Data.Position.X) dgvGoalPoint[YColumn, index].Value = goal.Data.Position.Y;
+                        if ((double)dgvGoalPoint[YColumn, index].Value != goal.Data.Position.Y) dgvGoalPoint[YColumn, index].Value = goal.Data.Position.Y;
                         if ((string)dgvGoalPoint[TowardColumn, index].Value != goal.Data.Toward.Theta.ToString("F2")) dgvGoalPoint[TowardColumn, index].Value = goal.Data.Toward.Theta.ToString("F2");
                     });
             }
@@ -572,28 +573,25 @@ namespace ClientUI
 
         #endregion Function - Private Methods
 
-        private void btnRefresh_Click(object sender, EventArgs e) {
-            RefreshSingle();
-        }
-
         private void UpdataSingle(uint uid,ISingle<ITowardPair> single,Dictionary<uint,int> mapping) {
             double x = single.Data.Position.X;
             double y = single.Data.Position.Y;
             double theta = single.Data.Toward.Theta;
             if (mapping.ContainsKey(uid)) {
                 int index = mapping[uid];
-                dgvGoalPoint.InvokeIfNecessary(
+                dgvGoalPoint.BeginInvokeIfNecessary(
                     () => {
-                        if ((uint)dgvGoalPoint[IDColumn, index].Value != uid) dgvGoalPoint[IDColumn, index].Value = uid;
-                        if ((string)dgvGoalPoint[NameColumn, index].Value != single.Name) dgvGoalPoint[NameColumn, index].Value = single.Name;
-                        if ((double)dgvGoalPoint[XColumn, index].Value != x) dgvGoalPoint[XColumn, index].Value = x;
-                        if ((double)dgvGoalPoint[YColumn, index].Value != y) dgvGoalPoint[YColumn, index].Value = y;
-                        if ((string)dgvGoalPoint[TowardColumn, index].Value != theta.ToString("F2")) dgvGoalPoint[TowardColumn, index].Value = theta.ToString("F2");
+                        DataGridViewRow row = dgvGoalPoint.Rows[index];
+                        if ((uint)row.Cells[IDColumn].Value != uid) row.Cells[IDColumn].Value = uid;
+                        if ((string)row.Cells[NameColumn].Value != single.Name) row.Cells[NameColumn].Value = single.Name;
+                        if ((double)row.Cells[XColumn].Value != x) row.Cells[XColumn].Value = x;
+                        if ((double)row.Cells[YColumn].Value != y)  row.Cells[YColumn].Value = y;
+                        if ((string)row.Cells[TowardColumn].Value != theta.ToString("F2")) row.Cells[TowardColumn].Value = theta.ToString("F2");
                     });
             } else {
-                dgvGoalPoint.InvokeIfNecessary(
+                dgvGoalPoint.BeginInvokeIfNecessary(
                 () => dgvGoalPoint.Rows.Add(new object[] { new CheckBox().Checked = false, uid, single.Name, x, y, theta.ToString("F2") }));
-                cmbGoalList.InvokeIfNecessary(() => {
+                cmbGoalList.BeginInvokeIfNecessary(() => {
                     cmbGoalList.Items.Add(single.Name);
                 });
             }

@@ -887,17 +887,6 @@ namespace ClientUI
 
         #region IMapGL事件連結
 
-        private void IMapCtrl_DragEvent(object sender, TowerPairEventArgs e) {
-            switch (e.DargTarget.GLSetting.Type) {
-                case EType.Goal:
-                    GoalSetting.AddGoal(e.ToCarTesianPosinfo());
-                    break;
-                case EType.Power:
-                    GoalSetting.AddPower(e.ToCarTesianPosinfo());
-                    break;
-            }
-        }
-
         private void IMapCtrl_GLClickEvent(object sender, GLMouseEventArgs e) {
             if (mIsSetting) {
                 if (Database.AGVGM.ContainsID(mAGVID)) {
@@ -968,13 +957,14 @@ namespace ClientUI
 
         private void IGoalSetting_SaveGoalEvent() {
             IConsole.AddMsg("[Save {0} Goals]", IGoalSetting.GoalCount);
-            List<CartesianPosInfo> points = IGoalSetting.GetGoals();
-            List<CartesianPosInfo> goals = new List<CartesianPosInfo>();
-            List<CartesianPosInfo> powers = new List<CartesianPosInfo>();
-            Database.GoalGM.SaftyForLoop((uid, goal) => goals.Add(FactoryMode.Factory.CartesianPosInfo(uid, goal)));
-            Database.PowerGM.SaftyForLoop((uid, power) => powers.Add(FactoryMode.Factory.CartesianPosInfo(uid, power)));
-            MapRecording.OverWriteGoal(goals, CurMapPath);
-            MapRecording.OverWritePower(powers, CurMapPath);
+            Database.Save(CurMapPath);
+            //List<CartesianPosInfo> points = IGoalSetting.GetGoals();
+            //List<CartesianPosInfo> goals = new List<CartesianPosInfo>();
+            //List<CartesianPosInfo> powers = new List<CartesianPosInfo>();
+            //Database.GoalGM.SaftyForLoop((uid, goal) => goals.Add(FactoryMode.Factory.CartesianPosInfo(uid, goal)));
+            //Database.PowerGM.SaftyForLoop((uid, power) => powers.Add(FactoryMode.Factory.CartesianPosInfo(uid, power)));
+            //MapRecording.OverWriteGoal(goals, CurMapPath);
+            //MapRecording.OverWritePower(powers, CurMapPath);
         }
 
         private void IGoalSetting_RunLoopEvent(IEnumerable<CartesianPosInfo> goal) {
@@ -1076,7 +1066,6 @@ namespace ClientUI
         /// </summary>
         /// <param name="obj"></param>
         private void tsk_RecvFiles(object obj) {
-
             int fileNameLen = 0;
             int recieve_data_size = 0;
             int first = 1;
@@ -1156,6 +1145,7 @@ namespace ClientUI
                     fileName = "FileName";
                 }
 
+                SetBalloonTip($"Get File", $"The { fileName} is downloaded", ToolTipIcon.Info, 10);
 
             } catch (SocketException se) {
                 System.Console.WriteLine("SocketException : {0}", se.ToString());
@@ -1927,7 +1917,8 @@ namespace ClientUI
                 /*-- 移動畫面至Map中心點 --*/
                 IMapCtrl.Focus(center);
 
-                IGoalSetting.ReloadSingle();
+                //IGoalSetting.ReloadSingle();
+                IGoalSetting.RefreshSingle();
             }
 
             /*-- 重新載入Map後須再次進行Confirm --*/
@@ -2101,7 +2092,6 @@ namespace ClientUI
             #endregion
 
             #region IMapGL 事件連結
-            IMapCtrl.ClickTowerPairEvent += IMapCtrl_DragEvent;
             IMapCtrl.GLClickEvent += IMapCtrl_GLClickEvent;
             IMapCtrl.DragTowerPairEvent += IMapCtrl_DragTowerPairEvent;
             IMapCtrl.GLMoveUp += IMapCtrl_GLMoveUp;
