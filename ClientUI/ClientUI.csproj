@@ -120,6 +120,7 @@
     </Compile>
     <Compile Include="Component\DefStruct.cs" />
     <Compile Include="Component\Events.cs" />
+    <Compile Include="Component\KeyboardHook.cs" />
     <Compile Include="Component\MapList.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -51,6 +51,7 @@
             this.btnGetGoalList = new System.Windows.Forms.Button();
             this.btnClear = new System.Windows.Forms.Button();
             this.btnCharging = new System.Windows.Forms.Button();
+            this.btnRefresh = new System.Windows.Forms.Button();
             this.grbMap.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvGoalPoint)).BeginInit();
             this.SuspendLayout();
@@ -378,12 +379,25 @@
             this.btnCharging.UseVisualStyleBackColor = true;
             this.btnCharging.Click += new System.EventHandler(this.btnCharging_Click);
             // 
+            // btnRefresh
+            // 
+            this.btnRefresh.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.btnRefresh.Location = new System.Drawing.Point(76, 712);
+            this.btnRefresh.Margin = new System.Windows.Forms.Padding(4);
+            this.btnRefresh.Name = "btnRefresh";
+            this.btnRefresh.Size = new System.Drawing.Size(160, 62);
+            this.btnRefresh.TabIndex = 68;
+            this.btnRefresh.Text = "Refresh";
+            this.btnRefresh.UseVisualStyleBackColor = true;
+            this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
+            // 
             // CtGoalSetting
             // 
             this.AutoHidePortion = 206D;
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(752, 776);
+            this.Controls.Add(this.btnRefresh);
             this.Controls.Add(this.btnCharging);
             this.Controls.Add(this.btnClear);
             this.Controls.Add(this.btnGetGoalList);
@@ -446,5 +460,6 @@
         private System.Windows.Forms.Button btnGetGoalList;
         private System.Windows.Forms.Button btnClear;
         private System.Windows.Forms.Button btnCharging;
+        private System.Windows.Forms.Button btnRefresh;
     }
 }

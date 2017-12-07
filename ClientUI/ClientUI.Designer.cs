@@ -31,7 +31,10 @@ namespace ClientUI {
                 mMenuItems = null;
 
                 components.Dispose();
-                
+
+                mKeyboardHook.KeyUpEvent -= mKeyboardHook_KeyUpEvent;
+                mKeyboardHook.Stop();
+
             }
             base.Dispose(disposing);
         }

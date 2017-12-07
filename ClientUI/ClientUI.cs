@@ -89,12 +89,17 @@ namespace ClientUI
         ///         \ 單獨監測Testing視窗之鍵盤事件
         ///     0.0.10  Jay [2017/12/06]
         ///         \ 加入路徑相關操作鎖定，必須在地圖相似度80%以上才可進行路徑相關操作
+        ///     0.0.11  Jay [2017/12/07]
+        ///         \ 優化Database與GoalSetting之間的聯動性
+        ///         \ 於底層路徑相關操作加入相似度門檻值鎖定
         /// </remarks>
-        public CtVersion Version { get { return new CtVersion(0, 0, 10, "2017/12/06", "Jay Chang"); } }
+        public CtVersion Version { get { return new CtVersion(0, 0, 11, "2017/12/07", "Jay Chang"); } }
 
         #endregion Version - Information
 
         #region Declaration - Fields
+
+        private KeyboardHook mKeyboardHook = new KeyboardHook();
 
         /// <summary>
         /// 當前Map檔路徑
@@ -267,11 +272,25 @@ namespace ClientUI
         /// </summary>
         private bool mIsMotorServoOn = false;
 
+        /// <summary>
+        /// 當前滑鼠模式
+        /// </summary>
+        private CursorMode mCursorMode = CursorMode.Select;
+
+        /// <summary>
+        /// 地圖相似度
+        /// </summary>
+        private double mSimilarity = 0;
+
+        /// <summary>
+        /// 地圖相似度門檻值
+        /// </summary>
+        private double mThrSimilarity = 80;
 
         #endregion Declaration - Fields
 
         #region Declaration - Properties
-        
+
         /// <summary>
         /// 伺服端是否還有在運作
         /// </summary>
@@ -456,11 +475,23 @@ namespace ClientUI
                 Database.AGVGM.Add(mAGVID, FactoryMode.Factory.AGV(0, 0, 0, "AGV"));
             }
 
+            mKeyboardHook.KeyUpEvent += mKeyboardHook_KeyUpEvent;
+            mKeyboardHook.Start();
         }
 
         #endregion Function - Constructors
 
         #region Function - Events
+
+        #region KeyboardHook
+
+        private void mKeyboardHook_KeyUpEvent(object sender, KeyEventArgs e) {
+            if (e.KeyCode == Keys.Delete) {
+                IGoalSetting.RefreshSingle();
+            }
+        }
+
+        #endregion KeyboardHook
 
         #region Form
 
@@ -687,17 +718,17 @@ namespace ClientUI
         #region ITest
 
         private void ITest_CarPosConfirm() {
-            double similarity = 100;
             if (mBypassSocket) {
                 /*-- 空跑模擬CarPosConfirm --*/
                 SpinWait.SpinUntil(() => false, 1000);
+                mSimilarity = 100;
             }else {
                 string[] rtnMsg = SendMsg("Set:ConfirmPos");
-                similarity = double.Parse(rtnMsg[2]);
+                mSimilarity = double.Parse(rtnMsg[2]);
             }
-            IConsole.AddMsg("[Confirm] - Similarity:{0}%",similarity);
+            IConsole.AddMsg("[Confirm] - Similarity:{0}%",mSimilarity);
 
-            EnableGo(similarity > 80);
+            EnableGo(mSimilarity > mThrSimilarity);
         }
 
         private void ITest_SettingCarPos() {
@@ -722,39 +753,42 @@ namespace ClientUI
                 SpinWait.SpinUntil(() => false, 1000);
                 return;
             }
-            NewMap();
             string[] tmpPath = CurOriPath.Split('.');
             CurMapPath = tmpPath[0] + ".map";
-            MapSimplication mapSimp = new MapSimplication(CurMapPath);
-            mapSimp.Reset();
-            List<ILine> obstacleLines = new List<ILine>();
-            List<IPair> obstaclePoints = new List<IPair>();
-            List<CartesianPos> resultPoints;
-            List<MapSimplication.Line> resultlines;
-            mapSimp.ReadMapAllTransferToLine(mMapMatch.parseMap, mMapMatch.minimumPos, mMapMatch.maximumPos
-                , 100, 0, out resultlines, out resultPoints);
-            try {
-                for (int i = 0; i < resultlines.Count; i++) {
-                    obstacleLines.Add(
-                         FactoryMode.Factory.Line(resultlines[i].startX, resultlines[i].startY,
-                        resultlines[i].endX, resultlines[i].endY)
-                    );
-                }
-                for (int i = 0; i < resultPoints.Count; i++) {
-                    obstaclePoints.Add(FactoryMode.Factory.Pair((int)resultPoints[i].x, (int)resultPoints[i].y));
-                }
+            Database.Save(CurMapPath);
 
-                Database.ObstaclePointsGM.DataList.AddRange(obstaclePoints);
-                Database.ObstacleLinesGM.DataList.AddRange(obstacleLines);
-            } catch (Exception ex) {
-                System.Console.WriteLine(ex.Message);
-            }
+            NewMap();
+
+            //MapSimplication mapSimp = new MapSimplication(CurMapPath);
+            //mapSimp.Reset();
+            //List<ILine> obstacleLines = new List<ILine>();
+            //List<IPair> obstaclePoints = new List<IPair>();
+            //List<CartesianPos> resultPoints;
+            //List<MapSimplication.Line> resultlines;
+            //mapSimp.ReadMapAllTransferToLine(mMapMatch.parseMap, mMapMatch.minimumPos, mMapMatch.maximumPos
+            //    , 100, 0, out resultlines, out resultPoints);
+            //try {
+            //    for (int i = 0; i < resultlines.Count; i++) {
+            //        obstacleLines.Add(
+            //             FactoryMode.Factory.Line(resultlines[i].startX, resultlines[i].startY,
+            //            resultlines[i].endX, resultlines[i].endY)
+            //        );
+            //    }
+            //    for (int i = 0; i < resultPoints.Count; i++) {
+            //        obstaclePoints.Add(FactoryMode.Factory.Pair((int)resultPoints[i].x, (int)resultPoints[i].y));
+            //    }
+
+            //    Database.ObstaclePointsGM.DataList.AddRange(obstaclePoints);
+            //    Database.ObstacleLinesGM.DataList.AddRange(obstacleLines);
+            //} catch (Exception ex) {
+            //    System.Console.WriteLine(ex.Message);
+            //}
 
 
-            obstacleLines = null;
-            obstaclePoints = null;
-            resultPoints = null;
-            resultlines = null;
+            //obstacleLines = null;
+            //obstaclePoints = null;
+            //resultPoints = null;
+            //resultlines = null;
         }
 
         private async void ITest_CheckIsServerAlive(bool cnn, string hostIP = "") {
@@ -885,6 +919,11 @@ namespace ClientUI
             } else {
                 IGoalSetting.SetCurrentRealPos(new CartesianPos(e.Position.X, e.Position.Y));
             }
+
+        }
+
+        private void IMapCtrl_DragTowerPairEvent(object sender, TowerPairEventArgs e) {
+            IGoalSetting.RefreshSingle();
         }
 
         #endregion IMapGL 事件連結
@@ -939,18 +978,22 @@ namespace ClientUI
         }
 
         private void IGoalSetting_RunLoopEvent(IEnumerable<CartesianPosInfo> goal) {
-            IConsole.AddMsg("[AGV Start Moving...]");
-            foreach (var item in goal) {
-                IConsole.AddMsg("[AGV Move To] - {0}", item.ToString());
-                IConsole.AddMsg("[AGV Arrived] - {0}", item.ToString());
-            }
-            IConsole.AddMsg("[AGV Move Finished]");
+            CheckSimilarity(mSimilarity,mThrSimilarity, () => {
+                IConsole.AddMsg("[AGV Start Moving...]");
+                foreach (var item in goal) {
+                    IConsole.AddMsg("[AGV Move To] - {0}", item.ToString());
+                    IConsole.AddMsg("[AGV Arrived] - {0}", item.ToString());
+                }
+                IConsole.AddMsg("[AGV Move Finished]");
+            });
         }
 
         private void IGoalSetting_RunGoalEvent(CartesianPosInfo goal, int idxGoal) {
-            IConsole.AddMsg("[AGV Start Moving...  idx{0} {1}]", idxGoal, goal.ToString());
-            Run(idxGoal);
-            IConsole.AddMsg("[AGV Arrived] - {0}", goal.ToString());
+            CheckSimilarity(mSimilarity,mThrSimilarity,() => {
+                IConsole.AddMsg("[AGV Start Moving...  idx{0} {1}]", idxGoal, goal.ToString());
+                Run(idxGoal);
+                IConsole.AddMsg("[AGV Arrived] - {0}", goal.ToString());
+            });
         }
 
         private void IGoalSetting_LoadMapFromAGVEvent() {
@@ -965,9 +1008,11 @@ namespace ClientUI
         }
 
         private void IGoalSetting_FindPathEvent(CartesianPosInfo goal, int idxGoal) {
-            IConsole.AddMsg("[Find Path] - idx{0} {1}", idxGoal, goal.ToString());
-            IConsole.AddMsg("[AGV Find A Path]");
-            PathPlan(idxGoal);
+            CheckSimilarity(mSimilarity,mThrSimilarity, () => {
+                IConsole.AddMsg("[Find Path] - idx{0} {1}", idxGoal, goal.ToString());
+                IConsole.AddMsg("[AGV Find A Path]");
+                PathPlan(idxGoal);
+            });
         }
 
         private void IGoalSetting_DeleteGoalsEvent(IEnumerable<CartesianPosInfo> goal) {
@@ -1004,10 +1049,6 @@ namespace ClientUI
 
         private void IGoalSetting_AddNewGoalEvent() {
             IMapCtrl.SetAddMode(FactoryMode.Factory.Goal($"Goal{Database.GoalGM.Count}"));
-        }
-
-        private void IGoalSetting_AddNewPowerEvent() {
-            IMapCtrl.SetAddMode(FactoryMode.Factory.Power($"Power{Database.PowerGM.Count}"));
         }
 
         /// <summary>
@@ -1650,6 +1691,14 @@ namespace ClientUI
 
         }
 
+        private void CheckSimilarity(double similarity,double thrSimilarity, Action act) {
+            if (similarity > thrSimilarity) {
+                act();
+            }else {
+                IConsole.AddMsg("Similarity is too low");
+            }
+        }
+
         #endregion Communication 
 
         #region UI
@@ -1857,10 +1906,6 @@ namespace ClientUI
         /// </summary>
         /// <param name="mapPath">Map檔路徑</param>
         private void LoadMap(string mapPath) {
-            List<CartesianPosInfo> goalList = null;
-            List<CartesianPosInfo> powerList = null;
-            List<CartesianPos> obstaclePoints = null;
-            List<MapLine> obstacleLine = null;
             mCurMapPath = mapPath;
             string mPath = CtFile.GetFileName(mapPath);
             SendMsg($"Set:MapName:{mPath}");
@@ -1881,19 +1926,6 @@ namespace ClientUI
 
                 /*-- 移動畫面至Map中心點 --*/
                 IMapCtrl.Focus(center);
-
-                /*-- 重置地圖匹配器的地圖資料 --*/
-                mMapMatch.Reset();
-
-                /*-- 將障礙點寫入地圖匹配器 --*/
-                Database.ObstaclePointsGM.DataList.SaftyForLoop(point => {
-                    mMapMatch.AddPoint(point.ToCartesianPos());
-                });
-
-                /*-- 將障礙線寫入地圖匹配器 --*/
-                Database.ObstacleLinesGM.DataList.SaftyForLoop(line => {
-                    mMapMatch.AddLine(line.ToMapLine());
-                });
 
                 IGoalSetting.ReloadSingle();
             }
@@ -1978,6 +2010,7 @@ namespace ClientUI
                 }
             }
             openMap = null;
+            var v = Database.ObstaclePointsGM.DataList;
         }
         
         /// <summary>
@@ -2052,7 +2085,6 @@ namespace ClientUI
         private void SetEvents() {
             #region IGoalSetting 事件連結     
             IGoalSetting.AddNewGoalEvent += IGoalSetting_AddNewGoalEvent;
-            IGoalSetting.AddNewPowerEvent += IGoalSetting_AddNewPowerEvent;
             IGoalSetting.ClearGoalsEvent += IGoalSetting_ClearGoalsEvent;
             IGoalSetting.DeleteGoalsEvent += IGoalSetting_DeleteGoalsEvent;
             IGoalSetting.FindPathEvent += IGoalSetting_FindPathEvent;
@@ -2065,13 +2097,14 @@ namespace ClientUI
             IGoalSetting.GetGoalNames += IGoalSetting_GetGoalNames;
             IGoalSetting.Charging += IGoalSetting_Charging;
             IGoalSetting.ClearMap += ITest_ClearMap;
-            IGoalSetting.SwitchCursor += IGoalSetting_SwitchCursor;
 
             #endregion
 
             #region IMapGL 事件連結
             IMapCtrl.ClickTowerPairEvent += IMapCtrl_DragEvent;
-            IMapCtrl.GLClickEvent += IMapCtrl_GLClickEvent;    
+            IMapCtrl.GLClickEvent += IMapCtrl_GLClickEvent;
+            IMapCtrl.DragTowerPairEvent += IMapCtrl_DragTowerPairEvent;
+            IMapCtrl.GLMoveUp += IMapCtrl_GLMoveUp;
             #endregion
 
             #region ITesting 事件連結
@@ -2097,7 +2130,18 @@ namespace ClientUI
             (mDockContent[miToolBox] as CtToolBox).SwitchCursor += IGoalSetting_SwitchCursor;
         }
 
+        private void IMapCtrl_GLMoveUp(object sender, GLMouseEventArgs e) {
+            switch (mCursorMode) {
+                case CursorMode.Goal:
+                case CursorMode.Power:
+                    IGoalSetting.RefreshSingle();
+                    mCursorMode = CursorMode.Select;
+                    break;
+            }
+        }
+
         private void IGoalSetting_SwitchCursor(CursorMode mode) {
+            mCursorMode = mode;
             switch (mode) {
                 case CursorMode.Drag:
                     IMapCtrl.SetDragMode();

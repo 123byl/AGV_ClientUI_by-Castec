@@ -32,6 +32,6 @@ namespace ClientUI.Component
         protected override void OnFormClosing(FormClosingEventArgs e) {
             e.Cancel = true;
         }
-
+        
     }
 }

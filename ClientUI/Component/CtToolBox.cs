@@ -13,9 +13,16 @@ using WeifenLuo.WinFormsUI.Docking;
 using static ClientUI.Events.GoalSettingEvents;
 
 namespace ClientUI.Component {
+
     public partial class CtToolBox : CtDockContent {
 
+        #region Declaration - Events
+
         public event DelSwitchCursor SwitchCursor;
+
+        #endregion Declaration - Evetns
+
+        #region Function - Constructors
 
         /// <summary>
         /// 共用建構方法
@@ -45,6 +52,10 @@ namespace ClientUI.Component {
             outlookBar2.BackColor = Color.Black;
         }
 
+        #endregion Function - Consturctors
+
+        #region Funciotn - Events
+
         private void OutlookItem_OnClick(object sender,EventArgs e) {
             Control ctrl = sender as Control;
             IOutlookItem item = ctrl?.Tag as IOutlookItem;
@@ -58,21 +69,8 @@ namespace ClientUI.Component {
             }
         }
 
-        private void CtToolBox_Resize(object sender, EventArgs e) {
-            //outlookBar2.Size = this.Size;
-        }
+        #endregion Function - Events
 
-        
     }
 
-    internal static class OutlockBarExtension {
-        public static IClickSender AddItem(this IOutlookCategory iconPanel, CursorMode mode, Image img=null) {
-            return iconPanel.AddItem(mode.ToString(), img, (int)mode);
-        }
-
-        public static IClickSender AddItem(this IOutlookCategory category,CursorMode mode,string imgPath) {
-            Image img = File.Exists(imgPath) ? Image.FromFile(imgPath) : null;
-            return category.AddItem(mode, img);
-        }
-    }
 }

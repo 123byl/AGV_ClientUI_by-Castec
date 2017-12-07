@@ -21,6 +21,11 @@ namespace ClientUI
 
         private readonly object mKey = new object();
 
+        /// <summary>
+        /// 當下車子的位置
+        /// </summary>
+        private CartesianPos mCurrentCar = new CartesianPos();
+
         #endregion Declaration - Fiedls
 
         #region Declaration - Const
@@ -54,39 +59,15 @@ namespace ClientUI
         #region Implement - IIGoalSetting
 
         /// <summary>
-        /// 設定真實座標
-        /// </summary>
-        public void SetCurrentRealPos(CartesianPos realPos)
-        {
-            lock (mKey)
-            {
-                txtAddPx.InvokeIfNecessary(() =>
-                {
-                    if (txtAddPx.Text != realPos.x.ToString()) txtAddPx.Text = realPos.x.ToString();
-                });
-                txtAddPy.InvokeIfNecessary(() =>
-                {
-                    if (txtAddPy.Text != realPos.y.ToString()) txtAddPy.Text = realPos.y.ToString();
-                });
-            }
-        }
-        /// <summary>
-        /// 當下車子的位置
-        /// </summary>
-        private CartesianPos mCurrentCar = new CartesianPos();
-
-        public event DelSwitchCursor SwitchCursor;
-
-        /// <summary>
         /// 加入 Goal 點
         /// </summary>
         public event DelAddNewGoal AddNewGoalEvent;
 
         /// <summary>
-        /// 加入充電站
+        /// 清除所有目標點
         /// </summary>
-        public event DelAddNewPower AddNewPowerEvent;
-
+        public event DelClearGoals ClearGoalsEvent;
+        
         /// <summary>
         /// 刪除
         /// </summary>
@@ -96,8 +77,6 @@ namespace ClientUI
         /// 尋找路徑
         /// </summary>
         public event DelFindPath FindPathEvent;
-
-        public event DelCharging Charging;
 
         /// <summary>
         /// 載入地圖
@@ -118,7 +97,7 @@ namespace ClientUI
         /// 按照順序移動全部
         /// </summary>
         public event DelRunLoop RunLoopEvent;
-
+        
         /// <summary>
         /// 儲存
         /// </summary>
@@ -130,10 +109,19 @@ namespace ClientUI
         public event DelSendMapToAGV SendMapToAGVEvent;
 
         /// <summary>
+        /// 取得所有Goal點名稱
+        /// </summary>
+        public event DelGetGoalNames GetGoalNames;
+        
+        public event DelCharging Charging;
+        
+        public event Events.TestingEvents.DelClearMap ClearMap;
+        
+        /// <summary>
         /// 當下車子的位置
         /// </summary>
         public CartesianPos CurrentCar { get { return mCurrentCar; } set { if (value != null) mCurrentCar = value; } }
-
+        
         /// <summary>
         /// 目標點個數
         /// </summary>
@@ -216,21 +204,13 @@ namespace ClientUI
             lock (mKey)
             {
                 dgvGoalPoint.InvokeIfNecessary(() => dgvGoalPoint.Rows.Clear());
-                cmbGoalList.InvokeIfNecessary(() => cmbGoalList.Items.Clear());
+                cmbGoalList.InvokeIfNecessary(() => {
+                    cmbGoalList.Items.Clear();
+                    cmbGoalList.SelectedIndex = ListBox.NoMatches;
+                });
             }
         }
 
-        /// <summary>
-        /// 重新載入標示物
-        /// </summary>
-        public void ReloadSingle() {
-            lock(mKey){
-                ClearGoal();                
-                Database.GoalGM.SaftyForLoop(LoadSingle);
-                Database.PowerGM.SaftyForLoop(LoadSingle);
-            }
-        }
-        
         /// <summary>
         /// 根據 ID 移除 Goal 點
         /// </summary>
@@ -239,7 +219,15 @@ namespace ClientUI
             lock (mKey)
             {
                 int row = FindIndexByID(ID);
-                if (row != -1) dgvGoalPoint.InvokeIfNecessary(() => dgvGoalPoint.Rows.RemoveAt(row));
+                if (row != -1) {
+                    dgvGoalPoint.InvokeIfNecessary(() => dgvGoalPoint.Rows.RemoveAt(row));
+                    cmbGoalList.InvokeIfNecessary(() => {
+                        if (cmbGoalList.SelectedIndex == row) {
+                            cmbGoalList.SelectedIndex = ListBox.NoMatches;
+                        }
+                        cmbGoalList.Items.RemoveAt(row);
+                    });
+                }
             }
         }
 
@@ -337,6 +325,7 @@ namespace ClientUI
                 return list;
             }
         }
+
         /// <summary>
         /// 獲得所有被選取的 Goal 點資訊
         /// </summary>
@@ -368,17 +357,79 @@ namespace ClientUI
                 return list;
             }
         }
+        
         /// <summary>
-        /// 清除所有目標點
+        /// 設定真實座標
         /// </summary>
-        public event DelClearGoals ClearGoalsEvent;
+        public void SetCurrentRealPos(CartesianPos realPos) {
+            lock (mKey) {
+                txtAddPx.InvokeIfNecessary(() => {
+                    if (txtAddPx.Text != realPos.x.ToString()) txtAddPx.Text = realPos.x.ToString();
+                });
+                txtAddPy.InvokeIfNecessary(() => {
+                    if (txtAddPy.Text != realPos.y.ToString()) txtAddPy.Text = realPos.y.ToString();
+                });
+            }
+        }
 
         /// <summary>
-        /// 取得所有Goal點名稱
+        /// 設定表單選擇項目
         /// </summary>
-        public event DelGetGoalNames GetGoalNames;
+        public void SetSelectItem(uint id) {
+            lock (mKey) {
+                dgvGoalPoint.InvokeIfNecessary(() => {
+                    for (int row = 0; row < dgvGoalPoint.RowCount; row++) {
+                        if ((uint)dgvGoalPoint[IDColumn, row].Value == id) {
+                            dgvGoalPoint.Rows[row].Selected = true;
+                        } else {
+                            dgvGoalPoint.Rows[row].Selected = false;
+                        }
+                    }
+                });
+            }
+        }
 
-        public event Events.TestingEvents.DelClearMap ClearMap;
+        /// <summary>
+        /// 重新載入標示物
+        /// </summary>
+        public void ReloadSingle() {
+            lock (mKey) {
+                ClearGoal();
+                Database.GoalGM.SaftyForLoop(LoadSingle);
+                Database.PowerGM.SaftyForLoop(LoadSingle);
+            }
+        }
+
+        /// <summary>
+        /// 解鎖與路徑相關操作
+        /// </summary>
+        /// <param name="enb"></param>
+        public void EnableGo(bool enb = true) {
+            CtInvoke.ControlEnabled(btnPath, enb);
+            CtInvoke.ControlEnabled(btnRunAll, enb);
+            CtInvoke.ControlEnabled(btnRun, enb);
+            CtInvoke.ControlEnabled(btnCharging, enb);
+        }
+
+        public void RefreshSingle() {
+            Dictionary<uint, int> uidMapping = new Dictionary<uint, int>();
+            for (int idx = 0; idx < dgvGoalPoint.RowCount; idx++) {
+                uidMapping.Add(Convert.ToUInt32(dgvGoalPoint[IDColumn, idx].Value), idx);
+            }
+            Database.GoalGM.SaftyForLoop((uid, goal) => {
+                UpdataSingle(uid, goal, uidMapping);
+                uidMapping.Remove(uid);
+            });
+            Database.PowerGM.SaftyForLoop((uid, power) => {
+                UpdataSingle(uid, power, uidMapping);
+                uidMapping.Remove(uid);
+            });
+
+            foreach (uint uid in uidMapping.Keys) {
+                DeleteGoal(uid);
+            }
+
+        }
 
         #endregion IIGoalSetting
 
@@ -488,34 +539,6 @@ namespace ClientUI
 
         #region Functin - Public Methods
 
-        /// <summary>
-        /// 設定表單選擇項目
-        /// </summary>
-        public void SetSelectItem(uint id) {
-            lock (mKey) {
-                dgvGoalPoint.InvokeIfNecessary(() => {
-                    for (int row = 0; row < dgvGoalPoint.RowCount; row++) {
-                        if ((uint)dgvGoalPoint[IDColumn, row].Value == id) {
-                            dgvGoalPoint.Rows[row].Selected = true;
-                        } else {
-                            dgvGoalPoint.Rows[row].Selected = false;
-                        }
-                    }
-                });
-            }
-        }
-
-        /// <summary>
-        /// 解鎖與路徑相關操作
-        /// </summary>
-        /// <param name="enb"></param>
-        public void EnableGo(bool enb = true) {
-            CtInvoke.ControlEnabled(btnPath, enb);
-            CtInvoke.ControlEnabled(btnRunAll, enb);
-            CtInvoke.ControlEnabled(btnRun, enb);
-            CtInvoke.ControlEnabled(btnCharging, enb);
-        }
-
         #endregion Funtion - Public Methods
 
         #region Fucnction - Private Methods
@@ -548,6 +571,33 @@ namespace ClientUI
         }
 
         #endregion Function - Private Methods
+
+        private void btnRefresh_Click(object sender, EventArgs e) {
+            RefreshSingle();
+        }
+
+        private void UpdataSingle(uint uid,ISingle<ITowardPair> single,Dictionary<uint,int> mapping) {
+            double x = single.Data.Position.X;
+            double y = single.Data.Position.Y;
+            double theta = single.Data.Toward.Theta;
+            if (mapping.ContainsKey(uid)) {
+                int index = mapping[uid];
+                dgvGoalPoint.InvokeIfNecessary(
+                    () => {
+                        if ((uint)dgvGoalPoint[IDColumn, index].Value != uid) dgvGoalPoint[IDColumn, index].Value = uid;
+                        if ((string)dgvGoalPoint[NameColumn, index].Value != single.Name) dgvGoalPoint[NameColumn, index].Value = single.Name;
+                        if ((double)dgvGoalPoint[XColumn, index].Value != x) dgvGoalPoint[XColumn, index].Value = x;
+                        if ((double)dgvGoalPoint[YColumn, index].Value != y) dgvGoalPoint[YColumn, index].Value = y;
+                        if ((string)dgvGoalPoint[TowardColumn, index].Value != theta.ToString("F2")) dgvGoalPoint[TowardColumn, index].Value = theta.ToString("F2");
+                    });
+            } else {
+                dgvGoalPoint.InvokeIfNecessary(
+                () => dgvGoalPoint.Rows.Add(new object[] { new CheckBox().Checked = false, uid, single.Name, x, y, theta.ToString("F2") }));
+                cmbGoalList.InvokeIfNecessary(() => {
+                    cmbGoalList.Items.Add(single.Name);
+                });
+            }
+        }
     }
 
     /// <summary>

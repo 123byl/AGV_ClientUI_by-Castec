@@ -16,6 +16,8 @@ using GLUI;
 using GLCore;
 using Geometry;
 using static FactoryMode;
+using CtOutLookBar.Public;
+using System.IO;
 
 namespace ClientUI
 {
@@ -101,6 +103,19 @@ namespace ClientUI
             agv.Data.Position.Y = (int)location.y;
             agv.Data.Toward.Theta = location.theta;
         }
+
+        #region OutlookBar
+
+        public static IClickSender AddItem(this IOutlookCategory iconPanel, CursorMode mode, Image img = null) {
+            return iconPanel.AddItem(mode.ToString(), img, (int)mode);
+        }
+
+        public static IClickSender AddItem(this IOutlookCategory category, CursorMode mode, string imgPath) {
+            Image img = File.Exists(imgPath) ? Image.FromFile(imgPath) : null;
+            return category.AddItem(mode, img);
+        }
+
+        #endregion OutlookBar
 
     }
 

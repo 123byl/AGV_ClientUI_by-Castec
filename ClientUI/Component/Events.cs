@@ -46,12 +46,7 @@ namespace ClientUI
         /// 加入 Goal 點
         /// </summary>
         event DelAddNewGoal AddNewGoalEvent;
-
-        /// <summary>
-        /// 加入充電站
-        /// </summary>
-        event DelAddNewPower AddNewPowerEvent;
-
+        
         /// <summary>
         /// 清除所有目標點
         /// </summary>
@@ -105,9 +100,7 @@ namespace ClientUI
         event DelCharging Charging;
 
         event DelClearMap ClearMap;
-
-        event DelSwitchCursor SwitchCursor;
-
+        
         /// <summary>
         /// 當下車子的位置
         /// </summary>
@@ -194,6 +187,12 @@ namespace ClientUI
         /// </summary>
         /// <param name="enb"></param>
         void EnableGo(bool enb = true);
+
+        /// <summary>
+        /// 更新標示物列表
+        /// </summary>
+        void RefreshSingle();
+
     }
 
     /// <summary>

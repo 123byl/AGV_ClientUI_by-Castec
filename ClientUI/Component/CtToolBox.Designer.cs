@@ -57,7 +57,7 @@
             this.outlookBar2.Location = new System.Drawing.Point(0, 0);
             this.outlookBar2.Name = "outlookBar2";
             this.outlookBar2.SelectedBand = 0;
-            this.outlookBar2.Size = new System.Drawing.Size(207, 221);
+            this.outlookBar2.Size = new System.Drawing.Size(207, 664);
             this.outlookBar2.TabIndex = 1;
             // 
             // CtToolBox
@@ -72,7 +72,6 @@
             this.MinimizeBox = false;
             this.Name = "CtToolBox";
             this.Text = "CtToolBox";
-            this.Resize += new System.EventHandler(this.CtToolBox_Resize);
             this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
 
