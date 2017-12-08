@@ -40,6 +40,7 @@ namespace ClientUI
                 ctrl.KeyUp += Ctrl_KeyUp;
                 ctrl.KeyDown += Ctrl_KeyDown;
             }
+
         }
 
         #endregion Function - Constructors
@@ -153,19 +154,21 @@ namespace ClientUI
                 MotionDirection dir = (MotionDirection)e.KeyCode;
                 mDirs.Remove(dir);
                 if (mDirs.Any()) {
-                    Motion_Down?.Invoke(mDirs[0], int.Parse(txtVelocity.Text));
+                    Motion_Down?.Invoke(mDirs[0]);
                 } else {
                     Motion_Up?.Invoke();
                 }
             }
         }
 
+        int ii = 0;
         private void Ctrl_KeyDown(object sender, KeyEventArgs e) {
+            Console.WriteLine($"KeyDown{ii++}");
             if (Enum.IsDefined(typeof(MotionDirection), (int)e.KeyCode)) {
                 MotionDirection dir = (MotionDirection)e.KeyCode;
                 if (!mDirs.Contains(dir)) {
                     mDirs.Add(dir);
-                    Motion_Down?.Invoke((MotionDirection)e.KeyCode, int.Parse(txtVelocity.Text));
+                    Motion_Down?.Invoke((MotionDirection)e.KeyCode);
                 }
             }
         }
@@ -186,11 +189,9 @@ namespace ClientUI
         private void Motion_MouseDown(object sender, MouseEventArgs e) {
             string sDirection = (sender as Control)?.Tag?.ToString();
             int iDirection = 0;
-            int velocity = 0;
             if (int.TryParse(sDirection, out iDirection) &&
-                Enum.IsDefined(typeof(MotionDirection), iDirection) &&
-                int.TryParse(txtVelocity.Text, out velocity)) {
-                Motion_Down?.Invoke((MotionDirection)iDirection, velocity);
+                Enum.IsDefined(typeof(MotionDirection), iDirection)) {
+                Motion_Down?.Invoke((MotionDirection)iDirection);
             }
         }
 
@@ -341,11 +342,11 @@ namespace ClientUI
         /// <summary>
         /// 左旋
         /// </summary>
-        LeftTrun = 39,
+        LeftTrun = 37,
         /// <summary>
         /// 右璇
         /// </summary>
-        RightTurn = 37,
+        RightTurn = 39,
         /// <summary>
         /// 停止
         /// </summary>

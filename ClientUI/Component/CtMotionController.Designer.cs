@@ -24,165 +24,137 @@
         /// </summary>
         private void InitializeComponent() {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CtMotionController));
-            this.btnSetVelo = new System.Windows.Forms.Button();
-            this.btnStartStop = new System.Windows.Forms.Button();
-            this.lbVelocity = new System.Windows.Forms.Label();
-            this.txtVelocity = new System.Windows.Forms.TextBox();
-            this.btnServoOnOff = new System.Windows.Forms.Button();
-            this.btnUp = new System.Windows.Forms.Button();
-            this.btnRight = new System.Windows.Forms.Button();
-            this.btnLeft = new System.Windows.Forms.Button();
-            this.btnDown = new System.Windows.Forms.Button();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.picStartStop = new System.Windows.Forms.PictureBox();
+            this.picServoStt = new System.Windows.Forms.PictureBox();
+            this.picRightTurn = new System.Windows.Forms.PictureBox();
+            this.picLeftTurn = new System.Windows.Forms.PictureBox();
+            this.picBack = new System.Windows.Forms.PictureBox();
+            this.picForward = new System.Windows.Forms.PictureBox();
+            this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picStartStop)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picServoStt)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picRightTurn)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picLeftTurn)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picBack)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picForward)).BeginInit();
             this.SuspendLayout();
             // 
-            // btnSetVelo
+            // panel1
             // 
-            this.btnSetVelo.Enabled = false;
-            this.btnSetVelo.Location = new System.Drawing.Point(270, 17);
-            this.btnSetVelo.Margin = new System.Windows.Forms.Padding(4);
-            this.btnSetVelo.Name = "btnSetVelo";
-            this.btnSetVelo.Size = new System.Drawing.Size(67, 35);
-            this.btnSetVelo.TabIndex = 20;
-            this.btnSetVelo.Text = "Set";
-            this.btnSetVelo.UseVisualStyleBackColor = true;
+            this.panel1.Controls.Add(this.picStartStop);
+            this.panel1.Controls.Add(this.picServoStt);
+            this.panel1.Controls.Add(this.picRightTurn);
+            this.panel1.Controls.Add(this.picLeftTurn);
+            this.panel1.Controls.Add(this.picBack);
+            this.panel1.Controls.Add(this.picForward);
+            this.panel1.Location = new System.Drawing.Point(12, 12);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(200, 124);
+            this.panel1.TabIndex = 6;
             // 
-            // btnStartStop
+            // picStartStop
             // 
-            this.btnStartStop.BackColor = System.Drawing.SystemColors.Control;
-            this.btnStartStop.Enabled = false;
-            this.btnStartStop.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnStartStop.Image = ((System.Drawing.Image)(resources.GetObject("btnStartStop.Image")));
-            this.btnStartStop.Location = new System.Drawing.Point(257, 75);
-            this.btnStartStop.Margin = new System.Windows.Forms.Padding(4);
-            this.btnStartStop.Name = "btnStartStop";
-            this.btnStartStop.Size = new System.Drawing.Size(67, 62);
-            this.btnStartStop.TabIndex = 19;
-            this.btnStartStop.Tag = "Stop";
-            this.btnStartStop.UseVisualStyleBackColor = false;
+            this.picStartStop.Image = global::ClientUI.Properties.Resources.play;
+            this.picStartStop.Location = new System.Drawing.Point(131, 8);
+            this.picStartStop.Name = "picStartStop";
+            this.picStartStop.Size = new System.Drawing.Size(50, 50);
+            this.picStartStop.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.picStartStop.TabIndex = 11;
+            this.picStartStop.TabStop = false;
             // 
-            // lbVelocity
+            // picServoStt
             // 
-            this.lbVelocity.AutoSize = true;
-            this.lbVelocity.BackColor = System.Drawing.Color.Transparent;
-            this.lbVelocity.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbVelocity.Location = new System.Drawing.Point(18, 23);
-            this.lbVelocity.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.lbVelocity.Name = "lbVelocity";
-            this.lbVelocity.Size = new System.Drawing.Size(169, 22);
-            this.lbVelocity.TabIndex = 13;
-            this.lbVelocity.Text = "Movement Velocity:";
+            this.picServoStt.Image = global::ClientUI.Properties.Resources.LED_L_Red;
+            this.picServoStt.Location = new System.Drawing.Point(19, 8);
+            this.picServoStt.Name = "picServoStt";
+            this.picServoStt.Size = new System.Drawing.Size(50, 50);
+            this.picServoStt.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.picServoStt.TabIndex = 10;
+            this.picServoStt.TabStop = false;
             // 
-            // txtVelocity
+            // picTurnRight
             // 
-            this.txtVelocity.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtVelocity.Location = new System.Drawing.Point(195, 18);
-            this.txtVelocity.Margin = new System.Windows.Forms.Padding(4);
-            this.txtVelocity.Name = "txtVelocity";
-            this.txtVelocity.Size = new System.Drawing.Size(67, 30);
-            this.txtVelocity.TabIndex = 12;
-            this.txtVelocity.Text = "500";
-            this.txtVelocity.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.picRightTurn.Image = global::ClientUI.Properties.Resources.Arrow_RotationR;
+            this.picRightTurn.Location = new System.Drawing.Point(131, 64);
+            this.picRightTurn.Name = "picTurnRight";
+            this.picRightTurn.Size = new System.Drawing.Size(50, 50);
+            this.picRightTurn.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.picRightTurn.TabIndex = 9;
+            this.picRightTurn.TabStop = false;
+            this.picRightTurn.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Motion_MouseDown);
+            this.picRightTurn.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Motion_MouseUp);
             // 
-            // btnServoOnOff
+            // picTurnLeft
             // 
-            this.btnServoOnOff.BackColor = System.Drawing.Color.Red;
-            this.btnServoOnOff.Enabled = false;
-            this.btnServoOnOff.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnServoOnOff.ForeColor = System.Drawing.Color.White;
-            this.btnServoOnOff.Location = new System.Drawing.Point(35, 75);
-            this.btnServoOnOff.Margin = new System.Windows.Forms.Padding(4);
-            this.btnServoOnOff.Name = "btnServoOnOff";
-            this.btnServoOnOff.Size = new System.Drawing.Size(67, 62);
-            this.btnServoOnOff.TabIndex = 14;
-            this.btnServoOnOff.Text = "OFF";
-            this.btnServoOnOff.UseVisualStyleBackColor = false;
+            this.picLeftTurn.Image = global::ClientUI.Properties.Resources.Arrow_RotationL;
+            this.picLeftTurn.Location = new System.Drawing.Point(19, 64);
+            this.picLeftTurn.Name = "picTurnLeft";
+            this.picLeftTurn.Size = new System.Drawing.Size(50, 50);
+            this.picLeftTurn.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.picLeftTurn.TabIndex = 8;
+            this.picLeftTurn.TabStop = false;
+            this.picLeftTurn.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Motion_MouseDown);
+            this.picLeftTurn.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Motion_MouseUp);
             // 
-            // btnUp
+            // picDown
             // 
-            this.btnUp.Enabled = false;
-            this.btnUp.Font = new System.Drawing.Font("新細明體", 20F);
-            this.btnUp.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.btnUp.Image = ((System.Drawing.Image)(resources.GetObject("btnUp.Image")));
-            this.btnUp.Location = new System.Drawing.Point(146, 75);
-            this.btnUp.Margin = new System.Windows.Forms.Padding(4);
-            this.btnUp.Name = "btnUp";
-            this.btnUp.Size = new System.Drawing.Size(67, 62);
-            this.btnUp.TabIndex = 15;
-            this.btnUp.Tag = "38";
-            this.btnUp.UseVisualStyleBackColor = true;
+            this.picBack.Image = global::ClientUI.Properties.Resources.Arrow_Down;
+            this.picBack.Location = new System.Drawing.Point(75, 64);
+            this.picBack.Name = "picDown";
+            this.picBack.Size = new System.Drawing.Size(50, 50);
+            this.picBack.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.picBack.TabIndex = 7;
+            this.picBack.TabStop = false;
+            this.picBack.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Motion_MouseDown);
+            this.picBack.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Motion_MouseUp);
             // 
-            // btnRight
+            // picUp
             // 
-            this.btnRight.Enabled = false;
-            this.btnRight.Font = new System.Drawing.Font("新細明體", 20F);
-            this.btnRight.Image = ((System.Drawing.Image)(resources.GetObject("btnRight.Image")));
-            this.btnRight.Location = new System.Drawing.Point(257, 154);
-            this.btnRight.Margin = new System.Windows.Forms.Padding(4);
-            this.btnRight.Name = "btnRight";
-            this.btnRight.Size = new System.Drawing.Size(67, 62);
-            this.btnRight.TabIndex = 16;
-            this.btnRight.Tag = "39";
-            this.btnRight.UseVisualStyleBackColor = true;
-            // 
-            // btnLeft
-            // 
-            this.btnLeft.Enabled = false;
-            this.btnLeft.Font = new System.Drawing.Font("新細明體", 20F);
-            this.btnLeft.Image = ((System.Drawing.Image)(resources.GetObject("btnLeft.Image")));
-            this.btnLeft.Location = new System.Drawing.Point(35, 154);
-            this.btnLeft.Margin = new System.Windows.Forms.Padding(4);
-            this.btnLeft.Name = "btnLeft";
-            this.btnLeft.Size = new System.Drawing.Size(67, 62);
-            this.btnLeft.TabIndex = 17;
-            this.btnLeft.Tag = "37";
-            this.btnLeft.UseVisualStyleBackColor = true;
-            // 
-            // btnDown
-            // 
-            this.btnDown.Enabled = false;
-            this.btnDown.Font = new System.Drawing.Font("新細明體", 20F);
-            this.btnDown.Image = ((System.Drawing.Image)(resources.GetObject("btnDown.Image")));
-            this.btnDown.Location = new System.Drawing.Point(146, 154);
-            this.btnDown.Margin = new System.Windows.Forms.Padding(4);
-            this.btnDown.Name = "btnDown";
-            this.btnDown.Size = new System.Drawing.Size(67, 62);
-            this.btnDown.TabIndex = 18;
-            this.btnDown.Tag = "40";
-            this.btnDown.UseVisualStyleBackColor = true;
+            this.picForward.Image = global::ClientUI.Properties.Resources.Arrow_Up;
+            this.picForward.Location = new System.Drawing.Point(75, 8);
+            this.picForward.Name = "picUp";
+            this.picForward.Size = new System.Drawing.Size(50, 50);
+            this.picForward.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.picForward.TabIndex = 6;
+            this.picForward.TabStop = false;
+            this.picForward.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Motion_MouseDown);
+            this.picForward.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Motion_MouseUp);
             // 
             // CtMotionController
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(357, 235);
-            this.Controls.Add(this.btnSetVelo);
-            this.Controls.Add(this.btnStartStop);
-            this.Controls.Add(this.lbVelocity);
-            this.Controls.Add(this.txtVelocity);
-            this.Controls.Add(this.btnServoOnOff);
-            this.Controls.Add(this.btnUp);
-            this.Controls.Add(this.btnRight);
-            this.Controls.Add(this.btnLeft);
-            this.Controls.Add(this.btnDown);
+            this.ClientSize = new System.Drawing.Size(225, 143);
+            this.Controls.Add(this.panel1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "CtMotionController";
-            this.Text = "CtMotionController";
-            this.Click += new System.EventHandler(this.CtMotionController_Click);
+            this.Text = "Motion Controller";
+            this.TopMost = true;
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.CtMotionController_KeyDown);
+            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.CtCotionController_KeyUp);
+            this.panel1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.picStartStop)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picServoStt)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picRightTurn)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picLeftTurn)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picBack)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picForward)).EndInit();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
 
-        private System.Windows.Forms.Button btnSetVelo;
-        private System.Windows.Forms.Button btnStartStop;
-        private System.Windows.Forms.Label lbVelocity;
-        private System.Windows.Forms.TextBox txtVelocity;
-        private System.Windows.Forms.Button btnServoOnOff;
-        private System.Windows.Forms.Button btnUp;
-        private System.Windows.Forms.Button btnRight;
-        private System.Windows.Forms.Button btnLeft;
-        private System.Windows.Forms.Button btnDown;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.PictureBox picStartStop;
+        private System.Windows.Forms.PictureBox picServoStt;
+        private System.Windows.Forms.PictureBox picRightTurn;
+        private System.Windows.Forms.PictureBox picLeftTurn;
+        private System.Windows.Forms.PictureBox picBack;
+        private System.Windows.Forms.PictureBox picForward;
     }
 }

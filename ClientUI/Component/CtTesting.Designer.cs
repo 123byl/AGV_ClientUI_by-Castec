@@ -58,6 +58,7 @@
             this.btnRight = new System.Windows.Forms.Button();
             this.btnLeft = new System.Windows.Forms.Button();
             this.btnDown = new System.Windows.Forms.Button();
+            this.btnMotionController = new System.Windows.Forms.Button();
             this.grbMap.SuspendLayout();
             this.grbInfo.SuspendLayout();
             this.grbMode.SuspendLayout();
@@ -112,7 +113,7 @@
             // btnSetCar
             // 
             this.btnSetCar.Font = new System.Drawing.Font("微軟正黑體", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.btnSetCar.Location = new System.Drawing.Point(485, 639);
+            this.btnSetCar.Location = new System.Drawing.Point(505, 388);
             this.btnSetCar.Margin = new System.Windows.Forms.Padding(4);
             this.btnSetCar.Name = "btnSetCar";
             this.btnSetCar.Size = new System.Drawing.Size(90, 85);
@@ -125,7 +126,7 @@
             // 
             this.btnSimplyOri.Enabled = false;
             this.btnSimplyOri.Font = new System.Drawing.Font("微軟正黑體", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.btnSimplyOri.Location = new System.Drawing.Point(212, 351);
+            this.btnSimplyOri.Location = new System.Drawing.Point(242, 351);
             this.btnSimplyOri.Margin = new System.Windows.Forms.Padding(4);
             this.btnSimplyOri.Name = "btnSimplyOri";
             this.btnSimplyOri.Size = new System.Drawing.Size(90, 85);
@@ -177,7 +178,7 @@
             // btnClrMap
             // 
             this.btnClrMap.Font = new System.Drawing.Font("微軟正黑體", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.btnClrMap.Location = new System.Drawing.Point(583, 639);
+            this.btnClrMap.Location = new System.Drawing.Point(603, 388);
             this.btnClrMap.Margin = new System.Windows.Forms.Padding(4);
             this.btnClrMap.Name = "btnClrMap";
             this.btnClrMap.Size = new System.Drawing.Size(90, 85);
@@ -517,11 +518,24 @@
             this.btnDown.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Motion_MouseDown);
             this.btnDown.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Motion_MouseUp);
             // 
+            // btnMotionController
+            // 
+            this.btnMotionController.Enabled = false;
+            this.btnMotionController.Font = new System.Drawing.Font("微軟正黑體", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.btnMotionController.Location = new System.Drawing.Point(370, 388);
+            this.btnMotionController.Margin = new System.Windows.Forms.Padding(4);
+            this.btnMotionController.Name = "btnMotionController";
+            this.btnMotionController.Size = new System.Drawing.Size(123, 85);
+            this.btnMotionController.TabIndex = 65;
+            this.btnMotionController.Text = "Motion Controller";
+            this.btnMotionController.UseVisualStyleBackColor = true;
+            // 
             // CtTesting
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(708, 767);
+            this.Controls.Add(this.btnMotionController);
             this.Controls.Add(this.lbHostIP);
             this.Controls.Add(this.cboHostIP);
             this.Controls.Add(this.grbMap);
@@ -539,6 +553,7 @@
             this.DockAreas = ((WeifenLuo.WinFormsUI.Docking.DockAreas)(((WeifenLuo.WinFormsUI.Docking.DockAreas.Float | WeifenLuo.WinFormsUI.Docking.DockAreas.DockLeft) 
             | WeifenLuo.WinFormsUI.Docking.DockAreas.DockRight)));
             this.Font = new System.Drawing.Font("新細明體", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "CtTesting";
             this.Text = "Testing";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Ctrl_KeyDown);
@@ -590,5 +605,6 @@
         private System.Windows.Forms.Button btnSendMap;
         private System.Windows.Forms.ComboBox cboHostIP;
         private System.Windows.Forms.Label lbHostIP;
+        private System.Windows.Forms.Button btnMotionController;
     }
 }

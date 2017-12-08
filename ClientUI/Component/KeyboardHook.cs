@@ -158,7 +158,7 @@ namespace ClientUI.Component {
                 hKeyboardHook = 0;
             }
 
-            if (!(retKeyboard)) throw new Exception("卸载钩子失败！");
+            //if (!(retKeyboard)) throw new Exception("卸载钩子失败！");
         }
 
         #endregion Function - Public Methods

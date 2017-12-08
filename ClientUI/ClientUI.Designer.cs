@@ -85,6 +85,7 @@ namespace ClientUI {
             this.miConsole = new System.Windows.Forms.ToolStripMenuItem();
             this.miToolBox = new System.Windows.Forms.ToolStripMenuItem();
             this.miMapInsert = new System.Windows.Forms.ToolStripMenuItem();
+            this.miMotionController = new System.Windows.Forms.ToolStripMenuItem();
             this.miHelp = new System.Windows.Forms.ToolStripMenuItem();
             this.miAbout = new System.Windows.Forms.ToolStripMenuItem();
             this.testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -242,7 +243,7 @@ namespace ClientUI {
             this.miBypass});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1082, 27);
+            this.menuStrip1.Size = new System.Drawing.Size(1082, 28);
             this.menuStrip1.TabIndex = 9;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -253,7 +254,7 @@ namespace ClientUI {
             this.miUserManager,
             this.miExit});
             this.systemToolStripMenuItem.Name = "systemToolStripMenuItem";
-            this.systemToolStripMenuItem.Size = new System.Drawing.Size(72, 23);
+            this.systemToolStripMenuItem.Size = new System.Drawing.Size(72, 24);
             this.systemToolStripMenuItem.Text = "System";
             // 
             // miLogin
@@ -287,48 +288,56 @@ namespace ClientUI {
             this.miGoalSetting,
             this.miConsole,
             this.miToolBox,
-            this.miMapInsert});
+            this.miMapInsert,
+            this.miMotionController});
             this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
-            this.viewToolStripMenuItem.Size = new System.Drawing.Size(55, 23);
+            this.viewToolStripMenuItem.Size = new System.Drawing.Size(55, 24);
             this.viewToolStripMenuItem.Text = "View";
             // 
             // miMapGL
             // 
             this.miMapGL.Name = "miMapGL";
-            this.miMapGL.Size = new System.Drawing.Size(181, 26);
+            this.miMapGL.Size = new System.Drawing.Size(208, 26);
             this.miMapGL.Text = "MapGL";
             this.miMapGL.Visible = false;
             // 
             // miTesting
             // 
             this.miTesting.Name = "miTesting";
-            this.miTesting.Size = new System.Drawing.Size(181, 26);
+            this.miTesting.Size = new System.Drawing.Size(208, 26);
             this.miTesting.Text = "Testing";
             // 
             // miGoalSetting
             // 
             this.miGoalSetting.Name = "miGoalSetting";
-            this.miGoalSetting.Size = new System.Drawing.Size(181, 26);
+            this.miGoalSetting.Size = new System.Drawing.Size(208, 26);
             this.miGoalSetting.Text = "Goal Setting";
             // 
             // miConsole
             // 
             this.miConsole.Name = "miConsole";
-            this.miConsole.Size = new System.Drawing.Size(181, 26);
+            this.miConsole.Size = new System.Drawing.Size(208, 26);
             this.miConsole.Text = "Console";
             // 
             // miToolBox
             // 
             this.miToolBox.Name = "miToolBox";
-            this.miToolBox.Size = new System.Drawing.Size(181, 26);
+            this.miToolBox.Size = new System.Drawing.Size(208, 26);
             this.miToolBox.Text = "ToolBox";
             // 
             // miMapInsert
             // 
             this.miMapInsert.Name = "miMapInsert";
-            this.miMapInsert.Size = new System.Drawing.Size(181, 26);
+            this.miMapInsert.Size = new System.Drawing.Size(208, 26);
             this.miMapInsert.Text = "MapInsert";
             this.miMapInsert.Visible = false;
+            // 
+            // miMotionController
+            // 
+            this.miMotionController.Name = "miMotionController";
+            this.miMotionController.Size = new System.Drawing.Size(208, 26);
+            this.miMotionController.Text = "Motion Controller";
+            this.miMotionController.Click += new System.EventHandler(this.miMotionController_Click);
             // 
             // miHelp
             // 
@@ -336,7 +345,7 @@ namespace ClientUI {
             this.miAbout,
             this.testToolStripMenuItem});
             this.miHelp.Name = "miHelp";
-            this.miHelp.Size = new System.Drawing.Size(53, 23);
+            this.miHelp.Size = new System.Drawing.Size(53, 24);
             this.miHelp.Text = "Help";
             // 
             // miAbout
@@ -359,7 +368,7 @@ namespace ClientUI {
             this.miLoadFile,
             this.miServer});
             this.miBypass.Name = "miBypass";
-            this.miBypass.Size = new System.Drawing.Size(69, 23);
+            this.miBypass.Size = new System.Drawing.Size(69, 24);
             this.miBypass.Text = "Bypass";
             this.miBypass.Visible = false;
             // 
@@ -438,5 +447,6 @@ namespace ClientUI {
         private System.Windows.Forms.ToolStripMenuItem testToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem miToolBox;
         private System.Windows.Forms.ToolStripMenuItem miMapInsert;
+        private System.Windows.Forms.ToolStripMenuItem miMotionController;
     }
 }

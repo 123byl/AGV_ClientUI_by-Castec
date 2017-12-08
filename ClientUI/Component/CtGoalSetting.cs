@@ -283,15 +283,15 @@ namespace ClientUI
 
                 uint id = 0;
                 string name = string.Empty;
-                int x = 0;
-                int y = 0;
+                double x = 0;
+                double y = 0;
                 double toward = 0.0;
                 dgvGoalPoint.InvokeIfNecessary(() =>
                 {
                     id = (uint)dgvGoalPoint[IDColumn, row].Value;
                     name = (string)dgvGoalPoint[NameColumn, row].Value;
-                    x = Convert.ToInt32(dgvGoalPoint[XColumn, row].Value);
-                    y = Convert.ToInt32(dgvGoalPoint[YColumn, row].Value);
+                    x = (double)dgvGoalPoint[XColumn, row].Value;
+                    y = (double)dgvGoalPoint[YColumn, row].Value;
                     toward = Convert.ToDouble(dgvGoalPoint[TowardColumn, row].Value);
                 });
                 return new CartesianPosInfo(x, y, toward, name, id);

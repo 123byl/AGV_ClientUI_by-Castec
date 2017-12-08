@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CtLib.Library;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -7,22 +8,217 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using WeifenLuo.WinFormsUI.Docking;
 
 namespace ClientUI.Component {
     public partial class CtMotionController : Form {
-        public CtMotionController() {
+
+        #region Declaration - Fields
+
+        private bool mMouseEnter;
+
+        /// <summary>
+        /// 紀錄鍵盤按下的方向
+        /// </summary>
+        private List<MotionDirection> mDirs = new List<MotionDirection>();
+
+        private Dictionary<MotionDirection,PictureBox> mDirCtrlMapping = null;
+
+        #endregion Declaration - Fields
+
+        #region Declaration - Events
+
+        public event Events.TestingEvents.DelMotorServoOn MotorServoOn;
+
+        public event Events.TestingEvents.DelMotion_Down MotionDown;
+
+        public event Events.TestingEvents.DelMotion_Up MotionUp;
+
+        #endregion Declaration - Events
+
+        #region Function - Constructors
+
+        /// <summary>
+        /// 共用建構方法
+        /// </summary>
+        public CtMotionController(){
             InitializeComponent();
-            foreach(Control ctrl in Controls) {
-                ctrl.KeyDown += CtMotionController_KeyDown;
+
+            RegisterEvent(this);
+            picBack.Tag = Keys.Down;
+            picForward.Tag = Keys.Up;
+            picLeftTurn.Tag = Keys.Left;
+            picRightTurn.Tag = Keys.Right;
+            mDirCtrlMapping = new Dictionary<MotionDirection, PictureBox>() {
+                { MotionDirection.Forward,picForward},
+                { MotionDirection.Backward,picBack},
+                { MotionDirection.LeftTrun,picLeftTurn},
+                { MotionDirection.RightTurn,picRightTurn}
+            };
+        }
+
+        #endregion Function - Constructors
+
+        #region Function - Events
+
+        #region Form
+
+        private void CtMotionController_KeyDown(object sender, KeyEventArgs e) {
+            if (Enum.IsDefined(typeof(MotionDirection), (int)e.KeyCode)) {
+                MotionDirection dir = (MotionDirection)e.KeyCode;
+                if (!mDirs.Contains(dir)) {
+                    ActivePic(mDirCtrlMapping[dir]);
+                    mDirs.Add(dir);
+                    MotionDown?.Invoke(dir);
+                    mDirCtrlMapping[dir].BorderStyle = BorderStyle.FixedSingle;
+                }
             }
         }
 
-        private void CtMotionController_KeyDown(object sender, KeyEventArgs e) {
-            Console.WriteLine(e.KeyCode);
+        private void CtCotionController_KeyUp(object sender,KeyEventArgs e) {
+            if (Enum.IsDefined(typeof(MotionDirection), (int)e.KeyCode)) {
+                MotionDirection dir = (MotionDirection)e.KeyCode;
+                ActivePic(mDirCtrlMapping[dir], false);
+                mDirs.Remove(dir);
+                if (mDirs.Any()) {                    
+                    MotionDown?.Invoke(mDirs[0]);
+                } else {
+                    MotionUp?.Invoke();
+                }
+            }
         }
 
-        private void CtMotionController_Click(object sender, EventArgs e) {
-            this.Focus();
+        #endregion Form
+
+        #region PictureBox
+
+        private void OnMouseMove(object sender, MouseEventArgs args) {
+            PictureBox pic = sender as PictureBox;
+
+            if ((args.X < pic.Size.Width - 2) &&
+                (args.Y < pic.Size.Width - 2) &&
+                (!mMouseEnter)) {
+                ActivePic(pic, true);
+                mMouseEnter = true;
+            }
         }
+
+        private void OnMouseEnter(object sender, EventArgs e) {
+        }
+
+        private void OnMouseLeave(object sender, EventArgs e) {
+            if (mMouseEnter) {
+                PictureBox pic = sender as PictureBox;
+                ActivePic(pic, false);
+                mMouseEnter = false;
+            }
+        }
+
+        private void Motion_MouseDown(object sender, MouseEventArgs e) {
+            PictureBox pic = sender as PictureBox;
+            if (pic.Tag is Keys) {
+                MotionControl((Keys)pic.Tag);
+            }
+        }
+
+        private void Motion_MouseUp(object sender, MouseEventArgs e) {
+            PictureBox pic = sender as PictureBox;
+            if (pic.Tag is Keys) {
+                MotionStop();
+            }
+        }
+
+        #endregion PictureBox
+
+        #endregion Function - Events
+
+        #region Function - Public Methods
+
+        /// <summary>
+        /// 依照馬達狀態變更UI介面
+        /// </summary>
+        /// <param name="isOn"></param>
+        public void ChangedMotorStt(bool isOn) {
+            if (isOn) {
+                CtInvoke.PictureBoxImage(picServoStt, Properties.Resources.LED_L_Green);
+            } else {
+                CtInvoke.PictureBoxImage(picServoStt, Properties.Resources.LED_L_Red);
+            }
+        }
+
+        #endregion Function - Public Methods
+
+        #region Function - Private Methods
+
+        /// <summary>
+        /// 移動控制
+        /// </summary>
+        /// <param name="key"></param>
+        private void MotionControl(Keys key) {
+            switch (key) {
+                case Keys.Up:
+                case Keys.Down:
+                case Keys.Left:
+                case Keys.Right:
+                    MotionDown?.Invoke((MotionDirection)key);
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// 停止移動
+        /// </summary>
+        private void MotionStop() {
+            MotionUp?.Invoke();
+        }
+        
+        /// <summary>
+        /// 以遞迴方式委派所有<see cref="PictureBox"/>控制項的Move與Leave事件
+        /// </summary>
+        /// <param name="ctrl"></param>
+        /// <param name="reg">委派/取消</param>
+        private void RegisterEvent(Control ctrl,bool reg = true) {
+            if (ctrl is PictureBox) {
+                if (reg) {
+                    ctrl.MouseMove += OnMouseMove;
+                    ctrl.MouseLeave += OnMouseLeave;
+                } else {
+                    ctrl.MouseMove -= OnMouseMove;
+                    ctrl.MouseLeave -= OnMouseLeave;
+                }
+            } else if (ctrl.HasChildren) {
+                foreach(Control child in ctrl.Controls) {
+                    RegisterEvent(child,reg);
+                }
+            }
+        }
+
+        /// <summary>
+        /// <see cref="PictureBox"/>顯示樣式切換Active/Idle
+        /// </summary>
+        /// <param name="pic"></param>
+        /// <param name="isActive"></param>
+        private void ActivePic(PictureBox pic, bool isActive = true) {
+            if (isActive) {
+                pic.BackColor = Color.LightCyan;
+                pic.BorderStyle = BorderStyle.FixedSingle;
+                pic.Location = pic.Location - new Size(1, 1);
+            } else {
+                pic.BackColor = this.BackColor;
+                pic.BorderStyle = BorderStyle.None;
+                pic.Location = pic.Location + new Size(1, 1);
+            }
+        }
+
+        #endregion Function - Private Methods
+
+        private void picServoStt_Click(object sender, EventArgs e) {
+            if (picServoStt.Tag == null || (picServoStt.Tag is bool && !(bool)picServoStt.Tag)) {
+                MotorServoOn.Invoke(true);
+            } else {
+                MotorServoOn.Invoke(false);
+            }
+        }
+
     }
 }

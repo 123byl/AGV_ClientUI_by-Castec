@@ -92,14 +92,61 @@ namespace ClientUI
         ///     0.0.11  Jay [2017/12/07]
         ///         \ 優化Database與GoalSetting之間的聯動性
         ///         \ 於底層路徑相關操作加入相似度門檻值鎖定
+        ///     0.0.12 加入AGV移動控制器        
+        /// 
         /// </remarks>
-        public CtVersion Version { get { return new CtVersion(0, 0, 11, "2017/12/07", "Jay Chang"); } }
+        public CtVersion Version { get { return new CtVersion(0, 0, 12, "2017/12/08", "Jay Chang"); } }
 
         #endregion Version - Information
-
+        
         #region Declaration - Fields
 
-        private KeyboardHook mKeyboardHook = new KeyboardHook();
+        #region Flag
+
+        /// <summary>
+        /// 是否正在設定Car Position
+        /// </summary>
+        private bool mIsSetting = false;
+
+        /// <summary>
+        /// 伺服馬達激磁狀態
+        /// </summary>
+        private bool mIsMotorServoOn = false;
+
+        /// <summary>
+        /// 是否已建立連線
+        /// </summary>
+        private bool mIsConnected = false;
+
+        /// <summary>
+        /// 是否Bypass Socket通訊
+        /// </summary>
+        private bool mBypassSocket = false;
+
+        /// <summary>
+        /// 是否Bypass LoadFile功能
+        /// </summary>
+        private bool mBypassLoadFile = false;
+
+        /// <summary>
+        /// 車子模式
+        /// </summary>
+        private CarMode mCarMode = CarMode.OffLine;
+
+        /// <summary>
+        /// 當前語系
+        /// </summary>
+        /// <remarks>
+        /// 未來開發多語系用
+        /// </remarks>
+        private UILanguage mCulture = UILanguage.English;
+
+        /// <summary>
+        /// 當前滑鼠模式
+        /// </summary>
+        private CursorMode mCursorMode = CursorMode.Select;
+
+        #endregion Flag
 
         /// <summary>
         /// 當前Map檔路徑
@@ -107,15 +154,17 @@ namespace ClientUI
         private string mCurMapPath = string.Empty;
 
         /// <summary>
-        /// 是否已建立連線
+        /// 系統列圖示標題
         /// </summary>
-        private bool mIsConnected = false;
+        protected string mNotifyCaption = "AGV Client";
+
+        /// <summary>
+        /// 地圖檔儲存路徑
+        /// </summary>
+        public string mDefMapDir = @"D:\MapInfo\";
 
         /// <summary>Opcode 檔案名稱</summary>
         //private static readonly string FILENAME_OPCODE = "D1703.opc";
-
-        /// <summary>CtOpcode Object</summary>
-        private CtOpcode mOpcode = new CtOpcode();
 
         /// <summary>
         /// Server端IP
@@ -146,16 +195,101 @@ namespace ClientUI
         /// 路徑規劃接收埠
         /// </summary>
         private static int mRecvPathPort = 900;
-
-        /// <summary>
-        /// 地圖檔儲存路徑
-        /// </summary>
-        public string mDefMapDir = @"D:\MapInfo\";
-
+        
         /// <summary>
         /// 車子馬達轉速
         /// </summary>
         private int mVelocity = 500;
+        
+        /// <summary>
+        /// 使用者操作權限
+        /// </summary>
+        private UserData mUser = new UserData("CASTEC", "", AccessLevel.Administrator);
+        
+        /// <summary>
+        /// AGV ID
+        /// </summary>
+        private uint mAGVID = 1;
+
+        /// <summary>
+        /// 障礙線 ID
+        /// </summary>
+        private uint mObstacleLinesID = 1;
+
+        /// <summary>
+        /// 障礙點 ID
+        /// </summary>
+        private uint mObstaclePointsID = 1;
+
+        /// <summary>
+        /// 地圖相似度
+        /// </summary>
+        private double mSimilarity = 0;
+
+        /// <summary>
+        /// 地圖相似度門檻值
+        /// </summary>
+        private double mThrSimilarity = 80;
+
+        /// <summary>
+        /// 車子資訊
+        /// </summary>
+        private CarInfo mCarInfo = new CarInfo(0, 0, 0, "AGV", 1);
+        
+        /// <summary>
+        /// Car Position 設定位置
+        /// </summary>
+        private IPair mNewPos = null;
+        
+        #endregion Declaration - Fields
+
+        #region Declaration - Members
+
+        #region UI
+
+        /// <summary>
+        /// 地圖插入控制器
+        /// </summary>
+        private ICtDockContent mMapInsert = new CtMapInsert();
+
+        /// <summary>
+        /// ICtDockContent與MenuItem對照
+        /// </summary>
+        private Dictionary<ToolStripMenuItem, ICtDockContent> mDockContent = null;
+
+        /// <summary>
+        /// 系統列圖示物件
+        /// </summary>
+        private CtNotifyIcon mNotifyIcon = null;
+
+        /// <summary>
+        /// 系統列圖示右鍵選單
+        /// </summary>
+        private MenuItems mMenuItems = null;
+
+        /// <summary>
+        /// AGV移動控制器
+        /// </summary>
+        private CtMotionController mMotionController = null;
+
+        #endregion UI
+
+        #region Tool
+
+        ///<summary>全域鍵盤鉤子</summary>
+        private KeyboardHook mKeyboardHook = new KeyboardHook();
+
+        /// <summary>CtOpcode Object</summary>
+        private CtOpcode mOpcode = new CtOpcode();
+
+        /// <summary>
+        /// 模組版本集合
+        /// </summary>
+        private Dictionary<string, string> mModuleVersions = new Dictionary<string, string>();
+
+        #endregion Tool
+
+        #region Socket
 
         /// <summary>
         /// 命令接收物件
@@ -178,118 +312,17 @@ namespace ClientUI
         private Socket mSoxCmd = null;
 
         /// <summary>
-        /// 模組版本集合
-        /// </summary>
-        private Dictionary<string, string> mModuleVersions = new Dictionary<string, string>();
-
-        /// <summary>
-        /// 使用者操作權限
-        /// </summary>
-        private UserData mUser = new UserData("CASTEC", "", AccessLevel.Administrator);
-
-        /// <summary>
-        /// 當前語系
-        /// </summary>
-        /// <remarks>
-        /// 未來開發多語系用
-        /// </remarks>
-        private UILanguage mCulture = UILanguage.English;
-
-        /// <summary>
         /// Socket通訊物件
         /// </summary>
         private Communication serverComm = new Communication(400, 600, 800);
 
-        /// <summary>
-        /// AGV ID
-        /// </summary>
-        private uint mAGVID = 1;
+        #endregion Socket
 
-        /// <summary>
-        /// 障礙線 ID
-        /// </summary>
-        private uint mObstacleLinesID = 1;
-
-        /// <summary>
-        /// 障礙點 ID
-        /// </summary>
-        private uint mObstaclePointsID = 1;
-
-        /// <summary>
-        /// 車子資訊
-        /// </summary>
-        private CarInfo mCarInfo = new CarInfo(0, 0, 0, "AGV", 1);
-
-        /// <summary>
-        /// 車子模式
-        /// </summary>
-        private CarMode mCarMode = CarMode.OffLine;
-
-        private MapMatching mMapMatch = new MapMatching();
-
-        /// <summary>
-        /// 是否Bypass Socket通訊
-        /// </summary>
-        private bool mBypassSocket = false;
-
-        /// <summary>
-        /// 是否Bypass LoadFile功能
-        /// </summary>
-        private bool mBypassLoadFile = false;
-
-        /// <summary>
-        /// ICtDockContent與MenuItem對照
-        /// </summary>
-        private Dictionary<ToolStripMenuItem, ICtDockContent> mDockContent = null;
-
-        /// <summary>
-        /// 系統列圖示物件
-        /// </summary>
-        private CtNotifyIcon mNotifyIcon = null;
-
-        /// <summary>
-        /// 系統列圖示右鍵選單
-        /// </summary>
-        private MenuItems mMenuItems = null;
-
-        /// <summary>
-        /// 系統列圖示標題
-        /// </summary>
-        protected string mNotifyCaption = "AGV Client";
-        
-        /// <summary>
-        /// 是否正在設定Car Position
-        /// </summary>
-        private bool mIsSetting = false;
-
-        /// <summary>
-        /// Car Position 設定位置
-        /// </summary>
-        private IPair mNewPos = null;
-
-        /// <summary>
-        /// 伺服馬達激磁狀態
-        /// </summary>
-        private bool mIsMotorServoOn = false;
-
-        /// <summary>
-        /// 當前滑鼠模式
-        /// </summary>
-        private CursorMode mCursorMode = CursorMode.Select;
-
-        /// <summary>
-        /// 地圖相似度
-        /// </summary>
-        private double mSimilarity = 0;
-
-        /// <summary>
-        /// 地圖相似度門檻值
-        /// </summary>
-        private double mThrSimilarity = 80;
-
-        #endregion Declaration - Fields
+        #endregion Declaration - Members
 
         #region Declaration - Properties
+
+        #region Flag
 
         /// <summary>
         /// 伺服端是否還有在運作
@@ -308,6 +341,47 @@ namespace ClientUI
                 //RaiseGoalSettingEvent(GoalSettingEventType.Connect, value);
             }
         }
+
+        /// <summary>
+        /// 是否Bypass Socket功能
+        /// </summary>
+        public bool IsBypassSocket { get { return mBypassSocket; } set { mBypassSocket = value; } }
+
+        /// <summary>
+        /// 是否Bypass LoadFile功能
+        /// </summary>
+        public bool IsBypassLoadFile { get { return mBypassLoadFile; } set { mBypassLoadFile = value; } }
+
+        /// <summary>
+        /// 使用者操作權限
+        /// </summary>
+        public AccessLevel UserLv { get { return mUser.Level; } }
+
+        /// <summary>
+        /// 當前語系
+        /// </summary>
+        /// <remarks>
+        /// 未來開發多語系的時候使用
+        /// </remarks>
+        public UILanguage Culture { get { return mCulture; } }
+
+        /// <summary>
+        /// 是否持續接收雷射資料
+        /// </summary>
+        public bool IsGettingLaser { get; set; } = false;
+
+        /// <summary>
+        /// 車子模式
+        /// </summary>
+        public CarMode CarMode {
+            get {
+                return mCarMode;
+            }
+            set {
+            }
+        }
+
+        #endregion Flag
 
         /// <summary>
         /// 車子馬達速度
@@ -355,61 +429,6 @@ namespace ClientUI
         public string HostIP { get { return mHostIP; } set { mHostIP = value; } }
 
         /// <summary>
-        /// 是否Bypass Socket功能
-        /// </summary>
-        public bool IsBypassSocket { get { return mBypassSocket; } set { mBypassSocket = value; } }
-
-        /// <summary>
-        /// 是否Bypass LoadFile功能
-        /// </summary>
-        public bool IsBypassLoadFile { get { return mBypassLoadFile; } set { mBypassLoadFile = value; } }
-
-        /// <summary>
-        /// 使用者操作權限
-        /// </summary>
-        public AccessLevel UserLv { get { return mUser.Level; } }
-
-        /// <summary>
-        /// 當前語系
-        /// </summary>
-        /// <remarks>
-        /// 未來開發多語系的時候使用
-        /// </remarks>
-        public UILanguage Culture { get { return mCulture; } }
-
-        /// <summary>
-        /// 是否持續接收雷射資料
-        /// </summary>
-        public bool IsGettingLaser { get; set; } = false;
-
-        /// <summary>
-        /// 車子模式
-        /// </summary>
-        public CarMode CarMode {
-            get {
-                return mCarMode;
-            }
-            set {
-                //if (value == CarMode.Map) {
-                //    string oriName = string.Empty;
-                //    CtInput txtBox = new CtInput();
-                //    if (Stat.SUCCESS == txtBox.Start(
-                //        CtInput.InputStyle.TEXT,
-                //        "Set Map File Name", "MAP Name",
-                //        out oriName,
-                //        $"MAP{DateTime.Today:MMdd}")) {
-                //        SendMsg($"Set:OriName:{oriName}.Ori");
-                //    } else {
-                //        return;
-                //    }
-                //}
-                //mCarMode = value;
-                //SendMsg($"Set:Mode:{mCarMode}");
-                //RaiseAgvClientEvent(AgvClientEventType.Mode, mCarMode);
-            }
-        }
-
-        /// <summary>
         /// MapGL子視窗
         /// </summary>
         private AGVMapUI MapGL {
@@ -452,7 +471,7 @@ namespace ClientUI
         private IIGoalSetting IGoalSetting { get { return GoalSetting; } }
         private IScene IMapCtrl { get { return MapGL != null ? MapGL.Ctrl : null; } }
         private IITesting ITest { get { return Testing; } }
-        private ICtDockContent mMapInsert = new CtMapInsert();
+        
         #endregion Declaration - Properties
 
         #region Functin - Constructors
@@ -474,7 +493,7 @@ namespace ClientUI
             if (!Database.AGVGM.ContainsID(mAGVID)) {
                 Database.AGVGM.Add(mAGVID, FactoryMode.Factory.AGV(0, 0, 0, "AGV"));
             }
-
+            mKeyboardHook.KeyDownEvent += mKeyboardHook_KeyDownEvent;
             mKeyboardHook.KeyUpEvent += mKeyboardHook_KeyUpEvent;
             mKeyboardHook.Start();
         }
@@ -485,9 +504,28 @@ namespace ClientUI
 
         #region KeyboardHook
 
+        private void mKeyboardHook_KeyDownEvent(object sneder,KeyEventArgs e) {
+            switch (e.KeyCode) {
+                case Keys.Up:
+                case Keys.Down:
+                case Keys.Left:
+                case Keys.Right:
+                    //MotionContorl((MotionDirection)e.KeyCode);
+                    break;
+            }
+        }
+
         private void mKeyboardHook_KeyUpEvent(object sender, KeyEventArgs e) {
-            if (e.KeyCode == Keys.Delete) {
-                IGoalSetting.RefreshSingle();
+            switch (e.KeyCode) {
+                case Keys.Delete:
+                    IGoalSetting.RefreshSingle();
+                    break;
+                case Keys.Up:
+                case Keys.Down:
+                case Keys.Left:
+                case Keys.Right:
+                    //MotionContorl(MotionDirection.Stop);
+                    break;
             }
         }
 
@@ -653,6 +691,27 @@ namespace ClientUI
         private void miLoadFile_Click(object sender, EventArgs e) {
             IsBypassLoadFile = !IsBypassLoadFile;
             CtInvoke.ToolStripItemChecked(miLoadFile, IsBypassLoadFile);
+        }
+
+        /// <summary>
+        /// AGV移動控制面板
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void miMotionController_Click(object sender, EventArgs e) {
+            if (mMotionController == null) {
+                mMotionController = new CtMotionController();
+                mMotionController.MotionDown += ITest_Motion_Down;
+                mMotionController.MotionUp += ITest_Motion_Up;
+                miMotionController.Checked = true;
+                mMotionController.FormClosing += (fSender, fE) => {
+                    mMotionController.MotionDown -= ITest_Motion_Down;
+                    mMotionController.MotionUp -= ITest_Motion_Up;
+                    mMotionController = null;
+                    miMotionController.Checked = false;
+                };
+                mMotionController.Show();
+            }
         }
         
         #endregion MenuItem
@@ -877,9 +936,9 @@ namespace ClientUI
             if (CarMode != CarMode.Map) CarMode = CarMode.Idle;
         }
 
-        private void ITest_Motion_Down(MotionDirection direction, int velocity = 0) {
-            IConsole.AddMsg($"[{direction} Velocity:{velocity}]");
-            MotionContorl(direction, Velocity);
+        private void ITest_Motion_Down(MotionDirection direction) {
+            IConsole.AddMsg($"[{direction}]");
+            MotionContorl(direction);
             if (CarMode != CarMode.Map) CarMode = CarMode.Work;
         }
 
@@ -1496,7 +1555,7 @@ namespace ClientUI
         /// </summary>
         /// <param name="direction">移動方向</param>
         /// <param name="velocity">移動速度</param>
-        private void MotionContorl(MotionDirection direction, int velocity = 0) {
+        private void MotionContorl(MotionDirection direction) {
             string[] rtnMsg = SendMsg("Get:IsOpen");
 
 
@@ -1515,10 +1574,10 @@ namespace ClientUI
                             cmd = $"Set:DriveVelo:-{mVelocity}:-{mVelocity}";
                             break;
                         case MotionDirection.LeftTrun:
-                            cmd = $"Set:DriveVelo:{mVelocity}:-{mVelocity}";
+                            cmd = $"Set:DriveVelo:-{mVelocity}:{mVelocity}";
                             break;
                         case MotionDirection.RightTurn:
-                            cmd = $"Set:DriveVelo:-{mVelocity}:{mVelocity}";
+                            cmd = $"Set:DriveVelo:{mVelocity}:-{mVelocity}";
                             break;
                     }
                     SendMsg(cmd);
@@ -2178,9 +2237,7 @@ namespace ClientUI
                 { miGoalSetting,new CtGoalSetting(DockState.DockLeft)},
                 { miTesting,new CtTesting(DockState.DockLeft)},
                 { miMapGL,new AGVMapUI( DockState.Document )},
-                { miToolBox,new CtToolBox(DockState.DockRightAutoHide)},
-               // { miMapInsert,mMapInsert}
-                
+                { miToolBox,new CtToolBox(DockState.DockRightAutoHide)}
             };
             SetEvents();
 
@@ -2198,13 +2255,16 @@ namespace ClientUI
                 dokContent.AssignmentDockPanel(dockPanel);
 
                 /*-- 顯示視窗 --*/
-                dokContent.ShowWindow();
+                if (dokContent.DefaultDockState != DockState.Hidden &&
+                    dokContent.DefaultDockState != DockState.Unknown) {
+                    dokContent.ShowWindow();
+                }
 
                 /*-- 訂閱DockDockStateCHanged事件 --*/
                 dokContent.DockStateChanged += Value_DockStateChanged;
 
                 /*-- 依照DockState狀態顯示MenuItem的Check狀態 --*/
-                item.Checked = dokContent.DockState != DockState.Hidden;
+                item.Checked = dokContent.DefaultDockState != DockState.Hidden;
 
                 /*-- MenuItem顯示DockContent標題文字(Text) --*/
                 item.Text = dokContent.Text;
@@ -2279,6 +2339,7 @@ namespace ClientUI
         
         #endregion Function - Private Methods
 
+        
     }
 
     #region Suppor - Class

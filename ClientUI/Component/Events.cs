@@ -364,7 +364,7 @@ namespace ClientUI
 
             public delegate void DelLoadOri();
 
-            public delegate void DelMotion_Down(MotionDirection direction, int velocity = 0);
+            public delegate void DelMotion_Down(MotionDirection direction);
 
             public delegate void DelMotion_Up();
 
