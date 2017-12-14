@@ -92,12 +92,13 @@ namespace ClientUI
         ///     0.0.11  Jay [2017/12/07]
         ///         \ 優化Database與GoalSetting之間的聯動性
         ///         \ 於底層路徑相關操作加入相似度門檻值鎖定
-        ///     0.0.12 加入AGV移動控制器        
+        ///     0.0.12  Jay [2017/12/12] 
+        ///         + 加入AGV移動控制器        
         ///     0.0.13  Jay [2017/12/14]
         ///         \ 將所有按鈕解鎖，當無法處於執行按鈕功能狀態，以對話視窗引導使用者進行狀態修正
         /// 
         /// </remarks>
-        public CtVersion Version { get { return new CtVersion(0, 0, 12, "2017/12/14", "Jay Chang"); } }
+        public CtVersion Version { get { return new CtVersion(0, 0, 13, "2017/12/14", "Jay Chang"); } }
 
         #endregion Version - Information
         
