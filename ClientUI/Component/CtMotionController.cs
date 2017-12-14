@@ -27,9 +27,7 @@ namespace ClientUI.Component {
         #endregion Declaration - Fields
 
         #region Declaration - Events
-
-        public event Events.TestingEvents.DelMotorServoOn MotorServoOn;
-
+        
         public event Events.TestingEvents.DelMotion_Down MotionDown;
 
         public event Events.TestingEvents.DelMotion_Up MotionUp;
@@ -134,17 +132,6 @@ namespace ClientUI.Component {
 
         #region Function - Public Methods
 
-        /// <summary>
-        /// 依照馬達狀態變更UI介面
-        /// </summary>
-        /// <param name="isOn"></param>
-        public void ChangedMotorStt(bool isOn) {
-            if (isOn) {
-                CtInvoke.PictureBoxImage(picServoStt, Properties.Resources.LED_L_Green);
-            } else {
-                CtInvoke.PictureBoxImage(picServoStt, Properties.Resources.LED_L_Red);
-            }
-        }
 
         #endregion Function - Public Methods
 
@@ -160,7 +147,7 @@ namespace ClientUI.Component {
                 case Keys.Down:
                 case Keys.Left:
                 case Keys.Right:
-                    MotionDown?.Invoke((MotionDirection)key);
+                    MotionDown?.BeginInvoke((MotionDirection)key,null,null);
                     break;
             }
         }
@@ -169,7 +156,7 @@ namespace ClientUI.Component {
         /// 停止移動
         /// </summary>
         private void MotionStop() {
-            MotionUp?.Invoke();
+            MotionUp?.BeginInvoke(null,null);
         }
         
         /// <summary>
@@ -211,14 +198,6 @@ namespace ClientUI.Component {
         }
 
         #endregion Function - Private Methods
-
-        private void picServoStt_Click(object sender, EventArgs e) {
-            if (picServoStt.Tag == null || (picServoStt.Tag is bool && !(bool)picServoStt.Tag)) {
-                MotorServoOn.Invoke(true);
-            } else {
-                MotorServoOn.Invoke(false);
-            }
-        }
 
     }
 }

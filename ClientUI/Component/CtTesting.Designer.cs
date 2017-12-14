@@ -24,6 +24,7 @@
         /// </summary>
         private void InitializeComponent() {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CtTesting));
+            this.btnMotionController = new System.Windows.Forms.Button();
             this.lbHostIP = new System.Windows.Forms.Label();
             this.cboHostIP = new System.Windows.Forms.ComboBox();
             this.btnScan = new System.Windows.Forms.Button();
@@ -50,20 +51,26 @@
             this.rdbIdle = new System.Windows.Forms.RadioButton();
             this.gpbShift = new ClientUI.CtGroupBox();
             this.btnSetVelo = new System.Windows.Forms.Button();
-            this.btnStartStop = new System.Windows.Forms.Button();
             this.lbVelocity = new System.Windows.Forms.Label();
             this.txtVelocity = new System.Windows.Forms.TextBox();
             this.btnServoOnOff = new System.Windows.Forms.Button();
-            this.btnUp = new System.Windows.Forms.Button();
-            this.btnRight = new System.Windows.Forms.Button();
-            this.btnLeft = new System.Windows.Forms.Button();
-            this.btnDown = new System.Windows.Forms.Button();
-            this.btnMotionController = new System.Windows.Forms.Button();
             this.grbMap.SuspendLayout();
             this.grbInfo.SuspendLayout();
             this.grbMode.SuspendLayout();
             this.gpbShift.SuspendLayout();
             this.SuspendLayout();
+            // 
+            // btnMotionController
+            // 
+            this.btnMotionController.Font = new System.Drawing.Font("微軟正黑體", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.btnMotionController.Location = new System.Drawing.Point(106, 74);
+            this.btnMotionController.Margin = new System.Windows.Forms.Padding(4);
+            this.btnMotionController.Name = "btnMotionController";
+            this.btnMotionController.Size = new System.Drawing.Size(123, 85);
+            this.btnMotionController.TabIndex = 65;
+            this.btnMotionController.Text = "Motion Controller";
+            this.btnMotionController.UseVisualStyleBackColor = true;
+            this.btnMotionController.Click += new System.EventHandler(this.btnMotionController_Click);
             // 
             // lbHostIP
             // 
@@ -99,7 +106,6 @@
             // 
             // btnPosConfirm
             // 
-            this.btnPosConfirm.Enabled = false;
             this.btnPosConfirm.Font = new System.Drawing.Font("微軟正黑體", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.btnPosConfirm.Location = new System.Drawing.Point(586, 21);
             this.btnPosConfirm.Margin = new System.Windows.Forms.Padding(4);
@@ -124,9 +130,8 @@
             // 
             // btnSimplyOri
             // 
-            this.btnSimplyOri.Enabled = false;
             this.btnSimplyOri.Font = new System.Drawing.Font("微軟正黑體", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.btnSimplyOri.Location = new System.Drawing.Point(242, 351);
+            this.btnSimplyOri.Location = new System.Drawing.Point(242, 273);
             this.btnSimplyOri.Margin = new System.Windows.Forms.Padding(4);
             this.btnSimplyOri.Name = "btnSimplyOri";
             this.btnSimplyOri.Size = new System.Drawing.Size(90, 85);
@@ -152,9 +157,8 @@
             // 
             // btnGetOri
             // 
-            this.btnGetOri.Enabled = false;
             this.btnGetOri.Font = new System.Drawing.Font("微軟正黑體", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.btnGetOri.Location = new System.Drawing.Point(32, 444);
+            this.btnGetOri.Location = new System.Drawing.Point(128, 273);
             this.btnGetOri.Margin = new System.Windows.Forms.Padding(4);
             this.btnGetOri.Name = "btnGetOri";
             this.btnGetOri.Size = new System.Drawing.Size(90, 85);
@@ -166,7 +170,7 @@
             // btnLoadOri
             // 
             this.btnLoadOri.Font = new System.Drawing.Font("微軟正黑體", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.btnLoadOri.Location = new System.Drawing.Point(32, 351);
+            this.btnLoadOri.Location = new System.Drawing.Point(32, 273);
             this.btnLoadOri.Margin = new System.Windows.Forms.Padding(4);
             this.btnLoadOri.Name = "btnLoadOri";
             this.btnLoadOri.Size = new System.Drawing.Size(90, 85);
@@ -203,7 +207,6 @@
             // 
             // btnGetMap
             // 
-            this.btnGetMap.Enabled = false;
             this.btnGetMap.Font = new System.Drawing.Font("微軟正黑體", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.btnGetMap.Location = new System.Drawing.Point(115, 34);
             this.btnGetMap.Margin = new System.Windows.Forms.Padding(4);
@@ -228,7 +231,6 @@
             // 
             // btnSendMap
             // 
-            this.btnSendMap.Enabled = false;
             this.btnSendMap.Font = new System.Drawing.Font("微軟正黑體", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.btnSendMap.Location = new System.Drawing.Point(213, 34);
             this.btnSendMap.Margin = new System.Windows.Forms.Padding(4);
@@ -254,7 +256,6 @@
             // 
             // btnGetLaser
             // 
-            this.btnGetLaser.Enabled = false;
             this.btnGetLaser.Font = new System.Drawing.Font("微軟正黑體", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.btnGetLaser.Location = new System.Drawing.Point(17, 36);
             this.btnGetLaser.Margin = new System.Windows.Forms.Padding(4);
@@ -267,7 +268,6 @@
             // 
             // btnGetCarStatus
             // 
-            this.btnGetCarStatus.Enabled = false;
             this.btnGetCarStatus.Font = new System.Drawing.Font("微軟正黑體", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.btnGetCarStatus.Location = new System.Drawing.Point(115, 36);
             this.btnGetCarStatus.Margin = new System.Windows.Forms.Padding(4);
@@ -288,9 +288,9 @@
             this.grbMode.Controls.Add(this.rdbWork);
             this.grbMode.Controls.Add(this.rdbIdle);
             this.grbMode.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.grbMode.Location = new System.Drawing.Point(32, 546);
+            this.grbMode.Location = new System.Drawing.Point(32, 484);
             this.grbMode.Name = "grbMode";
-            this.grbMode.Size = new System.Drawing.Size(316, 212);
+            this.grbMode.Size = new System.Drawing.Size(316, 274);
             this.grbMode.TabIndex = 60;
             this.grbMode.TabStop = false;
             this.grbMode.Text = "Car Mode";
@@ -373,28 +373,23 @@
             // gpbShift
             // 
             this.gpbShift.BorderColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.gpbShift.Controls.Add(this.btnMotionController);
             this.gpbShift.Controls.Add(this.btnSetVelo);
-            this.gpbShift.Controls.Add(this.btnStartStop);
             this.gpbShift.Controls.Add(this.lbVelocity);
             this.gpbShift.Controls.Add(this.txtVelocity);
             this.gpbShift.Controls.Add(this.btnServoOnOff);
-            this.gpbShift.Controls.Add(this.btnUp);
-            this.gpbShift.Controls.Add(this.btnRight);
-            this.gpbShift.Controls.Add(this.btnLeft);
-            this.gpbShift.Controls.Add(this.btnDown);
             this.gpbShift.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.gpbShift.Location = new System.Drawing.Point(13, 93);
             this.gpbShift.Margin = new System.Windows.Forms.Padding(4);
             this.gpbShift.Name = "gpbShift";
             this.gpbShift.Padding = new System.Windows.Forms.Padding(4);
-            this.gpbShift.Size = new System.Drawing.Size(350, 250);
+            this.gpbShift.Size = new System.Drawing.Size(350, 172);
             this.gpbShift.TabIndex = 37;
             this.gpbShift.TabStop = false;
             this.gpbShift.Text = "Velocity";
             // 
             // btnSetVelo
             // 
-            this.btnSetVelo.Enabled = false;
             this.btnSetVelo.Location = new System.Drawing.Point(267, 35);
             this.btnSetVelo.Margin = new System.Windows.Forms.Padding(4);
             this.btnSetVelo.Name = "btnSetVelo";
@@ -403,20 +398,6 @@
             this.btnSetVelo.Text = "Set";
             this.btnSetVelo.UseVisualStyleBackColor = true;
             this.btnSetVelo.Click += new System.EventHandler(this.btnSetVelo_Click);
-            // 
-            // btnStartStop
-            // 
-            this.btnStartStop.BackColor = System.Drawing.SystemColors.Control;
-            this.btnStartStop.Enabled = false;
-            this.btnStartStop.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnStartStop.Image = ((System.Drawing.Image)(resources.GetObject("btnStartStop.Image")));
-            this.btnStartStop.Location = new System.Drawing.Point(254, 93);
-            this.btnStartStop.Margin = new System.Windows.Forms.Padding(4);
-            this.btnStartStop.Name = "btnStartStop";
-            this.btnStartStop.Size = new System.Drawing.Size(67, 62);
-            this.btnStartStop.TabIndex = 10;
-            this.btnStartStop.Tag = "Stop";
-            this.btnStartStop.UseVisualStyleBackColor = false;
             // 
             // lbVelocity
             // 
@@ -432,7 +413,6 @@
             // 
             // txtVelocity
             // 
-            this.txtVelocity.Enabled = false;
             this.txtVelocity.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtVelocity.Location = new System.Drawing.Point(192, 36);
             this.txtVelocity.Margin = new System.Windows.Forms.Padding(4);
@@ -445,10 +425,9 @@
             // btnServoOnOff
             // 
             this.btnServoOnOff.BackColor = System.Drawing.Color.Red;
-            this.btnServoOnOff.Enabled = false;
             this.btnServoOnOff.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnServoOnOff.ForeColor = System.Drawing.Color.White;
-            this.btnServoOnOff.Location = new System.Drawing.Point(32, 93);
+            this.btnServoOnOff.Location = new System.Drawing.Point(19, 80);
             this.btnServoOnOff.Margin = new System.Windows.Forms.Padding(4);
             this.btnServoOnOff.Name = "btnServoOnOff";
             this.btnServoOnOff.Size = new System.Drawing.Size(67, 62);
@@ -457,85 +436,11 @@
             this.btnServoOnOff.UseVisualStyleBackColor = false;
             this.btnServoOnOff.Click += new System.EventHandler(this.btnServoOnOff_Click);
             // 
-            // btnUp
-            // 
-            this.btnUp.Enabled = false;
-            this.btnUp.Font = new System.Drawing.Font("新細明體", 20F);
-            this.btnUp.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.btnUp.Image = ((System.Drawing.Image)(resources.GetObject("btnUp.Image")));
-            this.btnUp.Location = new System.Drawing.Point(143, 93);
-            this.btnUp.Margin = new System.Windows.Forms.Padding(4);
-            this.btnUp.Name = "btnUp";
-            this.btnUp.Size = new System.Drawing.Size(67, 62);
-            this.btnUp.TabIndex = 1;
-            this.btnUp.Tag = "38";
-            this.btnUp.UseVisualStyleBackColor = true;
-            this.btnUp.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Motion_MouseDown);
-            this.btnUp.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Motion_MouseUp);
-            // 
-            // btnRight
-            // 
-            this.btnRight.Enabled = false;
-            this.btnRight.Font = new System.Drawing.Font("新細明體", 20F);
-            this.btnRight.Image = ((System.Drawing.Image)(resources.GetObject("btnRight.Image")));
-            this.btnRight.Location = new System.Drawing.Point(254, 172);
-            this.btnRight.Margin = new System.Windows.Forms.Padding(4);
-            this.btnRight.Name = "btnRight";
-            this.btnRight.Size = new System.Drawing.Size(67, 62);
-            this.btnRight.TabIndex = 1;
-            this.btnRight.Tag = "39";
-            this.btnRight.UseVisualStyleBackColor = true;
-            this.btnRight.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Motion_MouseDown);
-            this.btnRight.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Motion_MouseUp);
-            // 
-            // btnLeft
-            // 
-            this.btnLeft.Enabled = false;
-            this.btnLeft.Font = new System.Drawing.Font("新細明體", 20F);
-            this.btnLeft.Image = ((System.Drawing.Image)(resources.GetObject("btnLeft.Image")));
-            this.btnLeft.Location = new System.Drawing.Point(32, 172);
-            this.btnLeft.Margin = new System.Windows.Forms.Padding(4);
-            this.btnLeft.Name = "btnLeft";
-            this.btnLeft.Size = new System.Drawing.Size(67, 62);
-            this.btnLeft.TabIndex = 1;
-            this.btnLeft.Tag = "37";
-            this.btnLeft.UseVisualStyleBackColor = true;
-            this.btnLeft.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Motion_MouseDown);
-            this.btnLeft.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Motion_MouseUp);
-            // 
-            // btnDown
-            // 
-            this.btnDown.Enabled = false;
-            this.btnDown.Font = new System.Drawing.Font("新細明體", 20F);
-            this.btnDown.Image = ((System.Drawing.Image)(resources.GetObject("btnDown.Image")));
-            this.btnDown.Location = new System.Drawing.Point(143, 172);
-            this.btnDown.Margin = new System.Windows.Forms.Padding(4);
-            this.btnDown.Name = "btnDown";
-            this.btnDown.Size = new System.Drawing.Size(67, 62);
-            this.btnDown.TabIndex = 1;
-            this.btnDown.Tag = "40";
-            this.btnDown.UseVisualStyleBackColor = true;
-            this.btnDown.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Motion_MouseDown);
-            this.btnDown.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Motion_MouseUp);
-            // 
-            // btnMotionController
-            // 
-            this.btnMotionController.Enabled = false;
-            this.btnMotionController.Font = new System.Drawing.Font("微軟正黑體", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.btnMotionController.Location = new System.Drawing.Point(370, 388);
-            this.btnMotionController.Margin = new System.Windows.Forms.Padding(4);
-            this.btnMotionController.Name = "btnMotionController";
-            this.btnMotionController.Size = new System.Drawing.Size(123, 85);
-            this.btnMotionController.TabIndex = 65;
-            this.btnMotionController.Text = "Motion Controller";
-            this.btnMotionController.UseVisualStyleBackColor = true;
-            // 
             // CtTesting
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(708, 767);
-            this.Controls.Add(this.btnMotionController);
             this.Controls.Add(this.lbHostIP);
             this.Controls.Add(this.cboHostIP);
             this.Controls.Add(this.grbMap);
@@ -575,14 +480,9 @@
         private System.Windows.Forms.Button btnLoadOri;
         private System.Windows.Forms.Button btnClrMap;
         private System.Windows.Forms.Button btnSetVelo;
-        private System.Windows.Forms.Button btnStartStop;
         private System.Windows.Forms.Label lbVelocity;
         private System.Windows.Forms.TextBox txtVelocity;
         private System.Windows.Forms.Button btnServoOnOff;
-        private System.Windows.Forms.Button btnUp;
-        private System.Windows.Forms.Button btnRight;
-        private System.Windows.Forms.Button btnLeft;
-        private System.Windows.Forms.Button btnDown;
         private System.Windows.Forms.Button btnConnect;
         private System.Windows.Forms.Button btnSimplyOri;
         private System.Windows.Forms.Button btnSetCar;

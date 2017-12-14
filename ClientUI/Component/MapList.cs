@@ -17,6 +17,8 @@ namespace ClientUI
         public MapList(string MapList)
         {
             InitializeComponent();
+            TopLevel = true;
+            TopMost = true;
             btnOK.DialogResult = DialogResult.OK;
             btnCancel.DialogResult = DialogResult.Cancel;
             string[] strRemoveEndPoint = MapList.Split(',');

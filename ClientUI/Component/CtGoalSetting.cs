@@ -8,6 +8,7 @@ using MapProcessing;
 using CtLib.Library;
 using GLCore;
 using Geometry;
+using CtLib.Forms;
 
 namespace ClientUI
 {
@@ -120,12 +121,28 @@ namespace ClientUI
         /// <summary>
         /// 當下車子的位置
         /// </summary>
-        public CartesianPos CurrentCar { get { return mCurrentCar; } set { if (value != null) mCurrentCar = value; } }
+        public CartesianPos CurrentCar {
+            get {
+                lock(mKey){
+                    return mCurrentCar;
+                }
+            } set {
+                lock (mKey) {
+                    if (value != null) mCurrentCar = value;
+                }
+            }
+        }
         
         /// <summary>
         /// 目標點個數
         /// </summary>
-        public int GoalCount { get { lock (mKey) return dgvGoalPoint.Rows.Count; } }
+        public int GoalCount {
+            get {
+                lock (mKey) {
+                    return dgvGoalPoint.Rows.Count;
+                }
+            }
+        }
 
         /// <summary>
         /// 加入 Goal 點
@@ -405,12 +422,15 @@ namespace ClientUI
         /// </summary>
         /// <param name="enb"></param>
         public void EnableGo(bool enb = true) {
-            CtInvoke.ControlEnabled(btnPath, enb);
-            CtInvoke.ControlEnabled(btnRunAll, enb);
-            CtInvoke.ControlEnabled(btnRun, enb);
-            CtInvoke.ControlEnabled(btnCharging, enb);
+            //CtInvoke.ControlEnabled(btnPath, enb);
+            //CtInvoke.ControlEnabled(btnRunAll, enb);
+            //CtInvoke.ControlEnabled(btnRun, enb);
+            //CtInvoke.ControlEnabled(btnCharging, enb);
         }
 
+        /// <summary>
+        /// 刷新Goal與Power點資訊
+        /// </summary>
         public void RefreshSingle() {
             lock (mKey) {
                 Dictionary<uint, int> uidMapping = new Dictionary<uint, int>();
@@ -440,40 +460,48 @@ namespace ClientUI
 
         private void btnGetGoalList_Click(object sender, EventArgs e)
         {
-            GetGoalNames.Invoke();
+            lock (mKey) {
+                GetGoalNames.Invoke();
+            }
         }
         
         private void btnCurrPos_Click(object sender, EventArgs e)
         {
-            uint id = Database.ID.GenerateID();
-            CartesianPosInfo goal = new CartesianPosInfo(CurrentCar.x, CurrentCar.y, CurrentCar.theta, "Goal" + id, id);
-            AddNewGoalEvent?.Invoke();
+            lock (mKey) {
+                uint id = Database.ID.GenerateID();
+                CartesianPosInfo goal = new CartesianPosInfo(CurrentCar.x, CurrentCar.y, CurrentCar.theta, "Goal" + id, id);
+                AddNewGoalEvent?.Invoke();
+            }
         }
 
         private void btnGetMap_Click(object sender, EventArgs e)
         {
-            LoadMapFromAGVEvent?.Invoke();
+            lock (mKey) {
+                LoadMapFromAGVEvent?.BeginInvoke(null,null);
+            }
         }
 
         private void btnLoadMap_Click(object sender, EventArgs e)
         {
-            LoadMapEvent?.Invoke();
+            lock (mKey) {
+                LoadMapEvent?.Invoke();
+            }
         }
         
         private void btnPath_Click(object sender, EventArgs e)
         {
-            CartesianPosInfo goal = GetGoalByIndex(cmbGoalList.SelectedIndex);
-            if (goal != null) {
-                int index = Database.GoalGM.IndexOf(goal.id);
-                if (index >= 0) {
-                    FindPathEvent?.Invoke(goal, index);
-                }
+            lock (mKey) {
+                CartesianPosInfo goal = GetGoalByIndex(cmbGoalList.SelectedIndex);
+                int index = goal != null ? Database.GoalGM.IndexOf(goal.id) : -1;
+                FindPathEvent?.BeginInvoke(goal, index,null,null);
             }
         }
 
         private void btnSendMap_Click(object sender, EventArgs e)
         {
-            SendMapToAGVEvent?.Invoke();
+            lock (mKey) {
+                SendMapToAGVEvent?.Invoke();
+            }
         }
 
         private void btnGoGoal_Click(object sender, EventArgs e)
@@ -481,57 +509,53 @@ namespace ClientUI
             lock (mKey)
             {
                 CartesianPosInfo goal = GetGoalByIndex(cmbGoalList.SelectedIndex);
-                if (goal != null) {
-                    int index = Database.GoalGM.IndexOf(goal.id);
-                    if (index >= 0) {
-                        RunGoalEvent?.Invoke(goal, index);
-                    }
-                }
+                int index = goal != null ?  Database.GoalGM.IndexOf(goal.id) : -1;
+                RunGoalEvent?.BeginInvoke(goal, index,null,null);
             }
         }
 
         private void btnRunAll_Click(object sender, EventArgs e)
         {
-            List<CartesianPosInfo> goal = new List<CartesianPosInfo>();
             lock (mKey)
             {
-                goal = GetGoals();
-            }
-            if (goal.Count != 0) RunLoopEvent?.Invoke(goal);
+                RunLoopEvent?.BeginInvoke(GetGoals(),null,null);
+            } 
         }
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
-            List<CartesianPosInfo> goal = new List<CartesianPosInfo>();
             lock (mKey)
             {
-                goal = GetSelectedGoals();
+                DeleteGoalsEvent?.Invoke(GetSelectedGoals());
             }
-            if (goal.Count != 0) DeleteGoalsEvent?.Invoke(goal);
         }
 
         private void btnDeleteAll_Click(object sender, EventArgs e)
         {
-            ClearGoalsEvent?.Invoke();
+            lock (mKey) {
+                ClearGoalsEvent?.Invoke();
+            }
         }
 
         private void btnSaveGoal_Click(object sender, EventArgs e)
         {
-            SaveGoalEvent?.Invoke();
+            lock (mKey) {
+                SaveGoalEvent?.Invoke();
+            }
         }
 
         private void btnCharging_Click(object sender, EventArgs e) {
-            CartesianPosInfo power = GetGoalByIndex(cmbGoalList.SelectedIndex);
-            if (power != null) {
-                int index = Database.PowerGM.IndexOf(power.id);
-                if (index >= 0) {
-                    Charging?.Invoke(power, index);
-                }
+            lock (mKey) {
+                CartesianPosInfo power = GetGoalByIndex(cmbGoalList.SelectedIndex);
+                int index = power != null ? Database.PowerGM.IndexOf(power.id) : -1;
+                Charging?.BeginInvoke(power, index,null,null);
             }
         }
 
         private void btnClear_Click(object sender, EventArgs e) {
-            ClearMap?.Invoke();
+            lock (mKey) {
+                ClearMap?.Invoke();
+            }
         }
 
         #endregion Button
@@ -571,9 +595,7 @@ namespace ClientUI
             }
         }
 
-        #endregion Function - Private Methods
-
-        private void UpdataSingle(uint uid,ISingle<ITowardPair> single,Dictionary<uint,int> mapping) {
+        private void UpdataSingle(uint uid, ISingle<ITowardPair> single, Dictionary<uint, int> mapping) {
             double x = single.Data.Position.X;
             double y = single.Data.Position.Y;
             double theta = single.Data.Toward.Theta;
@@ -585,7 +607,7 @@ namespace ClientUI
                         if ((uint)row.Cells[IDColumn].Value != uid) row.Cells[IDColumn].Value = uid;
                         if ((string)row.Cells[NameColumn].Value != single.Name) row.Cells[NameColumn].Value = single.Name;
                         if ((double)row.Cells[XColumn].Value != x) row.Cells[XColumn].Value = x;
-                        if ((double)row.Cells[YColumn].Value != y)  row.Cells[YColumn].Value = y;
+                        if ((double)row.Cells[YColumn].Value != y) row.Cells[YColumn].Value = y;
                         if ((string)row.Cells[TowardColumn].Value != theta.ToString("F2")) row.Cells[TowardColumn].Value = theta.ToString("F2");
                     });
             } else {
@@ -596,6 +618,9 @@ namespace ClientUI
                 });
             }
         }
+
+        #endregion Function - Private Methods
+
     }
 
     /// <summary>

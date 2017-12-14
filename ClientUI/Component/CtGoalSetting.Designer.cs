@@ -74,7 +74,6 @@
             // 
             // btnGetMap
             // 
-            this.btnGetMap.Enabled = false;
             this.btnGetMap.Font = new System.Drawing.Font("微軟正黑體", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.btnGetMap.Location = new System.Drawing.Point(115, 34);
             this.btnGetMap.Margin = new System.Windows.Forms.Padding(4);
@@ -111,7 +110,6 @@
             // 
             // btnPath
             // 
-            this.btnPath.Enabled = false;
             this.btnPath.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.btnPath.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnPath.Location = new System.Drawing.Point(565, 222);
@@ -147,7 +145,6 @@
             // 
             // btnRunAll
             // 
-            this.btnRunAll.Enabled = false;
             this.btnRunAll.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.btnRunAll.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnRunAll.Location = new System.Drawing.Point(565, 362);
@@ -161,7 +158,6 @@
             // 
             // btnRun
             // 
-            this.btnRun.Enabled = false;
             this.btnRun.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.btnRun.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnRun.Location = new System.Drawing.Point(565, 292);
@@ -367,7 +363,6 @@
             // 
             // btnCharging
             // 
-            this.btnCharging.Enabled = false;
             this.btnCharging.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.btnCharging.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnCharging.Location = new System.Drawing.Point(397, 712);

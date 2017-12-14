@@ -61,7 +61,7 @@ namespace ServerOperation
                     System.Console.WriteLine("[Socket DisConnect ]" + se.ToString());
                 }
             }
-            return sServer.Connected;
+            return sServer?.Connected ?? false;
         }
 
         public bool ServoOn(ref Socket sClient,int connectPort)

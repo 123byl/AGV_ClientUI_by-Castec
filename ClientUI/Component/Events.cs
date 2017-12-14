@@ -1,5 +1,6 @@
 ﻿using MapProcessing;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using static ClientUI.Events.ConsoleEvents;
 using static ClientUI.Events.GoalSettingEvents;
 using static ClientUI.Events.TestingEvents;
@@ -235,6 +236,10 @@ namespace ClientUI
 
         event DelCarPosConfirm CarPosConfirm;
 
+        event DelStartScan StartScan;
+
+        event DelShowMotionController ShowMotionController;
+
         void ChangedMotorStt(bool servoOn);
 
         void SetLaserStt(bool isGettingLaser);
@@ -242,6 +247,18 @@ namespace ClientUI
         void SetServerStt(bool isConnect);
 
         void UnLockOriOperator(bool v);
+        
+        /// <summary>
+        /// 設定目標agv IP
+        /// </summary>
+        /// <param name="host">設定IP</param>
+        void SetHostIP(string host);
+
+        /// <summary>
+        /// 依照掃圖狀態變更UI介面
+        /// </summary>
+        /// <param name="isScanning"></param>
+        void ChangedScanStt(bool isScanning);
 
     }
 
@@ -374,6 +391,8 @@ namespace ClientUI
 
             public delegate void DelSetCarMode(CarMode mode);
 
+            public delegate void DelStartScan(bool scan);
+
             public delegate void DelSetVelocity(int velocity);
 
             public delegate void DelSimplifyOri();
@@ -383,6 +402,26 @@ namespace ClientUI
             public delegate void DelSettingCarPos();
 
             public delegate void DelCarPosConfirm();
+
+            public delegate void DelShowMotionController();
+
+        }
+
+        public static class FlagGuard {
+
+            public delegate void DelSetFlag(bool isAllow);
+            
+            public delegate bool DelUserContinue(string description);
+
+            public delegate void DelShowInfo();
+
+            public delegate bool DelSwitchFlag();
+
+            public delegate bool DelUserSwitch(string description);
+
+            public delegate bool DelIsAllow();
+
+            public delegate void DelExecutingInfo();
         }
     }
 

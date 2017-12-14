@@ -93,9 +93,11 @@ namespace ClientUI
         ///         \ 優化Database與GoalSetting之間的聯動性
         ///         \ 於底層路徑相關操作加入相似度門檻值鎖定
         ///     0.0.12 加入AGV移動控制器        
+        ///     0.0.13  Jay [2017/12/14]
+        ///         \ 將所有按鈕解鎖，當無法處於執行按鈕功能狀態，以對話視窗引導使用者進行狀態修正
         /// 
         /// </remarks>
-        public CtVersion Version { get { return new CtVersion(0, 0, 12, "2017/12/08", "Jay Chang"); } }
+        public CtVersion Version { get { return new CtVersion(0, 0, 12, "2017/12/14", "Jay Chang"); } }
 
         #endregion Version - Information
         
@@ -169,7 +171,7 @@ namespace ClientUI
         /// <summary>
         /// Server端IP
         /// </summary>
-        private static string mHostIP = "127.0.0.1";
+        private static string mHostIP = "192.168.50.152";
 
         /// <summary>
         /// 發送圖片的埠
@@ -240,7 +242,15 @@ namespace ClientUI
         /// Car Position 設定位置
         /// </summary>
         private IPair mNewPos = null;
+
+        private IntPtr mHandle = IntPtr.Zero;
         
+        private ConnectFlow mConnectFlow = null;
+
+        private SimilarityFlow mSimilarityFlow = null;
+
+        private ServoOnFlow mServoOnFlow = null;
+
         #endregion Declaration - Fields
 
         #region Declaration - Members
@@ -337,8 +347,23 @@ namespace ClientUI
                 return mIsConnected;
             }
             set {
-                mIsConnected = value;
+                if (mIsConnected != value) {
+                    mIsConnected = value;
+                    ITest.SetServerStt(value);
+                    IConsole.AddMsg($"{mHostIP} Is {(mIsConnected ? "Connected" : "Disconnected")}");
+                }
                 //RaiseGoalSettingEvent(GoalSettingEventType.Connect, value);
+            }
+        }
+
+        public bool IsMotorServoOn {
+            get {
+                return mIsMotorServoOn;
+            }set {
+                if (mIsMotorServoOn != value) {
+                    mIsMotorServoOn = value;
+                    ITest.ChangedMotorStt(value);
+                }
             }
         }
 
@@ -485,17 +510,23 @@ namespace ClientUI
 
             /*-- 車子資訊接收 --*/
             mSoxMonitorCmd = new SocketMonitor(mCmdPort, tsk_RecvCmd).Listen();
-
+            /*-- 檔案接收 --*/
             mSoxMonitorFile = new SocketMonitor(mFilePort, tsk_RecvFiles).Listen();
-
+            /*-- 路徑接收 --*/
             mSoxMonitorPath = new SocketMonitor(mRecvPathPort, tsk_RecvPath).Listen();
             
+            /*-- 載入AVG物件 --*/
             if (!Database.AGVGM.ContainsID(mAGVID)) {
                 Database.AGVGM.Add(mAGVID, FactoryMode.Factory.AGV(0, 0, 0, "AGV"));
             }
+
+            /*-- 開啟全域鍵盤鉤子 --*/
             mKeyboardHook.KeyDownEvent += mKeyboardHook_KeyDownEvent;
             mKeyboardHook.KeyUpEvent += mKeyboardHook_KeyUpEvent;
             mKeyboardHook.Start();
+
+            mHandle = this.Handle;
+            
         }
 
         #endregion Function - Constructors
@@ -555,8 +586,22 @@ namespace ClientUI
 
             /*-- 檢查遠端設備IP --*/
             tslbHostIP.Text = HostIP;
+            ITest.SetHostIP(HostIP);
 
+            mConnectFlow = new ConnectFlow(this.Handle, GetIsConnect, CheckServer, ExecutingInfo);
+            mSimilarityFlow = new SimilarityFlow(this.Handle, GetSimilarity, CheckSimilarity, ExecutingInfo);
+            mServoOnFlow = new ServoOnFlow(this.Handle, GetIsServoOn, CheckServoOn, ExecutingInfo);
         }
+
+        private bool CheckServoOn() {
+            ITest_MotorServoOn(true);
+            return IsMotorServoOn;
+        }
+
+        private bool GetIsServoOn() {
+            return mIsMotorServoOn;
+        }
+
 
         /// <summary>
         /// 表單關閉中事件
@@ -699,19 +744,7 @@ namespace ClientUI
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void miMotionController_Click(object sender, EventArgs e) {
-            if (mMotionController == null) {
-                mMotionController = new CtMotionController();
-                mMotionController.MotionDown += ITest_Motion_Down;
-                mMotionController.MotionUp += ITest_Motion_Up;
-                miMotionController.Checked = true;
-                mMotionController.FormClosing += (fSender, fE) => {
-                    mMotionController.MotionDown -= ITest_Motion_Down;
-                    mMotionController.MotionUp -= ITest_Motion_Up;
-                    mMotionController = null;
-                    miMotionController.Checked = false;
-                };
-                mMotionController.Show();
-            }
+            ShowMotionController();
         }
         
         #endregion MenuItem
@@ -767,7 +800,7 @@ namespace ClientUI
         /// <param name="context">提示內容</param>
         /// <param name="icon">提示Icon</param>
         /// <param name="tmo">顯示時間</param>
-        public void SetBalloonTip(string title, string context, ToolTipIcon icon, int tmo)
+        public void SetBalloonTip(string title, string context, ToolTipIcon icon = ToolTipIcon.Info, int tmo=5)
         {
             mNotifyIcon.ShowBalloonTip(title, context, tmo, icon);
         }
@@ -776,22 +809,35 @@ namespace ClientUI
 
         #region ITest
 
-        private void ITest_CarPosConfirm() {
-            if (mBypassSocket) {
-                /*-- 空跑模擬CarPosConfirm --*/
-                SpinWait.SpinUntil(() => false, 1000);
-                mSimilarity = 100;
-            }else {
-                string[] rtnMsg = SendMsg("Set:ConfirmPos");
-                mSimilarity = double.Parse(rtnMsg[2]);
-            }
-            IConsole.AddMsg("[Confirm] - Similarity:{0}%",mSimilarity);
-
-            EnableGo(mSimilarity > mThrSimilarity);
+        private void ITest_StartScan(bool scan) {
+            string description = (scan ? "Start" : "Stop") + " scan";
+            mConnectFlow.CheckFlag(description, () => {
+                CarMode mode = scan ? CarMode.Map : CarMode.Idle;
+                if (mCarMode != mode) {
+                    if (scan) {
+                        string oriName = string.Empty;
+                        if (Stat.SUCCESS == CtInput.Text(out oriName, "MAP Name", "Set Map File Name")) {
+                            SendMsg($"Set:OriName:{oriName}.Ori");
+                            ITest.ChangedScanStt(true);
+                        } else {
+                            return;
+                        }
+                    }
+                    IConsole.AddMsg(description);
+                    mCarMode = mode;
+                    ChangedMode(mode);
+                }
+            }); 
         }
 
+        private void ITest_CarPosConfirm() {
+            CheckSimilarity();
+        }
+        
         private void ITest_SettingCarPos() {
-            mIsSetting = true;
+            mConnectFlow.CheckFlag("Set Car",() => {
+                mIsSetting = true;
+            });
         }
 
         private void ITest_ClearMap() {
@@ -800,10 +846,13 @@ namespace ClientUI
         }
 
         private void ITest_MotorServoOn(bool servoOn) {
-            mIsMotorServoOn = servoOn;
-            SendMsg($"Set:Servo{(servoOn ? "On" : "Off")}");
-            ITest.ChangedMotorStt(servoOn);
-            IConsole.AddMsg($"Motor Servo {(servoOn ? "ON" : "OFF")}");
+            mConnectFlow.CheckFlag($"Servo {(servoOn ? "On" : "Off")}",() => {
+                string[] rtnMsg = SendMsg($"Set:Servo{(servoOn ? "On" : "Off")}");
+                if (rtnMsg.Count() > 2 && bool.Parse(rtnMsg[2])) {
+                    IsMotorServoOn = servoOn;
+                    IConsole.AddMsg($"Motor Servo {(servoOn ? "ON" : "OFF")}");
+                }
+            });
         }
 
         private void ITest_SimplifyOri() {
@@ -857,13 +906,11 @@ namespace ClientUI
                     if (cnn) {
                         if (VerifyIP(hostIP)) {
                             if (mHostIP != hostIP) mHostIP = hostIP;
-                            IsConnected = await Task<bool>.Run(() => CheckIsServerAlive());
+                            await Task.Run(() => IsConnected = CheckIsServerAlive());
                         }
                     } else {
                         IsConnected = DisConnectServer();
                     }
-                    ITest.SetServerStt(IsConnected);
-                    IConsole.AddMsg($"{hostIP} Is {(cnn ? "Connected" : "Disconnected")}");
                 } finally {
                     prog?.Close();
                     prog = null;
@@ -872,42 +919,85 @@ namespace ClientUI
         }
 
         private void ITest_SetVelocity(int velocity) {
-            mVelocity = velocity;
-            IConsole.AddMsg($"Set Velocity {velocity}");
-            SendMsg($"Set: WorkVelo:{velocity}:{velocity}");
+            mConnectFlow.CheckFlag("Set Velocity", () => {
+                mVelocity = velocity;
+                IConsole.AddMsg($"Set Velocity {velocity}");
+                SendMsg($"Set: WorkVelo:{velocity}:{velocity}");
+            });
         }
         
         private void ITest_SetCarMode(CarMode mode) {
-            if (mode == CarMode.Map) {
-                string oriName = string.Empty;
-                if (Stat.SUCCESS == CtInput.Text(out oriName, "MAP Name", "Set Map File Name")) {
-                    SendMsg($"Set:OriName:{oriName}.Ori");
-                } else {
-                    return;
-                }
-            }
-            if (mode != CarMode.OffLine) {
-                SendMsg($"Set:Mode:{mode}");
-                IConsole.AddMsg($"Set:Mode {mode}");
-            }
+            //if (mode == CarMode.Map) {
+            //    string oriName = string.Empty;
+            //    if (Stat.SUCCESS == CtInput.Text(out oriName, "MAP Name", "Set Map File Name")) {
+            //        SendMsg($"Set:OriName:{oriName}.Ori");
+            //        ITest.ChangedScanStt(true);
+            //    } else {
+            //        return;
+            //    }
+            //}
+            //if (mode != CarMode.OffLine) {
+            //    SendMsg($"Set:Mode:{mode}");
+            //    IConsole.AddMsg($"Set:Mode {mode}");
+            //}
+            IConsole.AddMsg($"Set:Mode {mode}");
             if (mode != mCarMode) {
                 mode = mCarMode;
                 ChangedMode(mCarMode);
+                switch (mode) {
+                    case CarMode.OffLine:
+                        break;
+                    case CarMode.Map:
+                        string oriName = string.Empty;
+                        if (Stat.SUCCESS == CtInput.Text(out oriName, "MAP Name", "Set Map File Name")) {
+                            SendMsg($"Set:OriName:{oriName}.Ori");
+                            ITest.ChangedScanStt(true);
+                        } else {
+                            return;
+                        }
+                        break;
+                    default:
+                        SendMsg($"Set:Mode:{mode}");
+                        break;
+                }
             }
         }
 
         private void ITest_SendMap() {
-            SendFile();
+            OpenFileDialog openMap = new OpenFileDialog();
+            openMap.InitialDirectory = mDefMapDir;
+            openMap.Filter = "MAP|*.ori;*.map";
+            if (openMap.ShowDialog() == DialogResult.OK) {
+                Task.Run(() => mConnectFlow.CheckFlag("Send Map", () => {
+                    string[] rtnMsg = SendMsg("Set:Map");
+                    bool ack = false;
+                    if (rtnMsg.Count() <2 || !bool.TryParse(rtnMsg[2],out ack)) {
+                        CtMsgBox.Show("Error", "Server responded incorrectly",MsgBoxBtn.OK,MsgBoxStyle.Error);
+                    }else if (!ack) {
+                        CtMsgBox.Show("Error", "Server refuses the request", MsgBoxBtn.OK, MsgBoxStyle.Error);
+                    }else {
+                        SendFile(openMap.FileName);
+                    }
+                }));
+            }
+
+            //mConnectFlow.CheckFlag("Send Map", () => {
+            //    SendFile();
+            //});
         }
 
         private void ITest_GetCar() {
-            ChangeSendInfo();
-            IConsole.AddMsg($"{IsGettingLaser}");
+            mConnectFlow.CheckFlag("GetCar", () => {
+                ChangeSendInfo();
+                IConsole.AddMsg($"{IsGettingLaser}");
+            });
         }
 
         private void ITest_GetLaser() {
-            IConsole.AddMsg("Get Laser");
-            GetLaser();
+            mConnectFlow.CheckFlag("GetLaser", () => {
+                IConsole.AddMsg("Get Laser");
+                GetLaser();
+            });
         }
 
         private void ITest_GetMap() {
@@ -931,15 +1021,20 @@ namespace ClientUI
         }
 
         private void ITest_Motion_Up() {
-            IConsole.AddMsg($"[Stop]");
-            MotionContorl(MotionDirection.Stop);
-            if (CarMode != CarMode.Map) CarMode = CarMode.Idle;
+            mConnectFlow.CheckFlag("Motion Controller",() => {
+                IConsole.AddMsg($"[Stop]");
+                MotionContorl(MotionDirection.Stop);
+                if (CarMode != CarMode.Map) CarMode = CarMode.Idle;
+
+            },false);
         }
 
         private void ITest_Motion_Down(MotionDirection direction) {
-            IConsole.AddMsg($"[{direction}]");
-            MotionContorl(direction);
-            if (CarMode != CarMode.Map) CarMode = CarMode.Work;
+            mServoOnFlow.CheckFlag($"{direction}",()=> {
+                IConsole.AddMsg($"[{direction}]");
+                MotionContorl(direction);
+                if (CarMode != CarMode.Map) CarMode = CarMode.Work;                
+            },false);
         }
 
         #endregion
@@ -961,7 +1056,6 @@ namespace ClientUI
                         SetPosition(mNewPos.X, mNewPos.Y, Calt);
                         mNewPos = null;
                         mIsSetting = false;
-                        EnableGo(false);
                     }
                 }
             } else {
@@ -978,76 +1072,52 @@ namespace ClientUI
 
         #region IGoalSetting 事件連結   
 
-        private void IGoalSetting_Charging(CartesianPosInfo goal, int idxPower) {
-            IConsole.AddMsg($"Charging to idx{idxPower} {goal.ToString()}");
-            Charging(idxPower);
-        }
-
-        private async void IGoalSetting_SendMapToAGVEvent() {
-            OpenFileDialog openMap = new OpenFileDialog();
-            openMap.InitialDirectory = mDefMapDir;
-            openMap.Filter = "MAP|*.ori;*.map";
-            if (openMap.ShowDialog() == DialogResult.OK) {
-                IConsole.AddMsg("[Map Update...]");
-                CtProgress prog = new CtProgress("Send Map", "The file are being transferred");
-                try {
-                    string fileName = CtFile.GetFileName(openMap.FileName);
-                    string extension = Path.GetExtension(fileName).ToLower().Replace(".", "");
-                    string[] rtnMsg = SendMsg($"Send:{extension}");
-                    if (rtnMsg.Count() > 2 && "True" == rtnMsg[2]) {
-
-                        await Task.Run(() => {
-                            if (!mBypassSocket) {
-                                SendFile(mHostIP, mSendMapPort, fileName);
-                            } else {
-                                /*-- 空跑模擬檔案傳送中 --*/
-                                SpinWait.SpinUntil(() => false, 1000);
-                            }
-                            //RaiseAgvClientEvent(AgvClientEventType.SendFile, fileName);
-                            IConsole.AddMsg("[Map Finished Update]");
-                        });
-                    }
-                } finally {
-                    prog?.Close();
-                    prog = null;
-                }
+        private void IGoalSetting_Charging(CartesianPosInfo power, int idxPower) {
+            if (power != null && idxPower >= 0) {
+                mSimilarityFlow.CheckFlag("Charging", () => {
+                    IConsole.AddMsg($"Charging to idx{idxPower} {power.ToString()}");
+                    Charging(idxPower);
+                });
+            }else {
+                CtMsgBox.Show(mHandle, "No target", "尚未選擇目標Power點",MsgBoxBtn.OK,MsgBoxStyle.Information);
             }
         }
 
         private void IGoalSetting_SaveGoalEvent() {
+            if (string.IsNullOrEmpty(CurMapPath)) {
+                if (MsgBoxBtn.Yes == CtMsgBox.Show("Map not loaded yet", "Whether to load the map?", MsgBoxBtn.YesNo, MsgBoxStyle.Question)) {
+                    ITest_LoadMap();
+                }
+                return;
+            }
             IConsole.AddMsg("[Save {0} Goals]", IGoalSetting.GoalCount);
             Database.Save(CurMapPath);
-            //List<CartesianPosInfo> points = IGoalSetting.GetGoals();
-            //List<CartesianPosInfo> goals = new List<CartesianPosInfo>();
-            //List<CartesianPosInfo> powers = new List<CartesianPosInfo>();
-            //Database.GoalGM.SaftyForLoop((uid, goal) => goals.Add(FactoryMode.Factory.CartesianPosInfo(uid, goal)));
-            //Database.PowerGM.SaftyForLoop((uid, power) => powers.Add(FactoryMode.Factory.CartesianPosInfo(uid, power)));
-            //MapRecording.OverWriteGoal(goals, CurMapPath);
-            //MapRecording.OverWritePower(powers, CurMapPath);
         }
 
         private void IGoalSetting_RunLoopEvent(IEnumerable<CartesianPosInfo> goal) {
-            CheckSimilarity(mSimilarity,mThrSimilarity, () => {
-                IConsole.AddMsg("[AGV Start Moving...]");
-                foreach (var item in goal) {
-                    IConsole.AddMsg("[AGV Move To] - {0}", item.ToString());
-                    IConsole.AddMsg("[AGV Arrived] - {0}", item.ToString());
-                }
-                IConsole.AddMsg("[AGV Move Finished]");
-            });
+            int goalCount = goal?.Count() ?? -1;
+            if (goalCount > 0) {
+                mSimilarityFlow.CheckFlag("Run all", () => {
+                    IConsole.AddMsg("[AGV Start Moving...]");
+                    foreach (var item in goal) {
+                        IConsole.AddMsg("[AGV Move To] - {0}", item.ToString());
+                        IConsole.AddMsg("[AGV Arrived] - {0}", item.ToString());
+                    }
+                    IConsole.AddMsg("[AGV Move Finished]");
+                });
+            }else {
+                CtMsgBox.Show(mHandle,"No target","尚未選取Goal點，無法進行Run all",MsgBoxBtn.OK,MsgBoxStyle.Information);
+            }
         }
 
         private void IGoalSetting_RunGoalEvent(CartesianPosInfo goal, int idxGoal) {
-            CheckSimilarity(mSimilarity,mThrSimilarity,() => {
-                IConsole.AddMsg("[AGV Start Moving...  idx{0} {1}]", idxGoal, goal.ToString());
-                Run(idxGoal);
-                IConsole.AddMsg("[AGV Arrived] - {0}", goal.ToString());
+            CheckGoal(goal, idxGoal, () => {
+                mSimilarityFlow.CheckFlag("Run goal", () => {
+                    IConsole.AddMsg("[AGV Start Moving...  idx{0} {1}]", idxGoal, goal.ToString());
+                    Run(idxGoal);
+                    IConsole.AddMsg("[AGV Arrived] - {0}", goal.ToString());
+                });
             });
-        }
-
-        private void IGoalSetting_LoadMapFromAGVEvent() {
-            IConsole.AddMsg("[Map Loading... From Remote] - ");
-            IConsole.AddMsg("[Map Loaded]");
         }
 
         private void IGoalSetting_LoadMapEvent() {
@@ -1057,33 +1127,37 @@ namespace ClientUI
         }
 
         private void IGoalSetting_FindPathEvent(CartesianPosInfo goal, int idxGoal) {
-            CheckSimilarity(mSimilarity,mThrSimilarity, () => {
-                IConsole.AddMsg("[Find Path] - idx{0} {1}", idxGoal, goal.ToString());
-                IConsole.AddMsg("[AGV Find A Path]");
-                PathPlan(idxGoal);
+            CheckGoal(goal, idxGoal, () => {
+                mSimilarityFlow.CheckFlag("Path plann", () => {
+                    IConsole.AddMsg("[Find Path] - idx{0} {1}", idxGoal, goal.ToString());
+                    IConsole.AddMsg("[AGV Find A Path]");
+                    PathPlan(idxGoal);
+                });
             });
         }
 
         private void IGoalSetting_DeleteGoalsEvent(IEnumerable<CartesianPosInfo> goal) {
-            IEnumerable<CartesianPosInfo> goals = goal.Where(v => Database.GoalGM.ContainsID(v.id));
-            IEnumerable<CartesianPosInfo> powers = goal.Where(v => Database.PowerGM.ContainsID(v.id));
-            List<uint> ID = new List<uint>();
-            if (goals?.Any() ?? false) {
-                IConsole.AddMsg($"Delete {goals.Count()}");
-                foreach (var item in goals) {
-                    Database.GoalGM.Remove(item.id);
-                    ID.Add(item.id);
-                    IConsole.AddMsg($"[Delete Goal] - {item.ToString()}");
+            if ((goal?.Count() ?? 0) > 0) {
+                IEnumerable<CartesianPosInfo> goals = goal.Where(v => Database.GoalGM.ContainsID(v.id));
+                IEnumerable<CartesianPosInfo> powers = goal.Where(v => Database.PowerGM.ContainsID(v.id));
+                List<uint> ID = new List<uint>();
+                if (goals?.Any() ?? false) {
+                    IConsole.AddMsg($"Delete {goals.Count()}");
+                    foreach (var item in goals) {
+                        Database.GoalGM.Remove(item.id);
+                        ID.Add(item.id);
+                        IConsole.AddMsg($"[Delete Goal] - {item.ToString()}");
+                    }
                 }
-            }
-            if (powers?.Any() ?? false) {
-                foreach (var item in powers) {
-                    Database.PowerGM.Remove(item.id);
-                    ID.Add(item.id);
-                    IConsole.AddMsg($"[Delete Power - {item.ToString()}]");
+                if (powers?.Any() ?? false) {
+                    foreach (var item in powers) {
+                        Database.PowerGM.Remove(item.id);
+                        ID.Add(item.id);
+                        IConsole.AddMsg($"[Delete Power - {item.ToString()}]");
+                    }
                 }
+                IGoalSetting.DeleteGoals(ID);
             }
-            IGoalSetting.DeleteGoals(ID);
         }
 
         private void IGoalSetting_ClearGoalsEvent() {
@@ -1204,8 +1278,7 @@ namespace ClientUI
                     fileName = "FileName";
                 }
 
-                SetBalloonTip($"Get File", $"The { fileName} is downloaded", ToolTipIcon.Info, 10);
-
+                SetBalloonTip($"Get File", $"The { fileName} is downloaded");
             } catch (SocketException se) {
                 System.Console.WriteLine("SocketException : {0}", se.ToString());
                 MessageBox.Show("檔案傳輸失敗!");
@@ -1351,7 +1424,7 @@ namespace ClientUI
                     System.Console.WriteLine($"[SocketException] : {ex.Message}");
                 } finally {
                     if (!mBypassSocket && !isAlive) {
-                        CtMsgBox.Show("Failed", "Connect Failed!!", MsgBoxBtn.OK, MsgBoxStyle.Error);
+                        CtMsgBox.Show(mHandle,"Failed", "Connect Failed!!", MsgBoxBtn.OK, MsgBoxStyle.Error);
                     }
                 }
                 IsServerAlive = isAlive;
@@ -1416,8 +1489,9 @@ namespace ClientUI
         /// <param name="clientPort">Communication port</param>
         /// <param name="fileName">File name</param>
         /// 
-        private void SendFile(string clientIP, int clientPort, string fileName) {
+        private bool SendFile(string clientIP, int clientPort, string fileName) {
             string curMsg = "";
+            bool isSent = true;
             try {
                 IPAddress[] ipAddress = Dns.GetHostAddresses(clientIP);
                 IPEndPoint ipEnd = new IPEndPoint(ipAddress[0], clientPort);
@@ -1434,7 +1508,7 @@ namespace ClientUI
                 byte[] fileNameByte = Encoding.ASCII.GetBytes(fileName);
                 if (fileNameByte.Length > 1024 * 1024 * 5) {
                     curMsg = "File size is more than 850kb, please try with small file.";
-                    return;
+                    return false;
                 }
                 curMsg = "Buffering ...";
                 byte[] fileData = File.ReadAllBytes(filePath + fileName);
@@ -1467,7 +1541,9 @@ namespace ClientUI
                     curMsg = "File Sending fail. Because server not running.";
                 else
                     curMsg = "File Sending fail." + ex.Message;
+                isSent = false;
             }
+            return isSent;
         }
 
         /// <summary>
@@ -1483,21 +1559,36 @@ namespace ClientUI
                     CtProgress prog = new CtProgress("Send Map", "The file are being transferred");
                     try {
                         await Task.Run(() => {
-                            string fileName = CtFile.GetFileName(openMap.FileName);
-                            if (!mBypassSocket) {
-                                SendFile(mHostIP, mSendMapPort, fileName);
-                            } else {
-                                /*-- 空跑模擬檔案傳送中 --*/
-                                SpinWait.SpinUntil(() => false, 1000);
-                            }
-                            IConsole.AddMsg($"Send File {fileName}");
-                            SetBalloonTip("Send File", fileName, ToolTipIcon.Info, 10);
-                        });
+                            SendFile(openMap.FileName);
+                            SetBalloonTip("Send File", openMap.FileName);
+                        }); 
                     } finally {
                         prog?.Close();
                         prog = null;
                     }
                 }
+            }
+        }
+
+        /// <summary>
+        /// 傳送檔案
+        /// </summary>
+        /// <param name="filePath"></param>
+        private  void SendFile(string filePath) {
+            string fileName = CtFile.GetFileName(filePath);
+            bool isSent = true;
+            if (!mBypassSocket) {
+                isSent = SendFile(mHostIP, mSendMapPort, fileName);
+            } else {
+                /*-- 空跑模擬檔案傳送中 --*/
+                SpinWait.SpinUntil(() => false, 1000);
+            }
+            if (isSent) {
+                IConsole.AddMsg($"{fileName} has been sent");
+                SetBalloonTip("Send file", $"{fileName} han been sent");
+            } else {
+                IConsole.AddMsg($"\'{fileName}\' send failed");
+                CtMsgBox.Show("Send file", $"\'{fileName}\' send failed", MsgBoxBtn.OK, MsgBoxStyle.Error);
             }
         }
 
@@ -1514,7 +1605,7 @@ namespace ClientUI
                 IsGettingLaser = !IsGettingLaser;
                 if (IsGettingLaser) {
                     /*-- 開啟車子資訊讀取執行緒 --*/
-                    mSoxMonitorCmd.Start();
+                    if (!mBypassSocket) mSoxMonitorCmd.Start();
 
                     /*-- 向Server端要求車子資料 --*/
                     string[] rtnMsg = SendMsg("Get:Car:True:True");
@@ -1523,11 +1614,11 @@ namespace ClientUI
                     /*-- 車子未發送資料則關閉Socket --*/
                     if (!IsGettingLaser) {
                         Database.AGVGM[mAGVID].LaserAPoints.DataList.Clear();
-                        mSoxMonitorCmd.Stop();
+                        if (!mBypassSocket)mSoxMonitorCmd.Stop();
                     }
                 } else {
                     Database.AGVGM[mAGVID].LaserAPoints.DataList.Clear();
-                    mSoxMonitorCmd.Stop();
+                    if (!mBypassSocket) mSoxMonitorCmd.Stop();
                     SendMsg("Get:Car:False");
                 }
                 ITest.SetLaserStt(IsGettingLaser);
@@ -1557,8 +1648,6 @@ namespace ClientUI
         /// <param name="velocity">移動速度</param>
         private void MotionContorl(MotionDirection direction) {
             string[] rtnMsg = SendMsg("Get:IsOpen");
-
-
             if (rtnMsg.Count() > 2 && bool.Parse(rtnMsg[2])) {
 
                 if (direction == MotionDirection.Stop) {
@@ -1566,20 +1655,8 @@ namespace ClientUI
                 } else {
 
                     string cmd = string.Empty;
-                    switch (direction) {
-                        case MotionDirection.Forward:
-                            cmd = $"Set:DriveVelo:{mVelocity}:{mVelocity}";
-                            break;
-                        case MotionDirection.Backward:
-                            cmd = $"Set:DriveVelo:-{mVelocity}:-{mVelocity}";
-                            break;
-                        case MotionDirection.LeftTrun:
-                            cmd = $"Set:DriveVelo:-{mVelocity}:{mVelocity}";
-                            break;
-                        case MotionDirection.RightTurn:
-                            cmd = $"Set:DriveVelo:{mVelocity}:-{mVelocity}";
-                            break;
-                    }
+                    cmd = GetMotionCmd(direction);
+                
                     SendMsg(cmd);
                     SendMsg("Set:Start");
                 }
@@ -1604,14 +1681,16 @@ namespace ClientUI
         }
 
         private void GetFile(FileType type) {
-            string fileList = string.Empty;
-            if (GetFileList(type, out fileList)) {
-                using (MapList f = new MapList(fileList)) {
-                    if (f.ShowDialog() == DialogResult.OK) {
-                        FileDownload(f.strMapList, type);
+            mConnectFlow.CheckFlag($"Get{type}", () => {
+                string fileList = string.Empty;
+                if (GetFileList(type, out fileList)) {
+                    using (MapList f = new MapList(fileList)) {
+                        if (f.ShowDialog() == DialogResult.OK) {
+                            FileDownload(f.strMapList, type);
+                        }
                     }
                 }
-            }
+            });
         }
 
         /// <summary>
@@ -1679,18 +1758,18 @@ namespace ClientUI
         /// <param name="passChkConn">是否略過檢查連線狀態</param>
         /// <returns>Server端回應</returns>
         private string[] SendMsg(string sendMseeage, bool passChkConn = true) {
-            if (mBypassSocket) {
-                /*-- Bypass略過不傳 --*/
-                return new string[] { "True" };
-            } else if (passChkConn && !IsServerAlive) {
-                /*-- 略過連線檢查且Server端未運作 --*/
-                return new string[] { "False" };
-            }
-
             /*-- 顯示發送出去的訊息 --*/
             string msg = $"{DateTime.Now} [Client] : {sendMseeage}";
             IConsole.AddMsg(msg);
 
+            if (mBypassSocket) {
+                /*-- Bypass略過不傳 --*/
+                return new string[] { "","","True" };
+            } else if (passChkConn && !IsServerAlive) {
+                /*-- 略過連線檢查且Server端未運作 --*/
+                return new string[] { "","","False" };
+            }
+            
             /*-- 等待Server端的回應 --*/
             string rtnMsg = SendStrMsg(sendMseeage);
             //string rtnMsg = SendStrMsg(mHostIP, mRecvCmdPort, sendMseeage );
@@ -1739,13 +1818,24 @@ namespace ClientUI
             }
 
         }
-
-        private void CheckSimilarity(double similarity,double thrSimilarity, Action act) {
-            if (similarity > thrSimilarity) {
-                act();
-            }else {
-                IConsole.AddMsg("Similarity is too low");
+        
+        private string GetMotionCmd(MotionDirection direction) {
+            string cmd = "";
+            switch (direction) {
+                case MotionDirection.Forward:
+                    cmd = $"Set:DriveVelo:{mVelocity}:{mVelocity}";
+                    break;
+                case MotionDirection.Backward:
+                    cmd = $"Set:DriveVelo:-{mVelocity}:-{mVelocity}";
+                    break;
+                case MotionDirection.LeftTrun:
+                    cmd = $"Set:DriveVelo:-{mVelocity}:{mVelocity}";
+                    break;
+                case MotionDirection.RightTurn:
+                    cmd = $"Set:DriveVelo:{mVelocity}:-{mVelocity}";
+                    break;
             }
+            return cmd;
         }
 
         #endregion Communication 
@@ -1758,6 +1848,7 @@ namespace ClientUI
         /// <param name="mode"></param>
         private void ChangedMode(CarMode mode) {
             tslbStatus.Text = $"{mode}";
+            ITest.ChangedScanStt(mode == CarMode.Map);
         }
 
         /// <summary>
@@ -1843,16 +1934,37 @@ namespace ClientUI
             tslbAccessLv.Text = usrLv.ToString();
             tslbUserName.Text = usrName;
         }
-            
+        
         /// <summary>
-        /// 解鎖路徑相關操作(路徑規劃、跑點、充電等功能)
+        /// 檢查Goal是否合法
         /// </summary>
-        /// <param name="enb"></param>
-        private void EnableGo(bool enb = true) {
-            IGoalSetting.EnableGo(enb);
-            IConsole.AddMsg("{0}Go", enb ? "Enable" : "Disable");
+        /// <param name="goal"></param>
+        /// <param name="idxGoal"></param>
+        /// <param name="act"></param>
+        private void CheckGoal(CartesianPosInfo goal, int idxGoal,Action act) {
+            if (goal != null && idxGoal >= 0) {
+                act?.Invoke();
+            } else {
+                CtMsgBox.Show(mHandle,"No target", "尚未選擇目標Goal點", MsgBoxBtn.OK, MsgBoxStyle.Information);
+            }
         }
 
+        private void ShowMotionController() {
+            if (mMotionController == null) {
+                mMotionController = new CtMotionController();
+                mMotionController.MotionDown += ITest_Motion_Down;
+                mMotionController.MotionUp += ITest_Motion_Up;
+                miMotionController.Checked = true;
+                mMotionController.FormClosing += (fSender, fE) => {
+                    mMotionController.MotionDown -= ITest_Motion_Down;
+                    mMotionController.MotionUp -= ITest_Motion_Up;
+                    mMotionController = null;
+                    miMotionController.Checked = false;
+                };
+                mMotionController.Show();
+            }
+        }
+        
         #endregion UI
 
         #region DockContent
@@ -1954,13 +2066,10 @@ namespace ClientUI
         /// 載入地圖
         /// </summary>
         /// <param name="mapPath">Map檔路徑</param>
-        private void LoadMap(string mapPath) {
+        private bool LoadMap(string mapPath) {
             mCurMapPath = mapPath;
-            string mPath = CtFile.GetFileName(mapPath);
-            SendMsg($"Set:MapName:{mPath}");
+            string path = CtFile.GetFileName(mapPath);
             Stopwatch sw = new Stopwatch();
-            CtProgress prog = null;
-            int nowProg = 0;
             if (mBypassLoadFile) {
                 /*-- 空跑1秒模擬載入Map檔 --*/
                 SpinWait.SpinUntil(() => false, 1000);
@@ -1971,17 +2080,24 @@ namespace ClientUI
                 NewMap();
 
                 /*-- 載入Map並取得Map中心點 --*/
-                IPair center = Database.LoadMapToDatabase(mCurMapPath).Center();
+                IPair center = Database.LoadMapToDatabase(mCurMapPath)?.Center();
+
+                if (center == null) {
+                    return false;
+                }
 
                 /*-- 移動畫面至Map中心點 --*/
                 IMapCtrl.Focus(center);
-
-                //IGoalSetting.ReloadSingle();
+                
                 IGoalSetting.RefreshSingle();
-            }
 
-            /*-- 重新載入Map後須再次進行Confirm --*/
-            EnableGo(false);
+                if (IsConnected) {
+                    SendFile(mapPath);
+
+                    SendMsg($"Set:MapName:{path}");
+                }
+            }
+            return true;
         }
 
         /// <summary>
@@ -1989,7 +2105,8 @@ namespace ClientUI
         /// </summary>
         /// <param name="oriPath"></param>
         /// <returns></returns>
-        private void LoadOri(string oriPath) {
+        private bool LoadOri(string oriPath) {
+            bool isLoaded = true;
             CurOriPath = oriPath;
             NewMap();
             MapReading MapReading = null;
@@ -2015,6 +2132,7 @@ namespace ClientUI
                             prog.UpdateStep(n);
                         }
                     } catch (Exception ex) {
+                        isLoaded = false;
                         System.Console.WriteLine(ex.Message);
                     } finally {
                         prog?.Close();
@@ -2026,6 +2144,7 @@ namespace ClientUI
                 SpinWait.SpinUntil(() => false, 1000);
             }
             MapReading = null;
+            return isLoaded;
         }
 
         /// <summary>
@@ -2038,25 +2157,31 @@ namespace ClientUI
             openMap.Filter = $"MAP|*.{type.ToString().ToLower()}";
             if (openMap.ShowDialog() == DialogResult.OK) {
                 try {
+                    bool isLoaded = false;
                     switch (type) {
                         case FileType.Ori:
-                            await Task.Run(() => LoadOri(openMap.FileName));
-                            Database.AGVGM[mAGVID]?.LaserAPoints.DataList.Clear();
-                            ITest.UnLockOriOperator(true);
-                            //RaiseTestingEvent(TestingEventType.CurOriPath);
+                            await Task.Run(() => 
+                                isLoaded = LoadOri(openMap.FileName));
+                                if (isLoaded) {
+                                    Database.AGVGM[mAGVID]?.LaserAPoints.DataList.Clear();
+                                    ITest.UnLockOriOperator(true);
+                                }
                             break;
                         case FileType.Map:
                             await Task.Run(() => {
-                                //Database.LoadMapToDatabase(openMap.FileName);
-                                LoadMap(openMap.FileName);
+                                isLoaded = LoadMap(openMap.FileName);
                             });
                             break;
                         default:
                             throw new ArgumentException($"無法載入未定義的檔案類型{type}");
                     }
-                    SetBalloonTip($"Load { type}", $"The { type} is loaded", ToolTipIcon.Info, 10);
+                    if (isLoaded) {
+                        SetBalloonTip($"Load { type}", $"\'{openMap.FileName}\' is loaded");
+                    }else {
+                        CtMsgBox.Show(mHandle, "Error", "File data is wrong, can not read", MsgBoxBtn.OK, MsgBoxStyle.Error);
+                    }
                 } catch (Exception ex) {
-                    CtMsgBox.Show("Error", ex.Message);
+                    CtMsgBox.Show(mHandle,"Error", ex.Message);
                 }
             }
             openMap = null;
@@ -2139,11 +2264,11 @@ namespace ClientUI
             IGoalSetting.DeleteGoalsEvent += IGoalSetting_DeleteGoalsEvent;
             IGoalSetting.FindPathEvent += IGoalSetting_FindPathEvent;
             IGoalSetting.LoadMapEvent += IGoalSetting_LoadMapEvent;
-            IGoalSetting.LoadMapFromAGVEvent += IGoalSetting_LoadMapFromAGVEvent;
+            IGoalSetting.LoadMapFromAGVEvent += ITest_GetMap;
             IGoalSetting.RunGoalEvent += IGoalSetting_RunGoalEvent;
             IGoalSetting.RunLoopEvent += IGoalSetting_RunLoopEvent;
             IGoalSetting.SaveGoalEvent += IGoalSetting_SaveGoalEvent;
-            IGoalSetting.SendMapToAGVEvent += IGoalSetting_SendMapToAGVEvent;
+            IGoalSetting.SendMapToAGVEvent += ITest_SendMap;
             IGoalSetting.GetGoalNames += IGoalSetting_GetGoalNames;
             IGoalSetting.Charging += IGoalSetting_Charging;
             IGoalSetting.ClearMap += ITest_ClearMap;
@@ -2174,11 +2299,13 @@ namespace ClientUI
             ITest.ClearMap += ITest_ClearMap;
             ITest.SettingCarPos += ITest_SettingCarPos;
             ITest.CarPosConfirm += ITest_CarPosConfirm;
+            ITest.StartScan += ITest_StartScan;
+            ITest.ShowMotionController += ShowMotionController;
             #endregion 
 
             (mDockContent[miToolBox] as CtToolBox).SwitchCursor += IGoalSetting_SwitchCursor;
         }
-
+        
         private void IMapCtrl_GLMoveUp(object sender, GLMouseEventArgs e) {
             switch (mCursorMode) {
                 case CursorMode.Goal:
@@ -2302,6 +2429,49 @@ namespace ClientUI
 
         #endregion Load
 
+        #region Flow
+
+        private void ExecutingInfo() {
+            SetBalloonTip("Warning", "請先完成當前操作", ToolTipIcon.Warning);
+        }
+
+        private bool CheckServer() {
+            CtProgress prog = new CtProgress("Connect", "Connecting...");
+            try {
+                IsConnected = CheckIsServerAlive();
+            } catch (Exception ex) {
+                System.Console.WriteLine(ex.Message);
+            } finally {
+                prog?.Close();
+            }
+            return IsConnected;
+        }
+
+        private bool GetIsConnect() {
+            return IsConnected;
+        }
+
+        private bool CheckSimilarity() {
+            mConnectFlow.CheckFlag("Car pos confirm", () => {
+                if (mBypassSocket) {
+                    /*-- 空跑模擬CarPosConfirm --*/
+                    SpinWait.SpinUntil(() => false, 1000);
+                    mSimilarity = 100;
+                } else {
+                    string[] rtnMsg = SendMsg("Set:ConfirmPos");
+                    mSimilarity = double.Parse(rtnMsg[2]);
+                }
+                IConsole.AddMsg("[Confirm] - Similarity:{0}%", mSimilarity);
+            });
+            return mSimilarity > mThrSimilarity;
+        }
+
+        private bool GetSimilarity() {
+            return mSimilarity > mThrSimilarity;
+        }
+
+        #endregion Flow
+
         ///<summary>IP驗證</summary>
         ///<param name="ip">要驗證的字串</param>
         ///<returns>True:合法IP/False:非法IP</returns>
@@ -2336,10 +2506,10 @@ namespace ClientUI
             }
             return rtnPoints;
         }
-        
+
+
         #endregion Function - Private Methods
 
-        
     }
 
     #region Suppor - Class
@@ -2730,6 +2900,183 @@ namespace ClientUI
             //text
             e.Graphics.DrawString(this.Text, this.Font,
                 new Pen(this.ForeColor).Brush, 6, 0);
+        }
+    }
+
+    public class CtFlagGuard {
+
+        #region Declaration - Fields 
+        
+        private object mKey = new object();
+
+        private bool mIsExecuting = false;
+
+        #endregion Declaration - Fields
+
+        #region Declaration - Delegates
+
+        public Events.FlagGuard.DelSetFlag SetFlag { get; set; }
+
+        public Events.FlagGuard.DelShowInfo FailureMessage { get; set; }
+
+        public Events.FlagGuard.DelSwitchFlag SwitchFlag { get; set; }
+
+        public Events.FlagGuard.DelUserContinue UserContinue { get; set; }
+
+        public Events.FlagGuard.DelUserSwitch UserSwitch { get; set; }
+
+        public Events.FlagGuard.DelIsAllow IsAllow { get; set; }
+
+        public Events.FlagGuard.DelExecutingInfo ExecutingInfo { get; set; }
+
+        #endregion Declaration - Delegates
+
+        #region Funciton - Public Methods
+
+        public void CheckFlag(string description,Action act,bool cont = true) {
+            
+            if (!mIsExecuting) {
+                lock (mKey) {
+                    try {
+                        mIsExecuting = true;
+                        if (!IsAllow()) {
+                            if (!UserSwitch(description)) {
+                                return;
+                            }
+                            SwitchFlag();
+                            bool isAllow = IsAllow();
+                            SetFlag(isAllow); 
+                            if (!isAllow) {
+                                FailureMessage();
+                                return;
+                            }
+                            if (!cont || !UserContinue(description)) {
+                                return;
+                            }
+                        }
+                        act?.Invoke();
+                    } catch (Exception ex) {
+                        System.Console.WriteLine("error",ex.Message);
+                    } finally {
+                        mIsExecuting = false;
+                    }
+                }
+            }else {
+                ExecutingInfo();
+            }
+        }
+
+        public async void CheckFlagAsync(string description,Action act,bool cont = true) {
+            if (!mIsExecuting) {
+                await Task.Run(() => CheckFlag(description, act, cont));
+            }else {
+                ExecutingInfo();
+            }
+        }
+
+        #endregion Function - Public Methods
+
+    }
+
+    public abstract class BaseFlowTemplate {
+
+        protected object mKey = new object();
+
+        protected bool mIsExecuting = false;
+
+        protected IntPtr mMainHandle = IntPtr.Zero;
+
+        protected Events.FlagGuard.DelIsAllow IsAllow = null;
+
+        protected Events.FlagGuard.DelSwitchFlag SwitchFlag = null;
+
+        protected Events.FlagGuard.DelExecutingInfo ExecutingInfo = null;
+
+        public BaseFlowTemplate(
+            IntPtr hWnd,
+            Events.FlagGuard.DelIsAllow isAllow,
+            Events.FlagGuard.DelSwitchFlag switchFlag,
+            Events.FlagGuard.DelExecutingInfo executingInfo) {
+            mMainHandle = hWnd;
+            IsAllow = isAllow;
+            SwitchFlag = switchFlag;
+            ExecutingInfo = executingInfo;
+        }
+
+        public void CheckFlag(string description, Action act, bool cont = true) {
+            
+            if (!mIsExecuting) {
+                lock (mKey) {
+                    try {
+                        mIsExecuting = true;
+                        if (!IsAllow()) {
+                            if (!UserSwitch(description)) {
+                                return;
+                            }
+                            if (!SwitchFlag()) {
+                                FailureMessage();
+                                return;
+                            }
+                            if (!cont || !UserContinue(description)) {
+                                return;
+                            }
+                        }
+                        act?.Invoke();
+                    } catch (Exception ex) {
+                        System.Console.WriteLine("error", ex.Message);
+                    } finally {
+                        mIsExecuting = false;
+                    }
+                }
+            }else {
+                ExecutingInfo();
+            }
+        }
+
+        protected virtual bool UserContinue(string description) {
+            return MsgBoxBtn.Yes == CtMsgBox.Show(mMainHandle,"Continue", $"是否繼續{description}?", MsgBoxBtn.YesNo, MsgBoxStyle.Question);
+        }
+        protected abstract void FailureMessage();
+        protected abstract bool UserSwitch(string description);
+    }
+
+    public class ConnectFlow : BaseFlowTemplate {
+        public ConnectFlow(IntPtr hWnd, Events.FlagGuard.DelIsAllow isAllow, Events.FlagGuard.DelSwitchFlag switchFlag, Events.FlagGuard.DelExecutingInfo executingInfo) : base(hWnd, isAllow, switchFlag, executingInfo) {
+        }
+
+        protected override void FailureMessage() {
+            CtMsgBox.Show(mMainHandle,"Failure", "無法與AGV連線", MsgBoxBtn.OK, MsgBoxStyle.Information);
+        }
+        
+        protected override bool UserSwitch(string description) {
+            return MsgBoxBtn.Yes == CtMsgBox.Show(mMainHandle,"Not connected yet", $"尚未與AGV連線無法{description}\r\n是否要連線至AGV?", MsgBoxBtn.YesNo, MsgBoxStyle.Information);
+        }
+
+    }
+
+    public class ServoOnFlow : BaseFlowTemplate {
+        public ServoOnFlow(IntPtr hWnd, Events.FlagGuard.DelIsAllow isAllow, Events.FlagGuard.DelSwitchFlag switchFlag, Events.FlagGuard.DelExecutingInfo executingInfo) : base(hWnd, isAllow, switchFlag, executingInfo) {
+        }
+
+        protected override void FailureMessage() {
+            CtMsgBox.Show(mMainHandle, "Failure", "ServoOn失敗", MsgBoxBtn.OK, MsgBoxStyle.Information);
+        }
+
+        protected override bool UserSwitch(string description=null) {
+            return MsgBoxBtn.Yes == CtMsgBox.Show(mMainHandle, "Not ServoOn yet", $"尚未Servo On無法{description}\r\n是否要Server On?",MsgBoxBtn.YesNo,MsgBoxStyle.Question);
+        }
+    }
+
+    public class SimilarityFlow : BaseFlowTemplate {
+        public SimilarityFlow(IntPtr hWnd, Events.FlagGuard.DelIsAllow isAllow, Events.FlagGuard.DelSwitchFlag switchFlag, Events.FlagGuard.DelExecutingInfo executingInfo) : base(hWnd, isAllow, switchFlag, executingInfo) {
+        }
+
+        protected override void FailureMessage() {
+            CtMsgBox.Show(mMainHandle, "Failure", "地圖相似度過低", MsgBoxBtn.OK, MsgBoxStyle.Information);
+        }
+
+        protected override bool UserSwitch(string description) {
+            return MsgBoxBtn.Yes == CtMsgBox.Show("Similarity is too low", $"地圖匹配度過低無法{description}，是否再Confirm一次?", MsgBoxBtn.YesNo, MsgBoxStyle.Question);
         }
     }
 

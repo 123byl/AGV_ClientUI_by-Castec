@@ -156,6 +156,9 @@
     <EmbeddedResource Include="Component\CtToolBox.resx">
       <DependentUpon>CtToolBox.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Component\MapList.resx">
+      <DependentUpon>MapList.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

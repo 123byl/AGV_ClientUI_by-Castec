@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 using CtLib.Library;
 using System.Linq;
+using System.Threading;
 
 namespace ClientUI
 {
@@ -64,9 +65,11 @@ namespace ClientUI
         public event Events.TestingEvents.DelClearMap ClearMap;
         public event Events.TestingEvents.DelSettingCarPos SettingCarPos;
         public event Events.TestingEvents.DelCarPosConfirm CarPosConfirm;
-        
+        public event Events.TestingEvents.DelStartScan StartScan;
+        public event Events.TestingEvents.DelShowMotionController ShowMotionController;
+
         /// <summary>
-        /// 依照伺服馬達激磁狀態變更UI介面狀態
+        /// 依照連線狀態變更UI介面狀態
         /// </summary>
         /// <param name="isConnect"></param>
         public void SetServerStt(bool isConnect) {
@@ -79,27 +82,27 @@ namespace ClientUI
             CtInvoke.ControlTag(btnConnect, isConnect);
             CtInvoke.ControlText(btnConnect, btnTxt);
             CtInvoke.ButtonImage(btnConnect, btnImg);
-            CtInvoke.ControlEnabled(btnGetLaser, isConnect);
-            CtInvoke.ControlEnabled(btnGetOri, isConnect);
-            CtInvoke.ControlEnabled(btnIdleMode, isConnect);
-            CtInvoke.ControlEnabled(btnWorkMode, isConnect);
-            CtInvoke.ControlEnabled(btnMapMode, isConnect);
-            CtInvoke.ControlEnabled(btnGetCarStatus, isConnect);
-            CtInvoke.ControlEnabled(btnPosConfirm, isConnect);
-            CtInvoke.ControlEnabled(btnServoOnOff, isConnect);
+            //CtInvoke.ControlEnabled(btnGetLaser, isConnect);
+            //CtInvoke.ControlEnabled(btnGetOri, isConnect);
+            //CtInvoke.ControlEnabled(btnIdleMode, isConnect);
+            //CtInvoke.ControlEnabled(btnWorkMode, isConnect);
+            //CtInvoke.ControlEnabled(btnMapMode, isConnect);
+            //CtInvoke.ControlEnabled(btnGetCarStatus, isConnect);
+            //CtInvoke.ControlEnabled(btnPosConfirm, isConnect);
+            //CtInvoke.ControlEnabled(btnServoOnOff, isConnect);
 
-            CtInvoke.ControlEnabled(btnSetVelo, isConnect);
-            CtInvoke.ControlEnabled(btnGetMap, isConnect);
-            CtInvoke.ControlEnabled(btnSendMap, isConnect);
-            CtInvoke.ControlEnabled(txtVelocity, isConnect);
+            //CtInvoke.ControlEnabled(btnSetVelo, isConnect);
+            //CtInvoke.ControlEnabled(btnGetMap, isConnect);
+            //CtInvoke.ControlEnabled(btnSendMap, isConnect);
+            //CtInvoke.ControlEnabled(txtVelocity, isConnect);
 
             if (!isConnect) {
                 //CarMode = CarMode.OffLine;
-                CtInvoke.ControlEnabled(btnUp, false);
-                CtInvoke.ControlEnabled(btnStartStop, false);
-                CtInvoke.ControlEnabled(btnLeft, false);
-                CtInvoke.ControlEnabled(btnRight, false);
-                CtInvoke.ControlEnabled(btnDown, false);
+                //CtInvoke.ControlEnabled(btnUp, false);
+                //CtInvoke.ControlEnabled(btnStartStop, false);
+                //CtInvoke.ControlEnabled(btnLeft, false);
+                //CtInvoke.ControlEnabled(btnRight, false);
+                //CtInvoke.ControlEnabled(btnDown, false);
                 //} else if (CarMode == CarMode.OffLine) {
                 //    CarMode = CarMode.Idle;
             }
@@ -136,13 +139,27 @@ namespace ClientUI
                 content = "OFF";
             }
             CtInvoke.ControlTag(btnServoOnOff, isOn);
-            CtInvoke.ControlEnabled(btnUp, isOn);
-            CtInvoke.ControlEnabled(btnDown, isOn);
-            CtInvoke.ControlEnabled(btnLeft, isOn);
-            CtInvoke.ControlEnabled(btnRight, isOn);
-            CtInvoke.ControlEnabled(btnStartStop, isOn);
             CtInvoke.ControlBackColor(btnServoOnOff, color);
             CtInvoke.ControlText(btnServoOnOff, content);
+        }
+
+        /// <summary>
+        /// 設定目標agv IP
+        /// </summary>
+        /// <param name="host">設定IP</param>
+        public void SetHostIP(string host) {
+            if (host != cboHostIP.Text) {
+                CtInvoke.ControlText(cboHostIP, host);
+            }
+        }
+
+        /// <summary>
+        /// 依照掃圖狀態變更UI介面
+        /// </summary>
+        /// <param name="isScanning"></param>
+        public void ChangedScanStt(bool isScanning) {
+            CtInvoke.ControlText(btnScan, isScanning ? "Stop scan" :" Scan");
+            CtInvoke.ControlTag(btnScan, isScanning);
         }
 
         #endregion Implement - ITest
@@ -209,7 +226,7 @@ namespace ClientUI
         }
         
         private void btnGetMap_Click(object sender, EventArgs e) {
-            GetMap?.Invoke();
+            GetMap?.BeginInvoke(null,null);
         }
 
         private void btnLoadMap_Click(object sender, EventArgs e) {
@@ -217,15 +234,15 @@ namespace ClientUI
         }
 
         private void btnGetOri_Click(object sender, EventArgs e) {
-            GetOri?.Invoke();
+            GetOri.BeginInvoke(null,null);
         }
 
         private void btnGetLaser_Click(object sender, EventArgs e) {
-            GetLaser?.Invoke();
+            GetLaser?.BeginInvoke(null,null);
         }
 
         private void btnGetCarStatus_Click(object sender, EventArgs e) {
-            GetCar?.Invoke();
+            GetCar?.BeginInvoke(null,null);
         }
 
         private void btnSendMap_Click(object sender, EventArgs e) {
@@ -251,7 +268,7 @@ namespace ClientUI
         private void btnSetVelo_Click(object sender, EventArgs e) {
             int velocity = 0;
             if (int.TryParse(txtVelocity.Text, out velocity)){
-                SetVelocity?.Invoke(velocity);
+                SetVelocity?.BeginInvoke(velocity,null,null);
             }
         }
 
@@ -278,49 +295,35 @@ namespace ClientUI
             CtInvoke.ControlEnabled(btnSendMap, isConnected);
             CtInvoke.ControlEnabled(txtVelocity, isConnected);
 
-            if (!isConnected) {
-                CtInvoke.ControlEnabled(btnUp, false);
-                CtInvoke.ControlEnabled(btnStartStop, false);
-                CtInvoke.ControlEnabled(btnLeft, false);
-                CtInvoke.ControlEnabled(btnRight, false);
-                CtInvoke.ControlEnabled(btnDown, false);
-            }
         }
 
         private void btnServoOnOff_Click(object sender, EventArgs e) {
             if (btnServoOnOff.Tag == null || (btnServoOnOff.Tag is bool && !(bool)btnServoOnOff.Tag)) {
-                MotorServoOn.Invoke(true);
+                MotorServoOn.BeginInvoke(true,null,null);
             } else {
-                MotorServoOn.Invoke(false);
+                MotorServoOn.BeginInvoke(false,null,null);
             }
         }
 
         private void btnPosConfirm_Click(object sender, EventArgs e) {
-            CarPosConfirm?.Invoke();
+            CarPosConfirm?.BeginInvoke(null,null);
         }
 
         private void btnSetCar_Click(object sender, EventArgs e) {
-            SettingCarPos?.Invoke();
+            SettingCarPos?.BeginInvoke(null,null);
         }
 
         private void btnScan_Click(object sender, EventArgs e) {
             bool isSacn = btnScan.Tag is bool ? ((bool)btnScan.Tag) : false;
-            if (!isSacn) {
-                btnScan.InvokeIfNecessary(() => {
-                    btnScan.Tag = true;
-                    btnScan.Text = "Stop scan";
-                });
-                SetCarMode?.Invoke(CarMode.Map);
-            } else {
-                btnScan.InvokeIfNecessary(() => {
-                    btnScan.Tag = true;
-                    btnScan.Text = "Scan";
-                });
-                SetCarMode?.Invoke(CarMode.Idle);
-            }
+            StartScan?.BeginInvoke(!isSacn,null,null);
+        }
+
+        private void btnMotionController_Click(object sender, EventArgs e) {
+            ShowMotionController?.Invoke();
         }
 
         #endregion Funciton - UI Events
+
     }
 
     /// <summary>
