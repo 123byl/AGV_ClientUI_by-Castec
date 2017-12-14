@@ -14,6 +14,7 @@ namespace ClientUI.Component
 {
     public partial class AGVMapUI : CtDockContent
     {
+        
         /// <summary>
         /// 共用建構方法
         /// </summary>
@@ -29,9 +30,31 @@ namespace ClientUI.Component
         /// </summary>
         public IScene Ctrl { get { return uiControl.BaseCtrl; } }
 
+        public override DockState DockState {
+            get {
+                return pnlHide.Visible ? DockState.Hidden : DockState.Document;                
+            }
+
+            set {
+                pnlHide.Visible = value != DockState.Document;
+                DockStateChanged?.Invoke(this, new EventArgs());
+            }
+        }
+
+        public override event EventHandler DockStateChanged;
+
         protected override void OnFormClosing(FormClosingEventArgs e) {
             e.Cancel = true;
         }
-        
+
+        public override void ShowWindow() {
+            base.ShowWindow();
+            DockState = DockState.Document;
+        }
+
+        public override void HideWindow() {
+            DockState = DockState.Hidden;
+        }
+
     }
 }

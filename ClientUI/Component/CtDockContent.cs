@@ -31,6 +31,18 @@ namespace ClientUI {
 
         #endregion Declaration - Fields
 
+        #region Declaration - Events
+
+        public new virtual event EventHandler DockStateChanged {
+            add {
+                base.DockStateChanged += value;
+            }remove {
+                base.DockStateChanged -= value;
+            }
+        }
+
+        #endregion Declaration - Events
+
         #region Declaration - Properties
 
         /// <summary>
@@ -55,6 +67,8 @@ namespace ClientUI {
                 CorrectionAutoHidePortion();
             }
         }
+
+        public new virtual DockState DockState { get { return base.DockState; } set { base.DockState = value; } }
 
         #endregion Declaration - Properties
 
@@ -110,7 +124,7 @@ namespace ClientUI {
         /// <summary>
         /// 依照預設來顯示視窗
         /// </summary>
-        public void ShowWindow() {
+        public virtual void ShowWindow() {
             if (rDockPanel != null) {
                 if (DefaultDockState == DockState.Float || DefaultDockState == DockState.Hidden) {
                     rDockPanel.DefaultFloatWindowSize = this.mFixedSize;
@@ -131,7 +145,7 @@ namespace ClientUI {
         /// <summary>
         /// 隱藏視窗
         /// </summary>
-        public void HideWindow() {
+        public virtual void HideWindow() {
             BeginInvoke(() => this.Hide());
         }
         

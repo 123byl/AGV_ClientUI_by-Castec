@@ -96,7 +96,8 @@ namespace ClientUI
         ///         + 加入AGV移動控制器        
         ///     0.0.13  Jay [2017/12/14]
         ///         \ 將所有按鈕解鎖，當無法處於執行按鈕功能狀態，以對話視窗引導使用者進行狀態修正
-        /// 
+        ///         \ 重寫模組權限(加入CtToolBox控制)
+        ///         \ 重寫AGVMapUI的ShowWindow與HideWindow方法
         /// </remarks>
         public CtVersion Version { get { return new CtVersion(0, 0, 13, "2017/12/14", "Jay Chang"); } }
 
@@ -649,12 +650,15 @@ namespace ClientUI
 
                 if (item.Checked)
                 {
-                    (mDockContent[item] as DockContent).Hide();
+                    (mDockContent[item] as CtDockContent).HideWindow();
                 }
                 else
                 {
                     mDockContent[item].ShowWindow();
                 }
+                //if (item.Checked != item.Checked) {
+                //    item.Checked = !item.Checked;
+                //}
             }
         }
 
@@ -761,7 +765,7 @@ namespace ClientUI
         {
 
             /*-- 取得發報的DockContent物件 --*/
-            DockContent dockWnd = sender as DockContent;
+            CtDockContent dockWnd = sender as CtDockContent;
 
             /*--取得對應MenuItem物件--*/
             ToolStripMenuItem menuItem = mDockContent.First(v => v.Value == dockWnd).Key;
@@ -1895,11 +1899,12 @@ namespace ClientUI
             AccessLevel usrLv = usrData.Level;
             string title = string.Empty;//工具列選項標題
             string usrName = string.Empty;//狀態列帳號名稱
-            bool allowUsrMan = usrLv < AccessLevel.Operator;
+            bool allowUsrMan = usrLv > AccessLevel.Operator;
 
             /*-- 依照權限切換模組可視層級 --*/
             switch (usrLv) {
                 case AccessLevel.None:
+                    DockContentVisible(miToolBox, false);
                     DockContentVisible(miMapGL, false);
                     DockContentVisible(miConsole, true);
                     DockContentVisible(miTesting, false);
@@ -1907,12 +1912,14 @@ namespace ClientUI
                     miBypass.Visible = false;
                     break;
                 case AccessLevel.Operator:
+                    DockContentVisible(miToolBox, false);
                     DockContentVisible(miMapGL, true);
                     DockContentVisible(miConsole, true);
                     DockContentVisible(miGoalSetting, true);
                     break;
                 case AccessLevel.Engineer:
                 case AccessLevel.Administrator:
+                    DockContentVisible(miToolBox, true);
                     DockContentVisible(miMapGL, true);
                     DockContentVisible(miConsole, true);
                     DockContentVisible(miGoalSetting, true);
@@ -2017,11 +2024,12 @@ namespace ClientUI
         /// <param name="vis">可視狀態</param>
         private void DockContentVisible(ICtDockContent dockContent, bool vis) {
             try {
-                if (vis) {
-                    dockContent.ShowWindow();
-                } else {
-                    dockContent.HideWindow();
-                }
+                    if (vis) {
+                        dockContent.ShowWindow();
+                    } else {
+                        dockContent.HideWindow();
+                    }
+                
             } catch (Exception ex) {
                 string msg = ex.Message;
             }
