@@ -461,8 +461,6 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "CtTesting";
             this.Text = "Testing";
-            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Ctrl_KeyDown);
-            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Ctrl_KeyUp);
             this.grbMap.ResumeLayout(false);
             this.grbInfo.ResumeLayout(false);
             this.grbMode.ResumeLayout(false);

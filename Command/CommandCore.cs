@@ -2973,7 +2973,7 @@ namespace CommandCore {
             if (Socket != null) {
                 Stop();
             }
-            IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, Port);
+            IPEndPoint endPoint = new IPEndPoint(new IPAddress(new byte[] { 127,0,0,1}), Port);
             Socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             Socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, 5000);//設置接收資料超時
             Socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.SendTimeout, 5000);

@@ -1,4 +1,5 @@
-﻿using MapProcessing;
+﻿using AGVDefine;
+using MapProcessing;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using static ClientUI.Events.ConsoleEvents;
@@ -389,7 +390,7 @@ namespace ClientUI
 
             public delegate void DelSendMap();
 
-            public delegate void DelSetCarMode(CarMode mode);
+            public delegate void DelSetCarMode(EMode mode);
 
             public delegate void DelStartScan(bool scan);
 
@@ -407,17 +408,9 @@ namespace ClientUI
 
         }
 
-        public static class FlagGuard {
-
-            public delegate void DelSetFlag(bool isAllow);
-            
-            public delegate bool DelUserContinue(string description);
-
-            public delegate void DelShowInfo();
+        public static class FlowTemplate {
 
             public delegate bool DelSwitchFlag();
-
-            public delegate bool DelUserSwitch(string description);
 
             public delegate bool DelIsAllow();
 

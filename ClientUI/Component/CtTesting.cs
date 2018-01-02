@@ -7,6 +7,7 @@ using WeifenLuo.WinFormsUI.Docking;
 using CtLib.Library;
 using System.Linq;
 using System.Threading;
+using AGVDefine;
 
 namespace ClientUI
 {
@@ -35,13 +36,7 @@ namespace ClientUI
         public CtTesting(DockState defState = DockState.Float)
             :base(defState) {
             InitializeComponent();
-            FixedSize = new Size(718, 814);       
-
-            foreach(Control ctrl in Controls) {
-                ctrl.KeyUp += Ctrl_KeyUp;
-                ctrl.KeyDown += Ctrl_KeyDown;
-            }
-
+            FixedSize = new Size(718, 814);
         }
 
         #endregion Function - Constructors
@@ -166,30 +161,6 @@ namespace ClientUI
 
         #region Function  - UI Events
 
-        private void Ctrl_KeyUp(object sender, KeyEventArgs e) {
-            if (Enum.IsDefined(typeof(MotionDirection), (int)e.KeyCode)) {
-                MotionDirection dir = (MotionDirection)e.KeyCode;
-                mDirs.Remove(dir);
-                if (mDirs.Any()) {
-                    Motion_Down?.Invoke(mDirs[0]);
-                } else {
-                    Motion_Up?.Invoke();
-                }
-            }
-        }
-
-        int ii = 0;
-        private void Ctrl_KeyDown(object sender, KeyEventArgs e) {
-            Console.WriteLine($"KeyDown{ii++}");
-            if (Enum.IsDefined(typeof(MotionDirection), (int)e.KeyCode)) {
-                MotionDirection dir = (MotionDirection)e.KeyCode;
-                if (!mDirs.Contains(dir)) {
-                    mDirs.Add(dir);
-                    Motion_Down?.Invoke((MotionDirection)e.KeyCode);
-                }
-            }
-        }
-
         private void btnConnect_Click(object sender, EventArgs e) {
             if (btnConnect.Tag == null || (btnConnect.Tag is bool && !(bool)btnConnect.Tag)) {
                 Connect.Invoke(true, cboHostIP.Text);
@@ -250,15 +221,15 @@ namespace ClientUI
         }
 
         private void btnMapMode_Click(object sender, EventArgs e) {
-            SetCarMode?.Invoke(CarMode.Map);
+            SetCarMode?.Invoke(EMode.Map);
         }
 
         private void btnWorkMode_Click(object sender, EventArgs e) {
-            SetCarMode?.Invoke(CarMode.Work);
+            SetCarMode?.Invoke(EMode.Work);
         }
 
         private void btnIdleMode_Click(object sender, EventArgs e) {
-            SetCarMode?.Invoke(CarMode.Idle);
+            SetCarMode?.Invoke(EMode.Idle);
         }
 
         private void btnSimplyOri_Click(object sender, EventArgs e) {
@@ -347,7 +318,7 @@ namespace ClientUI
         /// </summary>
         LeftTrun = 37,
         /// <summary>
-        /// 右璇
+        /// 右旋
         /// </summary>
         RightTurn = 39,
         /// <summary>

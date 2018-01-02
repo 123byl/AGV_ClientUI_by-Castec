@@ -67,7 +67,7 @@ namespace ClientUI.Component {
                 if (!mDirs.Contains(dir)) {
                     ActivePic(mDirCtrlMapping[dir]);
                     mDirs.Add(dir);
-                    MotionDown?.Invoke(dir);
+                    MotionDown?.BeginInvoke(dir,null,null);
                     mDirCtrlMapping[dir].BorderStyle = BorderStyle.FixedSingle;
                 }
             }
@@ -79,9 +79,9 @@ namespace ClientUI.Component {
                 ActivePic(mDirCtrlMapping[dir], false);
                 mDirs.Remove(dir);
                 if (mDirs.Any()) {                    
-                    MotionDown?.Invoke(mDirs[0]);
+                    MotionDown?.BeginInvoke(mDirs[0],null,null);
                 } else {
-                    MotionUp?.Invoke();
+                    MotionUp?.BeginInvoke(null,null);
                 }
             }
         }

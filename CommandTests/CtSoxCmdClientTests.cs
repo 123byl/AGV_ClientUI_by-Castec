@@ -8,12 +8,69 @@ using System.Threading.Tasks;
 using MapProcessing;
 using System.Threading;
 using System.IO;
+using Geometry;
+using System.Text.RegularExpressions;
+using System.Drawing;
 
 namespace CommandCore.Tests {
 
     [TestClass()]
     public class CtSoxCmdClientTests {
+        [TestMethod]
+        public void LinqTest() {
+            List<IPair> src = new List<IPair>() {
+                FactoryMode.Factory.Pair(10,10),
+                FactoryMode.Factory.Pair(20,20),
+                FactoryMode.Factory.Pair(30,30),
+                FactoryMode.Factory.Pair(40,40),
+                FactoryMode.Factory.Pair(50,50),
+                FactoryMode.Factory.Pair(60,60),
+                FactoryMode.Factory.Pair(70,70),
+                FactoryMode.Factory.Pair(80,80),
+            };
+            Assert.IsTrue(GenericCompare<IPair>.IsEqual(src[0], src[0]), $"IsEqual結果不符");
+            List<IPair> temp = src;
+            Assert.IsTrue(src.SequenceEqual(temp,GenericCompare<IPair>.Comparer),"SequenceEqual結果不符");
+            string pack = string.Join(",", src.ConvertAll(pair => pair.ToString()));
+            List<string> pairList = pack.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).ToList();
+            List<int> intList = new List<int>() { 1,2,3,4,5,6,7,8,9};
+            var testData = pairList
+                .Select(v => int.Parse(v))
+                .Select((val,idx) => new { val,idx})
+                .GroupBy(x => x.idx/2)
+                .Select(v => FactoryMode.Factory.Pair(v.ElementAt(0).val,v.ElementAt(1).val)
+                ).ToList();
+            
 
+            //Assert.IsTrue(src.SequenceEqual(dest,GenericCompare<IPair>.Comparer),"轉換後結果不符");
+        }
+        public class GenericCompare<T> : IEqualityComparer<T> where T: IEquatable<T>  {
+
+            private static GenericCompare<T> mInstance = null;
+
+            public static GenericCompare<T> Comparer {
+                get {
+                    if (mInstance == null) mInstance = new GenericCompare<T>();
+                    return mInstance;
+                }
+            }
+
+            private GenericCompare() {
+            }
+            
+
+            public bool Equals(T t1, T t2) {
+                return IsEqual(t1,t2);
+            }
+
+            public static bool IsEqual(T t1,T t2) {
+                return t1.Equals(t2);
+            }
+
+            public int GetHashCode(T obj) {
+                return obj.GetHashCode();
+            }
+        }
         #region Funciton - Test Methods
 
         /// <summary>
@@ -21,6 +78,7 @@ namespace CommandCore.Tests {
         /// </summary>
         [TestMethod]
         public void ConstructorTest() {
+            
             string remoteIP = "127.0.0.0";
             ISoxCmdClient client = TestFactory.CommandCore.Client(remoteIP);
             Assert.IsTrue(client.ServerIP == remoteIP);

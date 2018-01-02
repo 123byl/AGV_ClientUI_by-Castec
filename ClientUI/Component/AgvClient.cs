@@ -104,6 +104,12 @@ namespace ClientUI
             agv.Data.Toward.Theta = location.theta;
         }
 
+        public static void SetLocation(this IAGV agv,ITowardPair location) {
+            agv.Data.Position.X = location.Position.X;
+            agv.Data.Position.Y = location.Position.Y;
+            agv.Data.Toward.Theta = location.Toward.Theta;
+        }
+
         #region OutlookBar
 
         public static IClickSender AddItem(this IOutlookCategory iconPanel, CursorMode mode, Image img = null) {
@@ -123,28 +129,6 @@ namespace ClientUI
 
     #region Declaration - Enum
 
-    /// <summary>
-    /// 車子模式
-    /// </summary>
-    public enum CarMode:byte {
-        /// <summary>
-        /// 閒置
-        /// </summary>
-        Idle,
-        /// <summary>
-        /// 工作
-        /// </summary>
-        Work,
-        /// <summary>
-        /// 掃圖
-        /// </summary>
-        Map,
-        /// <summary>
-        /// 離線
-        /// </summary>
-        OffLine = 255
-    }
-    
     /// <summary>
     /// 檔案類型
     /// </summary>
