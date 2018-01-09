@@ -63,14 +63,12 @@ namespace ClientUI
         /// </summary>
         public void AddMsg(string msg)
         {
-            lock (mKey)
-            {
-                txtMsg.InvokeIfNecessary(()=> {
+            lock (mKey) {
+                txtMsg.InvokeIfNecessary(() => {
                     txtMsg.Text += msg + "\r\n";
                     txtMsg.SelectionStart = txtMsg.Text.Length;
                     txtMsg.ScrollToCaret();
-                }
-                );
+                });
             }
             ConsoleAddedEvent?.Invoke(msg);
         }

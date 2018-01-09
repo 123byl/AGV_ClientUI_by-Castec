@@ -73,7 +73,7 @@
   </dependency>
   -->
 
-   連接 Omron Adept ACE 相關組譯檔案 
+   <!--連接 Omron Adept ACE 相關組譯檔案 
   <dependency>
     <dependentAssembly>
       <assemblyIdentity
@@ -89,6 +89,6 @@
           name="HexSight\Controls\HSDisplay.sxs"
           version="1.0.0.0" />
     </dependentAssembly>
-  </dependency>
+  </dependency>-->
 
 </assembly>

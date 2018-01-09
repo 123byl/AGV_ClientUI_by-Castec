@@ -205,12 +205,12 @@ namespace ClientUI
         /// <summary>
         /// 地圖相似度
         /// </summary>
-        private double mSimilarity = 0;
+        protected double mSimilarity = 0;
 
         /// <summary>
         /// 地圖相似度門檻值
         /// </summary>
-        private double mThrSimilarity = 80;
+        private double mThrSimilarity = 0.80;
 
         /// <summary>
         /// 車子資訊
@@ -489,15 +489,12 @@ namespace ClientUI
         {
             InitializeComponent();
 
-            string[] data = new string[] { "1","2","3"};
-            string[] temp = new string[2];
-            Array.Copy(data,1, temp,0,2);
             /*-- 車子資訊接收 --*/
-            mSoxMonitorCmd = new SocketMonitor((int)EPort.port_sendState, tsk_RecvCmd).Listen();
-            /*-- 檔案接收 --*/
-            mSoxMonitorFile = new SocketMonitor((int)EPort.port_sendFile, tsk_RecvFiles).Listen();
-            /*-- 路徑接收 --*/
-            mSoxMonitorPath = new SocketMonitor((int)EPort.port_sendPath, tsk_RecvPath).Listen();
+            //mSoxMonitorCmd = new SocketMonitor((int)EPort.port_sendState, tsk_RecvCmd).Listen();
+            ///*-- 檔案接收 --*/
+            //mSoxMonitorFile = new SocketMonitor((int)EPort.port_sendFile, tsk_RecvFiles).Listen();
+            ///*-- 路徑接收 --*/
+            //mSoxMonitorPath = new SocketMonitor((int)EPort.port_sendPath, tsk_RecvPath).Listen();
             
             /*-- 載入AVG物件 --*/
             if (!Database.AGVGM.ContainsID(mAGVID)) {
@@ -822,9 +819,9 @@ namespace ClientUI
         }
         
         private void ITest_SettingCarPos() {
-            mConnectFlow.CheckFlag("Set Car",() => {
+            //mConnectFlow.CheckFlag("Set Car",() => {
                 mIsSetting = true;
-            });
+            //});
         }
 
         private void ITest_ClearMap() {
@@ -986,12 +983,12 @@ namespace ClientUI
             });
         }
 
-        private void ITest_GetMap() {
+        protected virtual void ITest_GetMap() {
             IConsole.AddMsg("[Get Map]");
             GetFile(FileType.Map);
         }
 
-        private void ITest_GetORi() {
+        protected virtual void ITest_GetORi() {
             IConsole.AddMsg("[Get Ori]");
             GetFile(FileType.Ori);
         }
@@ -1028,11 +1025,14 @@ namespace ClientUI
         #region IMapGL事件連結
 
         private void IMapCtrl_GLClickEvent(object sender, GLMouseEventArgs e) {
+            IConsole.AddMsg($"MapClickTrigger - IsSetting:{mIsSetting}");
             if (mIsSetting) {
                 if (Database.AGVGM.ContainsID(mAGVID)) {
                     if (mNewPos == null) {
+                        IConsole.AddMsg("NewPos=null");
                         mNewPos = e.Position;
                     } else {
+                        IConsole.AddMsg($"NewPos{mNewPos.ToString()}");
                         double Calx = e.Position.X - mNewPos.X;
                         double Caly = e.Position.Y - mNewPos.Y;
                         double Calt = Math.Atan2(Caly, Calx) * 180 / Math.PI;
@@ -1061,7 +1061,7 @@ namespace ClientUI
         private void IGoalSetting_Charging(CartesianPosInfo power, int idxPower) {
             if (power != null && idxPower >= 0) {
                 mSimilarityFlow.CheckFlag("Charging", () => {
-                    IConsole.AddMsg($"Charging to idx{idxPower} {power.ToString()}");
+                    IConsole.AddMsg($"Client - Charging to idx{idxPower} {power.ToString()}");
                     Charging(idxPower);
                 });
             }else {
@@ -1451,7 +1451,7 @@ namespace ClientUI
         /// </summary>
         /// <returns>Goal List:"{goal1},{goal2},{goal3}..."</returns>
         /// <remarks>用來模擬iS向AGV要求所有Goal點名稱</remarks> 
-        private string GetGoalNames() {
+        protected virtual string GetGoalNames() {
             string goalList = "Empty";
             if (mBypassSocket) {
                 /*-- 模擬用資料 --*/
@@ -2223,7 +2223,6 @@ namespace ClientUI
         /// 繪製雷射
         /// </summary>
         private void DrawLaser(CarInfo info) {
-
             //List<int> points = new List<IPair>();
             //int idx = 0;
             //foreach (int dist in info.LaserData) {
@@ -2233,9 +2232,13 @@ namespace ClientUI
             //        pos = null;
             //    }
             //}
-            Database.AGVGM[mAGVID]?.LaserAPoints.DataList.Replace(info.LaserData);
+            DrawLaser(info.LaserData);
         }
 
+        /// <summary>
+        /// 繪製雷射
+        /// </summary>
+        /// <param name="laserData"></param>
         private void DrawLaser(IEnumerable<int> laserData) {
             List<IPair> points = new List<IPair>();
             int idx = 0;
@@ -2263,11 +2266,27 @@ namespace ClientUI
         }
 
         /// <summary>
-        /// 繪製路徑路徑
+        /// 繪製雷射
         /// </summary>
-        /// <param name="points"></param>
-        private void DrawPath(List<CartesianPos> points) {
-            Database.AGVGM[mAGVID].Path.DataList.Replace(points.ToIPair());
+        /// <param name="laser"></param>
+        protected void DrawLaser(IEnumerable<IPair> laser) {
+            Database.AGVGM[mAGVID]?.LaserAPoints.DataList.Replace(laser);
+        }
+
+        /// <summary>
+        /// 繪製路徑
+        /// </summary>
+        /// <param name="path"></param>
+        private void DrawPath(List<CartesianPos> path) {
+            DrawPath(path.ToPairs());
+        }
+
+        /// <summary>
+        /// 繪製路徑
+        /// </summary>
+        /// <param name="path"></param>
+        protected void DrawPath(IEnumerable<IPair> path) {
+            Database.AGVGM[mAGVID].Path.DataList.Replace(path);
         }
 
         /// <summary>

@@ -102,7 +102,7 @@ namespace CommandCore {
         /// <summary>
         /// 檔案下載(Server to Client)
         /// </summary>
-        GetFile = 600,
+        GetFile = 602,
         /// <summary>
         /// 檔案傳送(Client to Server)
         /// </summary>
@@ -110,11 +110,11 @@ namespace CommandCore {
         /// <summary>
         /// 車子資訊
         /// </summary>
-        Info = 800,
+        Info = 802,
         /// <summary>
         /// 路徑規劃資料
         /// </summary>
-        Path = 900
+        Path = 902
     }
 
     /// <summary>

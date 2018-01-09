@@ -34,6 +34,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="SharpGL, Version=2.4.0.0, Culture=neutral, PublicKeyToken=27fc851303210b27, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>OpenGLDLL\SharpGL.dll</HintPath>
@@ -130,6 +131,12 @@
     <Compile Include="Component\MapList.Designer.cs">
       <DependentUpon>MapList.cs</DependentUpon>
     </Compile>
+    <Compile Include="Component\TaskCompletionSourceTest.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Component\TaskCompletionSourceTest.Designer.cs">
+      <DependentUpon>TaskCompletionSourceTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Component\CtMapInsert.resx">
@@ -161,6 +168,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Component\MapList.resx">
       <DependentUpon>MapList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Component\TaskCompletionSourceTest.resx">
+      <DependentUpon>TaskCompletionSourceTest.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

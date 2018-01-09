@@ -25,7 +25,7 @@ namespace ClientUI {
 
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new ClientUI_Serial());
-            //Application.Run(new CtMotionController());
+            //Application.Run(new TaskCompletionSourceTest());
 
         }
 

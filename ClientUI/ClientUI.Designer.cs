@@ -243,7 +243,7 @@ namespace ClientUI {
             this.miBypass});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1082, 28);
+            this.menuStrip1.Size = new System.Drawing.Size(1082, 27);
             this.menuStrip1.TabIndex = 9;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -254,7 +254,7 @@ namespace ClientUI {
             this.miUserManager,
             this.miExit});
             this.systemToolStripMenuItem.Name = "systemToolStripMenuItem";
-            this.systemToolStripMenuItem.Size = new System.Drawing.Size(72, 24);
+            this.systemToolStripMenuItem.Size = new System.Drawing.Size(72, 23);
             this.systemToolStripMenuItem.Text = "System";
             // 
             // miLogin
@@ -291,7 +291,7 @@ namespace ClientUI {
             this.miMapInsert,
             this.miMotionController});
             this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
-            this.viewToolStripMenuItem.Size = new System.Drawing.Size(55, 24);
+            this.viewToolStripMenuItem.Size = new System.Drawing.Size(55, 23);
             this.viewToolStripMenuItem.Text = "View";
             // 
             // miMapGL
@@ -344,7 +344,7 @@ namespace ClientUI {
             this.miAbout,
             this.testToolStripMenuItem});
             this.miHelp.Name = "miHelp";
-            this.miHelp.Size = new System.Drawing.Size(53, 24);
+            this.miHelp.Size = new System.Drawing.Size(53, 23);
             this.miHelp.Text = "Help";
             // 
             // miAbout
@@ -367,7 +367,7 @@ namespace ClientUI {
             this.miLoadFile,
             this.miServer});
             this.miBypass.Name = "miBypass";
-            this.miBypass.Size = new System.Drawing.Size(69, 24);
+            this.miBypass.Size = new System.Drawing.Size(69, 23);
             this.miBypass.Text = "Bypass";
             this.miBypass.Visible = false;
             // 
@@ -418,8 +418,8 @@ namespace ClientUI {
         #endregion
         private WeifenLuo.WinFormsUI.Docking.DockPanel dockPanel;
         private System.Windows.Forms.StatusStrip statusStrip1;
-        private System.Windows.Forms.ToolStripStatusLabel tslbBattery;
-        private System.Windows.Forms.ToolStripProgressBar tsprgBattery;
+        protected System.Windows.Forms.ToolStripStatusLabel tslbBattery;
+        protected System.Windows.Forms.ToolStripProgressBar tsprgBattery;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem viewToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem miMapGL;
@@ -437,7 +437,7 @@ namespace ClientUI {
         private System.Windows.Forms.ToolStripStatusLabel tslbSpring;
         private System.Windows.Forms.ToolStripStatusLabel tslbInterval;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
-        private System.Windows.Forms.ToolStripStatusLabel tslbStatus;
+        protected System.Windows.Forms.ToolStripStatusLabel tslbStatus;
         private System.Windows.Forms.ToolStripStatusLabel tslbHostIP;
         private System.Windows.Forms.ToolStripMenuItem miBypass;
         private System.Windows.Forms.ToolStripMenuItem miBypassSocket;

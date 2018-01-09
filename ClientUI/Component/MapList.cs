@@ -14,19 +14,17 @@ namespace ClientUI
     {
 
         public string strMapList = "";
-        public MapList(string MapList)
-        {
+        public MapList(string MapList):this(MapList.Split(new char[] { ',' },StringSplitOptions.RemoveEmptyEntries)){}
+
+        public MapList(string[] mapList) {
             InitializeComponent();
             TopLevel = true;
             TopMost = true;
             btnOK.DialogResult = DialogResult.OK;
             btnCancel.DialogResult = DialogResult.Cancel;
-            string[] strRemoveEndPoint = MapList.Split(',');
-            foreach (string x in strRemoveEndPoint)
-            {
+            foreach (string x in mapList) {
                 lstbMap.Items.Add(x);
             }
-
         }
 
         private void btnOK_Click(object sender, EventArgs e)

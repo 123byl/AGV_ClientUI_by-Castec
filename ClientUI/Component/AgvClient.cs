@@ -34,7 +34,7 @@ namespace ClientUI
         /// <param name="ctrl">欲調用的控制項</param>
         /// <param name="action">欲執行的方法</param>
         public static void InvokeIfNecessary(this Control ctrl, MethodInvoker action) {
-            if (ctrl.InvokeRequired) ctrl.Invoke(action);
+            if (ctrl.InvokeRequired) ctrl.BeginInvoke(action);
             else action();
         }
 
