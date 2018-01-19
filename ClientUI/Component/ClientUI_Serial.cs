@@ -25,7 +25,7 @@ namespace ClientUI.Component {
         /// </summary>
         ISerialClient mSerialClient = null;
 
-        List<CtTaskCompletionSource<IPacket<EPurpose>>> mCmdTsk = new List<CtTaskCompletionSource<IPacket<EPurpose>>>();
+        List<CtTaskCompletionSource<IProductPacket>> mCmdTsk = new List<CtTaskCompletionSource<IProductPacket>>();
 
         #endregion Declaration  - Fields
 
@@ -51,161 +51,138 @@ namespace ClientUI.Component {
         #region Function - Events
 
         private void mSerialClient_ReceiveData(object sender,ReceiveDataEventArgs e) {
-            if (e.Data is IPacket<EPurpose>) {
-                var response = (IPacket<EPurpose>)e.Data;
-                switch (response.Purpose) {
-                    case EPurpose.GetCar:
-                        if (response is IResponseGetCar) {
-                            IsGettingLaser = (response as IResponseGetCar).Enable;
-                            ITest.SetLaserStt(IsGettingLaser);
-                            IConsole.AddMsg($"Server - Get:Car:{IsGettingLaser}");
+            if (e.Data is IProductPacket) {
+                var product = e.Data as IProductPacket;
+                switch (product.Purpose) {
+                    case EPurpose.AutoReportLaser:
+                        var laser = product.ToIAutoReportLaser().Product;
+                        if (laser != null) {
+                            IsGettingLaser = true;
+                            DrawLaser(product.ToIAutoReportLaser().Product);
+                        } else {
+                            IsGettingLaser = false;
+                            Database.AGVGM[mAGVID].LaserAPoints.DataList.Clear();
+                            Database.AGVGM[mAGVID].Path.DataList.Clear();
                         }
+                        ITest.SetLaserStt(IsGettingLaser);
                         break;
-                    case EPurpose.GetLaser:
-                        if (response is IResponseGetLaser) {
-                            var laser = (response as IResponseGetLaser).LaserPoints;
-                            IConsole.AddMsg($"Server - GetLaser {laser.Count()}points");
-                            DrawLaser(laser);
-                        }
+                    case EPurpose.RequestLaser:
+                        DrawLaser(product.ToIRequestLaser().Product);
                         break;
-                    case EPurpose.SetServo:
-                        if (response is IResponseSetServo) {
-                            var servoOn = (response as IResponseSetServo).ServoOn;
+                    case EPurpose.SetServoMode:
+                            var servoOn = product.ToISetServoMode().Product;
                             IConsole.AddMsg($"Server - Set:Servo{(servoOn ? "On" : "Off")}:{servoOn}");
                             IsMotorServoOn = servoOn;
+                        break;
+                    case EPurpose.SetWorkVelocity:
+                            IConsole.AddMsg($"Server - Set:SerWorkVelocity:{product.ToISetWorkVelocity().Product}");
+                        break;
+                    case EPurpose.SetPosition: {
+                            var pack = product.ToISetPosition();
+                            Database.AGVGM[mAGVID].SetLocation(pack.Order.Design);
+                            IConsole.AddMsg($"Server - Set:POS:{pack.Product}");
+                            break;
+                        }
+                    case EPurpose.StartManualControl:
+                        bool isMoving = product.ToIStartManualControl().Product;
+                        IConsole.AddMsg($"Server - Set:Moving:{isMoving}");
+                        break;
+                    case EPurpose.SetManualVelocity: {
+                            var pack = product.ToISetManualVelocity();
+                            if (pack.Product) {
+                                var manualVelocity = pack.Order.Design;
+                                IConsole.AddMsg($"Server - Set:DriveVelo:{manualVelocity.X},{manualVelocity.Y}");
+                            } else {
+                                IConsole.AddMsg($"Server - Set:DriveVelo:False");
+                            }
+                            break;
+                        }
+                    case EPurpose.StopScaning: {
+                            var pack = product.ToIStopScaning();
+                            SetAgvStatus(EMode.Idle);
                         }
                         break;
-                    case EPurpose.SetWorkVelo:
-                        if (response is IResponseSetWorkVelocity) {
-                            int velocity = (response as IResponseSetWorkVelocity).WorkVelocity;
-                            IConsole.AddMsg($"Server - Set:SerWorkVelocity:{velocity}");
+                    case EPurpose.SetScaningOriFileName: {
+                            var pack = product.ToISetScaningOriFileName();
+                            if (pack.Product) {
+                                IConsole.AddMsg($"Server - Set:OriName:{pack.Order.Design}");
+                                SetAgvStatus(EMode.Map);
+                            } else {
+                                IConsole.AddMsg($"Server - Set:OriName:{pack.Product}");
+                                SetAgvStatus(EMode.Idle);
+                            }
+                            break;
                         }
+                    case EPurpose.DoPositionComfirm:
+                        mSimilarity = product.ToIDoPositionComfirm().Product;
+                        IConsole.AddMsg($"Server - Set:POSComfirm:{mSimilarity}");
                         break;
-                    case EPurpose.SetPOS:
-                        if (response is IResponseSetPOS) {
-                            bool suc = (response as IResponseSetPOS).Success;
-                            IConsole.AddMsg($"Server - Set:POS:{suc}");
+                    case EPurpose.AutoReportPath: {
+                            var pack = product.ToIAutoReportPath();
+                            //IConsole.AddMsg($"Server - SetPathPlan:idx({pack.Order.Design}):Count({pack.Product.Count})");
+                            DrawPath(pack.Product);
+                            break;
                         }
-                        break;
-                    case EPurpose.SetMoving:
-                        if (response is IResponseSetMoving) {
-                            bool isMoving = (response as IResponseSetMoving).IsMoving;
-                            IConsole.AddMsg($"Server - Set:Moving:{isMoving}");
+                    case EPurpose.DoRuningByGoalIndex: {
+                            var pack = product.ToIDoRuningByGoalIndex();
+                            IConsole.AddMsg($"Server - SetRun:idx({pack.Order.Design}):{pack.Product}");
+                            break;
                         }
-                        break;
-                    case EPurpose.SetDriveVelo:
-                        if (response is IResponseSetDriveVelo) {
-                            IResponseSetDriveVelo velo = response as IResponseSetDriveVelo;
-                            IConsole.AddMsg($"Server - Set:DriveVelo:{velo.LeftVelocity},{velo.RightVelocity}");
+                    case EPurpose.DoCharging: {
+                            var pack = product.ToIDoCharging();
+                            IConsole.AddMsg($"Server - SetCharging:idx({pack.Order.Design}):{pack.Product}");
+                            break;
                         }
-                        break;
-                    case EPurpose.SetMode:
-                        if (response is IResponseSetMode) {
-                            EMode mode = (response as IResponseSetMode).Mode;
-                            IConsole.AddMsg($"Server - Set:Mode:{mode}");
-                        }
-                        break;
-                    case EPurpose.SetOriName:
-                        if (response is IResponseSetOriName) {
-                            string oriName = (response as IResponseSetOriName).OriName;
-                            IConsole.AddMsg($"Server - Set:OriName:{oriName}");
-                        }
-                        break;
-                    case EPurpose.SetPOSComfirm:
-                        if (response is IResponseSetPOSComfirm) {
-                            mSimilarity = (response as IResponseSetPOSComfirm).Similarity;
-                            IConsole.AddMsg($"Server - Set:POSComfirm:{mSimilarity}");
-                        }
-                        break;
-                    case EPurpose.SetPathPlan:
-                        if (response is IResponseSetPathPlan) {
-                            var val = (response as IResponseSetPathPlan);
-                            IConsole.AddMsg($"Server - SetPathPlan:idx({val.GoalIndex}):{val.Success}:Count({val.Path?.Count ?? 0})");
-                            DrawPath(val.Path);
-                        }
-                        break;
-                    case EPurpose.SetRun:
-                        if (response is IResponseSetRun) {
-                            var val = (response as IResponseSetRun);
-                            IConsole.AddMsg($"Server - SetRun:idx({val.GoalIndex}):{val.Success}:Count({val.Path?.Count ?? 0})");
-                            DrawPath(val.Path);
-                        }
-                        break;
-                    case EPurpose.Charging:
-                        if (response is IResponseCharging) {
-                            var val = (response as IResponseCharging);
-                            IConsole.AddMsg($"Server - SetCharging:idx({val.PowerIndex}):{val.Success}:Count({val.Path?.Count ??0})");
-                            DrawPath(val.Path);
-                        }
-                        break;
-                    case EPurpose.GetMapList:
-                        if (response is IResponseGetMapList) {
-                            string[] mapList = (response as IResponseGetMapList).MapList;
-                            using (MapList f = new MapList(mapList)) {
-                                if (f.ShowDialog() == DialogResult.OK) {
-                                    mSerialClient.Send(FactoryMode.Factory.Command().GetMap(f.strMapList));
-                                }
+                    case EPurpose.RequestMapList:
+                        var mapList = product.ToIRequestMapList().Product;
+                        using (MapList f = new MapList(mapList)) {
+                            if (f.ShowDialog() == DialogResult.OK) {
+                                mSerialClient.Send(FactoryMode.Factory.Order().RequestMapFile(f.strMapList));
                             }
                         }
                         break;
-                    case EPurpose.GetMap:
-                        if (response is IResponseGetMap) {
-                            var map = (response as IResponseGetMap);
-                            map.Save(@"D:\Mapinfo\Client");
-                        }
+                    case EPurpose.RequestMapFile:
+                        product.ToIRequestMapFile().Product.SaveAs(@"D:\Mapinfo\Client");
                         break;
-                    case EPurpose.GetOriList:
-                        if (response is IResponseGetOriList) {
-                            string[] oriList = (response as IResponseGetOriList).OriList;
-                            using (MapList f = new MapList(oriList)) {
-                                if (f.ShowDialog() == DialogResult.OK) {
-                                    mSerialClient.Send(FactoryMode.Factory.Command().GetOri(f.strMapList));
-                                }
+                    case EPurpose.RequestOriFileList:
+                        var oriList = product.ToIRequestOriFileList().Product;
+                        using (MapList f = new MapList(oriList)) {
+                            if (f.ShowDialog() == DialogResult.OK) {
+                                mSerialClient.Send(FactoryMode.Factory.Order().RequestOriFile(f.strMapList));
                             }
                         }
                         break;
-                    case EPurpose.GetOri:
-                        if (response is IResponseGetOri) {
-                            var ori = (response as IResponseGetOri);
-                            ori.Save(@"D:\Mapinfo\Client");
-                        }
+                    case EPurpose.RequestOriFile:
+                        product.ToIRequestOriFile().Product.SaveAs(@"D:\Mapinfo\Client");
                         break;
-                    case EPurpose.SendMap:
-                        if (response is IResponseSendMap) {
-                            var map = response as IResponseSendMap;
-                            IConsole.AddMsg($"Server - Send:Map:{map.FileName}:{map.Success}");
-                            mSerialClient.Send(FactoryMode.Factory.Command().SetMapName(map.FileName));
+                    case EPurpose.UploadMapToAGV: {
+                            var pack = product.ToIUploadMapToAGV();
+                            IConsole.AddMsg($"Server - Send:Map:{pack.Order.Design.Name}:{pack.Product}");
+                            break;
                         }
+                    case EPurpose.ChangeMap: {
+                            var pack = product.ToIChangeMap();
+                            IConsole.AddMsg($"Server - Set:MapName:{(pack.Product ?  pack.Order.Design : "False")}");
+                            break;
+                        }
+                    case EPurpose.RequestGoalList:
+                            mCmdTsk.Last().SetResult(product);
+                            mCmdTsk.Remove(mCmdTsk.Last());                        
                         break;
-                    case EPurpose.SetMapName:
-                        if (response is IResponseSetMapName) {
-                            IConsole.AddMsg($"Server - Set:MapName:{(response as IResponseSetMapName).MapName}");
-                        }
+                    case EPurpose.AutoReportStatus:
+                        var status = product.ToIAutoReportStatus().Product;
+                        this.InvokeIfNecessary(() => {
+                            if (status.Battery != -1) {
+                                tsprgBattery.Value = (int)status.Battery;
+                                tslbBattery.Text = $"{status.Battery:0.0}%";
+                            }
+                            tslbStatus.Text = status.Description.ToString();
+                        });
+                        Database.AGVGM[mAGVID].SetLocation(status.Data);
                         break;
-                    case EPurpose.GetGoalList:
-                        if (response is IResponseGetGoalList) {
-                            mCmdTsk.Last().SetResult(response);
-                            mCmdTsk.Remove(mCmdTsk.Last());
-                        }
-                        break;
-                    case EPurpose.TakeStatus:
-                        if (response is IResponseTakeStatus) {
-                            var status = (response as IResponseTakeStatus).Status;
-                            this.InvokeIfNecessary(() => {
-                                if (status.Battery != -1) {
-                                    tsprgBattery.Value = (int)status.Battery;
-                                    tslbBattery.Text = $"{status.Battery:0.0}%";
-                                }
-                                tslbStatus.Text = status.Description.ToString();
-                            });
-                            Database.AGVGM[mAGVID].SetLocation(status.Data);
-                        }
-                        break;
-                    case EPurpose.TakePath:
-                        if (response is IResponseTakePath) {
-                            var path = (response as IResponseTakePath).Path;
-                            Database.AGVGM[mAGVID].Path.DataList.Replace(path);
-                        }
+                    case EPurpose.RequestPath:
+                        var path = product.ToIRequestPath().Product;
+                        DrawPath(path);
                         break;
                 }
             }
@@ -236,31 +213,34 @@ namespace ClientUI.Component {
 
         protected override bool GetLaser() {
             if (IsConnected) {
-                return mSerialClient.Send(FactoryMode.Factory.Command().GetLaser());
+                return mSerialClient.Send(FactoryMode.Factory.Order().RequestLaser());
             }
             
             return false;
         }
 
         protected override void ITest_GetCar() {
-            mSerialClient.Send(FactoryMode.Factory.Command().GetCar(!IsGettingLaser));
-            IConsole.AddMsg($"Client - Get:Car:{!IsGettingLaser}");
+            bool getting = !IsGettingLaser;
+            mSerialClient.Send(FactoryMode.Factory.Order().AutoReportLaser(getting));
+            mSerialClient.Send(FactoryMode.Factory.Order().AutoReportStatus(getting));
+            mSerialClient.Send(FactoryMode.Factory.Order().AutoReportPath(getting));
+            IConsole.AddMsg($"Client - Get:Car:{getting}");
         }
 
         protected override void ITest_MotorServoOn(bool servoOn) {
-            mSerialClient.Send(FactoryMode.Factory.Command().SetServo(servoOn));
+            mSerialClient.Send(FactoryMode.Factory.Order().SetServoMode(servoOn));
             IConsole.AddMsg($"Client - Set:Servo{(servoOn ? "On" : "Off")}:{servoOn}");
         }
 
         protected override void ITest_SetVelocity(int velocity) {
             mVelocity = velocity;
-            mSerialClient.Send(FactoryMode.Factory.Command().SetWorkVelocity(mVelocity));
+            mSerialClient.Send(FactoryMode.Factory.Order().SetWorkVelocity(mVelocity));
             IConsole.AddMsg($"Client - Set:WorkVelocity:{mVelocity}");
         }
 
         protected override void SetPosition(int x, int y, double theta) {
             var pos = FactoryMode.Factory.TowardPair(x, y, theta);
-            var cmd = FactoryMode.Factory.Command().SetPOS(pos);
+            var cmd = FactoryMode.Factory.Order().SetPosition(pos);
 
             mSerialClient.Send(cmd);
             
@@ -269,13 +249,13 @@ namespace ClientUI.Component {
 
         protected override void MotionContorl(MotionDirection direction) {
             if (direction == MotionDirection.Stop) {
-                mSerialClient.Send(FactoryMode.Factory.Command().SetMoving(false));
+                mSerialClient.Send(FactoryMode.Factory.Order().StartManualControl(false));
                 IConsole.AddMsg($"Client - Set:Moving:False");
             } else {
                 var cmd = GetMotionICmd(direction);
                 if (cmd != null) {
                     mSerialClient.Send(cmd);
-                    mSerialClient.Send(FactoryMode.Factory.Command().SetMoving(true));
+                    mSerialClient.Send(FactoryMode.Factory.Order().StartManualControl(true));
                     IConsole.AddMsg($"Client - Set:Moving:True");
                 }
             }
@@ -287,14 +267,13 @@ namespace ClientUI.Component {
                 if (scan) {
                     string oriName = string.Empty;
                     if (Stat.SUCCESS == CtInput.Text(out oriName, "MAP Name", "Set Map File Name")) {
-                        mSerialClient.Send(FactoryMode.Factory.Command().SetMode(mode));
-                        mSerialClient.Send(FactoryMode.Factory.Command().SetOriName(oriName));
+                        mSerialClient.Send(FactoryMode.Factory.Order().SetScaningOriFileName(oriName));
                         IConsole.AddMsg($"Start scan");
                     } else {
                         return;
                     }
                 }else {
-                    mSerialClient.Send(FactoryMode.Factory.Command().SetMode(mode));
+                    mSerialClient.Send(FactoryMode.Factory.Order().StopScaning());
                     IConsole.AddMsg($"Stop scan");
                 }
                 mCarMode = mode;
@@ -303,28 +282,28 @@ namespace ClientUI.Component {
         }
 
         protected override void ITest_CarPosConfirm() {
-            mSerialClient.Send(FactoryMode.Factory.Command().SetPOSComfirm());
+            mSerialClient.Send(FactoryMode.Factory.Order().DoPositionComfirm());
             IConsole.AddMsg($"Client - Set:POSComfirm");
         }
 
         protected override void PathPlan(int numGoal) {
-            mSerialClient.Send(FactoryMode.Factory.Command().SetPathPlan(numGoal));
+            mSerialClient.Send(FactoryMode.Factory.Order().RequestPath(numGoal));
         }
 
         protected override void Run(int numGoal) {
-            mSerialClient.Send(FactoryMode.Factory.Command().SetRun(numGoal));
+            mSerialClient.Send(FactoryMode.Factory.Order().DoRuningByGoalIndex(numGoal));
         }
 
         protected override void Charging(int numGoal) {
-            mSerialClient.Send(FactoryMode.Factory.Command().SetCharging(numGoal));
+            mSerialClient.Send(FactoryMode.Factory.Order().DoCharging(numGoal));
         }
 
         protected override void ITest_GetMap() {
-            mSerialClient.Send(FactoryMode.Factory.Command().GetMapList());
+            mSerialClient.Send(FactoryMode.Factory.Order().RequestMapList());
         }
 
         protected override void ITest_GetORi() {
-            mSerialClient.Send(FactoryMode.Factory.Command().GetOriList());
+            mSerialClient.Send(FactoryMode.Factory.Order().RequestOriFileList());
         }
 
         protected override void ITest_SendMap() {
@@ -332,20 +311,35 @@ namespace ClientUI.Component {
             openMap.InitialDirectory = mDefMapDir;
             openMap.Filter = "MAP|*.map";
             if (openMap.ShowDialog() == DialogResult.OK) {
-                mSerialClient.Send(FactoryMode.Factory.Command().SendMap(openMap.FileName));
+                SendFile(openMap.FileName);
+                mSerialClient.Send(FactoryMode.Factory.Order().UploadMapToAGV(openMap.FileName));
+                mSerialClient.Send(FactoryMode.Factory.Order().ChangeMap(openMap.FileName));
             }
         }
 
         protected override string GetGoalNames() {
-            CtTaskCompletionSource<IPacket<EPurpose>> tskCompSrc = new CtTaskCompletionSource<IPacket<EPurpose>>(0);
+            CtTaskCompletionSource<IProductPacket> tskCompSrc = new CtTaskCompletionSource<IProductPacket>(0);
             var tsk = tskCompSrc.Task;
             mCmdTsk.Add(tskCompSrc);
-            mSerialClient.Send(FactoryMode.Factory.Command().GetGoalList());
+            mSerialClient.Send(FactoryMode.Factory.Order().RequestGoalList());
             tsk.Wait(500);
-            return string.Join(",", (tsk.Result as IResponseGetGoalList).GoalNames);
+            return string.Join(",", tsk.Result.ToIRequestGoalList().Product);
         }
 
-        private ICommandSetDriveVelo GetMotionICmd(MotionDirection direction) {
+        protected override void SendFile(string filePath) {
+            IOrderPacket order = null;
+            switch (Path.GetExtension(filePath).ToLower()) {
+                case ".map":
+                    mSerialClient.Send(FactoryMode.Factory.Order().UploadMapToAGV(filePath));
+                    mSerialClient.Send(FactoryMode.Factory.Order().ChangeMap(filePath));
+                    break;
+                case ".ori":
+
+                    break;
+            }
+        }
+
+        private IOrderPacket<IPair,bool> GetMotionICmd(MotionDirection direction) {
             int r = 0, l = 0,v = mVelocity;
             switch (direction) {
                 case MotionDirection.Forward:
@@ -367,10 +361,24 @@ namespace ClientUI.Component {
                 default:
                     return null;
             }
-            return FactoryMode.Factory.Command().SetDriveVelo(l, r);
+            return FactoryMode.Factory.Order().SetManualVelocity(l, r);
         }
 
+        /// <summary>
+        /// 設定AGV狀態
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="status"></param>
+        private void SetAgvStatus<T>(T status)where T:struct {
+            this.InvokeIfNecessary(() => {
+                tslbStatus.Text = status.ToString();
+            });
+        }
+
+
+
         #endregion Function - Private Methods
+
     }
 
     internal class FakeSerialClient : ISerialClient {
@@ -408,134 +416,134 @@ namespace ClientUI.Component {
         }
 
         public bool Send(ICanSendBySerial msg) {
-            if (msg is IPacket<EPurpose>) {
-                var cmd = (IPacket<EPurpose>)msg;
-                switch (cmd.Purpose) {
-                    case EPurpose.GetCar:
-                        if (cmd is ICommandGetCar) {
-                            bool enb = (cmd as ICommandGetCar).Enable;
-                            //mReceiveDataEvent.BeginInvoke(this, new ReceiveDataEventArgs(FactoryMode.Factory.Response().GetCar(enb,null,null,0,null), null),null,null);
-                        }
-                        break;
-                    case EPurpose.GetLaser:
-                        if (cmd is ICommandGetLaser) {
-                            List<IPair> laserPoints = new List<IPair>();
-                            mReceiveDataEvent.BeginInvoke(this, new ReceiveDataEventArgs(FactoryMode.Factory.Response().GetLaser(laserPoints), null),null,null);
-                        }
-                        break;
-                    case EPurpose.SetServo:
-                        if (cmd is ICommandSetServo) {
-                            bool servoOn = (cmd as ICommandSetServo).ServoOn;
-                            mReceiveDataEvent.BeginInvoke(this, new ReceiveDataEventArgs(FactoryMode.Factory.Response().SetServo(servoOn), null), null, null);
-                        }
-                        break;
-                    case EPurpose.SetWorkVelo:
-                        if (cmd is ICommandSetWorkVelocity) {
-                            int velocity = (cmd as ICommandSetWorkVelocity).WorkVelocity;
-                            mReceiveDataEvent.BeginInvoke(this, new ReceiveDataEventArgs(FactoryMode.Factory.Response().SetWorkVelocity(velocity), null), null, null);
-                        }
-                        break;
-                    case EPurpose.SetPOS:
-                        if (cmd is ICommandSetPOS) {
-                            ITowardPair pos = (cmd as ICommandSetPOS).Position;
-                            mReceiveDataEvent.BeginInvoke(this, new ReceiveDataEventArgs(FactoryMode.Factory.Response().SetPOS(true), null), null, null);
-                        }
-                        break;
-                    case EPurpose.SetMoving:
-                        if (cmd is ICommandSetMoving) {
-                            bool start = (cmd as ICommandSetMoving).StartMoving;
-                            mReceiveDataEvent.BeginInvoke(this, new ReceiveDataEventArgs(FactoryMode.Factory.Response().SetMoving(start), null), null, null);
-                        }
-                        break;
-                    case EPurpose.SetDriveVelo:
-                        if (cmd is ICommandSetDriveVelo) {
-                            ICommandSetDriveVelo velo = cmd as ICommandSetDriveVelo;
-                            mReceiveDataEvent.BeginInvoke(this, new ReceiveDataEventArgs(FactoryMode.Factory.Response().SetDriveVelo(velo.LeftVelocity, velo.RightVelocity), null), null, null);
-                        }
-                        break;
-                    case EPurpose.SetMode:
-                        if (cmd is ICommandSetMode) {
-                            EMode mode = (cmd as ICommandSetMode).Mode;
-                            mReceiveDataEvent.BeginInvoke(this, new ReceiveDataEventArgs(FactoryMode.Factory.Response().SetMode(mode), null), null, null);
-                        }
-                        break;
-                    case EPurpose.SetOriName:
-                        if (cmd is ICommandSetOriName) {
-                            string oriName = (cmd as ICommandSetOriName).OriName;
-                            mReceiveDataEvent.BeginInvoke(this, new ReceiveDataEventArgs(FactoryMode.Factory.Response().SetOriName(oriName), null), null, null);
-                        }
-                        break;
-                    case EPurpose.SetPOSComfirm:
-                        if (cmd is ICommandSetPOSComfirm) {
-                            mReceiveDataEvent.BeginInvoke(this, new ReceiveDataEventArgs(FactoryMode.Factory.Response().SetPOSComfirm(0.99), null), null, null);
-                        }
-                        break;
-                    case EPurpose.SetPathPlan:
-                        if (cmd is ICommandSetPathPlan) {
-                            int idx = (cmd as ICommandSetPathPlan).GoalIndex;
-                            mReceiveDataEvent.BeginInvoke(this, new ReceiveDataEventArgs(FactoryMode.Factory.Response().SetPathPlan(true, idx, new List<IPair>()), null), null, null);
-                        }
-                        break;
-                    case EPurpose.SetRun:
-                        if (cmd is ICommandSetRun) {
-                            int idx = (cmd as ICommandSetRun).GoalIndex;
-                            mReceiveDataEvent.BeginInvoke(this, new ReceiveDataEventArgs(FactoryMode.Factory.Response().SetRun(true, idx, new List<IPair>()), null), null, null);
-                        }
-                        break;
-                    case EPurpose.Charging:
-                        if (cmd is ICommandSetCharging) {
-                            int idx = (cmd as ICommandSetCharging).PowerIndex;
-                            mReceiveDataEvent.BeginInvoke(this, new ReceiveDataEventArgs(FactoryMode.Factory.Response().Charging(true, idx, new List<IPair>()), null), null, null);
-                        }
-                        break;
-                    case EPurpose.GetMapList:
-                        if (cmd is ICommandGetMapList) {
-                            string[] mapList = Array.ConvertAll(Directory.GetFiles(@"D:\Mapinfo", "*.map"),v => Path.GetFileName(v));
-                            mReceiveDataEvent.BeginInvoke(this, new ReceiveDataEventArgs(FactoryMode.Factory.Response().GetMapList(mapList), null), null, null);
-                        }
-                        break;
-                    case EPurpose.GetMap:
-                        if (cmd is ICommandGetMap) {
-                            string mapPath = $@"D:\Mapinfo\{(cmd as ICommandGetMap).MapName}";
-                            if (File.Exists(mapPath)) {
-                                mReceiveDataEvent.BeginInvoke(this, new ReceiveDataEventArgs(FactoryMode.Factory.Response().GetMap(mapPath), null), null, null);
-                            }
-                        }
-                        break;
-                    case EPurpose.GetOriList:
-                        if (cmd is ICommandGetOriList) {
-                            string[] oriList = Array.ConvertAll(Directory.GetFiles(@"D:\Mapinfo", "*.ori"), v => Path.GetFileName(v));
-                            mReceiveDataEvent.BeginInvoke(this, new ReceiveDataEventArgs(FactoryMode.Factory.Response().GetOriList(oriList), null), null, null);
-                        }
-                        break;
-                    case EPurpose.GetOri:
-                        if (cmd is ICommandGetOri) {
-                            string oriPath = $@"D:\Mapinfo\{(cmd as ICommandGetOri).OriName}";
-                            if (File.Exists(oriPath)) {
-                                mReceiveDataEvent.BeginInvoke(this, new ReceiveDataEventArgs(FactoryMode.Factory.Response().GetOri(oriPath), null), null, null);
-                            }
-                        }
-                        break;
-                    case EPurpose.SendMap:
-                        if (cmd is ICommandSendMap) {
-                            var map = cmd as ICommandSendMap;
-                            map.Save($@"D:\Mapinfo\Client");
-                            mReceiveDataEvent.BeginInvoke(this, new ReceiveDataEventArgs(FactoryMode.Factory.Response().SendMap(true,map.FileName),null), null, null);
-                        }
-                        break;
-                    case EPurpose.SetMapName:
-                        if (cmd is ICommandSetMapName) {
-                            var mapName = (cmd as ICommandSetMapName).MapName;
-                            mReceiveDataEvent.BeginInvoke(this, new ReceiveDataEventArgs(FactoryMode.Factory.Response().SetMapName(mapName), null), null, null);
-                        }
-                        break;
-                    case EPurpose.GetGoalList:
-                        if (cmd is ICommandGetGoalList) {
-                            //mReceiveDataEvent.BeginInvoke(this, new ReceiveDataEventArgs(FactoryMode.Factory.Response().GetGoalList(new string[] { "GoalA", "GoalB", "GoalC" }), null), null, null);
-                        }
-                        break;
-                }
-            }
+            //if (msg is IPacket<EPurpose>) {
+            //    var cmd = (IPacket<EPurpose>)msg;
+            //    switch (cmd.Purpose) {
+            //        case EPurpose.GetCar:
+            //            if (cmd is ICommandGetCar) {
+            //                bool enb = (cmd as ICommandGetCar).Enable;
+            //                //mReceiveDataEvent.BeginInvoke(this, new ReceiveDataEventArgs(FactoryMode.Factory.Response().GetCar(enb,null,null,0,null), null),null,null);
+            //            }
+            //            break;
+            //        case EPurpose.GetLaser:
+            //            if (cmd is ICommandGetLaser) {
+            //                List<IPair> laserPoints = new List<IPair>();
+            //                mReceiveDataEvent.BeginInvoke(this, new ReceiveDataEventArgs(FactoryMode.Factory.Response().GetLaser(laserPoints), null),null,null);
+            //            }
+            //            break;
+            //        case EPurpose.SetServo:
+            //            if (cmd is ICommandSetServo) {
+            //                bool servoOn = (cmd as ICommandSetServo).ServoOn;
+            //                mReceiveDataEvent.BeginInvoke(this, new ReceiveDataEventArgs(FactoryMode.Factory.Response().SetServo(servoOn), null), null, null);
+            //            }
+            //            break;
+            //        case EPurpose.SetWorkVelo:
+            //            if (cmd is ICommandSetWorkVelocity) {
+            //                int velocity = (cmd as ICommandSetWorkVelocity).WorkVelocity;
+            //                mReceiveDataEvent.BeginInvoke(this, new ReceiveDataEventArgs(FactoryMode.Factory.Response().SetWorkVelocity(velocity), null), null, null);
+            //            }
+            //            break;
+            //        case EPurpose.SetPOS:
+            //            if (cmd is ICommandSetPOS) {
+            //                ITowardPair pos = (cmd as ICommandSetPOS).Position;
+            //                mReceiveDataEvent.BeginInvoke(this, new ReceiveDataEventArgs(FactoryMode.Factory.Response().SetPOS(true), null), null, null);
+            //            }
+            //            break;
+            //        case EPurpose.SetMoving:
+            //            if (cmd is ICommandSetMoving) {
+            //                bool start = (cmd as ICommandSetMoving).StartMoving;
+            //                mReceiveDataEvent.BeginInvoke(this, new ReceiveDataEventArgs(FactoryMode.Factory.Response().SetMoving(start), null), null, null);
+            //            }
+            //            break;
+            //        case EPurpose.SetDriveVelo:
+            //            if (cmd is ICommandSetDriveVelo) {
+            //                ICommandSetDriveVelo velo = cmd as ICommandSetDriveVelo;
+            //                mReceiveDataEvent.BeginInvoke(this, new ReceiveDataEventArgs(FactoryMode.Factory.Response().SetDriveVelo(velo.LeftVelocity, velo.RightVelocity), null), null, null);
+            //            }
+            //            break;
+            //        case EPurpose.SetMode:
+            //            if (cmd is ICommandSetMode) {
+            //                EMode mode = (cmd as ICommandSetMode).Mode;
+            //                mReceiveDataEvent.BeginInvoke(this, new ReceiveDataEventArgs(FactoryMode.Factory.Response().SetMode(mode), null), null, null);
+            //            }
+            //            break;
+            //        case EPurpose.SetOriName:
+            //            if (cmd is ICommandSetOriName) {
+            //                string oriName = (cmd as ICommandSetOriName).OriName;
+            //                mReceiveDataEvent.BeginInvoke(this, new ReceiveDataEventArgs(FactoryMode.Factory.Response().SetOriName(oriName), null), null, null);
+            //            }
+            //            break;
+            //        case EPurpose.SetPOSComfirm:
+            //            if (cmd is ICommandSetPOSComfirm) {
+            //                mReceiveDataEvent.BeginInvoke(this, new ReceiveDataEventArgs(FactoryMode.Factory.Response().SetPOSComfirm(0.99), null), null, null);
+            //            }
+            //            break;
+            //        case EPurpose.SetPathPlan:
+            //            if (cmd is ICommandSetPathPlan) {
+            //                int idx = (cmd as ICommandSetPathPlan).GoalIndex;
+            //                mReceiveDataEvent.BeginInvoke(this, new ReceiveDataEventArgs(FactoryMode.Factory.Response().SetPathPlan(true, idx, new List<IPair>()), null), null, null);
+            //            }
+            //            break;
+            //        case EPurpose.SetRun:
+            //            if (cmd is ICommandSetRun) {
+            //                int idx = (cmd as ICommandSetRun).GoalIndex;
+            //                mReceiveDataEvent.BeginInvoke(this, new ReceiveDataEventArgs(FactoryMode.Factory.Response().SetRun(true, idx, new List<IPair>()), null), null, null);
+            //            }
+            //            break;
+            //        case EPurpose.Charging:
+            //            if (cmd is ICommandSetCharging) {
+            //                int idx = (cmd as ICommandSetCharging).PowerIndex;
+            //                mReceiveDataEvent.BeginInvoke(this, new ReceiveDataEventArgs(FactoryMode.Factory.Response().Charging(true, idx, new List<IPair>()), null), null, null);
+            //            }
+            //            break;
+            //        case EPurpose.GetMapList:
+            //            if (cmd is ICommandGetMapList) {
+            //                string[] mapList = Array.ConvertAll(Directory.GetFiles(@"D:\Mapinfo", "*.map"),v => Path.GetFileName(v));
+            //                mReceiveDataEvent.BeginInvoke(this, new ReceiveDataEventArgs(FactoryMode.Factory.Response().GetMapList(mapList), null), null, null);
+            //            }
+            //            break;
+            //        case EPurpose.GetMap:
+            //            if (cmd is ICommandGetMap) {
+            //                string mapPath = $@"D:\Mapinfo\{(cmd as ICommandGetMap).MapName}";
+            //                if (File.Exists(mapPath)) {
+            //                    mReceiveDataEvent.BeginInvoke(this, new ReceiveDataEventArgs(FactoryMode.Factory.Response().GetMap(mapPath), null), null, null);
+            //                }
+            //            }
+            //            break;
+            //        case EPurpose.GetOriList:
+            //            if (cmd is ICommandGetOriList) {
+            //                string[] oriList = Array.ConvertAll(Directory.GetFiles(@"D:\Mapinfo", "*.ori"), v => Path.GetFileName(v));
+            //                mReceiveDataEvent.BeginInvoke(this, new ReceiveDataEventArgs(FactoryMode.Factory.Response().GetOriList(oriList), null), null, null);
+            //            }
+            //            break;
+            //        case EPurpose.GetOri:
+            //            if (cmd is ICommandGetOri) {
+            //                string oriPath = $@"D:\Mapinfo\{(cmd as ICommandGetOri).OriName}";
+            //                if (File.Exists(oriPath)) {
+            //                    mReceiveDataEvent.BeginInvoke(this, new ReceiveDataEventArgs(FactoryMode.Factory.Response().GetOri(oriPath), null), null, null);
+            //                }
+            //            }
+            //            break;
+            //        case EPurpose.SendMap:
+            //            if (cmd is ICommandSendMap) {
+            //                var map = cmd as ICommandSendMap;
+            //                map.Save($@"D:\Mapinfo\Client");
+            //                mReceiveDataEvent.BeginInvoke(this, new ReceiveDataEventArgs(FactoryMode.Factory.Response().SendMap(true,map.FileName),null), null, null);
+            //            }
+            //            break;
+            //        case EPurpose.SetMapName:
+            //            if (cmd is ICommandSetMapName) {
+            //                var mapName = (cmd as ICommandSetMapName).MapName;
+            //                mReceiveDataEvent.BeginInvoke(this, new ReceiveDataEventArgs(FactoryMode.Factory.Response().SetMapName(mapName), null), null, null);
+            //            }
+            //            break;
+            //        case EPurpose.GetGoalList:
+            //            if (cmd is ICommandGetGoalList) {
+            //                //mReceiveDataEvent.BeginInvoke(this, new ReceiveDataEventArgs(FactoryMode.Factory.Response().GetGoalList(new string[] { "GoalA", "GoalB", "GoalC" }), null), null, null);
+            //            }
+            //            break;
+            //    }
+            //}
             return true;
         }
 

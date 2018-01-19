@@ -16,7 +16,7 @@ namespace ClientUI
         public string strMapList = "";
         public MapList(string MapList):this(MapList.Split(new char[] { ',' },StringSplitOptions.RemoveEmptyEntries)){}
 
-        public MapList(string[] mapList) {
+        public MapList(IEnumerable<string> mapList) {
             InitializeComponent();
             TopLevel = true;
             TopMost = true;

@@ -827,6 +827,8 @@ namespace ClientUI
         private void ITest_ClearMap() {
             IGoalSetting.ClearGoal();
             Database.ClearAllButAGV();
+            Database.AGVGM[mAGVID].LaserAPoints.DataList.Clear();
+            Database.AGVGM[mAGVID].Path.DataList.Clear();
         }
 
         protected virtual void ITest_MotorServoOn(bool servoOn) {
@@ -1036,8 +1038,6 @@ namespace ClientUI
                         double Calx = e.Position.X - mNewPos.X;
                         double Caly = e.Position.Y - mNewPos.Y;
                         double Calt = Math.Atan2(Caly, Calx) * 180 / Math.PI;
-                        Database.AGVGM[mAGVID].Data.Position = mNewPos;
-                        Database.AGVGM[mAGVID].Data.Toward.Theta = Calt;
                         //Send POS to AGV   
                         SetPosition(mNewPos.X, mNewPos.Y, Calt);
                         mNewPos = null;
@@ -1577,7 +1577,7 @@ namespace ClientUI
         /// 傳送檔案
         /// </summary>
         /// <param name="filePath"></param>
-        private  void SendFile(string filePath) {
+        protected virtual  void SendFile(string filePath) {
             string fileName = CtFile.GetFileName(filePath);
             bool isSent = true;
             if (!mBypassSocket) {
@@ -2524,11 +2524,11 @@ namespace ClientUI
                 }
                 IConsole.AddMsg("[Confirm] - Similarity:{0}%", mSimilarity);
             //});
-            return mSimilarity > mThrSimilarity;
+            return mSimilarity==-1;
         }
 
         private bool GetSimilarity() {
-            return mSimilarity > mThrSimilarity;
+            return mSimilarity ==-1;
         }
 
         #endregion Flow
