@@ -24,7 +24,7 @@ namespace ClientUI {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new ClientUI_Serial());
+            Application.Run(new AgvClientUI());
             //Application.Run(new TaskCompletionSourceTest());
 
         }

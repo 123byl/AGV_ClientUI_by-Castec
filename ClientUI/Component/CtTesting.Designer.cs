@@ -42,13 +42,6 @@
             this.grbInfo = new ClientUI.CtGroupBox();
             this.btnGetLaser = new System.Windows.Forms.Button();
             this.btnGetCarStatus = new System.Windows.Forms.Button();
-            this.grbMode = new ClientUI.CtGroupBox();
-            this.btnIdleMode = new System.Windows.Forms.Button();
-            this.btnWorkMode = new System.Windows.Forms.Button();
-            this.btnMapMode = new System.Windows.Forms.Button();
-            this.rdbMap = new System.Windows.Forms.RadioButton();
-            this.rdbWork = new System.Windows.Forms.RadioButton();
-            this.rdbIdle = new System.Windows.Forms.RadioButton();
             this.gpbShift = new ClientUI.CtGroupBox();
             this.btnSetVelo = new System.Windows.Forms.Button();
             this.lbVelocity = new System.Windows.Forms.Label();
@@ -56,7 +49,6 @@
             this.btnServoOnOff = new System.Windows.Forms.Button();
             this.grbMap.SuspendLayout();
             this.grbInfo.SuspendLayout();
-            this.grbMode.SuspendLayout();
             this.gpbShift.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -278,98 +270,6 @@
             this.btnGetCarStatus.UseVisualStyleBackColor = true;
             this.btnGetCarStatus.Click += new System.EventHandler(this.btnGetCarStatus_Click);
             // 
-            // grbMode
-            // 
-            this.grbMode.BorderColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.grbMode.Controls.Add(this.btnIdleMode);
-            this.grbMode.Controls.Add(this.btnWorkMode);
-            this.grbMode.Controls.Add(this.btnMapMode);
-            this.grbMode.Controls.Add(this.rdbMap);
-            this.grbMode.Controls.Add(this.rdbWork);
-            this.grbMode.Controls.Add(this.rdbIdle);
-            this.grbMode.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.grbMode.Location = new System.Drawing.Point(32, 484);
-            this.grbMode.Name = "grbMode";
-            this.grbMode.Size = new System.Drawing.Size(316, 274);
-            this.grbMode.TabIndex = 60;
-            this.grbMode.TabStop = false;
-            this.grbMode.Text = "Car Mode";
-            this.grbMode.Visible = false;
-            // 
-            // btnIdleMode
-            // 
-            this.btnIdleMode.Enabled = false;
-            this.btnIdleMode.Font = new System.Drawing.Font("微軟正黑體", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.btnIdleMode.Location = new System.Drawing.Point(210, 88);
-            this.btnIdleMode.Margin = new System.Windows.Forms.Padding(4);
-            this.btnIdleMode.Name = "btnIdleMode";
-            this.btnIdleMode.Size = new System.Drawing.Size(90, 85);
-            this.btnIdleMode.TabIndex = 55;
-            this.btnIdleMode.Text = "Idle Mode";
-            this.btnIdleMode.UseVisualStyleBackColor = true;
-            this.btnIdleMode.Click += new System.EventHandler(this.btnIdleMode_Click);
-            // 
-            // btnWorkMode
-            // 
-            this.btnWorkMode.Enabled = false;
-            this.btnWorkMode.Font = new System.Drawing.Font("微軟正黑體", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.btnWorkMode.Location = new System.Drawing.Point(120, 88);
-            this.btnWorkMode.Margin = new System.Windows.Forms.Padding(4);
-            this.btnWorkMode.Name = "btnWorkMode";
-            this.btnWorkMode.Size = new System.Drawing.Size(90, 85);
-            this.btnWorkMode.TabIndex = 54;
-            this.btnWorkMode.Text = "Work Mode";
-            this.btnWorkMode.UseVisualStyleBackColor = true;
-            this.btnWorkMode.Click += new System.EventHandler(this.btnWorkMode_Click);
-            // 
-            // btnMapMode
-            // 
-            this.btnMapMode.Enabled = false;
-            this.btnMapMode.Font = new System.Drawing.Font("微軟正黑體", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.btnMapMode.Location = new System.Drawing.Point(28, 88);
-            this.btnMapMode.Margin = new System.Windows.Forms.Padding(4);
-            this.btnMapMode.Name = "btnMapMode";
-            this.btnMapMode.Size = new System.Drawing.Size(90, 85);
-            this.btnMapMode.TabIndex = 53;
-            this.btnMapMode.Text = "Map Mode";
-            this.btnMapMode.UseVisualStyleBackColor = true;
-            this.btnMapMode.Click += new System.EventHandler(this.btnMapMode_Click);
-            // 
-            // rdbMap
-            // 
-            this.rdbMap.AutoSize = true;
-            this.rdbMap.Location = new System.Drawing.Point(192, 43);
-            this.rdbMap.Name = "rdbMap";
-            this.rdbMap.Size = new System.Drawing.Size(76, 29);
-            this.rdbMap.TabIndex = 2;
-            this.rdbMap.Tag = "2";
-            this.rdbMap.Text = "Map";
-            this.rdbMap.UseVisualStyleBackColor = true;
-            // 
-            // rdbWork
-            // 
-            this.rdbWork.AutoSize = true;
-            this.rdbWork.Location = new System.Drawing.Point(102, 43);
-            this.rdbWork.Name = "rdbWork";
-            this.rdbWork.Size = new System.Drawing.Size(84, 29);
-            this.rdbWork.TabIndex = 1;
-            this.rdbWork.Tag = "1";
-            this.rdbWork.Text = "Work";
-            this.rdbWork.UseVisualStyleBackColor = true;
-            // 
-            // rdbIdle
-            // 
-            this.rdbIdle.AutoSize = true;
-            this.rdbIdle.Checked = true;
-            this.rdbIdle.Location = new System.Drawing.Point(28, 43);
-            this.rdbIdle.Name = "rdbIdle";
-            this.rdbIdle.Size = new System.Drawing.Size(68, 29);
-            this.rdbIdle.TabIndex = 0;
-            this.rdbIdle.TabStop = true;
-            this.rdbIdle.Tag = "0";
-            this.rdbIdle.Text = "Idle";
-            this.rdbIdle.UseVisualStyleBackColor = true;
-            // 
             // gpbShift
             // 
             this.gpbShift.BorderColor = System.Drawing.SystemColors.ControlDarkDark;
@@ -446,7 +346,6 @@
             this.Controls.Add(this.grbMap);
             this.Controls.Add(this.grbInfo);
             this.Controls.Add(this.btnScan);
-            this.Controls.Add(this.grbMode);
             this.Controls.Add(this.btnPosConfirm);
             this.Controls.Add(this.btnSetCar);
             this.Controls.Add(this.btnSimplyOri);
@@ -463,8 +362,6 @@
             this.Text = "Testing";
             this.grbMap.ResumeLayout(false);
             this.grbInfo.ResumeLayout(false);
-            this.grbMode.ResumeLayout(false);
-            this.grbMode.PerformLayout();
             this.gpbShift.ResumeLayout(false);
             this.gpbShift.PerformLayout();
             this.ResumeLayout(false);
@@ -485,15 +382,8 @@
         private System.Windows.Forms.Button btnSimplyOri;
         private System.Windows.Forms.Button btnSetCar;
         private System.Windows.Forms.Button btnPosConfirm;
-        private System.Windows.Forms.RadioButton rdbMap;
-        private System.Windows.Forms.RadioButton rdbWork;
-        private System.Windows.Forms.RadioButton rdbIdle;
         private CtGroupBox gpbShift;
-        private CtGroupBox grbMode;
         private System.Windows.Forms.Button btnScan;
-        private System.Windows.Forms.Button btnIdleMode;
-        private System.Windows.Forms.Button btnWorkMode;
-        private System.Windows.Forms.Button btnMapMode;
         private CtGroupBox grbInfo;
         private System.Windows.Forms.Button btnGetCarStatus;
         private System.Windows.Forms.Button btnGetLaser;

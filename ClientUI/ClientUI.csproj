@@ -67,9 +67,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Component\ClientUI_Serial.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="Component\CtMapInsert.cs">
       <SubType>Form</SubType>
     </Compile>

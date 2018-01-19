@@ -33,6 +33,7 @@ using CommandCore;
 using UIControl;
 using AGVDefine;
 using SerialCommunication;
+using SerialCommunicationData;
 
 namespace ClientUI
 {
@@ -229,7 +230,7 @@ namespace ClientUI
         private SimilarityFlow mSimilarityFlow = null;
 
         private ServoOnFlow mServoOnFlow = null;
-
+        
         #endregion Declaration - Fields
 
         #region Declaration - Members
@@ -280,32 +281,12 @@ namespace ClientUI
 
         #region Socket
 
+        /// <summary>
+        /// 序列化傳輸物件
+        /// </summary>
         private ISerialClient mSerialClient = null;
 
-        /// <summary>
-        /// 命令接收物件
-        /// </summary>
-        private SocketMonitor mSoxMonitorCmd = null;
-
-        /// <summary>
-        /// 地圖資料接收物件
-        /// </summary>
-        private SocketMonitor mSoxMonitorFile = null;
-
-        /// <summary>
-        /// 路徑規劃接收物件
-        /// </summary>
-        private SocketMonitor mSoxMonitorPath = null;
-
-        /// <summary>
-        /// 命令發送用<see cref="Socket"/>
-        /// </summary>
-        private Socket mSoxCmd = null;
-
-        /// <summary>
-        /// Socket通訊物件
-        /// </summary>
-        private Communication serverComm = new Communication(400, 600, 800);
+        private List<TaskCompletionSource<IProductPacket>> mCmdTsk = new List<TaskCompletionSource<IProductPacket>>();
 
         #endregion Socket
 
@@ -316,24 +297,11 @@ namespace ClientUI
         #region Flag
 
         /// <summary>
-        /// 伺服端是否還有在運作
-        /// </summary>
-        public bool IsServerAlive { get; private set; }
-
-        /// <summary>
         /// 是否已建立連線
         /// </summary>
         public virtual bool IsConnected {
             get {
-                return mIsConnected;
-            }
-            set {
-                if (mIsConnected != value) {
-                    mIsConnected = value;
-                    ITest.SetServerStt(value);
-                    IConsole.AddMsg($"{mHostIP} Is {(mIsConnected ? "Connected" : "Disconnected")}");
-                }
-                //RaiseGoalSettingEvent(GoalSettingEventType.Connect, value);
+                return mSerialClient?.Connected ?? false;
             }
         }
 
@@ -793,29 +761,28 @@ namespace ClientUI
         #region ITest
 
         protected virtual void ITest_StartScan(bool scan) {
-            string description = (scan ? "Start" : "Stop") + " scan";
-            mConnectFlow.CheckFlag(description, () => {
-                EMode mode = scan ? EMode.Map : EMode.Idle;
-                if (mCarMode != mode) {
-                    SendMsg($"Set:Mode:{mode}");
-                    if (scan) {
-                        string oriName = string.Empty;
-                        if (Stat.SUCCESS == CtInput.Text(out oriName, "MAP Name", "Set Map File Name")) {
-                            SendMsg($"Set:OriName:{oriName}.Ori");
-                            ITest.ChangedScanStt(true);
-                        } else {
-                            return;
-                        }
+            EMode mode = scan ? EMode.Map : EMode.Idle;
+            if (mCarMode != mode) {
+                if (scan) {
+                    string oriName = string.Empty;
+                    if (Stat.SUCCESS == CtInput.Text(out oriName, "MAP Name", "Set Map File Name")) {
+                        mSerialClient.Send(FactoryMode.Factory.Order().SetScaningOriFileName(oriName));
+                        IConsole.AddMsg($"Start scan");
+                    } else {
+                        return;
                     }
-                    IConsole.AddMsg(description);
-                    mCarMode = mode;
-                    ChangedMode(mode);
+                } else {
+                    mSerialClient.Send(FactoryMode.Factory.Order().StopScaning());
+                    IConsole.AddMsg($"Stop scan");
                 }
-            }); 
+                mCarMode = mode;
+                ChangedMode(mode);
+            }
         }
 
         protected virtual void ITest_CarPosConfirm() {
-            CheckSimilarity();
+            mSerialClient.Send(FactoryMode.Factory.Order().DoPositionComfirm());
+            IConsole.AddMsg($"Client - Set:POSComfirm");
         }
         
         private void ITest_SettingCarPos() {
@@ -832,13 +799,8 @@ namespace ClientUI
         }
 
         protected virtual void ITest_MotorServoOn(bool servoOn) {
-            mConnectFlow.CheckFlag($"Servo {(servoOn ? "On" : "Off")}",() => {
-                string[] rtnMsg = SendMsg($"Set:Servo{(servoOn ? "On" : "Off")}");
-                if (rtnMsg.Count() > 2 && bool.Parse(rtnMsg[2])) {
-                    IsMotorServoOn = servoOn;
-                    IConsole.AddMsg($"Motor Servo {(servoOn ? "ON" : "OFF")}");
-                }
-            });
+            mSerialClient.Send(FactoryMode.Factory.Order().SetServoMode(servoOn));
+            IConsole.AddMsg($"Client - Set:Servo{(servoOn ? "On" : "Off")}:{servoOn}");
         }
 
         private void ITest_SimplifyOri() {
@@ -885,68 +847,32 @@ namespace ClientUI
             //resultlines = null;
         }
 
-        protected virtual async void ITest_CheckIsServerAlive(bool cnn, string hostIP = "") {
-            if (cnn != IsConnected) {
-                CtProgress prog = new CtProgress("Connect", "Connecting...");
-                try {
-                    if (cnn) {
-                        if (VerifyIP(hostIP)) {
-                            if (mHostIP != hostIP) mHostIP = hostIP;
-                            await Task.Run(() => IsConnected = CheckIsServerAlive());
-                        }
-                    } else {
-                        IsConnected = DisConnectServer();
+        protected virtual void ITest_CheckIsServerAlive(bool cnn, string hostIP = "") {
+            if (IsConnected != cnn) {
+                if (cnn) {
+                    if (mSerialClient == null) {
+                        mSerialClient = FactoryMode.Factory.SerialClient(mSerialClient_ReceiveData);
                     }
-                } finally {
-                    prog?.Close();
-                    prog = null;
+                    mHostIP = hostIP;
+                    mSerialClient.Connect(mHostIP, (int)EPort.ClientPort);
+                } else {
+                    mSerialClient.Dispose();
+                    mSerialClient = null;
                 }
+
+
+                ITest.SetServerStt(IsConnected);
+                IConsole.AddMsg($"Client - Is {(IsConnected ? "Connected" : "Disconnected")} to {mHostIP}");
             }
         }
 
         protected virtual void ITest_SetVelocity(int velocity) {
-            mConnectFlow.CheckFlag("Set Velocity", () => {
-                mVelocity = velocity;
-                IConsole.AddMsg($"Set Velocity {velocity}");
-                SendMsg($"Set: WorkVelo:{velocity}:{velocity}");
-            });
+            mVelocity = velocity;
+            mSerialClient.Send(FactoryMode.Factory.Order().SetWorkVelocity(mVelocity));
         }
         
         private void ITest_SetCarMode(EMode mode) {
-            //if (mode == CarMode.Map) {
-            //    string oriName = string.Empty;
-            //    if (Stat.SUCCESS == CtInput.Text(out oriName, "MAP Name", "Set Map File Name")) {
-            //        SendMsg($"Set:OriName:{oriName}.Ori");
-            //        ITest.ChangedScanStt(true);
-            //    } else {
-            //        return;
-            //    }
-            //}
-            //if (mode != CarMode.OffLine) {
-            //    SendMsg($"Set:Mode:{mode}");
-            //    IConsole.AddMsg($"Set:Mode {mode}");
-            //}
-            IConsole.AddMsg($"Set:Mode {mode}");
-            if (mode != mCarMode) {
-                mode = mCarMode;
-                ChangedMode(mCarMode);
-                switch (mode) {
-                    case EMode.OffLine:
-                        break;
-                    case EMode.Map:
-                        string oriName = string.Empty;
-                        if (Stat.SUCCESS == CtInput.Text(out oriName, "MAP Name", "Set Map File Name")) {
-                            SendMsg($"Set:OriName:{oriName}.Ori");
-                            ITest.ChangedScanStt(true);
-                        } else {
-                            return;
-                        }
-                        break;
-                    default:
-                        SendMsg($"Set:Mode:{mode}");
-                        break;
-                }
-            }
+           
         }
 
         protected virtual void ITest_SendMap() {
@@ -954,45 +880,30 @@ namespace ClientUI
             openMap.InitialDirectory = mDefMapDir;
             openMap.Filter = "MAP|*.map";
             if (openMap.ShowDialog() == DialogResult.OK) {
-                //Task.Run(() => mConnectFlow.CheckFlag("Send Map", () => {
-                    string[] rtnMsg = SendMsg($"Set:MapName:{Path.GetFileName(openMap.FileName)}");
-                    bool ack = false;
-                    if (rtnMsg.Count() <2 || !bool.TryParse(rtnMsg[2],out ack)) {
-                        CtMsgBox.Show("Error", "Server responded incorrectly",MsgBoxBtn.OK,MsgBoxStyle.Error);
-                    }else if (!ack) {
-                        CtMsgBox.Show("Error", "Server refuses the request", MsgBoxBtn.OK, MsgBoxStyle.Error);
-                    }else {
-                        SendFile(openMap.FileName);
-                    }
-                //}));
+                SendFile(openMap.FileName);
+                mSerialClient.Send(FactoryMode.Factory.Order().UploadMapToAGV(openMap.FileName));
+                mSerialClient.Send(FactoryMode.Factory.Order().ChangeMap(openMap.FileName));
             }
-
-            //mConnectFlow.CheckFlag("Send Map", () => {
-            //    SendFile();
-            //});
         }
 
         protected virtual void ITest_GetCar() {
-            mConnectFlow.CheckFlag("GetCar", () => {
-                ChangeSendInfo();
-                IConsole.AddMsg($"{IsGettingLaser}");
-            });
+            bool getting = !IsGettingLaser;
+            mSerialClient.Send(FactoryMode.Factory.Order().AutoReportLaser(getting));
+            mSerialClient.Send(FactoryMode.Factory.Order().AutoReportStatus(getting));
+            mSerialClient.Send(FactoryMode.Factory.Order().AutoReportPath(getting));
+            IConsole.AddMsg($"Client - Get:Car:{getting}");
         }
 
         protected virtual void ITest_GetLaser() {
-            mConnectFlow.CheckFlag("GetLaser", () => {
-                IConsole.AddMsg($"Client - [Get Laser] {(GetLaser() ? "Sent" : "Send fail")}");
-            });
+            GetLaser();
         }
 
         protected virtual void ITest_GetMap() {
-            IConsole.AddMsg("[Get Map]");
-            GetFile(FileType.Map);
+            mSerialClient.Send(FactoryMode.Factory.Order().RequestMapList());
         }
 
         protected virtual void ITest_GetORi() {
-            IConsole.AddMsg("[Get Ori]");
-            GetFile(FileType.Ori);
+            mSerialClient.Send(FactoryMode.Factory.Order().RequestOriFileList());
         }
 
         private void ITest_LoadMap() {
@@ -1171,15 +1082,145 @@ namespace ClientUI
         #endregion
 
         #region ISerialClient
-
-        /// <summary>
-        /// 序列傳輸Client端接收事件
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        
         private void mSerialClient_ReceiveData(object sender, ReceiveDataEventArgs e) {
-
+            if (e.Data is IProductPacket) {
+                var product = e.Data as IProductPacket;
+                switch (product.Purpose) {
+                    case EPurpose.AutoReportLaser:
+                        var laser = product.ToIAutoReportLaser().Product;
+                        if (laser != null) {
+                            IsGettingLaser = true;
+                            DrawLaser(product.ToIAutoReportLaser().Product);
+                        } else {
+                            IsGettingLaser = false;
+                            Database.AGVGM[mAGVID].LaserAPoints.DataList.Clear();
+                            Database.AGVGM[mAGVID].Path.DataList.Clear();
+                        }
+                        ITest.SetLaserStt(IsGettingLaser);
+                        break;
+                    case EPurpose.RequestLaser:
+                        DrawLaser(product.ToIRequestLaser().Product);
+                        break;
+                    case EPurpose.SetServoMode:
+                        var servoOn = product.ToISetServoMode().Product;
+                        IConsole.AddMsg($"Server - Set:Servo{(servoOn ? "On" : "Off")}:{servoOn}");
+                        IsMotorServoOn = servoOn;
+                        break;
+                    case EPurpose.SetWorkVelocity:
+                        IConsole.AddMsg($"Server - Set:SerWorkVelocity:{product.ToISetWorkVelocity().Product}");
+                        break;
+                    case EPurpose.SetPosition: {
+                            var pack = product.ToISetPosition();
+                            Database.AGVGM[mAGVID].SetLocation(pack.Order.Design);
+                            IConsole.AddMsg($"Server - Set:POS:{pack.Product}");
+                            break;
+                        }
+                    case EPurpose.StartManualControl:
+                        bool isMoving = product.ToIStartManualControl().Product;
+                        IConsole.AddMsg($"Server - Set:Moving:{isMoving}");
+                        break;
+                    case EPurpose.SetManualVelocity: {
+                            var pack = product.ToISetManualVelocity();
+                            if (pack.Product) {
+                                var manualVelocity = pack.Order.Design;
+                                IConsole.AddMsg($"Server - Set:DriveVelo:{manualVelocity.X},{manualVelocity.Y}");
+                            } else {
+                                IConsole.AddMsg($"Server - Set:DriveVelo:False");
+                            }
+                            break;
+                        }
+                    case EPurpose.StopScaning: {
+                            var pack = product.ToIStopScaning();
+                            SetAgvStatus(EMode.Idle);
+                        }
+                        break;
+                    case EPurpose.SetScaningOriFileName: {
+                            var pack = product.ToISetScaningOriFileName();
+                            if (pack.Product) {
+                                IConsole.AddMsg($"Server - Set:OriName:{pack.Order.Design}");
+                                SetAgvStatus(EMode.Map);
+                            } else {
+                                IConsole.AddMsg($"Server - Set:OriName:{pack.Product}");
+                                SetAgvStatus(EMode.Idle);
+                            }
+                            break;
+                        }
+                    case EPurpose.DoPositionComfirm:
+                        mSimilarity = product.ToIDoPositionComfirm().Product;
+                        IConsole.AddMsg($"Server - Set:POSComfirm:{mSimilarity}");
+                        break;
+                    case EPurpose.AutoReportPath: {
+                            var pack = product.ToIAutoReportPath();
+                            //IConsole.AddMsg($"Server - SetPathPlan:idx({pack.Order.Design}):Count({pack.Product.Count})");
+                            DrawPath(pack.Product);
+                            break;
+                        }
+                    case EPurpose.DoRuningByGoalIndex: {
+                            var pack = product.ToIDoRuningByGoalIndex();
+                            IConsole.AddMsg($"Server - SetRun:idx({pack.Order.Design}):{pack.Product}");
+                            break;
+                        }
+                    case EPurpose.DoCharging: {
+                            var pack = product.ToIDoCharging();
+                            IConsole.AddMsg($"Server - SetCharging:idx({pack.Order.Design}):{pack.Product}");
+                            break;
+                        }
+                    case EPurpose.RequestMapList:
+                        var mapList = product.ToIRequestMapList().Product;
+                        using (MapList f = new MapList(mapList)) {
+                            if (f.ShowDialog() == DialogResult.OK) {
+                                mSerialClient.Send(FactoryMode.Factory.Order().RequestMapFile(f.strMapList));
+                            }
+                        }
+                        break;
+                    case EPurpose.RequestMapFile:
+                        product.ToIRequestMapFile().Product.SaveAs(@"D:\Mapinfo\Client");
+                        break;
+                    case EPurpose.RequestOriFileList:
+                        var oriList = product.ToIRequestOriFileList().Product;
+                        using (MapList f = new MapList(oriList)) {
+                            if (f.ShowDialog() == DialogResult.OK) {
+                                mSerialClient.Send(FactoryMode.Factory.Order().RequestOriFile(f.strMapList));
+                            }
+                        }
+                        break;
+                    case EPurpose.RequestOriFile:
+                        product.ToIRequestOriFile().Product.SaveAs(@"D:\Mapinfo\Client");
+                        break;
+                    case EPurpose.UploadMapToAGV: {
+                            var pack = product.ToIUploadMapToAGV();
+                            IConsole.AddMsg($"Server - Send:Map:{pack.Order.Design.Name}:{pack.Product}");
+                            break;
+                        }
+                    case EPurpose.ChangeMap: {
+                            var pack = product.ToIChangeMap();
+                            IConsole.AddMsg($"Server - Set:MapName:{(pack.Product ? pack.Order.Design : "False")}");
+                            break;
+                        }
+                    case EPurpose.RequestGoalList:
+                        mCmdTsk.Last().SetResult(product);
+                        mCmdTsk.Remove(mCmdTsk.Last());
+                        break;
+                    case EPurpose.AutoReportStatus:
+                        var status = product.ToIAutoReportStatus().Product;
+                        this.InvokeIfNecessary(() => {
+                            if (status.Battery != -1) {
+                                tsprgBattery.Value = (int)status.Battery;
+                                tslbBattery.Text = $"{status.Battery:0.0}%";
+                            }
+                            tslbStatus.Text = status.Description.ToString();
+                        });
+                        Database.AGVGM[mAGVID].SetLocation(status.Data);
+                        break;
+                    case EPurpose.RequestPath:
+                        var path = product.ToIRequestPath().Product;
+                        DrawPath(path);
+                        break;
+                }
+            }
         }
+
 
         #endregion ISerialClient
 
@@ -1191,259 +1232,10 @@ namespace ClientUI
 
         #region Function - Private Methods
 
-        #region  Task
-
-        /// <summary>
-        /// 檔案接收執行緒
-        /// </summary>
-        /// <param name="obj"></param>
-        private void tsk_RecvFiles(object obj) {
-            int fileNameLen = 0;
-            int recieve_data_size = 0;
-            int first = 1;
-            int receivedBytesLen = 0;
-            double cal_size = 0;
-            SocketMonitor soxMonitor = obj as SocketMonitor;
-            Socket clientSock = null;
-            BinaryWriter bWrite = null;
-            //MemoryStream ms = null;
-            string curMsg = "Stopped";
-            string fileName = "";
-            try {
-                if (!mBypassSocket) {
-                    clientSock = serverComm.ClientAccept(soxMonitor.Socket);
-                    curMsg = "Running and waiting to receive file.";
-
-                    //Socket clientSock = sRecvFile.Accept();
-                    //clientSock.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, 5000);//設置接收資料超時
-                    //clientSock.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.SendTimeout, 5000);//設置發送資料超時
-                    //clientSock.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.SendBuffer, 1024); //設置發送緩衝區大小 1K
-                    /* When request comes from client that accept it and return 
-                    new socket object for handle that client. */
-                    byte[] clientData = new byte[1024 * 10000];
-                    do {
-                        receivedBytesLen = clientSock.Receive(clientData);
-                        curMsg = "Receiving data...";
-                        if (first == 1) {
-                            fileNameLen = BitConverter.ToInt32(clientData, 0);
-                            /* I've sent byte array data from client in that format like 
-                            [file name length in byte][file name] [file data], so need to know 
-                            first how long the file name is. */
-                            fileName = Encoding.ASCII.GetString(clientData, 4, fileNameLen);
-                            /* Read file name */
-                            if (!Directory.Exists(mDefMapDir)) {
-                                Directory.CreateDirectory(mDefMapDir);
-                            }
-                            if (File.Exists(mDefMapDir + "/" + fileName)) {
-                                File.Delete(mDefMapDir + "/" + fileName);
-                            }
-                            bWrite = new BinaryWriter(File.Open(mDefMapDir + "/" + fileName, FileMode.OpenOrCreate));
-                            /* Make a Binary stream writer to saving the receiving data from client. */
-                            // ms = new MemoryStream();
-                            bWrite.Write(clientData, 4 + fileNameLen, receivedBytesLen - 4 - fileNameLen);
-                            //ms.Write(clientData, 4 + fileNameLen, receivedBytesLen - 4 -
-                            //fileNameLen);
-                            //寫入資料 ，呈現於BITMAP用  
-                            /* Read remain data (which is file content) and 
-                            save it by using binary writer. */
-                            curMsg = "Saving file...";
-                            /* Close binary writer and client socket */
-                            curMsg = "Received & Saved file; Server Stopped.";
-                        } else //第二筆接收為資料  
-                          {
-                            //-----------  
-                            fileName = Encoding.ASCII.GetString(clientData, 0,
-                            receivedBytesLen);
-                            //-----------  
-                            bWrite.Write(clientData/*, 4 + fileNameLen, receivedBytesLen - 4 -
-                                  fileNameLen*/, 0, receivedBytesLen);
-                            //每筆接收起始 0 結束為當次Receive長度  
-                            //ms.Write(clientData, 0, receivedBytesLen);
-                            //寫入資料 ，呈現於BITMAP用  
-                        }
-                        recieve_data_size += receivedBytesLen;
-                        //計算資料每筆資料長度並累加，後面可以輸出總值看是否有完整接收  
-                        cal_size = recieve_data_size;
-                        cal_size /= 1024;
-                        cal_size = Math.Round(cal_size, 2);
-
-                        first++;
-                        SpinWait.SpinUntil(() => false, 10); //每次接收不能太快，否則會資料遺失  
-
-                    } while (clientSock.Available != 0);
-                    clientData = null;
-                } else {
-                    SpinWait.SpinUntil(() => false, 1000);
-                    fileName = "FileName";
-                }
-
-                SetBalloonTip($"Get File", $"The { fileName} is downloaded");
-            } catch (SocketException se) {
-                System.Console.WriteLine("SocketException : {0}", se.ToString());
-                MessageBox.Show("檔案傳輸失敗!");
-                curMsg = "File Receiving error.";
-            } catch (Exception ex) {
-                System.Console.WriteLine("[RecvFiles]" + ex.ToString());
-                curMsg = "File Receiving error.";
-            } finally {
-                bWrite?.Close();
-                clientSock?.Shutdown(SocketShutdown.Both);
-                clientSock?.Close();
-                clientSock = null;
-                //RaiseTestingEvent(TestingEventType.GetFile);
-            }
-        }
-
-        /// <summary>
-        /// 車子資訊接收執行緒
-        /// </summary>
-        public void tsk_RecvCmd(object obj) {
-
-            System.Console.WriteLine("Start");
-            SocketMonitor soxMonitor = obj as SocketMonitor;
-            Socket sRecvCmdTemp = null;
-            sRecvCmdTemp = serverComm.ClientAccept(soxMonitor.Socket);
-            string strRecvCmd;
-            System.Console.WriteLine("IsAccept");
-            try {
-                while (IsGettingLaser) {
-                    //SpinWait.SpinUntil(() => false, 1);//每個執行緒內部的閉環裡面都要加個「短時間」睡眠，使得執行緒佔用資源得到及時釋放
-                    //Thread.Sleep(1);
-                    byte[] recvBytes = new byte[65536];//開啟一個緩衝區，存儲接收到的資訊
-                    sRecvCmdTemp.Receive(recvBytes); //將讀得的內容放在recvBytes中
-                    strRecvCmd = Encoding.Default.GetString(recvBytes);//
-                                                                       //程式運行到這個地方，已經能接收到遠端發過來的命令了
-                    strRecvCmd = strRecvCmd.Split(new char[] { '\0' })[0];
-                    //Console.WriteLine("[Server] : " + strRecvCmd);
-
-                    //*************
-                    //解碼命令，並執行相應的操作----如下面的發送本機圖片
-                    //*************
-
-                    string[] strArray = strRecvCmd.Split(':');
-                    recvBytes = null;
-
-                    System.Console.WriteLine("Decoder");
-                    if (CarInfo.TryParse(strRecvCmd, ref mCarInfo)) {
-
-                        System.Console.WriteLine("Display");
-                        this.InvokeIfNecessary(() => {
-                            tsprgBattery.Value = mCarInfo.PowerPercent;
-                            tslbBattery.Text = string.Format(tslbBattery.Tag.ToString(), mCarInfo.PowerPercent);
-                            tslbStatus.Text = mCarInfo.Status;
-                        });
-                        System.Console.WriteLine("Draw");
-                        List<IPair> temp = mCarInfo.LaserData.ToList();
-
-                        Database.AGVGM[mAGVID].SetLocation(mCarInfo);
-                        DrawLaser(mCarInfo);
-                        sRecvCmdTemp.Send(Encoding.UTF8.GetBytes("Get:Car:True:True"));
-                    } else {
-                        sRecvCmdTemp.Send(Encoding.UTF8.GetBytes("Get:Car:False"));
-                    }
-
-                    strRecvCmd = null;
-                    strArray = null;
-                }
-
-                Thread.Sleep(1);
-            } catch (SocketException se) {
-                System.Console.WriteLine("[Status Recv] : " + se.ToString());
-                CtStatus.Report(Stat.ER3_WSK_COMERR, se);
-                MessageBox.Show("目標拒絕連線");
-            } catch (Exception ex) {
-                CtStatus.Report(Stat.ER3_WSK_COMERR, ex);
-                System.Console.Write(ex.Message);
-                //throw ex;
-            } finally {
-                sRecvCmdTemp?.Close();
-                sRecvCmdTemp = null;
-            }
-        }
-
-        /// <summary>
-        /// 路徑接收執行緒
-        /// </summary>
-        protected void tsk_RecvPath(object obj) {
-            SocketMonitor soxMonitor = obj as SocketMonitor;
-            Socket sRecvCmdTemp = soxMonitor.Accept();
-            
-            try {
-                sRecvCmdTemp.Send(Encoding.UTF8.GetBytes("Path:Require"));
-                byte[] recvBytes = new byte[1024 * 500];//開啟一個緩衝區，存儲接收到的資訊
-                sRecvCmdTemp.Receive(recvBytes); //將讀得的內容放在recvBytes中
-                string strRecvCmd = Encoding.Default.GetString(recvBytes);
-                //程式運行到這個地方，已經能接收到遠端發過來的命令了
-                //Console.WriteLine("[Server] : " + strRecvCmd);
-                //*************
-                //解碼命令，並執行相應的操作----如下面的發送本機圖片
-                //*************
-                strRecvCmd = strRecvCmd.Split(new char[] { '\0' })[0];
-
-                string[] strArray = strRecvCmd.Split(':');
-                recvBytes = null;
-                if (strArray[0] == "Path" && !string.IsNullOrEmpty(strArray[1])) {
-                    DrawPath(PathEncoder(strArray[1]));
-                }
-                //else
-                //    sRecvCmdTemp.Send(Encoding.UTF8.GetBytes("Path:False"));
-
-                strRecvCmd = null;
-                strArray = null;
-                sRecvCmdTemp.Close();
-
-            } catch (SocketException se) {
-                System.Console.WriteLine("[Status Recv] : " + se.ToString());
-                //MessageBox.Show("目標拒絕連線");
-            } catch (Exception ex) {
-                System.Console.Write(ex.Message);
-                //throw ex;
-            } finally {
-                sRecvCmdTemp.Close();
-                sRecvCmdTemp = null;
-            }
-        }
-
-        #endregion Task
-
         #region Communication
         
-        /// <summary>
-        /// 檢查Server是否在運作中
-        /// </summary>
-        /// <returns></returns>
-        private bool CheckIsServerAlive() {
-            if (mBypassSocket) {
-                IsServerAlive = true;
-                Thread.Sleep(1000);
-            } else {
-                bool isAlive = false;
-                try {
-                    if (isAlive = ConnectServer()) {
-                        string[] rtnMsg = SendMsg("Get:Hello", false);
-                        isAlive = rtnMsg.Count() > 2 && rtnMsg[2] == "True";
-                    }
-                } catch (Exception ex) {
-                    System.Console.WriteLine($"[SocketException] : {ex.Message}");
-                } finally {
-                    if (!mBypassSocket && !isAlive) {
-                        CtMsgBox.Show(mHandle,"Failed", "Connect Failed!!", MsgBoxBtn.OK, MsgBoxStyle.Error);
-                    }
-                }
-                IsServerAlive = isAlive;
-            }
-            return IsServerAlive;
-        }
-
         protected virtual void SetPosition(int x, int y, double theta) {
-            Database.AGVGM[mAGVID].Data.Position.X = x;
-            Database.AGVGM[mAGVID].Data.Position.Y = y;
-            Database.AGVGM[mAGVID].Data.Toward.Theta = theta;
-            mCarInfo.x = x;
-            mCarInfo.y = y;
-            mCarInfo.theta = theta;
-
-            SendMsg($"Set:POS:{x:F0}:{y:F0}:{theta}");
+            mSerialClient.Send(FactoryMode.Factory.Order().SetPosition(x, y, theta));
         }
 
         /// <summary>
@@ -1452,39 +1244,14 @@ namespace ClientUI
         /// <returns>Goal List:"{goal1},{goal2},{goal3}..."</returns>
         /// <remarks>用來模擬iS向AGV要求所有Goal點名稱</remarks> 
         protected virtual string GetGoalNames() {
-            string goalList = "Empty";
-            if (mBypassSocket) {
-                /*-- 模擬用資料 --*/
-                goalList = "GoalA,GoalB,GoalC";
-            } else {
-                string[] rtnMsg = SendMsg($"Get:GoalList");
-                if (rtnMsg.Count() > 3) {
-                    goalList = rtnMsg[3];
-                }
-            }
-            return goalList;
+            TaskCompletionSource<IProductPacket> tskCompSrc = new TaskCompletionSource<IProductPacket>(0);
+            var tsk = tskCompSrc.Task;
+            mCmdTsk.Add(tskCompSrc);
+            mSerialClient.Send(FactoryMode.Factory.Order().RequestGoalList());
+            tsk.Wait(500);
+            return string.Join(",", tsk.Result.ToIRequestGoalList().Product);
         }
-
-        /// <summary>
-        /// 連接至Server端(AGV)
-        /// </summary>
-        /// <returns><see cref="Socket"/>連線狀態 True:已連線/False:已斷開</returns>
-        private bool ConnectServer() {
-            return serverComm.ConnectServer(ref mSoxCmd, mHostIP, (int)EPort.port_receiveCmd);
-        }
-
-        /// <summary>
-        /// 與Server端(AGV)斷開連線
-        /// </summary>
-        /// <returns><see cref="Socket"/>連線狀態 True:已連線/False:已斷開</returns>
-        public bool DisConnectServer() {
-            if (mBypassSocket) {
-                return false;
-            } else {
-                return serverComm.DisconnectServer(mSoxCmd);
-            }
-        }
-
+        
         /// <summary>
         /// Send file of server to client
         /// </summary>
@@ -1552,101 +1319,21 @@ namespace ClientUI
         /// <summary>
         /// 傳送檔案
         /// </summary>
-        private async void SendFile() {
-            string[] rtnMsg = SendMsg("Send:map");
-            if (mBypassSocket || rtnMsg.Count() > 2 && "True" == rtnMsg[2]) {
-                OpenFileDialog openMap = new OpenFileDialog();
-                openMap.InitialDirectory = mDefMapDir;
-                openMap.Filter = "MAP|*.ori;*.map";
-                if (openMap.ShowDialog() == DialogResult.OK) {
-                    CtProgress prog = new CtProgress("Send Map", "The file are being transferred");
-                    try {
-                        await Task.Run(() => {
-                            SendFile(openMap.FileName);
-                            SetBalloonTip("Send File", openMap.FileName);
-                        }); 
-                    } finally {
-                        prog?.Close();
-                        prog = null;
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// 傳送檔案
-        /// </summary>
         /// <param name="filePath"></param>
         protected virtual  void SendFile(string filePath) {
-            string fileName = CtFile.GetFileName(filePath);
-            bool isSent = true;
-            if (!mBypassSocket) {
-                isSent = SendFile(mHostIP, (int)EPort.port_receiveFile, fileName);
-            } else {
-                /*-- 空跑模擬檔案傳送中 --*/
-                SpinWait.SpinUntil(() => false, 1000);
-            }
-            if (isSent) {
-                IConsole.AddMsg($"{fileName} has been sent");
-                SetBalloonTip("Send file", $"{fileName} han been sent");
-            } else {
-                IConsole.AddMsg($"\'{fileName}\' send failed");
-                CtMsgBox.Show("Send file", $"\'{fileName}\' send failed", MsgBoxBtn.OK, MsgBoxStyle.Error);
+            switch (Path.GetExtension(filePath).ToLower()) {
+                case ".map":
+                    mSerialClient.Send(FactoryMode.Factory.Order().UploadMapToAGV(filePath));
+                    mSerialClient.Send(FactoryMode.Factory.Order().ChangeMap(filePath));
+                    break;
+                case ".ori":
+
+                    break;
             }
         }
 
-        /// <summary>
-        /// 變更車子資料發送狀態
-        /// </summary>
-        /// <param name="on">true:開啟/false:關閉資訊回傳</param>
-        /// <remarks>
-        /// modify by Jay 2017/09/08
-        /// </remarks>
-        /// <returns>True:發送中/False:停止發送</returns>
-        public bool ChangeSendInfo() {
-            try {
-                IsGettingLaser = !IsGettingLaser;
-                if (IsGettingLaser) {
-                    /*-- 開啟車子資訊讀取執行緒 --*/
-                    if (!mBypassSocket) mSoxMonitorCmd.Start();
-
-                    /*-- 向Server端要求車子資料 --*/
-                    string[] rtnMsg = SendMsg("Get:Car:True:True");
-                    IsGettingLaser = mBypassSocket || (rtnMsg.Count() > 2 && "True" == rtnMsg[2]);
-
-                    /*-- 車子未發送資料則關閉Socket --*/
-                    if (!IsGettingLaser) {
-                        Database.AGVGM[mAGVID].LaserAPoints.DataList.Clear();
-                        if (!mBypassSocket)mSoxMonitorCmd.Stop();
-                    }
-                } else {
-                    Database.AGVGM[mAGVID].LaserAPoints.DataList.Clear();
-                    if (!mBypassSocket) mSoxMonitorCmd.Stop();
-                    SendMsg("Get:Car:False");
-                }
-                ITest.SetLaserStt(IsGettingLaser);
-            } catch (Exception ex) {
-                System.Console.WriteLine(ex.Message);
-            }
-
-            return IsGettingLaser;
-        }
-
-        protected virtual bool GetLaser() {
-            /*-- 若是雷射資料則更新資料 --*/
-            string[] rtnMsg = SendMsg("Get:Laser");
-            if (rtnMsg.Length > 3) {
-                if (rtnMsg[1] == "Laser") {
-                    string[] sreRemoteLaser = rtnMsg[3].Split(',');
-                    List<IPair> laserData = new List<IPair>();
-                    for(int i = 0; i < sreRemoteLaser.Count()-1; i += 2) {
-                        laserData.Add(FactoryMode.Factory.Pair(int.Parse(sreRemoteLaser[i]), int.Parse(sreRemoteLaser[i + 1])));
-                    }
-                    Database.AGVGM[mAGVID]?.LaserAPoints.DataList.Replace(laserData);
-                    return true;
-                }
-            }
-            return false;
+        protected void GetLaser() {
+            mSerialClient.Send(FactoryMode.Factory.Order().RequestLaser());
         }
 
         /// <summary>
@@ -1655,70 +1342,17 @@ namespace ClientUI
         /// <param name="direction">移動方向</param>
         /// <param name="velocity">移動速度</param>
         protected virtual void MotionContorl(MotionDirection direction) {
-            /////原本是用來判斷是否有連線而已
-            //string[] rtnMsg = SendMsg("Get:IsOpen");
-            //if (rtnMsg.Count() > 2 && bool.Parse(rtnMsg[2])) {
-                if (direction == MotionDirection.Stop) {
-                    SendMsg("Set:Stop");
-                } else {
-
-                    string cmd = string.Empty;
-                    cmd = GetMotionCmd(direction);
-                
-                    SendMsg(cmd);
-                    SendMsg("Set:Start");
-                }
-            //}
-        }
-
-        /// <summary>
-        /// 向Server端要求檔案
-        /// </summary>
-        /// <param name="type">檔案類型</param>
-        /// <remarks>modified by Jay 2017/09/20</remarks>
-        private bool GetFileList(FileType type, out string fileList) {
-            bool ret = true;
-            fileList = string.Empty;
-            if (mBypassSocket) {
-                fileList = $"{type}1,{type}2,{type}3";
+            if (direction == MotionDirection.Stop) {
+                mSerialClient.Send(FactoryMode.Factory.Order().StartManualControl(false));
+                IConsole.AddMsg($"Client - Set:Moving:False");
             } else {
-                string[] rtnMsg = SendMsg($"Get:{type}List");
-                fileList = rtnMsg[3];
-            }
-            return ret;
-        }
-
-        private void GetFile(FileType type) {
-            mConnectFlow.CheckFlag($"Get{type}", () => {
-                string fileList = string.Empty;
-                if (GetFileList(type, out fileList)) {
-                    using (MapList f = new MapList(fileList)) {
-                        if (f.ShowDialog() == DialogResult.OK) {
-                            FileDownload(f.strMapList, type);
-                        }
-                    }
+                var cmd = GetMotionICmd(direction);
+                if (cmd != null) {
+                    mSerialClient.Send(cmd);
+                    mSerialClient.Send(FactoryMode.Factory.Order().StartManualControl(true));
+                    IConsole.AddMsg($"Client - Set:Moving:True");
                 }
-            });
-        }
-
-        /// <summary>
-        /// 檔案下載
-        /// </summary>
-        /// <param name="fileName"></param>
-        /// <param name="type"></param>
-        public void FileDownload(string fileName, FileType type) {
-            /*-- 開啟執行緒準備接收檔案 --*/
-            mSoxMonitorFile.Start();
-
-            /*-- 向Server端發出檔案請求 --*/
-            SendMsg($"Get:{type}:{fileName}");
-            //if (type == FileType.Map) {
-            //    RaiseGoalSettingEvent(GoalSettingEventType.CurMapPath, true);
-            //} else {
-            //    RaiseTestingEvent(TestingEventType.CurOriPath, true);
-            //}
-            //RaiseAgvClientEvent(AgvClientEventType.GetFile, type);
-
+            }
         }
 
         /// <summary>
@@ -1726,13 +1360,7 @@ namespace ClientUI
         /// </summary>
         /// <param name="numGoal">目標Goal點</param>
         protected virtual void Run(int numGoal) {
-            /*-- 若是路徑資料則開始接收資料 --*/
-            string[] rtnMsg = SendMsg($"Set:Run:{numGoal}");
-            if ((rtnMsg?.Length ?? 0) > 3 &&
-                rtnMsg[1] == "Run" &&
-                rtnMsg[3] == "Done") {
-                mSoxMonitorPath.Start();
-            }
+            mSerialClient.Send(FactoryMode.Factory.Order().DoRuningByGoalIndex(numGoal));
         }
 
         /// <summary>
@@ -1740,117 +1368,121 @@ namespace ClientUI
         /// </summary>
         /// <param name="no">目標Goal點編號</param>
         protected virtual void PathPlan(int numGoal) {
-            /*-- 若是路徑資料則開始接收資料 --*/
-            string[] rtnMsg = SendMsg($"Set:PathPlan:{numGoal}");
-            if ((rtnMsg?.Count() ?? 0) > 3 &&
-                rtnMsg[1] == "PathPlan" &&
-                rtnMsg[2] == "True") {
-                mSoxMonitorPath.Start();
-            }
+            mSerialClient.Send(FactoryMode.Factory.Order().RequestPath(numGoal));
         }
 
         protected virtual void Charging(int numGoal) {
-            /*-- 若是路徑資料則開始接收資料 --*/
-            string[] rtnMsg = SendMsg($"Set:Charging:{numGoal}");
-            if ((rtnMsg?.Count() ?? 0) > 3 &&
-                rtnMsg[1] == "PathPlan" &&
-                rtnMsg[2] == "True") {
-                mSoxMonitorPath.Start();
-            }
+            mSerialClient.Send(FactoryMode.Factory.Order().DoCharging(numGoal));
         }
 
-        /// <summary>
-        /// 訊息傳送(會觸發事件)
-        /// </summary>
-        /// <param name="sendMseeage">傳送訊息內容</param>
-        /// <param name="passChkConn">是否略過檢查連線狀態</param>
-        /// <returns>Server端回應</returns>
-        private string[] SendMsg(string sendMseeage, bool passChkConn = true) {
-            /*-- 顯示發送出去的訊息 --*/
-            string msg = $"{DateTime.Now} [Client] : {sendMseeage}";
-            IConsole.AddMsg(msg);
+        ///// <summary>
+        ///// 訊息傳送(會觸發事件)
+        ///// </summary>
+        ///// <param name="sendMseeage">傳送訊息內容</param>
+        ///// <param name="passChkConn">是否略過檢查連線狀態</param>
+        ///// <returns>Server端回應</returns>
+        //private string[] SendMsg(string sendMseeage, bool passChkConn = true) {
+        //    /*-- 顯示發送出去的訊息 --*/
+        //    string msg = $"{DateTime.Now} [Client] : {sendMseeage}";
+        //    IConsole.AddMsg(msg);
 
-            if (mBypassSocket) {
-                /*-- Bypass略過不傳 --*/
-                return new string[] { "","","True" };
-            } else if (passChkConn && !IsServerAlive) {
-                /*-- 略過連線檢查且Server端未運作 --*/
-                return new string[] { "","","False" };
-            }
+        //    if (mBypassSocket) {
+        //        /*-- Bypass略過不傳 --*/
+        //        return new string[] { "","","True" };
+        //    } else if (passChkConn && !IsServerAlive) {
+        //        /*-- 略過連線檢查且Server端未運作 --*/
+        //        return new string[] { "","","False" };
+        //    }
             
-            /*-- 等待Server端的回應 --*/
-            string rtnMsg = SendStrMsg(sendMseeage);
-            //string rtnMsg = SendStrMsg(mHostIP, mRecvCmdPort, sendMseeage );
-            rtnMsg = rtnMsg.Trim();
-            /*-- 顯示Server端回應 --*/
-            msg = $"{DateTime.Now} [Server] : {rtnMsg}\r\n";
-            IConsole.AddMsg(msg);
+        //    /*-- 等待Server端的回應 --*/
+        //    string rtnMsg = SendStrMsg(sendMseeage);
+        //    //string rtnMsg = SendStrMsg(mHostIP, mRecvCmdPort, sendMseeage );
+        //    rtnMsg = rtnMsg.Trim();
+        //    /*-- 顯示Server端回應 --*/
+        //    msg = $"{DateTime.Now} [Server] : {rtnMsg}\r\n";
+        //    IConsole.AddMsg(msg);
 
-            return rtnMsg.Split(':');
-        }
+        //    return rtnMsg.Split(':');
+        //}
 
-        /// <summary>
-        /// 訊息傳送(具體Socket交握實現，但是不會觸發事件)
-        /// </summary>
-        /// <param name="serverIP">伺服端IP</param>
-        /// <param name="requerPort">通訊埠號</param>
-        /// <param name="sendMseeage">傳送訊息內容</param>
-        /// <returns>Server端回應</returns>
-        private string SendStrMsg(string sendMseeage) {
-            //可以在字串編碼上做文章，可以傳送各種資訊內容，目前主要有三種編碼方式：
-            //1.自訂連接字串編碼－－微量
-            //2.JSON編碼--輕量
-            //3.XML編碼--重量
-            int state;
-            byte[] recvBytes = null;//開啟一個緩衝區，存儲接收到的資訊
-            try {
+        ///// <summary>
+        ///// 訊息傳送(具體Socket交握實現，但是不會觸發事件)
+        ///// </summary>
+        ///// <param name="serverIP">伺服端IP</param>
+        ///// <param name="requerPort">通訊埠號</param>
+        ///// <param name="sendMseeage">傳送訊息內容</param>
+        ///// <returns>Server端回應</returns>
+        //private string SendStrMsg(string sendMseeage) {
+        //    //可以在字串編碼上做文章，可以傳送各種資訊內容，目前主要有三種編碼方式：
+        //    //1.自訂連接字串編碼－－微量
+        //    //2.JSON編碼--輕量
+        //    //3.XML編碼--重量
+        //    int state;
+        //    byte[] recvBytes = null;//開啟一個緩衝區，存儲接收到的資訊
+        //    try {
 
-                byte[] sendContents = Encoding.UTF8.GetBytes(sendMseeage + "\r\n");
-                state = mSoxCmd.Send(sendContents, sendContents.Length, 0);//發送二進位資料
-                recvBytes = new byte[mSoxCmd.ReceiveBufferSize];
+        //        byte[] sendContents = Encoding.UTF8.GetBytes(sendMseeage + "\r\n");
+        //        state = mSoxCmd.Send(sendContents, sendContents.Length, 0);//發送二進位資料
+        //        recvBytes = new byte[mSoxCmd.ReceiveBufferSize];
                 
-                state = mSoxCmd.Receive(recvBytes);
-                string strRecvCmd = Encoding.Default.GetString(recvBytes);//
-                strRecvCmd = strRecvCmd.Split(new char[] { '\0' })[0];
-                sendContents = null;
-                return strRecvCmd;
-            } catch (SocketException se) {
-                System.Console.WriteLine("SocketException : {0}", se.ToString());
-                return "False";
-            } catch (ArgumentNullException ane) {
-                System.Console.WriteLine("ArgumentNullException : {0}", ane.ToString());
-                return "False";
-            } catch (Exception ex) {
-                System.Console.Write(ex.Message);
-                return "False";
-            } finally {
-                recvBytes = null;
-            }
+        //        state = mSoxCmd.Receive(recvBytes);
+        //        string strRecvCmd = Encoding.Default.GetString(recvBytes);//
+        //        strRecvCmd = strRecvCmd.Split(new char[] { '\0' })[0];
+        //        sendContents = null;
+        //        return strRecvCmd;
+        //    } catch (SocketException se) {
+        //        System.Console.WriteLine("SocketException : {0}", se.ToString());
+        //        return "False";
+        //    } catch (ArgumentNullException ane) {
+        //        System.Console.WriteLine("ArgumentNullException : {0}", ane.ToString());
+        //        return "False";
+        //    } catch (Exception ex) {
+        //        System.Console.Write(ex.Message);
+        //        return "False";
+        //    } finally {
+        //        recvBytes = null;
+        //    }
 
-        }
+        //}
         
-        private string GetMotionCmd(MotionDirection direction) {
-            string cmd = "";
+        private IOrderPacket<IPair, bool> GetMotionICmd(MotionDirection direction) {
+            int r = 0, l = 0, v = mVelocity;
             switch (direction) {
                 case MotionDirection.Forward:
-                    cmd = $"Set:DriveVelo:{mVelocity}:{mVelocity}";
+                    r = v;
+                    l = v;
                     break;
                 case MotionDirection.Backward:
-                    cmd = $"Set:DriveVelo:-{mVelocity}:-{mVelocity}";
+                    r = -v;
+                    l = -v;
                     break;
                 case MotionDirection.LeftTrun:
-                    cmd = $"Set:DriveVelo:-{mVelocity}:{mVelocity}";
+                    r = v;
+                    l = -v;
                     break;
                 case MotionDirection.RightTurn:
-                    cmd = $"Set:DriveVelo:{mVelocity}:-{mVelocity}";
+                    r = -v;
+                    l = v;
                     break;
+                default:
+                    return null;
             }
-            return cmd;
+            return FactoryMode.Factory.Order().SetManualVelocity(l, r);
         }
 
         #endregion Communication 
 
         #region UI
+        /// <summary>
+        /// 設定AGV狀態
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="status"></param>
+        private void SetAgvStatus<T>(T status) where T : struct {
+            this.InvokeIfNecessary(() => {
+                tslbStatus.Text = status.ToString();
+            });
+        }
 
         /// <summary>
         /// 車子模式切換時
@@ -2107,8 +1739,6 @@ namespace ClientUI
 
                 if (IsConnected) {
                     SendFile(mapPath);
-
-                    SendMsg($"Set:MapName:{path}");
                 }
             }
             return true;
@@ -2497,14 +2127,6 @@ namespace ClientUI
         }
 
         private bool CheckServer() {
-            CtProgress prog = new CtProgress("Connect", "Connecting...");
-            try {
-                IsConnected = CheckIsServerAlive();
-            } catch (Exception ex) {
-                System.Console.WriteLine(ex.Message);
-            } finally {
-                prog?.Close();
-            }
             return IsConnected;
         }
 
@@ -2513,17 +2135,6 @@ namespace ClientUI
         }
 
         private bool CheckSimilarity() {
-            //mConnectFlow.CheckFlag("Car pos confirm", () => {
-                if (mBypassSocket) {
-                    /*-- 空跑模擬CarPosConfirm --*/
-                    SpinWait.SpinUntil(() => false, 1000);
-                    mSimilarity = 100;
-                } else {
-                    string[] rtnMsg = SendMsg("Set:POSConfirm");
-                    mSimilarity = double.Parse(rtnMsg[2]);
-                }
-                IConsole.AddMsg("[Confirm] - Similarity:{0}%", mSimilarity);
-            //});
             return mSimilarity==-1;
         }
 

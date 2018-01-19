@@ -220,18 +220,6 @@ namespace ClientUI
             SendMap?.Invoke();
         }
 
-        private void btnMapMode_Click(object sender, EventArgs e) {
-            SetCarMode?.Invoke(EMode.Map);
-        }
-
-        private void btnWorkMode_Click(object sender, EventArgs e) {
-            SetCarMode?.Invoke(EMode.Work);
-        }
-
-        private void btnIdleMode_Click(object sender, EventArgs e) {
-            SetCarMode?.Invoke(EMode.Idle);
-        }
-
         private void btnSimplyOri_Click(object sender, EventArgs e) {
             SimplifyOri?.Invoke();
         }
@@ -254,9 +242,6 @@ namespace ClientUI
         private void ChangedConnectStt(bool isConnected) {
             CtInvoke.ControlEnabled(btnGetLaser, isConnected);
             CtInvoke.ControlEnabled(btnGetOri, isConnected);
-            CtInvoke.ControlEnabled(btnIdleMode, isConnected);
-            CtInvoke.ControlEnabled(btnWorkMode, isConnected);
-            CtInvoke.ControlEnabled(btnMapMode, isConnected);
             CtInvoke.ControlEnabled(btnGetCarStatus, isConnected);
             CtInvoke.ControlEnabled(btnPosConfirm, isConnected);
             CtInvoke.ControlEnabled(btnServoOnOff, isConnected);
