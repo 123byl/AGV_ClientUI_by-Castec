@@ -10,8 +10,6 @@ using System.Drawing;
 
 using CtLib.Library;
 
-using MapProcessing;
-using static MapProcessing.MapSimplication;
 using GLUI;
 using GLCore;
 using Geometry;
@@ -41,74 +39,17 @@ namespace ClientUI
         #endregion UI
 
         #region Converter
-
-        public static IEnumerable<IPair> ToIPair(this IEnumerable<CartesianPos> data) {
-            return data.Select(v => FactoryMode.Factory.Pair(v.x, v.y));
-        }
-
-        public static CartesianPos ToCartesianPos(this IPair pair) {
-            return new CartesianPos(pair.X, pair.Y);
-        }
-
-        public static MapLine ToMapLine(this ILine line) {
-            return new MapLine(line.Begin.X, line.Begin.Y, line.End.X, line.End.Y);
-        }
-
-        public static CartesianPosInfo CartesianPosInfo(this IFactory factory, uint uid, ISingle<ITowardPair> single) {
-            return new CartesianPosInfo(
-                single.Data.Position.X,
-                single.Data.Position.Y,
-                single.Data.Toward.Theta,
-                single.Name,
-                uid);
-        }
-
-        public static List<IPair> ToPairs(this List<CartesianPos> points) {
-            List<IPair> pairs = new List<IPair>();
-            foreach (var item in points) {
-                pairs.Add(FactoryMode.Factory.Pair(item.x, item.y));
-            }
-            return pairs;
-        }
-
-        public static CartesianPosInfo ToCarTesianPosinfo(this TowerPairEventArgs e) {
-            return new CartesianPosInfo(
-                e.DargTarget.Data.Position.X,
-                e.DargTarget.Data.Position.Y,
-                e.DargTarget.Data.Toward.Theta,
-                e.DargTarget.Name,
-                e.ID
-            );
-        }
+        
 
         #endregion Convert
-
-        /// <summary>
-        /// 回傳字串表示點位資訊，格式x,y,theta
-        /// </summary>
-        /// <param name="point">要轉換的點位</param>
-        /// <returns></returns>
-        public static string ToStr(this CartesianPos point) {
-            return $"{point.x:F0},{point.y:F0},{point.theta:F0}";
-        }
-
-        public static void SetPosition(this CartesianPos pos, IAGV agv) {
-            pos.x = agv.Data.Position.X;
-            pos.y = agv.Data.Position.Y;
-            pos.theta = agv.Data.Toward.Theta * Math.PI / 180;
-        }
-
-        public static void SetLocation(this IAGV agv, CartesianPos location) {
-            agv.Data.Position.X = (int)location.x;
-            agv.Data.Position.Y = (int)location.y;
-            agv.Data.Toward.Theta = location.theta;
-        }
 
         public static void SetLocation(this IAGV agv,ITowardPair location) {
             agv.Data.Position.X = location.Position.X;
             agv.Data.Position.Y = location.Position.Y;
             agv.Data.Toward.Theta = location.Toward.Theta;
         }
+
+
 
         #region OutlookBar
 

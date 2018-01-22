@@ -8,6 +8,7 @@ using System.Threading;
 using AGVMathOperation;
 using KDTree;
 using GLCore;
+using Geometry;
 
 namespace MapProcessing
 {
@@ -226,6 +227,29 @@ namespace MapProcessing
         }
 
         /// <summary>
+        /// 讀取單一筆掃描資訊
+        /// </summary>
+        /// <param name="pack"></param>
+        /// <param name="carPos"></param>
+        /// <param name="laserData"></param>
+        public static void ReadScanningInfo(string pack, out ITowardPair carPos, out List<IPair> laserData) {
+            try {
+                string[] info = pack.Split(new char[] {':',','},StringSplitOptions.RemoveEmptyEntries);
+                carPos=  FactoryMode.Factory.TowardPair(double.Parse(info[0]), double.Parse(info[1]), double.Parse(info[2]));
+                laserData = new List<IPair>();
+                for (int m = 3; m < info.Length - 1; m += 2) {
+                    laserData.Add(FactoryMode.Factory.Pair(double.Parse(info[m]), double.Parse(info[m + 1])));
+                }
+                //return true;
+            } catch (Exception error) {
+                carPos = null;
+                laserData = null;
+                Console.WriteLine(error);
+                //return false;
+            }
+        }
+
+        /// <summary>
         /// Extract signle origin recording information
         /// </summary>
         /// <param name="index">Extract index</param>
@@ -234,6 +258,8 @@ namespace MapProcessing
         /// <returns>T:Read success F:File or data not exists</returns>
         public bool ReadScanningInfo(int index, out CartesianPos carPos, out List<CartesianPos> laserData)
         {
+            Stopwatch sw = new Stopwatch();
+            sw.Restart();
             try
             {
                 carPos = new CartesianPos();
@@ -246,6 +272,8 @@ namespace MapProcessing
                 {
                     laserData.Add(new CartesianPos(double.Parse(info[m]), double.Parse(info[m + 1])));
                 }
+                sw.Stop();
+                Console.WriteLine($"CartesianPos Spend:{sw.ElapsedMilliseconds}");
                 return true;
             }
             catch (Exception error)
@@ -255,7 +283,6 @@ namespace MapProcessing
                 Console.WriteLine(error);
                 return false;
             }
-
         }
 
         /// <summary>

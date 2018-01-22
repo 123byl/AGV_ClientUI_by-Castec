@@ -15,7 +15,7 @@ using WeifenLuo.WinFormsUI.Docking;
 using CtLib.Library;
 using static CtLib.Forms.CtLogin;
 using CtLib.Forms;
-using MapProcessing;
+//using MapProcessing;
 using System.Threading;
 using ServerOperation;
 using System.Net;
@@ -149,7 +149,7 @@ namespace ClientUI
         private UILanguage mCulture = UILanguage.English;
 
         /// <summary>
-        /// 當前滑鼠模式
+        /// MapGL當前滑鼠模式
         /// </summary>
         private CursorMode mCursorMode = CursorMode.Select;
 
@@ -204,19 +204,9 @@ namespace ClientUI
         private uint mObstaclePointsID = 1;
 
         /// <summary>
-        /// 地圖相似度
+        /// 地圖相似度，範圍0%～100%，超過門檻值為-100%
         /// </summary>
         protected double mSimilarity = 0;
-
-        /// <summary>
-        /// 地圖相似度門檻值
-        /// </summary>
-        private double mThrSimilarity = 0.80;
-
-        /// <summary>
-        /// 車子資訊
-        /// </summary>
-        private CarInfo mCarInfo = new CarInfo(0, 0, 0, "AGV", 1);
         
         /// <summary>
         /// Car Position 設定位置
@@ -305,6 +295,9 @@ namespace ClientUI
             }
         }
 
+        /// <summary>
+        /// 伺服馬達是否激磁
+        /// </summary>
         public bool IsMotorServoOn {
             get {
                 return mIsMotorServoOn;
@@ -456,13 +449,6 @@ namespace ClientUI
         public AgvClientUI()
         {
             InitializeComponent();
-
-            /*-- 車子資訊接收 --*/
-            //mSoxMonitorCmd = new SocketMonitor((int)EPort.port_sendState, tsk_RecvCmd).Listen();
-            ///*-- 檔案接收 --*/
-            //mSoxMonitorFile = new SocketMonitor((int)EPort.port_sendFile, tsk_RecvFiles).Listen();
-            ///*-- 路徑接收 --*/
-            //mSoxMonitorPath = new SocketMonitor((int)EPort.port_sendPath, tsk_RecvPath).Listen();
             
             /*-- 載入AVG物件 --*/
             if (!Database.AGVGM.ContainsID(mAGVID)) {
@@ -474,8 +460,7 @@ namespace ClientUI
             mKeyboardHook.KeyUpEvent += mKeyboardHook_KeyUpEvent;
             mKeyboardHook.Start();
 
-            mHandle = this.Handle;
-            
+            mHandle = this.Handle;            
         }
 
         #endregion Function - Constructors
@@ -484,27 +469,25 @@ namespace ClientUI
 
         #region KeyboardHook
 
+        /// <summary>
+        /// 全域鍵盤按下事件
+        /// </summary>
+        /// <param name="sneder"></param>
+        /// <param name="e"></param>
         private void mKeyboardHook_KeyDownEvent(object sneder,KeyEventArgs e) {
-            switch (e.KeyCode) {
-                case Keys.Up:
-                case Keys.Down:
-                case Keys.Left:
-                case Keys.Right:
-                    //MotionContorl((MotionDirection)e.KeyCode);
-                    break;
-            }
+            
         }
 
+        /// <summary>
+        /// 全域鍵盤放開事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void mKeyboardHook_KeyUpEvent(object sender, KeyEventArgs e) {
             switch (e.KeyCode) {
-                case Keys.Delete:
-                    IGoalSetting.RefreshSingle();
-                    break;
-                case Keys.Up:
-                case Keys.Down:
-                case Keys.Left:
-                case Keys.Right:
-                    //MotionContorl(MotionDirection.Stop);
+                case Keys.Delete://MapGL刪除Goal點快捷鍵
+                    /*-- 有可能標示物被刪除，通知GoalSetting界面更新 --*/
+                    IGoalSetting.ReloadSingle();
                     break;
             }
         }
@@ -550,8 +533,7 @@ namespace ClientUI
         private bool GetIsServoOn() {
             return mIsMotorServoOn;
         }
-
-
+        
         /// <summary>
         /// 表單關閉中事件
         /// </summary>
@@ -792,8 +774,8 @@ namespace ClientUI
         }
 
         private void ITest_ClearMap() {
-            IGoalSetting.ClearGoal();
             Database.ClearAllButAGV();
+            IGoalSetting.ReloadSingle();
             Database.AGVGM[mAGVID].LaserAPoints.DataList.Clear();
             Database.AGVGM[mAGVID].Path.DataList.Clear();
         }
@@ -956,20 +938,20 @@ namespace ClientUI
                     }
                 }
             } else {
-                IGoalSetting.SetCurrentRealPos(new CartesianPos(e.Position.X, e.Position.Y));
+                IGoalSetting.SetCurrentRealPos(e.Position);
             }
 
         }
 
         private void IMapCtrl_DragTowerPairEvent(object sender, TowerPairEventArgs e) {
-            IGoalSetting.RefreshSingle();
+            IGoalSetting.ReloadSingle();
         }
 
         #endregion IMapGL 事件連結
 
         #region IGoalSetting 事件連結   
 
-        private void IGoalSetting_Charging(CartesianPosInfo power, int idxPower) {
+        private void IGoalSetting_Charging(IPower power, int idxPower) {
             if (power != null && idxPower >= 0) {
                 mSimilarityFlow.CheckFlag("Charging", () => {
                     IConsole.AddMsg($"Client - Charging to idx{idxPower} {power.ToString()}");
@@ -991,7 +973,7 @@ namespace ClientUI
             Database.Save(CurMapPath);
         }
 
-        private void IGoalSetting_RunLoopEvent(IEnumerable<CartesianPosInfo> goal) {
+        private void IGoalSetting_RunLoopEvent(IEnumerable<IGoal> goal) {
             int goalCount = goal?.Count() ?? -1;
             if (goalCount > 0) {
                 mSimilarityFlow.CheckFlag("Run all", () => {
@@ -1007,7 +989,7 @@ namespace ClientUI
             }
         }
 
-        private void IGoalSetting_RunGoalEvent(CartesianPosInfo goal, int idxGoal) {
+        private void IGoalSetting_RunGoalEvent(IGoal goal, int idxGoal) {
             CheckGoal(goal, idxGoal, () => {
                 mSimilarityFlow.CheckFlag("Run goal", () => {
                     IConsole.AddMsg("[AGV Start Moving...  idx{0} {1}]", idxGoal, goal.ToString());
@@ -1023,7 +1005,7 @@ namespace ClientUI
             LoadFile(FileType.Map);
         }
 
-        private void IGoalSetting_FindPathEvent(CartesianPosInfo goal, int idxGoal) {
+        private void IGoalSetting_FindPathEvent(IGoal goal, int idxGoal) {
             CheckGoal(goal, idxGoal, () => {
                 mSimilarityFlow.CheckFlag("Path plann", () => {
                     IConsole.AddMsg("[Find Path] - idx{0} {1}", idxGoal, goal.ToString());
@@ -1033,28 +1015,16 @@ namespace ClientUI
             });
         }
 
-        private void IGoalSetting_DeleteGoalsEvent(IEnumerable<CartesianPosInfo> goal) {
-            if ((goal?.Count() ?? 0) > 0) {
-                IEnumerable<CartesianPosInfo> goals = goal.Where(v => Database.GoalGM.ContainsID(v.id));
-                IEnumerable<CartesianPosInfo> powers = goal.Where(v => Database.PowerGM.ContainsID(v.id));
-                List<uint> ID = new List<uint>();
-                if (goals?.Any() ?? false) {
-                    IConsole.AddMsg($"Delete {goals.Count()}");
-                    foreach (var item in goals) {
-                        Database.GoalGM.Remove(item.id);
-                        ID.Add(item.id);
-                        IConsole.AddMsg($"[Delete Goal] - {item.ToString()}");
-                    }
+        private void IGoalSetting_DeleteGoalsEvent(IEnumerable<uint> singles) {
+            foreach(var id in singles) {
+                if (Database.GoalGM.ContainsID(id)) {
+                    Database.GoalGM.Remove(id);
+                }else if (Database.PowerGM.ContainsID(id)) {
+                    Database.PowerGM.Remove(id);
                 }
-                if (powers?.Any() ?? false) {
-                    foreach (var item in powers) {
-                        Database.PowerGM.Remove(item.id);
-                        ID.Add(item.id);
-                        IConsole.AddMsg($"[Delete Power - {item.ToString()}]");
-                    }
-                }
-                IGoalSetting.DeleteGoals(ID);
             }
+            IGoalSetting.ReloadSingle();
+            
         }
 
         private void IGoalSetting_ClearGoalsEvent() {
@@ -1064,18 +1034,23 @@ namespace ClientUI
             IConsole.AddMsg("[Clear Power]");
             Database.PowerGM.Clear();
 
-            IGoalSetting.ClearGoal();
+            IGoalSetting.ReloadSingle();
         }
 
-        private void IGoalSetting_AddNewGoalEvent() {
-            IMapCtrl.SetAddMode(FactoryMode.Factory.Goal($"Goal{Database.GoalGM.Count}"));
+        private void AddNewGoalEvent(ITowardPair goalPosition) {
+            IMapCtrl.SetAddMode(FactoryMode.Factory.Goal(goalPosition,$"Goal{Database.GoalGM.Count}"));
         }
 
         /// <summary>
         /// 取得所有Goal點名稱
         /// </summary>
-        private void IGoalSetting_GetGoalNames() {
-            string goalNames = GetGoalNames();
+        private void GoalNames() {
+            TaskCompletionSource<IProductPacket> tskCompSrc = new TaskCompletionSource<IProductPacket>(0);
+            var tsk = tskCompSrc.Task;
+            mCmdTsk.Add(tskCompSrc);
+            mSerialClient.Send(FactoryMode.Factory.Order().RequestGoalList());
+            tsk.Wait(500);
+            string goalNames = string.Join(",", tsk.Result.ToIRequestGoalList().Product);
             IConsole.AddMsg($"Goal Names:{goalNames}");
         }
 
@@ -1083,6 +1058,11 @@ namespace ClientUI
 
         #region ISerialClient
         
+        /// <summary>
+        /// 序列化通訊接收
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void mSerialClient_ReceiveData(object sender, ReceiveDataEventArgs e) {
             if (e.Data is IProductPacket) {
                 var product = e.Data as IProductPacket;
@@ -1220,36 +1200,17 @@ namespace ClientUI
                 }
             }
         }
-
-
+        
         #endregion ISerialClient
 
         #endregion Function - Events
-
-        #region Functoin - Public Methods
-
-        #endregion Function - Public Methdos
-
+        
         #region Function - Private Methods
 
         #region Communication
         
         protected virtual void SetPosition(int x, int y, double theta) {
             mSerialClient.Send(FactoryMode.Factory.Order().SetPosition(x, y, theta));
-        }
-
-        /// <summary>
-        /// 向AGV要求所有Goal點名稱
-        /// </summary>
-        /// <returns>Goal List:"{goal1},{goal2},{goal3}..."</returns>
-        /// <remarks>用來模擬iS向AGV要求所有Goal點名稱</remarks> 
-        protected virtual string GetGoalNames() {
-            TaskCompletionSource<IProductPacket> tskCompSrc = new TaskCompletionSource<IProductPacket>(0);
-            var tsk = tskCompSrc.Task;
-            mCmdTsk.Add(tskCompSrc);
-            mSerialClient.Send(FactoryMode.Factory.Order().RequestGoalList());
-            tsk.Wait(500);
-            return string.Join(",", tsk.Result.ToIRequestGoalList().Product);
         }
         
         /// <summary>
@@ -1374,76 +1335,6 @@ namespace ClientUI
         protected virtual void Charging(int numGoal) {
             mSerialClient.Send(FactoryMode.Factory.Order().DoCharging(numGoal));
         }
-
-        ///// <summary>
-        ///// 訊息傳送(會觸發事件)
-        ///// </summary>
-        ///// <param name="sendMseeage">傳送訊息內容</param>
-        ///// <param name="passChkConn">是否略過檢查連線狀態</param>
-        ///// <returns>Server端回應</returns>
-        //private string[] SendMsg(string sendMseeage, bool passChkConn = true) {
-        //    /*-- 顯示發送出去的訊息 --*/
-        //    string msg = $"{DateTime.Now} [Client] : {sendMseeage}";
-        //    IConsole.AddMsg(msg);
-
-        //    if (mBypassSocket) {
-        //        /*-- Bypass略過不傳 --*/
-        //        return new string[] { "","","True" };
-        //    } else if (passChkConn && !IsServerAlive) {
-        //        /*-- 略過連線檢查且Server端未運作 --*/
-        //        return new string[] { "","","False" };
-        //    }
-            
-        //    /*-- 等待Server端的回應 --*/
-        //    string rtnMsg = SendStrMsg(sendMseeage);
-        //    //string rtnMsg = SendStrMsg(mHostIP, mRecvCmdPort, sendMseeage );
-        //    rtnMsg = rtnMsg.Trim();
-        //    /*-- 顯示Server端回應 --*/
-        //    msg = $"{DateTime.Now} [Server] : {rtnMsg}\r\n";
-        //    IConsole.AddMsg(msg);
-
-        //    return rtnMsg.Split(':');
-        //}
-
-        ///// <summary>
-        ///// 訊息傳送(具體Socket交握實現，但是不會觸發事件)
-        ///// </summary>
-        ///// <param name="serverIP">伺服端IP</param>
-        ///// <param name="requerPort">通訊埠號</param>
-        ///// <param name="sendMseeage">傳送訊息內容</param>
-        ///// <returns>Server端回應</returns>
-        //private string SendStrMsg(string sendMseeage) {
-        //    //可以在字串編碼上做文章，可以傳送各種資訊內容，目前主要有三種編碼方式：
-        //    //1.自訂連接字串編碼－－微量
-        //    //2.JSON編碼--輕量
-        //    //3.XML編碼--重量
-        //    int state;
-        //    byte[] recvBytes = null;//開啟一個緩衝區，存儲接收到的資訊
-        //    try {
-
-        //        byte[] sendContents = Encoding.UTF8.GetBytes(sendMseeage + "\r\n");
-        //        state = mSoxCmd.Send(sendContents, sendContents.Length, 0);//發送二進位資料
-        //        recvBytes = new byte[mSoxCmd.ReceiveBufferSize];
-                
-        //        state = mSoxCmd.Receive(recvBytes);
-        //        string strRecvCmd = Encoding.Default.GetString(recvBytes);//
-        //        strRecvCmd = strRecvCmd.Split(new char[] { '\0' })[0];
-        //        sendContents = null;
-        //        return strRecvCmd;
-        //    } catch (SocketException se) {
-        //        System.Console.WriteLine("SocketException : {0}", se.ToString());
-        //        return "False";
-        //    } catch (ArgumentNullException ane) {
-        //        System.Console.WriteLine("ArgumentNullException : {0}", ane.ToString());
-        //        return "False";
-        //    } catch (Exception ex) {
-        //        System.Console.Write(ex.Message);
-        //        return "False";
-        //    } finally {
-        //        recvBytes = null;
-        //    }
-
-        //}
         
         private IOrderPacket<IPair, bool> GetMotionICmd(MotionDirection direction) {
             int r = 0, l = 0, v = mVelocity;
@@ -1473,6 +1364,7 @@ namespace ClientUI
         #endregion Communication 
 
         #region UI
+
         /// <summary>
         /// 設定AGV狀態
         /// </summary>
@@ -1515,17 +1407,6 @@ namespace ClientUI
         private void Exit() {
             mNotifyIcon.HideIcon();
             this.Dispose();
-        }
-
-        /// <summary>
-        /// 車子資訊更新事件
-        /// </summary>
-        ///<param name="info">車子資訊</param>
-        private void CarInfoRefresh(CarInfo info) {
-            int battery = info.PowerPercent;
-            tsprgBattery.Value = battery;
-            tslbBattery.Text = string.Format(tslbBattery.Tag.ToString(), battery);
-            tslbStatus.Text = info.Status;
         }
 
         /// <summary>
@@ -1586,7 +1467,7 @@ namespace ClientUI
         /// <param name="goal"></param>
         /// <param name="idxGoal"></param>
         /// <param name="act"></param>
-        private void CheckGoal(CartesianPosInfo goal, int idxGoal,Action act) {
+        private void CheckGoal(IGoal goal, int idxGoal,Action act) {
             if (goal != null && idxGoal >= 0) {
                 act?.Invoke();
             } else {
@@ -1735,7 +1616,7 @@ namespace ClientUI
                 /*-- 移動畫面至Map中心點 --*/
                 IMapCtrl.Focus(center);
                 
-                IGoalSetting.RefreshSingle();
+                IGoalSetting.ReloadSingle();
 
                 if (IsConnected) {
                     SendFile(mapPath);
@@ -1744,51 +1625,25 @@ namespace ClientUI
             return true;
         }
 
-        /// <summary>
-        /// 載入Ori檔
-        /// </summary>
-        /// <param name="oriPath"></param>
-        /// <returns></returns>
         private bool LoadOri(string oriPath) {
-            bool isLoaded = true;
             CurOriPath = oriPath;
             NewMap();
-            MapReading MapReading = null;
             if (!mBypassLoadFile) {//無BypassLoadFile
-                MapReading = new MapReading(CurOriPath);
-                CartesianPos carPos = null;
-                List<CartesianPos> laserData = null;
-                //List<Point> listMap = new List<Point>();
-                int dataLength = MapReading.OpenFile();
-                if (dataLength != 0) {
-                    CtProgress prog = new CtProgress(ProgBarStyle.Percent, $"Load Ori", $"Loading {oriPath}...", dataLength - 1);
-                    try {
-                        IMapCtrl.Zoom = 100;
-                        for (int n = 0; n < dataLength; n++) {
-                            MapReading.ReadScanningInfo(n, out carPos, out laserData);
-                            Database.AGVGM[mAGVID].SetLocation(carPos);
-                            List<IPair> points = laserData.ToPairs();
-                            Database.AGVGM[mAGVID]?.LaserAPoints.DataList.Replace(points);
-                            Database.ObstaclePointsGM.DataList.AddRange(points);
-                            IMapCtrl.Focus((int)carPos.x, (int)carPos.y);
-                            Thread.Sleep(10);
-                            System.Console.WriteLine(n);
-                            prog.UpdateStep(n);
-                        }
-                    } catch (Exception ex) {
-                        isLoaded = false;
-                        System.Console.WriteLine(ex.Message);
-                    } finally {
-                        prog?.Close();
-                        prog = null;
-                    }
+                
+                /*-- 載入Map並取得Map中心點 --*/
+                IPair center = Database.LoadOriToDatabase(CurOriPath, mAGVID)?.Center();
+
+                if (center == null) {
+                    return false;
                 }
+
+                /*-- 移動畫面至Map中心點 --*/
+                IMapCtrl.Focus(center);
             } else {//Bypass LoadFile功能
                     /*-- 空跑一秒，模擬檔案載入 --*/
                 SpinWait.SpinUntil(() => false, 1000);
             }
-            MapReading = null;
-            return isLoaded;
+            return true;
         }
 
         /// <summary>
@@ -1907,37 +1762,8 @@ namespace ClientUI
         /// 繪製路徑
         /// </summary>
         /// <param name="path"></param>
-        private void DrawPath(List<CartesianPos> path) {
-            DrawPath(path.ToPairs());
-        }
-
-        /// <summary>
-        /// 繪製路徑
-        /// </summary>
-        /// <param name="path"></param>
         protected void DrawPath(IEnumerable<IPair> path) {
             Database.AGVGM[mAGVID].Path.DataList.Replace(path);
-        }
-
-        /// <summary>
-        /// 計算雷射點座標
-        /// </summary>
-        /// <param name="dist"></param>
-        /// <param name="idx"></param>
-        /// <param name="carPos"></param>
-        /// <returns></returns>
-        private int[] CalcLaserPoint(int dist,int idx,CartesianPos carPos) {
-            double angle, Laserangle;
-            return Transformation.LaserPoleToCartesian(
-                dist,
-                LaserParam.AngleBase,
-                LaserParam.Resolution,
-                idx++,
-                LaserParam.AngleOffset,
-                LaserParam.OffsetLen,
-                LaserParam.OffsetTheta,
-                carPos.x,carPos.y, carPos.theta,
-                out angle, out Laserangle);
         }
 
         #endregion Draw
@@ -1949,9 +1775,9 @@ namespace ClientUI
         /// </summary>
         private void SetEvents() {
             #region IGoalSetting 事件連結     
-            IGoalSetting.AddNewGoalEvent += IGoalSetting_AddNewGoalEvent;
+            IGoalSetting.AddNewGoalEvent += AddNewGoalEvent;
             IGoalSetting.ClearGoalsEvent += IGoalSetting_ClearGoalsEvent;
-            IGoalSetting.DeleteGoalsEvent += IGoalSetting_DeleteGoalsEvent;
+            IGoalSetting.DeleteSingleEvent += IGoalSetting_DeleteGoalsEvent;
             IGoalSetting.FindPathEvent += IGoalSetting_FindPathEvent;
             IGoalSetting.LoadMapEvent += IGoalSetting_LoadMapEvent;
             IGoalSetting.LoadMapFromAGVEvent += ITest_GetMap;
@@ -1959,7 +1785,7 @@ namespace ClientUI
             IGoalSetting.RunLoopEvent += IGoalSetting_RunLoopEvent;
             IGoalSetting.SaveGoalEvent += IGoalSetting_SaveGoalEvent;
             IGoalSetting.SendMapToAGVEvent += ITest_SendMap;
-            IGoalSetting.GetGoalNames += IGoalSetting_GetGoalNames;
+            IGoalSetting.GetGoalNames += GoalNames;
             IGoalSetting.Charging += IGoalSetting_Charging;
             IGoalSetting.ClearMap += ITest_ClearMap;
 
@@ -2001,7 +1827,7 @@ namespace ClientUI
             switch (mCursorMode) {
                 case CursorMode.Goal:
                 case CursorMode.Power:
-                    IGoalSetting.RefreshSingle();
+                    IGoalSetting.ReloadSingle();
                     mCursorMode = CursorMode.Select;
                     break;
             }
@@ -2151,34 +1977,6 @@ namespace ClientUI
         {
             return Regex.IsMatch(ip, @"^((2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(2[0-4]\d|25[0-5]|[01]?\d\d?)$");
         }
-        
-        /// <summary>
-        /// 路徑資料分析
-        /// </summary>
-        /// <param name="pack"></param>
-        /// <returns></returns>
-        private List<CartesianPos> PathEncoder(string pack) {
-            string[] pathArray = pack.Trim().Split(new char[] { Separator.Data }, StringSplitOptions.RemoveEmptyEntries);
-            List<CartesianPos> rtnPoints = null;
-            int len = pathArray?.Count() ?? 0;
-            if (len != 0 && len % 2 == 0) {
-                rtnPoints = new List<CartesianPos>();
-                double x, y;
-                for (int i = 0; i < pathArray.Count() - 1; i += 2) {
-                    string strX = pathArray[i];
-                    string strY = pathArray[i + 1];
-                    if (double.TryParse(pathArray[i], out x) && double.TryParse(pathArray[i + 1], out y)) {
-                        rtnPoints.Add(new CartesianPos(x, y));
-                    } else {
-                        rtnPoints.Clear();
-                        rtnPoints = null;
-                        break;
-                    }
-                }
-            }
-            return rtnPoints;
-        }
-
 
         #endregion Function - Private Methods
 

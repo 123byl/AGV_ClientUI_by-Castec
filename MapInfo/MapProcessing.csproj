@@ -46,6 +46,14 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\AGVBase\FactoryMode\FactoryMode.csproj">
+      <Project>{b66dd409-3bf6-488d-b887-d00a59c6396d}</Project>
+      <Name>FactoryMode</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\AGVBase\Geometry\Geometry.csproj">
+      <Project>{07E11B21-0D87-4446-8EE8-91135DCAE089}</Project>
+      <Name>Geometry</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\AGVBase\GLCore\GLCore.csproj">
       <Project>{805b8702-0fac-4104-8f41-5337130ca0c6}</Project>
       <Name>GLCore</Name>

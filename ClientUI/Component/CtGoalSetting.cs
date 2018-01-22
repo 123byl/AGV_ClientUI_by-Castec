@@ -4,7 +4,6 @@ using System.Drawing;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 using static ClientUI.Events.GoalSettingEvents;
-using MapProcessing;
 using CtLib.Library;
 using GLCore;
 using Geometry;
@@ -21,12 +20,7 @@ namespace ClientUI
         #region Declaration - Fields
 
         private readonly object mKey = new object();
-
-        /// <summary>
-        /// 當下車子的位置
-        /// </summary>
-        private CartesianPos mCurrentCar = new CartesianPos();
-
+       
         #endregion Declaration - Fiedls
 
         #region Declaration - Const
@@ -72,7 +66,7 @@ namespace ClientUI
         /// <summary>
         /// 刪除
         /// </summary>
-        public event DelDeleteGoals DeleteGoalsEvent;
+        public event DelDeleteSingle DeleteSingleEvent;
 
         /// <summary>
         /// 尋找路徑
@@ -117,22 +111,7 @@ namespace ClientUI
         public event DelCharging Charging;
         
         public event Events.TestingEvents.DelClearMap ClearMap;
-        
-        /// <summary>
-        /// 當下車子的位置
-        /// </summary>
-        public CartesianPos CurrentCar {
-            get {
-                lock(mKey){
-                    return mCurrentCar;
-                }
-            } set {
-                lock (mKey) {
-                    if (value != null) mCurrentCar = value;
-                }
-            }
-        }
-        
+      
         /// <summary>
         /// 目標點個數
         /// </summary>
@@ -140,75 +119,6 @@ namespace ClientUI
             get {
                 lock (mKey) {
                     return dgvGoalPoint.Rows.Count;
-                }
-            }
-        }
-
-        /// <summary>
-        /// 加入 Goal 點
-        /// </summary>
-        public void AddGoal(CartesianPosInfo goal)
-        {
-            lock (mKey)
-            {
-                int index = FindIndexByID(goal.id);
-                if (!cmbGoalList.Items.Contains(goal.name)) {
-                    cmbGoalList.InvokeIfNecessary(() => cmbGoalList.Items.Add(goal.name));
-                }
-
-                if (index == -1)
-                {
-                    dgvGoalPoint.InvokeIfNecessary(
-                        () => dgvGoalPoint.Rows.Add(new object[] { new CheckBox().Checked = false, goal.id, goal.name, goal.x, goal.y, goal.theta.ToString("F2") }));
-                }
-                else
-                {
-                    dgvGoalPoint.InvokeIfNecessary(
-                        () =>
-                        {
-                            if ((uint)dgvGoalPoint[IDColumn, index].Value != goal.id) dgvGoalPoint[IDColumn, index].Value = goal.id;
-                            if ((string)dgvGoalPoint[NameColumn, index].Value != goal.name) dgvGoalPoint[NameColumn, index].Value = goal.name;
-                            if ((double)dgvGoalPoint[XColumn, index].Value != goal.x) dgvGoalPoint[XColumn, index].Value = goal.x;
-                            if ((double)dgvGoalPoint[YColumn, index].Value != goal.y) dgvGoalPoint[YColumn, index].Value = goal.y;
-                            if ((string)dgvGoalPoint[TowardColumn, index].Value != goal.theta.ToString("F2")) dgvGoalPoint[TowardColumn, index].Value = goal.theta.ToString("F2");
-                        });
-                }
-            }
-        }
-
-        /// <summary>
-        /// 加入 Goal 點
-        /// </summary>
-        public void AddPower(CartesianPosInfo power) {
-            lock (mKey) {
-                int index = FindIndexByID(power.id);
-                if (index == -1) {
-                    dgvGoalPoint.InvokeIfNecessary(
-                        () => dgvGoalPoint.Rows.Add(new object[] { new CheckBox().Checked = false, power.id, power.name, power.x, power.y, power.theta.ToString("F2") }));
-                } else {
-                    dgvGoalPoint.InvokeIfNecessary(
-                        () => {
-                            if ((uint)dgvGoalPoint[IDColumn, index].Value != power.id) dgvGoalPoint[IDColumn, index].Value = power.id;
-                            if ((string)dgvGoalPoint[NameColumn, index].Value != power.name) dgvGoalPoint[NameColumn, index].Value = power.name;
-                            if ((double)dgvGoalPoint[XColumn, index].Value != power.x) dgvGoalPoint[XColumn, index].Value = power.x;
-                            if ((double)dgvGoalPoint[YColumn, index].Value != power.y) dgvGoalPoint[YColumn, index].Value = power.y;
-                            if ((string)dgvGoalPoint[TowardColumn, index].Value != power.theta.ToString("F2")) dgvGoalPoint[TowardColumn, index].Value = power.theta.ToString("F2");
-                        });
-                }
-            }
-        }
-
-        /// <summary>
-        /// 移除目前 Goal 點並加入新的 goal 點
-        /// </summary>
-        public void ClearAndAddGoals(IEnumerable<CartesianPosInfo> goals)
-        {
-            lock (mKey)
-            {
-                ClearGoal();
-                foreach (var goal in goals)
-                {
-                    AddGoal(goal);
                 }
             }
         }
@@ -280,64 +190,72 @@ namespace ClientUI
         /// <summary>
         /// 根據 ID 查詢 Goal 點
         /// </summary>
-        public CartesianPosInfo GetGoalByID(uint ID)
+        public IGoal GetGoalByID(uint ID)
         {
             lock (mKey)
             {
                 int row = FindIndexByID(ID);
-                return GetGoalByIndex(row);
+                return GetSingleByIndex<IGoal>(row);
             }
         }
 
         /// <summary>
         /// 根據表單的列編號查詢 Goal
         /// </summary>
-        public CartesianPosInfo GetGoalByIndex(int row)
+        public T GetSingleByIndex<T>(int row)where T:ISingle<ITowardPair>
         {
             lock (mKey)
             {
-                if (row < 0 || row >= GoalCount) return null;
-
-                uint id = 0;
-                string name = string.Empty;
-                double x = 0;
-                double y = 0;
-                double toward = 0.0;
-                dgvGoalPoint.InvokeIfNecessary(() =>
-                {
-                    id = (uint)dgvGoalPoint[IDColumn, row].Value;
-                    name = (string)dgvGoalPoint[NameColumn, row].Value;
-                    x = (double)dgvGoalPoint[XColumn, row].Value;
-                    y = (double)dgvGoalPoint[YColumn, row].Value;
-                    toward = Convert.ToDouble(dgvGoalPoint[TowardColumn, row].Value);
-                });
-                return new CartesianPosInfo(x, y, toward, name, id);
+                T single = default(T);
+                if (row >= 0 && row < GoalCount) {
+                    uint id = 0;
+                    dgvGoalPoint.InvokeIfNecessary(() =>
+                    {
+                        id = (uint)dgvGoalPoint[IDColumn, row].Value;
+                    });
+                    if (single is IGoal && Database.GoalGM.ContainsID(id)) {
+                        if (!Database.GoalGM.ContainsID(id)) throw new Exception($"GoalGM中不存在{id}");
+                        single = (T)Database.GoalGM[id];
+                    }else if (single is IPower ) {
+                        if (!Database.PowerGM.ContainsID(id)) throw new Exception($"PowerGM中不存在{id}");
+                        single = (T)Database.PowerGM[id];
+                    }else {
+                        throw new Exception($"未知的標記形態{typeof(T).Name}");
+                    }
+                }
+                return single;
+            }
+        }
+        
+        public uint GetSelectedID() {
+            lock (mKey) {
+                uint id = uint.MaxValue;
+                int row = cmbGoalList.SelectedIndex;
+                if (row >= 0 && row < GoalCount) {                    
+                    dgvGoalPoint.InvokeIfNecessary(() => {
+                        id = (uint)dgvGoalPoint[IDColumn, row].Value;
+                    });
+                }
+                return id;
             }
         }
 
         /// <summary>
         /// 獲得所有 Goal 點資訊
         /// </summary>
-        public List<CartesianPosInfo> GetGoals()
+        private List<IGoal> GetGoals()
         {
             lock (mKey)
             {
-                List<CartesianPosInfo> list = new List<CartesianPosInfo>();
+                var list = new List<IGoal>();
                 for (int row = 0; row < GoalCount; ++row)
                 {
                     uint id = 0;
-                    string name = string.Empty;
-                    double x=0d,y=0d, toward = 0.0;
                     dgvGoalPoint.InvokeIfNecessary(() =>
                     {
-                        string type = dgvGoalPoint[TowardColumn, row].Value.GetType().Name;
                         id = Convert.ToUInt32(dgvGoalPoint[IDColumn, row].Value);
-                        name = (string)dgvGoalPoint[NameColumn, row].Value;
-                        x = Convert.ToDouble(dgvGoalPoint[XColumn, row].Value);
-                        y = Convert.ToDouble(dgvGoalPoint[YColumn, row].Value);
-                        toward = Convert.ToDouble(dgvGoalPoint[TowardColumn, row].Value.ToString());
                     });
-                    if (id != 0) list.Add(new CartesianPosInfo(x, y, toward, name, id));
+                    if (Database.GoalGM.ContainsID(id)) list.Add(Database.GoalGM[id]);
                 }
                 return list;
             }
@@ -346,30 +264,22 @@ namespace ClientUI
         /// <summary>
         /// 獲得所有被選取的 Goal 點資訊
         /// </summary>
-        public List<CartesianPosInfo> GetSelectedGoals()
+        private List<uint> GetSelectedSingleID()
         {
             lock (mKey)
             {
-                List<CartesianPosInfo> list = new List<CartesianPosInfo>();
+                var list = new List<uint>();
                 for (int row = 0; row < GoalCount; ++row)
                 {
-                    uint id = 0;
-                    string name = string.Empty;
-                    double x = 0;
-                    double y = 0;
-                    double toward = 0.0;
                     dgvGoalPoint.InvokeIfNecessary(() =>
                     {
-                        if ((bool)dgvGoalPoint[SelectColumn, row].Value)
+                        bool isSelected = (bool)dgvGoalPoint[SelectColumn, row].Value;
+                        if (isSelected)
                         {
-                            id = (uint)dgvGoalPoint[IDColumn, row].Value;
-                            name = (string)dgvGoalPoint[NameColumn, row].Value;
-                            x = Convert.ToDouble(dgvGoalPoint[XColumn, row].Value);
-                            y = Convert.ToDouble(dgvGoalPoint[YColumn, row].Value);
-                            toward = Convert.ToDouble(dgvGoalPoint[TowardColumn, row].Value);
+                            uint id = (uint)dgvGoalPoint[IDColumn, row].Value;
+                            list.Add(id);
                         }
                     });
-                    if (id != 0) list.Add(new CartesianPosInfo(x, y, toward, name, id));
                 }
                 return list;
             }
@@ -378,13 +288,13 @@ namespace ClientUI
         /// <summary>
         /// 設定真實座標
         /// </summary>
-        public void SetCurrentRealPos(CartesianPos realPos) {
+        public void SetCurrentRealPos(IPair realPos) {
             lock (mKey) {
                 txtAddPx.InvokeIfNecessary(() => {
-                    if (txtAddPx.Text != realPos.x.ToString()) txtAddPx.Text = realPos.x.ToString();
+                    if (txtAddPx.Text != realPos.X.ToString()) txtAddPx.Text = realPos.X.ToString();
                 });
                 txtAddPy.InvokeIfNecessary(() => {
-                    if (txtAddPy.Text != realPos.y.ToString()) txtAddPy.Text = realPos.y.ToString();
+                    if (txtAddPy.Text != realPos.Y.ToString()) txtAddPy.Text = realPos.Y.ToString();
                 });
             }
         }
@@ -428,30 +338,6 @@ namespace ClientUI
             //CtInvoke.ControlEnabled(btnCharging, enb);
         }
 
-        /// <summary>
-        /// 刷新Goal與Power點資訊
-        /// </summary>
-        public void RefreshSingle() {
-            lock (mKey) {
-                Dictionary<uint, int> uidMapping = new Dictionary<uint, int>();
-                for (int idx = 0; idx < dgvGoalPoint.RowCount; idx++) {
-                    uidMapping.Add(Convert.ToUInt32(dgvGoalPoint[IDColumn, idx].Value), idx);
-                }
-                Database.GoalGM.SaftyForLoop((uid, goal) => {
-                    UpdataSingle(uid, goal, uidMapping);
-                    uidMapping.Remove(uid);
-                });
-                Database.PowerGM.SaftyForLoop((uid, power) => {
-                    UpdataSingle(uid, power, uidMapping);
-                    uidMapping.Remove(uid);
-                });
-
-                foreach (uint uid in uidMapping.Keys) {
-                    DeleteGoal(uid);
-                }
-            }
-        }
-
         #endregion IIGoalSetting
 
         #region UI Event
@@ -468,9 +354,7 @@ namespace ClientUI
         private void btnCurrPos_Click(object sender, EventArgs e)
         {
             lock (mKey) {
-                uint id = Database.ID.GenerateID();
-                CartesianPosInfo goal = new CartesianPosInfo(CurrentCar.x, CurrentCar.y, CurrentCar.theta, "Goal" + id, id);
-                AddNewGoalEvent?.Invoke();
+                AddNewGoalEvent?.Invoke(Database.AGVGM[0].Data);
             }
         }
 
@@ -491,8 +375,9 @@ namespace ClientUI
         private void btnPath_Click(object sender, EventArgs e)
         {
             lock (mKey) {
-                CartesianPosInfo goal = GetGoalByIndex(cmbGoalList.SelectedIndex);
-                int index = goal != null ? Database.GoalGM.IndexOf(goal.id) : -1;
+                var goal = GetSingleByIndex<IGoal>(cmbGoalList.SelectedIndex);
+                uint id = GetSelectedID();
+                int index = Database.GoalGM.IndexOf(id);
                 FindPathEvent?.BeginInvoke(goal, index,null,null);
             }
         }
@@ -508,8 +393,9 @@ namespace ClientUI
         {
             lock (mKey)
             {
-                CartesianPosInfo goal = GetGoalByIndex(cmbGoalList.SelectedIndex);
-                int index = goal != null ?  Database.GoalGM.IndexOf(goal.id) : -1;
+                var goal = GetSingleByIndex<IGoal>(cmbGoalList.SelectedIndex);
+                uint id = GetSelectedID();
+                int index = Database.GoalGM.IndexOf(id);
                 RunGoalEvent?.BeginInvoke(goal, index,null,null);
             }
         }
@@ -526,7 +412,7 @@ namespace ClientUI
         {
             lock (mKey)
             {
-                DeleteGoalsEvent?.Invoke(GetSelectedGoals());
+                DeleteSingleEvent?.Invoke(GetSelectedSingleID());
             }
         }
 
@@ -546,8 +432,9 @@ namespace ClientUI
 
         private void btnCharging_Click(object sender, EventArgs e) {
             lock (mKey) {
-                CartesianPosInfo power = GetGoalByIndex(cmbGoalList.SelectedIndex);
-                int index = power != null ? Database.PowerGM.IndexOf(power.id) : -1;
+                var power = GetSingleByIndex<IPower>(cmbGoalList.SelectedIndex);
+                uint id = GetSelectedID();
+                int index = Database.PowerGM.IndexOf(id);
                 Charging?.BeginInvoke(power, index,null,null);
             }
         }

@@ -11,7 +11,6 @@ using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 
 using CtLib.Library;
-using MapProcessing;
 using static ClientUI.Events.ConsoleEvents;
 
 namespace ClientUI

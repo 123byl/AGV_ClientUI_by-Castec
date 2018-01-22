@@ -119,7 +119,6 @@
     <Compile Include="Component\CtToolBox.Designer.cs">
       <DependentUpon>CtToolBox.cs</DependentUpon>
     </Compile>
-    <Compile Include="Component\DefStruct.cs" />
     <Compile Include="Component\Events.cs" />
     <Compile Include="Component\KeyboardHook.cs" />
     <Compile Include="Component\MapList.cs">
@@ -535,10 +534,6 @@
     <ProjectReference Include="..\KDTree\KDTree.csproj">
       <Project>{33a00a90-c02e-474b-a8c0-3b0559873ea0}</Project>
       <Name>KDTree</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MapInfo\MapProcessing.csproj">
-      <Project>{c33505bd-7481-44d1-9cfc-193bb3f9d92f}</Project>
-      <Name>MapProcessing</Name>
     </ProjectReference>
     <ProjectReference Include="..\ServerOperation\ServerOperation.csproj">
       <Project>{0b608ad1-fce4-4d20-bd57-ade3e8f48661}</Project>
