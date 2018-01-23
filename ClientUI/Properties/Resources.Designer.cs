@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClientUI.Properties {
+namespace VehiclePlanner.Properties {
     using System;
     
     

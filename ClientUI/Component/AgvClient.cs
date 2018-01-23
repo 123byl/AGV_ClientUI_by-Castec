@@ -17,7 +17,7 @@ using static FactoryMode;
 using CtOutLookBar.Public;
 using System.IO;
 
-namespace ClientUI
+namespace VehiclePlanner
 {
     #region Declaration Extenstion
 

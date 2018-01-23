@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 
-namespace ClientUI.Component
+namespace VehiclePlanner.Component
 {
     public partial class AGVMapUI : CtDockContent
     {

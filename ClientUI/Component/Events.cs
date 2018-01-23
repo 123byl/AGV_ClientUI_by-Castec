@@ -3,11 +3,11 @@ using Geometry;
 using GLCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using static ClientUI.Events.ConsoleEvents;
-using static ClientUI.Events.GoalSettingEvents;
-using static ClientUI.Events.TestingEvents;
+using static VehiclePlanner.Events.ConsoleEvents;
+using static VehiclePlanner.Events.GoalSettingEvents;
+using static VehiclePlanner.Events.TestingEvents;
 
-namespace ClientUI
+namespace VehiclePlanner
 {
     /// <summary>
     /// Console 視窗公開操作方法

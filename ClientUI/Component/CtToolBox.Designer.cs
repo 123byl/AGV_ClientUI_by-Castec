@@ -1,4 +1,4 @@
-﻿namespace ClientUI.Component {
+﻿namespace VehiclePlanner.Component {
     partial class CtToolBox {
         /// <summary>
         /// Required designer variable.

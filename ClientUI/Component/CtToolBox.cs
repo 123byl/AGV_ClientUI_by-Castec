@@ -10,9 +10,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
-using static ClientUI.Events.GoalSettingEvents;
+using static VehiclePlanner.Events.GoalSettingEvents;
 
-namespace ClientUI.Component {
+namespace VehiclePlanner.Component {
 
     public partial class CtToolBox : CtDockContent {
 

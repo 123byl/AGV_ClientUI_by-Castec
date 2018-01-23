@@ -1,4 +1,4 @@
-﻿namespace ClientUI {
+﻿namespace VehiclePlanner {
     partial class CtTesting {
         /// <summary>
         /// Required designer variable.
@@ -35,14 +35,14 @@
             this.btnGetOri = new System.Windows.Forms.Button();
             this.btnLoadOri = new System.Windows.Forms.Button();
             this.btnClrMap = new System.Windows.Forms.Button();
-            this.grbMap = new ClientUI.CtGroupBox();
+            this.grbMap = new VehiclePlanner.CtGroupBox();
             this.btnGetMap = new System.Windows.Forms.Button();
             this.btnLoadMap = new System.Windows.Forms.Button();
             this.btnSendMap = new System.Windows.Forms.Button();
-            this.grbInfo = new ClientUI.CtGroupBox();
+            this.grbInfo = new VehiclePlanner.CtGroupBox();
             this.btnGetLaser = new System.Windows.Forms.Button();
             this.btnGetCarStatus = new System.Windows.Forms.Button();
-            this.gpbShift = new ClientUI.CtGroupBox();
+            this.gpbShift = new VehiclePlanner.CtGroupBox();
             this.btnSetVelo = new System.Windows.Forms.Button();
             this.lbVelocity = new System.Windows.Forms.Label();
             this.txtVelocity = new System.Windows.Forms.TextBox();
@@ -135,7 +135,7 @@
             // btnConnect
             // 
             this.btnConnect.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.btnConnect.Image = global::ClientUI.Properties.Resources.Disconnect;
+            this.btnConnect.Image = global::VehiclePlanner.Properties.Resources.Disconnect;
             this.btnConnect.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnConnect.Location = new System.Drawing.Point(202, 21);
             this.btnConnect.Margin = new System.Windows.Forms.Padding(4);

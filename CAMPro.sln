@@ -5,7 +5,7 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AGVMath", "AGVMath\AGVMath.csproj", "{68C119FE-7CF4-4828-8745-D9558ACD7FAB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientUI", "ClientUI\ClientUI.csproj", "{E03A4197-BA64-4EED-A628-8DE3B8B9BA9A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VehiclePlanner", "ClientUI\VehiclePlanner.csproj", "{E03A4197-BA64-4EED-A628-8DE3B8B9BA9A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CtLib", "CtLib\CtLib\CtLib.csproj", "{A9BED8B3-2F9D-42A8-90BD-9FAE0522EB09}"
 EndProject

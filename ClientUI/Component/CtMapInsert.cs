@@ -11,7 +11,7 @@ using System.Windows.Forms;
 using UIControl;
 using WeifenLuo.WinFormsUI.Docking;
 
-namespace ClientUI {
+namespace VehiclePlanner {
     public partial class CtMapInsert : CtDockContent , IMouseInsertPanel {
 
         #region Declaration - Declaration - Fields

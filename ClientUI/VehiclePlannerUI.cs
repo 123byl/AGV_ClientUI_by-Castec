@@ -15,11 +15,10 @@ using WeifenLuo.WinFormsUI.Docking;
 using CtLib.Library;
 using static CtLib.Forms.CtLogin;
 using CtLib.Forms;
-//using MapProcessing;
 using System.Threading;
 using System.Net;
 using System.Net.Sockets;
-using ClientUI.Component;
+using VehiclePlanner.Component;
 using System.IO;
 using System.Diagnostics;
 using CtLib.Module.Utility;
@@ -33,13 +32,13 @@ using SerialCommunication;
 using SerialCommunicationData;
 using System.Net.NetworkInformation;
 
-namespace ClientUI
+namespace VehiclePlanner
 {
 
     /// <summary>
     /// 客戶端介面
     /// </summary>
-    public partial class AgvClientUI : Form, ICtVersion
+    public partial class VehiclePlannerUI : Form, ICtVersion
     {
 
         #region Version - Information
@@ -434,7 +433,7 @@ namespace ClientUI
         /// <summary>
         /// 共用建構方法
         /// </summary>
-        public AgvClientUI()
+        public VehiclePlannerUI()
         {
             InitializeComponent();
             

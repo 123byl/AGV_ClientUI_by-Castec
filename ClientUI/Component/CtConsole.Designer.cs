@@ -1,4 +1,4 @@
-﻿namespace ClientUI {
+﻿namespace VehiclePlanner {
     partial class CtConsole {
         /// <summary>
         /// Required designer variable.

@@ -1,4 +1,4 @@
-﻿namespace ClientUI {
+﻿namespace VehiclePlanner {
     partial class CtMapInsert {
         /// <summary>
         /// Required designer variable.

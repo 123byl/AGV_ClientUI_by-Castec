@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Drawing;
 using WeifenLuo.WinFormsUI.Docking;
 using System.Windows.Forms;
-namespace ClientUI {
+namespace VehiclePlanner {
     /// <summary>
     /// 基礎的DockContent類
     /// </summary>

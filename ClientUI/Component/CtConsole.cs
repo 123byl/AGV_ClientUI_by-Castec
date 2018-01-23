@@ -11,9 +11,9 @@ using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 
 using CtLib.Library;
-using static ClientUI.Events.ConsoleEvents;
+using static VehiclePlanner.Events.ConsoleEvents;
 
-namespace ClientUI
+namespace VehiclePlanner
 {
     
     /// <summary>

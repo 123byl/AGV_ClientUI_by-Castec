@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace ClientUI.Component {
+namespace VehiclePlanner.Component {
 
     /// <summary>
     /// 键盘钩子

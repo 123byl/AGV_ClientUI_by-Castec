@@ -80,11 +80,11 @@
     <Compile Include="Component\AGVMapUI.Designer.cs">
       <DependentUpon>AGVMapUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="ClientUI.cs">
+    <Compile Include="VehiclePlannerUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ClientUI.Designer.cs">
-      <DependentUpon>ClientUI.cs</DependentUpon>
+    <Compile Include="VehiclePlannerUI.Designer.cs">
+      <DependentUpon>VehiclePlannerUI.cs</DependentUpon>
     </Compile>
     <Compile Include="Component\CtConsole.cs">
       <SubType>Form</SubType>
@@ -135,8 +135,8 @@
     <EmbeddedResource Include="Component\AGVMapUI.resx">
       <DependentUpon>AGVMapUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ClientUI.resx">
-      <DependentUpon>ClientUI.cs</DependentUpon>
+    <EmbeddedResource Include="VehiclePlannerUI.resx">
+      <DependentUpon>VehiclePlannerUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Component\CtConsole.resx">
       <DependentUpon>CtConsole.cs</DependentUpon>

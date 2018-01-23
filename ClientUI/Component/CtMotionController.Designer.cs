@@ -1,4 +1,4 @@
-﻿namespace ClientUI.Component {
+﻿namespace VehiclePlanner.Component {
     partial class CtMotionController {
         /// <summary>
         /// Required designer variable.
@@ -49,7 +49,7 @@
             // 
             // picRightTurn
             // 
-            this.picRightTurn.Image = global::ClientUI.Properties.Resources.Arrow_RotationR;
+            this.picRightTurn.Image = global::VehiclePlanner.Properties.Resources.Arrow_RotationR;
             this.picRightTurn.Location = new System.Drawing.Point(131, 64);
             this.picRightTurn.Name = "picRightTurn";
             this.picRightTurn.Size = new System.Drawing.Size(50, 50);
@@ -61,7 +61,7 @@
             // 
             // picLeftTurn
             // 
-            this.picLeftTurn.Image = global::ClientUI.Properties.Resources.Arrow_RotationL;
+            this.picLeftTurn.Image = global::VehiclePlanner.Properties.Resources.Arrow_RotationL;
             this.picLeftTurn.Location = new System.Drawing.Point(19, 64);
             this.picLeftTurn.Name = "picLeftTurn";
             this.picLeftTurn.Size = new System.Drawing.Size(50, 50);
@@ -73,7 +73,7 @@
             // 
             // picBack
             // 
-            this.picBack.Image = global::ClientUI.Properties.Resources.Arrow_Down;
+            this.picBack.Image = global::VehiclePlanner.Properties.Resources.Arrow_Down;
             this.picBack.Location = new System.Drawing.Point(75, 64);
             this.picBack.Name = "picBack";
             this.picBack.Size = new System.Drawing.Size(50, 50);
@@ -85,7 +85,7 @@
             // 
             // picForward
             // 
-            this.picForward.Image = global::ClientUI.Properties.Resources.Arrow_Up;
+            this.picForward.Image = global::VehiclePlanner.Properties.Resources.Arrow_Up;
             this.picForward.Location = new System.Drawing.Point(75, 8);
             this.picForward.Name = "picForward";
             this.picForward.Size = new System.Drawing.Size(50, 50);

@@ -9,7 +9,7 @@ using System.Linq;
 using System.Threading;
 using AGVDefine;
 
-namespace ClientUI
+namespace VehiclePlanner
 {
     /// <summary>
     /// 測試功能介面

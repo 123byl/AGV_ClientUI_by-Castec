@@ -1,6 +1,6 @@
 ﻿using GLUI;
 
-namespace ClientUI.Component
+namespace VehiclePlanner.Component
 {
     partial class AGVMapUI
     {

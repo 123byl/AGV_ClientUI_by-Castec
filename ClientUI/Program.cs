@@ -1,11 +1,11 @@
-﻿using ClientUI.Component;
+﻿using VehiclePlanner.Component;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace ClientUI {
+namespace VehiclePlanner {
     static class Program {
         /// <summary>
         /// 應用程式的主要進入點。
@@ -24,7 +24,7 @@ namespace ClientUI {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new AgvClientUI());
+            Application.Run(new VehiclePlannerUI());
             //Application.Run(new TaskCompletionSourceTest());
 
         }

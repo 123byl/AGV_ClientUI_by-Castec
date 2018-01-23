@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
-using static ClientUI.Events.GoalSettingEvents;
+using static VehiclePlanner.Events.GoalSettingEvents;
 using CtLib.Library;
 using GLCore;
 using Geometry;
 using CtLib.Forms;
 
-namespace ClientUI
+namespace VehiclePlanner
 {
     /// <summary>
     /// Goal點設定介面
