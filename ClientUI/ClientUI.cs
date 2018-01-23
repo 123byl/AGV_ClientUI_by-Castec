@@ -172,9 +172,19 @@ namespace ClientUI
         //private static readonly string FILENAME_OPCODE = "D1703.opc";
 
         /// <summary>
-        /// Server端IP
+        /// Vehicle Console端IP
         /// </summary>
-        protected string mHostIP = "192.168.50.152";
+        protected string mHostIP {
+            get {
+                return Properties.Settings.Default.HostIP;
+            }
+            set {
+                if (Properties.Settings.Default.HostIP != value && !string.IsNullOrEmpty(value)) {
+                    Properties.Settings.Default.HostIP = value;
+                    Properties.Settings.Default.Save();
+                }
+            }
+        }
         
         /// <summary>
         /// 車子馬達轉速
@@ -190,16 +200,6 @@ namespace ClientUI
         /// AGV ID
         /// </summary>
         protected uint mAGVID = 1;
-
-        /// <summary>
-        /// 障礙線 ID
-        /// </summary>
-        private uint mObstacleLinesID = 1;
-
-        /// <summary>
-        /// 障礙點 ID
-        /// </summary>
-        private uint mObstaclePointsID = 1;
 
         /// <summary>
         /// 地圖相似度，範圍0%～100%，超過門檻值為-100%
@@ -382,12 +382,7 @@ namespace ClientUI
         /// 使用者資料
         /// </summary>
         public UserData UserData { get { return mUser; } }
-
-        /// <summary>
-        /// 目標設備IP
-        /// </summary>
-        public string HostIP { get { return mHostIP; } set { mHostIP = value; } }
-
+        
         /// <summary>
         /// MapGL子視窗
         /// </summary>
@@ -501,7 +496,7 @@ namespace ClientUI
 
             /*-- 載入CtNotifyIcon物件 --*/
             LoadCtNotifyIcon();
-
+            
             /*-- 依照使用者權限進行配置 --*/
             UserChanged(UserData);
 
@@ -510,8 +505,8 @@ namespace ClientUI
             CtInvoke.ToolStripItemChecked(miLoadFile, IsBypassLoadFile);
 
             /*-- 檢查遠端設備IP --*/
-            tslbHostIP.Text = HostIP;
-            ITest.SetHostIP(HostIP);
+            tslbHostIP.Text = mHostIP;
+            ITest.SetHostIP(mHostIP);
 
             mConnectFlow = new ConnectFlow(this.Handle, GetIsConnect, CheckServer, ExecutingInfo);
             mSimilarityFlow = new SimilarityFlow(this.Handle, GetSimilarity, CheckSimilarity, ExecutingInfo);
@@ -837,7 +832,9 @@ namespace ClientUI
                     PingStatus stt = CtNetwork.Ping(hostIP, 500).PingState;
                     if (CtNetwork.Ping(hostIP,500).PingState != PingStatus.Success) throw new PingException($"PingStatus:{stt}");
                     mSerialClient.Connect(hostIP, (int)EPort.ClientPort);
-                    if (IsConnected) mHostIP = hostIP;
+                    if (IsConnected) {
+                        mHostIP = hostIP;
+                    }
                 } else {
                     mSerialClient.Stop();
                 }
@@ -922,11 +919,7 @@ namespace ClientUI
                         mNewPos = e.Position;
                     } else {
                         IConsole.AddMsg($"NewPos{mNewPos.ToString()}");
-                        double Calx = e.Position.X - mNewPos.X;
-                        double Caly = e.Position.Y - mNewPos.Y;
-                        double Calt = Math.Atan2(Caly, Calx) * 180 / Math.PI;
-                        //Send POS to AGV   
-                        SetPosition(mNewPos.X, mNewPos.Y, Calt);
+                        SetPosition(e.Position, mNewPos);
                         mNewPos = null;
                         mIsSetting = false;
                     }
@@ -1203,8 +1196,14 @@ namespace ClientUI
 
         #region Communication
         
-        protected virtual void SetPosition(int x, int y, double theta) {
-            mSerialClient.Send(FactoryMode.Factory.Order().SetPosition(x, y, theta));
+        /// <summary>
+        /// 要求AGV設定新位置
+        /// </summary>
+        /// <param name="oldPosition">舊座標</param>
+        /// <param name="newPosition">新座標</param>
+        protected virtual void SetPosition(IPair oldPosition,IPair newPosition) {
+            var position = FactoryMode.Factory.TowardPair(newPosition, oldPosition.Angle(newPosition));
+            mSerialClient.Send(FactoryMode.Factory.Order().SetPosition(position));
         }
         
         /// <summary>
@@ -1889,7 +1888,7 @@ namespace ClientUI
                 mNotifyIcon.MenuItems = mMenuItems;
             }
         }
-
+        
         #endregion Load
 
         #region Flow

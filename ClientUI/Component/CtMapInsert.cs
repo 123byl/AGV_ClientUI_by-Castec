@@ -21,7 +21,7 @@ namespace ClientUI {
         /// </summary>
         IMouseInsertPanel mPanel = null;
 
-        Size mFloatFormSize = new Size();
+        //Size mFloatFormSize = new Size();
 
         #endregion Declaration  -Fields
 

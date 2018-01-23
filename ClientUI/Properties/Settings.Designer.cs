@@ -22,5 +22,17 @@ namespace ClientUI.Properties {
                 return defaultInstance;
             }
         }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string HostIP {
+            get {
+                return (string)this["HostIP"];
+            }
+            set {
+                this["HostIP"] = value;
+            }
+        }
     }
 }
