@@ -515,14 +515,6 @@
       <Project>{b7d0f648-6962-4596-b164-c777766bba97}</Project>
       <Name>UIControl</Name>
     </ProjectReference>
-    <ProjectReference Include="..\AGVMath\AGVMath.csproj">
-      <Project>{68c119fe-7cf4-4828-8745-d9558acd7fab}</Project>
-      <Name>AGVMath</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Command\Command.csproj">
-      <Project>{1CABEB43-7C54-4BE5-A828-08D65AA7593F}</Project>
-      <Name>Command</Name>
-    </ProjectReference>
     <ProjectReference Include="..\CtLib\CtLib\CtLib.csproj">
       <Project>{a9bed8b3-2f9d-42a8-90bd-9fae0522eb09}</Project>
       <Name>CtLib</Name>
@@ -530,14 +522,6 @@
     <ProjectReference Include="..\CtOutLookBar\CtOutLookBar.csproj">
       <Project>{1bea4f2d-0a48-4a1c-aff2-0b44efa08442}</Project>
       <Name>CtOutLookBar</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\KDTree\KDTree.csproj">
-      <Project>{33a00a90-c02e-474b-a8c0-3b0559873ea0}</Project>
-      <Name>KDTree</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ServerOperation\ServerOperation.csproj">
-      <Project>{0b608ad1-fce4-4d20-bd57-ade3e8f48661}</Project>
-      <Name>ServerOperation</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

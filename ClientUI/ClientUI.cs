@@ -17,23 +17,21 @@ using static CtLib.Forms.CtLogin;
 using CtLib.Forms;
 //using MapProcessing;
 using System.Threading;
-using ServerOperation;
 using System.Net;
 using System.Net.Sockets;
 using ClientUI.Component;
 using System.IO;
-using AGVMathOperation;
 using System.Diagnostics;
 using CtLib.Module.Utility;
 using System.Text.RegularExpressions;
 using Geometry;
 using GLCore;
 using GLUI;
-using CommandCore;
 using UIControl;
 using AGVDefine;
 using SerialCommunication;
 using SerialCommunicationData;
+using System.Net.NetworkInformation;
 
 namespace ClientUI
 {
@@ -379,11 +377,6 @@ namespace ClientUI
                 //RaiseGoalSettingEvent(GoalSettingEventType.CurMapPath, !string.IsNullOrEmpty(value));
             }
         }
-
-        /// <summary>
-        /// 車子資訊
-        /// </summary>
-        public CarInfo CarInfo { get; }
 
         /// <summary>
         /// 使用者資料
@@ -829,20 +822,25 @@ namespace ClientUI
             //resultlines = null;
         }
 
-        protected virtual void ITest_CheckIsServerAlive(bool cnn, string hostIP = "") {
+        /// <summary>
+        /// 與指定IP AGV連線/斷線
+        /// </summary>
+        /// <param name="cnn">連線/斷線</param>
+        /// <param name="hostIP">AGV IP</param>
+        /// <exception cref=""
+        protected virtual void ITest_ConnectToAGV(bool cnn, string hostIP = "") {
             if (IsConnected != cnn) {
                 if (cnn) {
                     if (mSerialClient == null) {
                         mSerialClient = FactoryMode.Factory.SerialClient(mSerialClient_ReceiveData);
                     }
-                    mHostIP = hostIP;
-                    mSerialClient.Connect(mHostIP, (int)EPort.ClientPort);
+                    PingStatus stt = CtNetwork.Ping(hostIP, 500).PingState;
+                    if (CtNetwork.Ping(hostIP,500).PingState != PingStatus.Success) throw new PingException($"PingStatus:{stt}");
+                    mSerialClient.Connect(hostIP, (int)EPort.ClientPort);
+                    if (IsConnected) mHostIP = hostIP;
                 } else {
-                    mSerialClient.Dispose();
-                    mSerialClient = null;
+                    mSerialClient.Stop();
                 }
-
-
                 ITest.SetServerStt(IsConnected);
                 IConsole.AddMsg($"Client - Is {(IsConnected ? "Connected" : "Disconnected")} to {mHostIP}");
             }
@@ -852,11 +850,7 @@ namespace ClientUI
             mVelocity = velocity;
             mSerialClient.Send(FactoryMode.Factory.Order().SetWorkVelocity(mVelocity));
         }
-        
-        private void ITest_SetCarMode(EMode mode) {
-           
-        }
-
+       
         protected virtual void ITest_SendMap() {
             OpenFileDialog openMap = new OpenFileDialog();
             openMap.InitialDirectory = mDefMapDir;
@@ -1006,13 +1000,13 @@ namespace ClientUI
         }
 
         private void IGoalSetting_FindPathEvent(IGoal goal, int idxGoal) {
-            CheckGoal(goal, idxGoal, () => {
-                mSimilarityFlow.CheckFlag("Path plann", () => {
+            //CheckGoal(goal, idxGoal, () => {
+            //    mSimilarityFlow.CheckFlag("Path plann", () => {
                     IConsole.AddMsg("[Find Path] - idx{0} {1}", idxGoal, goal.ToString());
                     IConsole.AddMsg("[AGV Find A Path]");
                     PathPlan(idxGoal);
-                });
-            });
+            //    });
+            //});
         }
 
         private void IGoalSetting_DeleteGoalsEvent(IEnumerable<uint> singles) {
@@ -1703,53 +1697,6 @@ namespace ClientUI
             Database.AGVGM[mAGVID].Path.DataList.Clear();
         }
 
-
-        /// <summary>
-        /// 繪製雷射
-        /// </summary>
-        private void DrawLaser(CarInfo info) {
-            //List<int> points = new List<IPair>();
-            //int idx = 0;
-            //foreach (int dist in info.LaserData) {
-            //    if (dist >= 30 && dist < 15000) {
-            //        int[] pos = CalcLaserPoint(dist, idx++, info);
-            //        points.Add(FactoryMode.Factory.Pair(pos[0], pos[1]));
-            //        pos = null;
-            //    }
-            //}
-            DrawLaser(info.LaserData);
-        }
-
-        /// <summary>
-        /// 繪製雷射
-        /// </summary>
-        /// <param name="laserData"></param>
-        private void DrawLaser(IEnumerable<int> laserData) {
-            List<IPair> points = new List<IPair>();
-            int idx = 0;
-            GLCore.IAGV carPos = Database.AGVGM[mAGVID];
-            double angle,Laserangle;
-            
-            foreach (int dist in laserData) {
-                if (dist >= 30 && dist < 15000) {
-                    int[] pos = Transformation.LaserPoleToCartesian(
-                dist,
-                LaserParam.AngleBase,
-                LaserParam.Resolution,
-                idx++,
-                LaserParam.AngleOffset,
-                LaserParam.OffsetLen,
-                LaserParam.OffsetTheta,
-                carPos.Data.Position.X, carPos.Data.Position.Y, carPos.Data.Toward.Theta,
-                out angle, out Laserangle);
-                    points.Add(FactoryMode.Factory.Pair(pos[0], pos[1]));
-                    pos = null;
-                }
-            }
-            Database.AGVGM[mAGVID]?.LaserAPoints.DataList.Replace(points);
-            IConsole.AddMsg($"LaserPointCount:{points.Count()}");
-        }
-
         /// <summary>
         /// 繪製雷射
         /// </summary>
@@ -1808,9 +1755,8 @@ namespace ClientUI
             ITest.GetLaser += ITest_GetLaser;
             ITest.GetCar += ITest_GetCar;
             ITest.SendMap += ITest_SendMap;
-            ITest.SetCarMode += ITest_SetCarMode;
             ITest.SetVelocity += ITest_SetVelocity;
-            ITest.Connect += ITest_CheckIsServerAlive;
+            ITest.Connect += ITest_ConnectToAGV;
             ITest.MotorServoOn += ITest_MotorServoOn;
             ITest.SimplifyOri += ITest_SimplifyOri;
             ITest.ClearMap += ITest_ClearMap;

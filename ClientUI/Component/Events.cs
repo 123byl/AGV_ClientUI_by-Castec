@@ -174,9 +174,7 @@ namespace ClientUI
         event DelMotorServoOn MotorServoOn;
 
         event DelSendMap SendMap;
-
-        event DelSetCarMode SetCarMode;
-
+        
         event DelSetVelocity SetVelocity;
 
         event DelSimplifyOri SimplifyOri;
@@ -339,9 +337,7 @@ namespace ClientUI
             public delegate void DelMotorServoOn(bool servoOn);
 
             public delegate void DelSendMap();
-
-            public delegate void DelSetCarMode(EMode mode);
-
+            
             public delegate void DelStartScan(bool scan);
 
             public delegate void DelSetVelocity(int velocity);

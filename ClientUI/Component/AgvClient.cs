@@ -79,20 +79,5 @@ namespace ClientUI
     }
 
     #endregion Declaration - Enum
-
-    #region Declaration - Const
-
-    /// <summary>
-    /// 雷射參數
-    /// </summary>
-    public struct LaserParam {
-        public const double AngleBase = -135;
-        public const double Resolution = 0.25;
-        public const double AngleOffset = 43;
-        public const double OffsetLen = 416.75;
-        public const double OffsetTheta = 43;
-    }
-
-    #endregion Declaration - Const
-
+    
 }

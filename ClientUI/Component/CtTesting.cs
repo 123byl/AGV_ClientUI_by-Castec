@@ -52,7 +52,6 @@ namespace ClientUI
         public event Events.TestingEvents.DelGetLaser GetLaser;
         public event Events.TestingEvents.DelGetCar GetCar;
         public event Events.TestingEvents.DelSendMap SendMap;
-        public event Events.TestingEvents.DelSetCarMode SetCarMode;
         public event Events.TestingEvents.DelSimplifyOri SimplifyOri;
         public event Events.TestingEvents.DelSetVelocity SetVelocity;
         public event Events.TestingEvents.DelConnect Connect;

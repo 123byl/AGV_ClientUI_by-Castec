@@ -213,10 +213,10 @@ namespace ClientUI
                     {
                         id = (uint)dgvGoalPoint[IDColumn, row].Value;
                     });
-                    if (single is IGoal && Database.GoalGM.ContainsID(id)) {
+                    if (Database.GoalGM.ContainsID(id)) {
                         if (!Database.GoalGM.ContainsID(id)) throw new Exception($"GoalGM中不存在{id}");
                         single = (T)Database.GoalGM[id];
-                    }else if (single is IPower ) {
+                    }else if (Database.PowerGM.ContainsID(id)) {
                         if (!Database.PowerGM.ContainsID(id)) throw new Exception($"PowerGM中不存在{id}");
                         single = (T)Database.PowerGM[id];
                     }else {
