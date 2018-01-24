@@ -123,9 +123,14 @@ namespace VehiclePlanner
         protected bool mIsConnected = false;
 
         /// <summary>
+        /// 是否持續接收資料
+        /// </summary>
+        private bool mIsAtuoReport = false;
+
+        /// <summary>
         /// 是否Bypass Socket通訊
         /// </summary>
-        protected bool mBypassSocket = false;
+        protected bool mBypassSocket = true;
 
         /// <summary>
         /// 是否Bypass LoadFile功能
@@ -133,9 +138,9 @@ namespace VehiclePlanner
         private bool mBypassLoadFile = false;
 
         /// <summary>
-        /// 車子模式
+        /// 是否正在掃描中
         /// </summary>
-        protected EMode mCarMode = EMode.OffLine;
+        private bool mIsScanning = false;
 
         /// <summary>
         /// 當前語系
@@ -210,6 +215,11 @@ namespace VehiclePlanner
         /// </summary>
         private IPair mNewPos = null;
 
+        /// <summary>
+        /// iTS狀態
+        /// </summary>
+        private IStatus mStatus;
+
         private IntPtr mHandle = IntPtr.Zero;
         
         private ConnectFlow mConnectFlow = null;
@@ -268,13 +278,6 @@ namespace VehiclePlanner
 
         #region Socket
 
-        /// <summary>
-        /// 序列化傳輸物件
-        /// </summary>
-        private ISerialClient mSerialClient = null;
-
-        private List<TaskCompletionSource<IProductPacket>> mCmdTsk = new List<TaskCompletionSource<IProductPacket>>();
-
         #endregion Socket
 
         #endregion Declaration - Members
@@ -283,14 +286,7 @@ namespace VehiclePlanner
 
         #region Flag
 
-        /// <summary>
-        /// 是否已建立連線
-        /// </summary>
-        public virtual bool IsConnected {
-            get {
-                return mSerialClient?.Connected ?? false;
-            }
-        }
+        
 
         /// <summary>
         /// 伺服馬達是否激磁
@@ -329,22 +325,7 @@ namespace VehiclePlanner
         /// </remarks>
         public UILanguage Culture { get { return mCulture; } }
 
-        /// <summary>
-        /// 是否持續接收雷射資料
-        /// </summary>
-        public bool IsGettingLaser { get; set; } = false;
-
-        /// <summary>
-        /// 車子模式
-        /// </summary>
-        public EMode CarMode {
-            get {
-                return mCarMode;
-            }
-            set {
-            }
-        }
-
+        
         #endregion Flag
 
         /// <summary>
@@ -426,6 +407,28 @@ namespace VehiclePlanner
         private IScene IMapCtrl { get { return MapGL != null ? MapGL.Ctrl : null; } }
         protected IITesting ITest { get { return Testing; } }
         
+        /// <summary>
+        /// iTS狀態
+        /// </summary>
+        protected IStatus Status {
+            get {
+                return mStatus;
+            }
+            private set {
+                if (value != null && mStatus != value) {
+                    mStatus = value;
+                    this.InvokeIfNecessary(() => {
+                        if (mStatus.Battery != -1) {
+                            tsprgBattery.Value = (int)mStatus.Battery;
+                            tslbBattery.Text = $"{mStatus.Battery:0.0}%";
+                        }
+                        tslbStatus.Text = mStatus.Description.ToString();
+                    });
+                    Database.AGVGM[mAGVID].SetLocation(mStatus.Data);
+                }
+            }
+        }
+
         #endregion Declaration - Properties
 
         #region Functin - Constructors
@@ -506,7 +509,7 @@ namespace VehiclePlanner
             /*-- 檢查遠端設備IP --*/
             tslbHostIP.Text = mHostIP;
             ITest.SetHostIP(mHostIP);
-
+            
             mConnectFlow = new ConnectFlow(this.Handle, GetIsConnect, CheckServer, ExecutingInfo);
             mSimilarityFlow = new SimilarityFlow(this.Handle, GetSimilarity, CheckSimilarity, ExecutingInfo);
             mServoOnFlow = new ServoOnFlow(this.Handle, GetIsServoOn, CheckServoOn, ExecutingInfo);
@@ -729,180 +732,307 @@ namespace VehiclePlanner
 
         #region ITest
 
-        protected virtual void ITest_StartScan(bool scan) {
-            EMode mode = scan ? EMode.Map : EMode.Idle;
-            if (mCarMode != mode) {
-                if (scan) {
-                    string oriName = string.Empty;
-                    if (Stat.SUCCESS == CtInput.Text(out oriName, "MAP Name", "Set Map File Name")) {
-                        mSerialClient.Send(FactoryMode.Factory.Order().SetScaningOriFileName(oriName));
-                        IConsole.AddMsg($"Start scan");
-                    } else {
-                        return;
+
+        /// <summary>
+        /// 通知VehicleConsole開始/停止掃描
+        /// </summary>
+        /// <param name="scan">True(開始)/False(停止)</param>
+        protected virtual async Task ITest_StartScan(bool scan) {
+            await Task.Run(() => {
+                try {
+                    bool? isScanning = null;
+                    if (mIsScanning != scan) {
+                        if (scan) {//開始掃描
+                            if (mStatus?.Description == EDescription.Idle) {
+                                string oriName = string.Empty;
+                                if (Stat.SUCCESS == CtInput.Text(out oriName, "MAP Name", "Set Map File Name")) {
+                                    isScanning = SetScanningOriFileName(oriName);
+                                }
+                                if (isScanning == true) {
+                                    IConsole.AddMsg($"iTS - The new ori name is {oriName}.ori");
+                                }
+                            } else {
+                                IConsole.AddMsg($"The iTS is now in {mStatus?.Description}, can't start scanning");
+                            }
+                        } else {//停止掃描
+                            if (mStatus?.Description == EDescription.Map) {
+                                isScanning = StopScanning();
+                            } else {
+                                IConsole.AddMsg($"The iTS is now in {mStatus?.Description}, can't stop scanning");
+                            }
+                        }
+                        if (isScanning != null) {
+                            ITest.ChangedScanStt((bool)isScanning);
+                            IConsole.AddMsg($"iTS - Is {(isScanning == true ? "start" : "stop")} scanning");
+                        }
                     }
-                } else {
-                    mSerialClient.Send(FactoryMode.Factory.Order().StopScaning());
-                    IConsole.AddMsg($"Stop scan");
+                } catch (Exception ex) {
+                    IConsole.AddMsg("Error:" + ex.Message);
                 }
-                mCarMode = mode;
-                ChangedMode(mode);
-            }
-        }
-
-        protected virtual void ITest_CarPosConfirm() {
-            mSerialClient.Send(FactoryMode.Factory.Order().DoPositionComfirm());
-            IConsole.AddMsg($"Client - Set:POSComfirm");
-        }
-        
-        private void ITest_SettingCarPos() {
-            //mConnectFlow.CheckFlag("Set Car",() => {
-                mIsSetting = true;
-            //});
-        }
-
-        private void ITest_ClearMap() {
-            Database.ClearAllButAGV();
-            IGoalSetting.ReloadSingle();
-            Database.AGVGM[mAGVID].LaserAPoints.DataList.Clear();
-            Database.AGVGM[mAGVID].Path.DataList.Clear();
-        }
-
-        protected virtual void ITest_MotorServoOn(bool servoOn) {
-            mSerialClient.Send(FactoryMode.Factory.Order().SetServoMode(servoOn));
-            IConsole.AddMsg($"Client - Set:Servo{(servoOn ? "On" : "Off")}:{servoOn}");
-        }
-
-        private void ITest_SimplifyOri() {
-            if (mBypassLoadFile) {
-                /*-- 空跑模擬SimplifyOri --*/
-                SpinWait.SpinUntil(() => false, 1000);
-                return;
-            }
-            string[] tmpPath = CurOriPath.Split('.');
-            CurMapPath = tmpPath[0] + ".map";
-            Database.Save(CurMapPath);
-
-            NewMap();
-
-            //MapSimplication mapSimp = new MapSimplication(CurMapPath);
-            //mapSimp.Reset();
-            //List<ILine> obstacleLines = new List<ILine>();
-            //List<IPair> obstaclePoints = new List<IPair>();
-            //List<CartesianPos> resultPoints;
-            //List<MapSimplication.Line> resultlines;
-            //mapSimp.ReadMapAllTransferToLine(mMapMatch.parseMap, mMapMatch.minimumPos, mMapMatch.maximumPos
-            //    , 100, 0, out resultlines, out resultPoints);
-            //try {
-            //    for (int i = 0; i < resultlines.Count; i++) {
-            //        obstacleLines.Add(
-            //             FactoryMode.Factory.Line(resultlines[i].startX, resultlines[i].startY,
-            //            resultlines[i].endX, resultlines[i].endY)
-            //        );
-            //    }
-            //    for (int i = 0; i < resultPoints.Count; i++) {
-            //        obstaclePoints.Add(FactoryMode.Factory.Pair((int)resultPoints[i].x, (int)resultPoints[i].y));
-            //    }
-
-            //    Database.ObstaclePointsGM.DataList.AddRange(obstaclePoints);
-            //    Database.ObstacleLinesGM.DataList.AddRange(obstacleLines);
-            //} catch (Exception ex) {
-            //    System.Console.WriteLine(ex.Message);
-            //}
-
-
-            //obstacleLines = null;
-            //obstaclePoints = null;
-            //resultPoints = null;
-            //resultlines = null;
+            });
         }
 
         /// <summary>
-        /// 與指定IP AGV連線/斷線
+        /// 通知VehicleConsole進行位置矯正
         /// </summary>
-        /// <param name="cnn">連線/斷線</param>
-        /// <param name="hostIP">AGV IP</param>
-        /// <exception cref=""
-        protected virtual void ITest_ConnectToAGV(bool cnn, string hostIP = "") {
-            if (IsConnected != cnn) {
-                if (cnn) {
-                    if (mSerialClient == null) {
-                        mSerialClient = FactoryMode.Factory.SerialClient(mSerialClient_ReceiveData);
+        protected virtual async Task ITest_CarPosConfirm() {
+            await Task.Run(() => {
+                try {
+                    var similarity = DoPositionComfirm();
+                    if (similarity != null) {
+                        mSimilarity = (double)similarity;
+                        if (mSimilarity != -1) {
+                            IConsole.AddMsg($"iTS - The map similarity is {mSimilarity:0.0%}");
+                        } else {
+                            IConsole.AddMsg($"iTS - The map is now matched");
+                        }
                     }
-                    PingStatus stt = CtNetwork.Ping(hostIP, 500).PingState;
-                    if (CtNetwork.Ping(hostIP,500).PingState != PingStatus.Success) throw new PingException($"PingStatus:{stt}");
-                    mSerialClient.Connect(hostIP, (int)EPort.ClientPort);
-                    if (IsConnected) {
-                        mHostIP = hostIP;
-                    }
-                } else {
-                    mSerialClient.Stop();
+                } catch (Exception ex) {
+                    IConsole.AddMsg(ex.Message);
                 }
-                ITest.SetServerStt(IsConnected);
-                IConsole.AddMsg($"Client - Is {(IsConnected ? "Connected" : "Disconnected")} to {mHostIP}");
+            });
+        }
+        
+        /// <summary>
+        /// 切換SetCar旗標
+        /// </summary>
+        private void ITest_SettingCarPos() {
+            mIsSetting = true;
+        }
+
+        /// <summary>
+        /// 清除地圖
+        /// </summary>
+        private void ITest_ClearMap() {
+            try {
+                Database.ClearAllButAGV();
+                Database.AGVGM[mAGVID].LaserAPoints.DataList.Clear();
+                Database.AGVGM[mAGVID].Path.DataList.Clear();
+                IGoalSetting.ReloadSingle();
+            } catch (Exception ex) {
+                IConsole.AddMsg(ex.Message);
             }
         }
 
+        /// <summary>
+        /// 設定伺服馬達激磁
+        /// </summary>
+        /// <param name="servoOn">是否激磁</param>
+        protected virtual async void ITest_MotorServoOn(bool servoOn) {
+            await Task.Run(() => {
+                try {
+                    var servoOnStt = SetServoMode(servoOn);
+                    if (servoOnStt != null) {
+                        IConsole.AddMsg($"iTS - Is Servo{(servoOn ? "On" : "Off")}");
+                        IsMotorServoOn = (bool)servoOnStt;
+                    }
+                } catch (Exception ex) {
+                    IConsole.AddMsg(ex.Message);
+                }
+            });
+        }
+
+        /// <summary>
+        /// 設定移動速度
+        /// </summary>
+        /// <param name="velocity">移動速度</param>
         protected virtual void ITest_SetVelocity(int velocity) {
-            mVelocity = velocity;
-            mSerialClient.Send(FactoryMode.Factory.Order().SetWorkVelocity(mVelocity));
-        }
-       
-        protected virtual void ITest_SendMap() {
-            OpenFileDialog openMap = new OpenFileDialog();
-            openMap.InitialDirectory = mDefMapDir;
-            openMap.Filter = "MAP|*.map";
-            if (openMap.ShowDialog() == DialogResult.OK) {
-                SendFile(openMap.FileName);
-                mSerialClient.Send(FactoryMode.Factory.Order().UploadMapToAGV(openMap.FileName));
-                mSerialClient.Send(FactoryMode.Factory.Order().ChangeMap(openMap.FileName));
+            try {
+                var success = SetWorkVelocity(velocity);
+                if (success == true) {
+                    mVelocity = velocity;
+                    IConsole.AddMsg($"iTS - WorkVelocity = {velocity}");
+                }
+                Send(FactoryMode.Factory.Order().SetWorkVelocity(mVelocity));
+            }catch(Exception ex) {
+                IConsole.AddMsg(ex.Message);
             }
         }
 
+        /// <summary>
+        /// 傳送Map檔
+        /// </summary>
+        protected virtual async Task ITest_SendMap() {
+            await Task.Run(() => {
+                try {
+                    OpenFileDialog openMap = new OpenFileDialog();
+                    openMap.InitialDirectory = mDefMapDir;
+                    openMap.Filter = "MAP|*.map";
+                    if (openMap.ShowDialog() == DialogResult.OK) {
+                        SendAndSetMap(openMap.FileName);
+                    }
+                } catch (Exception ex) {
+                    IConsole.AddMsg(ex.Message);
+                }
+            });
+        }
+
+
+        /// <summary>
+        /// 要求VehicleConsole自動回傳資料
+        /// </summary>
         protected virtual void ITest_GetCar() {
-            bool getting = !IsGettingLaser;
-            mSerialClient.Send(FactoryMode.Factory.Order().AutoReportLaser(getting));
-            mSerialClient.Send(FactoryMode.Factory.Order().AutoReportStatus(getting));
-            mSerialClient.Send(FactoryMode.Factory.Order().AutoReportPath(getting));
-            IConsole.AddMsg($"Client - Get:Car:{getting}");
+            try {
+                bool isAutoReport = !mIsAtuoReport;
+                Send(FactoryMode.Factory.Order().AutoReportLaser(isAutoReport));
+                Send(FactoryMode.Factory.Order().AutoReportStatus(isAutoReport));
+                Send(FactoryMode.Factory.Order().AutoReportPath(isAutoReport));
+            } catch (Exception ex) {
+                IConsole.AddMsg(ex.Message);
+            }
         }
 
-        protected virtual void ITest_GetLaser() {
-            GetLaser();
+        /// <summary>
+        /// 要求雷射資料
+        /// </summary>
+        protected virtual async Task ITest_GetLaser() {
+            await Task.Run(() => {
+                try {
+                    var laser = RequestLaser();
+                    if (laser != null) {
+                        if (laser.Count > 0) {
+                            IConsole.AddMsg($"iTS - Received {laser.Count} laser data");
+                            DrawLaser(laser);
+                        } else {
+                            IConsole.AddMsg($"iTS - Laser data request failed");
+                        }
+                    }
+                } catch (Exception ex) {
+                    IConsole.AddMsg(ex.Message);
+                }
+            });
         }
 
-        protected virtual void ITest_GetMap() {
-            mSerialClient.Send(FactoryMode.Factory.Order().RequestMapList());
+        /// <summary>
+        /// 要求VehicleConsole端Map檔清單
+        /// </summary>
+        protected virtual async Task ITest_GetMap() {
+            await Task.Run(() => {
+                try {
+                    string mapList = RequestMapList();
+                    if (!string.IsNullOrEmpty(mapList)) {
+                        using (MapList f = new MapList(mapList)) {
+                            if (f.ShowDialog() == DialogResult.OK) {
+                                var map = RequestMapFile(f.strMapList);
+                                if (map != null) {
+                                    if (map.SaveAs(@"D:\Mapinfo\Client")) {
+                                        IConsole.AddMsg($"Planner - {map.Name} download completed");
+                                    } else {
+                                        IConsole.AddMsg($"Planner - {map.Name} failed to save ");
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } catch (Exception ex) {
+                    IConsole.AddMsg(ex.Message);
+                }
+            });
         }
 
-        protected virtual void ITest_GetORi() {
-            mSerialClient.Send(FactoryMode.Factory.Order().RequestOriFileList());
+        /// <summary>
+        /// 要求VehicleConsole端Ori檔清單
+        /// </summary>
+        protected virtual async Task ITest_GetORi() {
+            await Task.Run(() => {
+                try {
+                    string oriList = RequestOriList();
+                    if (!string.IsNullOrEmpty(oriList)) {
+                        using (MapList f = new MapList(oriList)) {
+                            if (f.ShowDialog() == DialogResult.OK) {
+                                var ori = RequestOriFile(f.strMapList);
+                                if (ori != null) {
+                                    if (ori.SaveAs(@"D:\MapInfo\Client")) {
+                                        IConsole.AddMsg($"Planner - {ori.Name} download completed");
+                                    } else {
+                                        IConsole.AddMsg($"Planner - {ori.Name} failed to save");
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } catch (Exception ex) {
+                    IConsole.AddMsg(ex.Message);
+                }
+            });
         }
 
-        private void ITest_LoadMap() {
-            IConsole.AddMsg("[Loaded Map]");
-            LoadFile(FileType.Map);
+        /// <summary>
+        /// 載入Map檔
+        /// </summary>
+        /// <returns></returns>
+        private async Task ITest_LoadMap() {
+            await Task.Run(() => {
+                try {
+                    LoadFile(FileType.Map);
+                } catch (Exception ex) {
+                    IConsole.AddMsg(ex.Message);
+                }
+            });
         }
 
-        private void ITest_LoadOri() {
-            IConsole.AddMsg("[Loaded Ori]");
-            LoadFile(FileType.Ori);
+        /// <summary>
+        /// 載入Ori檔
+        /// </summary>
+        /// <returns></returns>
+        private async Task ITest_LoadOri() {
+            await Task.Run(() => {
+                try {
+                    LoadFile(FileType.Ori);
+                } catch (Exception ex) {
+                    IConsole.AddMsg(ex.Message);
+                }
+            });
         }
 
-        private void ITest_Motion_Up() {
-            mConnectFlow.CheckFlag("Motion Controller",() => {
-                IConsole.AddMsg($"[Stop]");
-                MotionContorl(MotionDirection.Stop);
-                if (CarMode != EMode.Map) CarMode = EMode.Idle;
-
-            },false);
+        /// <summary>
+        /// 停止手動控制
+        /// </summary>
+        private async Task ITest_Motion_Up() {
+            await Task.Run(() => {
+                try {
+                    mConnectFlow.CheckFlag("Motion Controller", () => {
+                        IConsole.AddMsg($"[Stop]");
+                        MotionContorl(MotionDirection.Stop);
+                    }, false);
+                } catch (Exception ex) {
+                    IConsole.AddMsg(ex.Message);
+                }
+            });
         }
 
-        private void ITest_Motion_Down(MotionDirection direction) {
-            mServoOnFlow.CheckFlag($"{direction}",()=> {
-                IConsole.AddMsg($"[{direction}]");
-                MotionContorl(direction);
-                if (CarMode != EMode.Map) CarMode = EMode.Work;                
-            },false);
+        /// <summary>
+        /// 開始手動控制
+        /// </summary>
+        /// <param name="direction">移動方向</param>
+        private async Task ITest_Motion_Down(MotionDirection direction) {
+            await Task.Run(() => {
+                try {
+                    mServoOnFlow.CheckFlag($"{direction}", () => {
+                        IConsole.AddMsg($"[{direction}]");
+                        MotionContorl(direction);
+                    }, false);
+                } catch (Exception ex) {
+                    IConsole.AddMsg(ex.Message);
+                }
+            });
+        }
+
+        private void ITest_SimplifyOri() {
+            try {
+                if (mBypassLoadFile) {
+                    /*-- 空跑模擬SimplifyOri --*/
+                    SpinWait.SpinUntil(() => false, 1000);
+                    return;
+                }
+                string[] tmpPath = CurOriPath.Split('.');
+                CurMapPath = tmpPath[0] + ".map";
+                Database.Save(CurMapPath);
+
+                NewMap();
+            }catch(Exception ex) {
+                IConsole.AddMsg(ex.Message);
+            }
         }
 
         #endregion
@@ -910,11 +1040,9 @@ namespace VehiclePlanner
         #region IMapGL事件連結
 
         private void IMapCtrl_GLClickEvent(object sender, GLMouseEventArgs e) {
-            IConsole.AddMsg($"MapClickTrigger - IsSetting:{mIsSetting}");
             if (mIsSetting) {
                 if (Database.AGVGM.ContainsID(mAGVID)) {
                     if (mNewPos == null) {
-                        IConsole.AddMsg("NewPos=null");
                         mNewPos = e.Position;
                     } else {
                         IConsole.AddMsg($"NewPos{mNewPos.ToString()}");
@@ -923,10 +1051,9 @@ namespace VehiclePlanner
                         mIsSetting = false;
                     }
                 }
-            } else {
+            } else {//顯示滑鼠點擊的座標
                 IGoalSetting.SetCurrentRealPos(e.Position);
             }
-
         }
 
         private void IMapCtrl_DragTowerPairEvent(object sender, TowerPairEventArgs e) {
@@ -937,21 +1064,29 @@ namespace VehiclePlanner
 
         #region IGoalSetting 事件連結   
 
-        private void IGoalSetting_Charging(IPower power, int idxPower) {
-            if (power != null && idxPower >= 0) {
-                mSimilarityFlow.CheckFlag("Charging", () => {
-                    IConsole.AddMsg($"Client - Charging to idx{idxPower} {power.ToString()}");
-                    Charging(idxPower);
-                });
-            }else {
-                CtMsgBox.Show(mHandle, "No target", "尚未選擇目標Power點",MsgBoxBtn.OK,MsgBoxStyle.Information);
-            }
+        private async Task IGoalSetting_Charging(IPower power, int powerIndex) {
+            await Task.Run(() => {
+                try {
+                    if (power != null && powerIndex >= 0) {
+                        var success = DoCharging(powerIndex);
+                        if (success == true) {
+                            IConsole.AddMsg($"iTS - Begin charging at {power.Name}");
+                        } else if (success == false){
+                            IConsole.AddMsg("iTS - Charging failed");
+                        }
+                    } else {
+                        CtMsgBox.Show(mHandle, "No target", "尚未選擇目標Power點", MsgBoxBtn.OK, MsgBoxStyle.Information);
+                    }
+                } catch(Exception ex) {
+                    IConsole.AddMsg(ex.Message);
+                }
+            });
         }
 
-        private void IGoalSetting_SaveGoalEvent() {
+        private async Task IGoalSetting_SaveGoalEvent() {
             if (string.IsNullOrEmpty(CurMapPath)) {
                 if (MsgBoxBtn.Yes == CtMsgBox.Show("Map not loaded yet", "Whether to load the map?", MsgBoxBtn.YesNo, MsgBoxStyle.Question)) {
-                    ITest_LoadMap();
+                    await Task.Run(ITest_LoadMap);
                 }
                 return;
             }
@@ -975,30 +1110,41 @@ namespace VehiclePlanner
             }
         }
 
-        private void IGoalSetting_RunGoalEvent(IGoal goal, int idxGoal) {
-            CheckGoal(goal, idxGoal, () => {
-                mSimilarityFlow.CheckFlag("Run goal", () => {
-                    IConsole.AddMsg("[AGV Start Moving...  idx{0} {1}]", idxGoal, goal.ToString());
-                    Run(idxGoal);
-                    IConsole.AddMsg("[AGV Arrived] - {0}", goal.ToString());
-                });
+        private async Task IGoalSetting_RunGoalEvent(IGoal goal, int idxGoal) {
+            await Task.Run(() => {
+                try {
+                    CheckGoal(goal, idxGoal, () => {
+                        mSimilarityFlow.CheckFlag("Run goal", () => {
+                            var success = DoRunningByGoalIndex(idxGoal);
+                            if (success == true) {
+                                IConsole.AddMsg($"iTS - Start moving to {goal.Name}");
+                            }else if (success == false){
+                                IConsole.AddMsg($"Move to goal failure");
+                            }
+                            
+                        });
+                    });
+                } catch(Exception ex) {
+                    IConsole.AddMsg(ex.Message);
+                }
             });
         }
-
-        private void IGoalSetting_LoadMapEvent() {
-            IConsole.AddMsg("[Map Loading...]");
-            IConsole.AddMsg("[Map Loaded]");
-            LoadFile(FileType.Map);
-        }
-
-        private void IGoalSetting_FindPathEvent(IGoal goal, int idxGoal) {
-            //CheckGoal(goal, idxGoal, () => {
-            //    mSimilarityFlow.CheckFlag("Path plann", () => {
-                    IConsole.AddMsg("[Find Path] - idx{0} {1}", idxGoal, goal.ToString());
-                    IConsole.AddMsg("[AGV Find A Path]");
-                    PathPlan(idxGoal);
-            //    });
-            //});
+        
+        private async Task IGoalSetting_FindPathEvent(IGoal goal, int goalIndex) {
+            await Task.Run(() => {
+                try {
+                    var path = RequestPath(goalIndex);
+                    if (path != null) {
+                        if (path.Count > 0) {
+                            IConsole.AddMsg($"iTS - The path to {goal.Name} is completion. The number of path points is {path.Count}");
+                        } else {
+                            IConsole.AddMsg($"iTS - Can not plan the path to  {goal.Name}");
+                        }
+                    }
+                } catch (Exception ex) {
+                    IConsole.AddMsg(ex.Message);
+                }
+            });
         }
 
         private void IGoalSetting_DeleteGoalsEvent(IEnumerable<uint> singles) {
@@ -1030,163 +1176,24 @@ namespace VehiclePlanner
         /// <summary>
         /// 取得所有Goal點名稱
         /// </summary>
-        private void GoalNames() {
-            TaskCompletionSource<IProductPacket> tskCompSrc = new TaskCompletionSource<IProductPacket>(0);
-            var tsk = tskCompSrc.Task;
-            mCmdTsk.Add(tskCompSrc);
-            mSerialClient.Send(FactoryMode.Factory.Order().RequestGoalList());
-            tsk.Wait(500);
-            string goalNames = string.Join(",", tsk.Result.ToIRequestGoalList().Product);
-            IConsole.AddMsg($"Goal Names:{goalNames}");
+        private async Task GoalNames() {
+            await Task.Run(() => {
+                try {
+                    var goalList = RequestGoalList();
+                    if (!string.IsNullOrEmpty(goalList)) {
+                        IConsole.AddMsg($"iTS - GoalNames:{goalList}");
+                    }
+                } catch(Exception ex) {
+                    IConsole.AddMsg(ex.Message);
+                }
+            });
         }
 
         #endregion
 
         #region ISerialClient
         
-        /// <summary>
-        /// 序列化通訊接收
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void mSerialClient_ReceiveData(object sender, ReceiveDataEventArgs e) {
-            if (e.Data is IProductPacket) {
-                var product = e.Data as IProductPacket;
-                switch (product.Purpose) {
-                    case EPurpose.AutoReportLaser:
-                        var laser = product.ToIAutoReportLaser().Product;
-                        if (laser != null) {
-                            IsGettingLaser = true;
-                            DrawLaser(product.ToIAutoReportLaser().Product);
-                        } else {
-                            IsGettingLaser = false;
-                            Database.AGVGM[mAGVID].LaserAPoints.DataList.Clear();
-                            Database.AGVGM[mAGVID].Path.DataList.Clear();
-                        }
-                        ITest.SetLaserStt(IsGettingLaser);
-                        break;
-                    case EPurpose.RequestLaser:
-                        DrawLaser(product.ToIRequestLaser().Product);
-                        break;
-                    case EPurpose.SetServoMode:
-                        var servoOn = product.ToISetServoMode().Product;
-                        IConsole.AddMsg($"Server - Set:Servo{(servoOn ? "On" : "Off")}:{servoOn}");
-                        IsMotorServoOn = servoOn;
-                        break;
-                    case EPurpose.SetWorkVelocity:
-                        IConsole.AddMsg($"Server - Set:SerWorkVelocity:{product.ToISetWorkVelocity().Product}");
-                        break;
-                    case EPurpose.SetPosition: {
-                            var pack = product.ToISetPosition();
-                            Database.AGVGM[mAGVID].SetLocation(pack.Order.Design);
-                            IConsole.AddMsg($"Server - Set:POS:{pack.Product}");
-                            break;
-                        }
-                    case EPurpose.StartManualControl:
-                        bool isMoving = product.ToIStartManualControl().Product;
-                        IConsole.AddMsg($"Server - Set:Moving:{isMoving}");
-                        break;
-                    case EPurpose.SetManualVelocity: {
-                            var pack = product.ToISetManualVelocity();
-                            if (pack.Product) {
-                                var manualVelocity = pack.Order.Design;
-                                IConsole.AddMsg($"Server - Set:DriveVelo:{manualVelocity.X},{manualVelocity.Y}");
-                            } else {
-                                IConsole.AddMsg($"Server - Set:DriveVelo:False");
-                            }
-                            break;
-                        }
-                    case EPurpose.StopScaning: {
-                            var pack = product.ToIStopScaning();
-                            SetAgvStatus(EMode.Idle);
-                        }
-                        break;
-                    case EPurpose.SetScaningOriFileName: {
-                            var pack = product.ToISetScaningOriFileName();
-                            if (pack.Product) {
-                                IConsole.AddMsg($"Server - Set:OriName:{pack.Order.Design}");
-                                SetAgvStatus(EMode.Map);
-                            } else {
-                                IConsole.AddMsg($"Server - Set:OriName:{pack.Product}");
-                                SetAgvStatus(EMode.Idle);
-                            }
-                            break;
-                        }
-                    case EPurpose.DoPositionComfirm:
-                        mSimilarity = product.ToIDoPositionComfirm().Product;
-                        IConsole.AddMsg($"Server - Set:POSComfirm:{mSimilarity}");
-                        break;
-                    case EPurpose.AutoReportPath: {
-                            var pack = product.ToIAutoReportPath();
-                            //IConsole.AddMsg($"Server - SetPathPlan:idx({pack.Order.Design}):Count({pack.Product.Count})");
-                            DrawPath(pack.Product);
-                            break;
-                        }
-                    case EPurpose.DoRuningByGoalIndex: {
-                            var pack = product.ToIDoRuningByGoalIndex();
-                            IConsole.AddMsg($"Server - SetRun:idx({pack.Order.Design}):{pack.Product}");
-                            break;
-                        }
-                    case EPurpose.DoCharging: {
-                            var pack = product.ToIDoCharging();
-                            IConsole.AddMsg($"Server - SetCharging:idx({pack.Order.Design}):{pack.Product}");
-                            break;
-                        }
-                    case EPurpose.RequestMapList:
-                        var mapList = product.ToIRequestMapList().Product;
-                        using (MapList f = new MapList(mapList)) {
-                            if (f.ShowDialog() == DialogResult.OK) {
-                                mSerialClient.Send(FactoryMode.Factory.Order().RequestMapFile(f.strMapList));
-                            }
-                        }
-                        break;
-                    case EPurpose.RequestMapFile:
-                        product.ToIRequestMapFile().Product.SaveAs(@"D:\Mapinfo\Client");
-                        break;
-                    case EPurpose.RequestOriFileList:
-                        var oriList = product.ToIRequestOriFileList().Product;
-                        using (MapList f = new MapList(oriList)) {
-                            if (f.ShowDialog() == DialogResult.OK) {
-                                mSerialClient.Send(FactoryMode.Factory.Order().RequestOriFile(f.strMapList));
-                            }
-                        }
-                        break;
-                    case EPurpose.RequestOriFile:
-                        product.ToIRequestOriFile().Product.SaveAs(@"D:\Mapinfo\Client");
-                        break;
-                    case EPurpose.UploadMapToAGV: {
-                            var pack = product.ToIUploadMapToAGV();
-                            IConsole.AddMsg($"Server - Send:Map:{pack.Order.Design.Name}:{pack.Product}");
-                            break;
-                        }
-                    case EPurpose.ChangeMap: {
-                            var pack = product.ToIChangeMap();
-                            IConsole.AddMsg($"Server - Set:MapName:{(pack.Product ? pack.Order.Design : "False")}");
-                            break;
-                        }
-                    case EPurpose.RequestGoalList:
-                        mCmdTsk.Last().SetResult(product);
-                        mCmdTsk.Remove(mCmdTsk.Last());
-                        break;
-                    case EPurpose.AutoReportStatus:
-                        var status = product.ToIAutoReportStatus().Product;
-                        this.InvokeIfNecessary(() => {
-                            if (status.Battery != -1) {
-                                tsprgBattery.Value = (int)status.Battery;
-                                tslbBattery.Text = $"{status.Battery:0.0}%";
-                            }
-                            tslbStatus.Text = status.Description.ToString();
-                        });
-                        Database.AGVGM[mAGVID].SetLocation(status.Data);
-                        break;
-                    case EPurpose.RequestPath:
-                        var path = product.ToIRequestPath().Product;
-                        DrawPath(path);
-                        break;
-                }
-            }
-        }
-        
+
         #endregion ISerialClient
 
         #endregion Function - Events
@@ -1202,133 +1209,34 @@ namespace VehiclePlanner
         /// <param name="newPosition">新座標</param>
         protected virtual void SetPosition(IPair oldPosition,IPair newPosition) {
             var position = FactoryMode.Factory.TowardPair(newPosition, oldPosition.Angle(newPosition));
-            mSerialClient.Send(FactoryMode.Factory.Order().SetPosition(position));
+            var success = SetPosition(position);
+            if (success == true) {
+                Database.AGVGM[mAGVID].SetLocation(position);
+                IConsole.AddMsg($"iTS - The position are now at {position}");
+            }
         }
         
-        /// <summary>
-        /// Send file of server to client
-        /// </summary>
-        /// <param name="clientIP">Ip address of client</param>
-        /// <param name="clientPort">Communication port</param>
-        /// <param name="fileName">File name</param>
-        /// 
-        private bool SendFile(string clientIP, int clientPort, string fileName) {
-            string curMsg = "";
-            bool isSent = true;
-            try {
-                IPAddress[] ipAddress = Dns.GetHostAddresses(clientIP);
-                IPEndPoint ipEnd = new IPEndPoint(ipAddress[0], clientPort);
-                /* Make IP end point same as Server. */
-                Socket clientSock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.IP);
-                /* Make a client socket to send data to server. */
-                string filePath = "D:\\MapInfo\\";
-                /* File reading operation. */
-                fileName = fileName.Replace("\\", "/");
-                while (fileName.IndexOf("/") > -1) {
-                    filePath += fileName.Substring(0, fileName.IndexOf("/") + 1);
-                    fileName = fileName.Substring(fileName.IndexOf("/") + 1);
-                }
-                byte[] fileNameByte = Encoding.ASCII.GetBytes(fileName);
-                if (fileNameByte.Length > 1024 * 1024 * 5) {
-                    curMsg = "File size is more than 850kb, please try with small file.";
-                    return false;
-                }
-                curMsg = "Buffering ...";
-                byte[] fileData = File.ReadAllBytes(filePath + fileName);
-                /* Read & store file byte data in byte array. */
-                byte[] clientData = new byte[4 + fileNameByte.Length + fileData.Length];
-                /* clientData will store complete bytes which will store file name length, 
-                file name & file data. */
-                byte[] fileNameLen = BitConverter.GetBytes(fileNameByte.Length);
-                /* File name length’s binary data. */
-                fileNameLen.CopyTo(clientData, 0);
-                fileNameByte.CopyTo(clientData, 4);
-                fileData.CopyTo(clientData, 4 + fileNameByte.Length);
-                /* copy these bytes to a variable with format line [file name length]
-                [file name] [ file content] */
-                curMsg = "Connection to server ...";
-                clientSock.Connect(ipEnd);
-                /* Trying to connection with server. */
-                curMsg = "File sending...";
-                clientSock.Send(clientData);
-                /* Now connection established, send client data to server. */
-                curMsg = "Disconnecting...";
-                clientSock.Close();
-                fileNameByte = null;
-                clientData = null;
-                fileNameLen = null;
-                /* Data send complete now close socket. */
-                curMsg = "File transferred.";
-            } catch (Exception ex) {
-                if (ex.Message == "No connection could be made because the target machine actively refused it")
-                    curMsg = "File Sending fail. Because server not running.";
-                else
-                    curMsg = "File Sending fail." + ex.Message;
-                isSent = false;
-            }
-            return isSent;
-        }
-
-        /// <summary>
-        /// 傳送檔案
-        /// </summary>
-        /// <param name="filePath"></param>
-        protected virtual  void SendFile(string filePath) {
-            switch (Path.GetExtension(filePath).ToLower()) {
-                case ".map":
-                    mSerialClient.Send(FactoryMode.Factory.Order().UploadMapToAGV(filePath));
-                    mSerialClient.Send(FactoryMode.Factory.Order().ChangeMap(filePath));
-                    break;
-                case ".ori":
-
-                    break;
-            }
-        }
-
-        protected void GetLaser() {
-            mSerialClient.Send(FactoryMode.Factory.Order().RequestLaser());
-        }
-
         /// <summary>
         /// 移動控制
         /// </summary>
         /// <param name="direction">移動方向</param>
         /// <param name="velocity">移動速度</param>
         protected virtual void MotionContorl(MotionDirection direction) {
+            bool? isManual = null;
             if (direction == MotionDirection.Stop) {
-                mSerialClient.Send(FactoryMode.Factory.Order().StartManualControl(false));
-                IConsole.AddMsg($"Client - Set:Moving:False");
+                isManual = StartManualControl(false);
             } else {
-                var cmd = GetMotionICmd(direction);
-                if (cmd != null) {
-                    mSerialClient.Send(cmd);
-                    mSerialClient.Send(FactoryMode.Factory.Order().StartManualControl(true));
-                    IConsole.AddMsg($"Client - Set:Moving:True");
+                if (SetManualVelocity(direction) == true) {
+                    IConsole.AddMsg($"iTS - is {direction},Velocity is {mVelocity}");
+                    isManual = StartManualControl(true);
                 }
             }
-        }
-
-        /// <summary>
-        /// 前往目標Goal點
-        /// </summary>
-        /// <param name="numGoal">目標Goal點</param>
-        protected virtual void Run(int numGoal) {
-            mSerialClient.Send(FactoryMode.Factory.Order().DoRuningByGoalIndex(numGoal));
-        }
-
-        /// <summary>
-        /// 路徑規劃
-        /// </summary>
-        /// <param name="no">目標Goal點編號</param>
-        protected virtual void PathPlan(int numGoal) {
-            mSerialClient.Send(FactoryMode.Factory.Order().RequestPath(numGoal));
-        }
-
-        protected virtual void Charging(int numGoal) {
-            mSerialClient.Send(FactoryMode.Factory.Order().DoCharging(numGoal));
+            if (isManual!= null) {
+                IConsole.AddMsg($"iTS - {((isManual == true) ? "Start" : "Stop")} moving");
+            }
         }
         
-        private IOrderPacket<IPair, bool> GetMotionICmd(MotionDirection direction) {
+        private bool? SetManualVelocity(MotionDirection direction) {
             int r = 0, l = 0, v = mVelocity;
             switch (direction) {
                 case MotionDirection.Forward:
@@ -1350,33 +1258,13 @@ namespace VehiclePlanner
                 default:
                     return null;
             }
-            return FactoryMode.Factory.Order().SetManualVelocity(l, r);
+            return SetManualVelocity(FactoryMode.Factory.Pair(l, r));
         }
 
         #endregion Communication 
 
         #region UI
-
-        /// <summary>
-        /// 設定AGV狀態
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="status"></param>
-        private void SetAgvStatus<T>(T status) where T : struct {
-            this.InvokeIfNecessary(() => {
-                tslbStatus.Text = status.ToString();
-            });
-        }
-
-        /// <summary>
-        /// 車子模式切換時
-        /// </summary>
-        /// <param name="mode"></param>
-        protected void ChangedMode(EMode mode) {
-            tslbStatus.Text = $"{mode}";
-            ITest.ChangedScanStt(mode == EMode.Map);
-        }
-
+        
         /// <summary>
         /// 顯示主介面
         /// </summary>
@@ -1604,14 +1492,13 @@ namespace VehiclePlanner
                 if (center == null) {
                     return false;
                 }
-
                 /*-- 移動畫面至Map中心點 --*/
                 IMapCtrl.Focus(center);
                 
                 IGoalSetting.ReloadSingle();
 
                 if (IsConnected) {
-                    SendFile(mapPath);
+                    SendAndSetMap(mapPath);
                 }
             }
             return true;
@@ -1642,7 +1529,7 @@ namespace VehiclePlanner
         /// 載入檔案
         /// </summary>
         /// <param name="type">載入檔案類型</param>
-        public async void LoadFile(FileType type) {
+        public void LoadFile(FileType type) {
             OpenFileDialog openMap = new OpenFileDialog();
             openMap.InitialDirectory = mDefMapDir;
             openMap.Filter = $"MAP|*.{type.ToString().ToLower()}";
@@ -1651,17 +1538,14 @@ namespace VehiclePlanner
                     bool isLoaded = false;
                     switch (type) {
                         case FileType.Ori:
-                            await Task.Run(() => 
-                                isLoaded = LoadOri(openMap.FileName));
-                                if (isLoaded) {
-                                    Database.AGVGM[mAGVID]?.LaserAPoints.DataList.Clear();
-                                    ITest.UnLockOriOperator(true);
-                                }
+                            isLoaded = LoadOri(openMap.FileName);
+                            if (isLoaded) {
+                                Database.AGVGM[mAGVID]?.LaserAPoints.DataList.Clear();
+                                ITest.UnLockOriOperator(true);
+                            }
                             break;
                         case FileType.Map:
-                            await Task.Run(() => {
-                                isLoaded = LoadMap(openMap.FileName);
-                            });
+                            isLoaded = LoadMap(openMap.FileName);                            
                             break;
                         default:
                             throw new ArgumentException($"無法載入未定義的檔案類型{type}");
@@ -1676,7 +1560,6 @@ namespace VehiclePlanner
                 }
             }
             openMap = null;
-            var v = Database.ObstaclePointsGM.DataList;
         }
         
         /// <summary>
@@ -1724,7 +1607,7 @@ namespace VehiclePlanner
             IGoalSetting.ClearGoalsEvent += IGoalSetting_ClearGoalsEvent;
             IGoalSetting.DeleteSingleEvent += IGoalSetting_DeleteGoalsEvent;
             IGoalSetting.FindPathEvent += IGoalSetting_FindPathEvent;
-            IGoalSetting.LoadMapEvent += IGoalSetting_LoadMapEvent;
+            IGoalSetting.LoadMapEvent += ITest_LoadMap;
             IGoalSetting.LoadMapFromAGVEvent += ITest_GetMap;
             IGoalSetting.RunGoalEvent += IGoalSetting_RunGoalEvent;
             IGoalSetting.RunLoopEvent += IGoalSetting_RunLoopEvent;
@@ -1746,7 +1629,7 @@ namespace VehiclePlanner
             #region ITesting 事件連結
             ITest.Motion_Down += ITest_Motion_Down;
             ITest.Motion_Up += ITest_Motion_Up;
-            ITest.LoadMap += IGoalSetting_LoadMapEvent;
+            ITest.LoadMap += ITest_LoadMap;
             ITest.LoadOri += ITest_LoadOri;
             ITest.GetOri += ITest_GetORi;
             ITest.GetMap += ITest_GetMap;
@@ -1754,7 +1637,7 @@ namespace VehiclePlanner
             ITest.GetCar += ITest_GetCar;
             ITest.SendMap += ITest_SendMap;
             ITest.SetVelocity += ITest_SetVelocity;
-            ITest.Connect += ITest_ConnectToAGV;
+            ITest.Connect += ConnectToITS;
             ITest.MotorServoOn += ITest_MotorServoOn;
             ITest.SimplifyOri += ITest_SimplifyOri;
             ITest.ClearMap += ITest_ClearMap;
@@ -1914,6 +1797,29 @@ namespace VehiclePlanner
 
         #endregion Flow
 
+        #region Serial 
+
+        /// <summary>
+        /// 傳送並要求載入Map
+        /// </summary>
+        /// <param name="mapPath">目標Map檔路徑</param>
+        private void SendAndSetMap(string mapPath) {
+            var success = UploadMapToAGV(mapPath);
+            string mapName = Path.GetFileName(mapPath);
+            if (success == true) {
+                IConsole.AddMsg($"iTS - The {mapName} uploaded");
+                success = ChangeMap(mapName);
+                if (success == true) {
+                    IConsole.AddMsg($"iTS - The {mapName} is now running");
+                }else if(success == false) {
+                    IConsole.AddMsg($"iTS - The {mapName} failed to run");
+                }
+            } else if (success == false) {
+                IConsole.AddMsg($"iTS - The {mapName} upload failed");
+            }
+        }
+
+        #endregion Serial 
         ///<summary>IP驗證</summary>
         ///<param name="ip">要驗證的字串</param>
         ///<returns>True:合法IP/False:非法IP</returns>

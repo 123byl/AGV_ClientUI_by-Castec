@@ -196,7 +196,7 @@ namespace VehiclePlanner
         }
         
         private void btnGetMap_Click(object sender, EventArgs e) {
-            GetMap?.BeginInvoke(null,null);
+            GetMap?.Invoke();
         }
 
         private void btnLoadMap_Click(object sender, EventArgs e) {
@@ -204,15 +204,15 @@ namespace VehiclePlanner
         }
 
         private void btnGetOri_Click(object sender, EventArgs e) {
-            GetOri.BeginInvoke(null,null);
+            GetOri.Invoke();
         }
 
         private void btnGetLaser_Click(object sender, EventArgs e) {
-            GetLaser?.BeginInvoke(null,null);
+            GetLaser?.Invoke();
         }
 
         private void btnGetCarStatus_Click(object sender, EventArgs e) {
-            GetCar?.BeginInvoke(null,null);
+            GetCar?.Invoke();
         }
 
         private void btnSendMap_Click(object sender, EventArgs e) {
@@ -226,7 +226,7 @@ namespace VehiclePlanner
         private void btnSetVelo_Click(object sender, EventArgs e) {
             int velocity = 0;
             if (int.TryParse(txtVelocity.Text, out velocity)){
-                SetVelocity?.BeginInvoke(velocity,null,null);
+                SetVelocity?.Invoke(velocity);
             }
         }
 
@@ -254,23 +254,23 @@ namespace VehiclePlanner
 
         private void btnServoOnOff_Click(object sender, EventArgs e) {
             if (btnServoOnOff.Tag == null || (btnServoOnOff.Tag is bool && !(bool)btnServoOnOff.Tag)) {
-                MotorServoOn.BeginInvoke(true,null,null);
+                MotorServoOn.Invoke(true);
             } else {
-                MotorServoOn.BeginInvoke(false,null,null);
+                MotorServoOn.Invoke(false);
             }
         }
 
         private void btnPosConfirm_Click(object sender, EventArgs e) {
-            CarPosConfirm?.BeginInvoke(null,null);
+            CarPosConfirm?.Invoke();
         }
 
         private void btnSetCar_Click(object sender, EventArgs e) {
-            SettingCarPos?.BeginInvoke(null,null);
+            SettingCarPos?.Invoke();
         }
 
         private void btnScan_Click(object sender, EventArgs e) {
             bool isSacn = btnScan.Tag is bool ? ((bool)btnScan.Tag) : false;
-            StartScan?.BeginInvoke(!isSacn,null,null);
+            StartScan?.Invoke(!isSacn);
         }
 
         private void btnMotionController_Click(object sender, EventArgs e) {

@@ -16,6 +16,7 @@ using Geometry;
 using static FactoryMode;
 using CtOutLookBar.Public;
 using System.IO;
+using SerialCommunication;
 
 namespace VehiclePlanner
 {
@@ -56,6 +57,14 @@ namespace VehiclePlanner
         }
 
         #endregion OutlookBar
+
+        public static ISerialClient SerialClient(this IFactory factory,DelReceiveDataEvent receiveDataEvent, bool bypass) {
+            if (bypass) {
+                return new FakeSerialClient(receiveDataEvent);
+            }else {
+                return FactoryMode.Factory.SerialClient(receiveDataEvent);
+            }
+        }
 
     }
 

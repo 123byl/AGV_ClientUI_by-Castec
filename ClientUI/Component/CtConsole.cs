@@ -64,7 +64,7 @@ namespace VehiclePlanner
         {
             lock (mKey) {
                 txtMsg.InvokeIfNecessary(() => {
-                    txtMsg.Text += msg + "\r\n";
+                    txtMsg.Text += DateTime.Now.ToString("[hh:mm:ss.fff] ") + msg + "\r\n";
                     txtMsg.SelectionStart = txtMsg.Text.Length;
                     txtMsg.ScrollToCaret();
                 });
