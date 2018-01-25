@@ -334,7 +334,7 @@ namespace VehiclePlanner
 
             public delegate Task DelMotion_Up();
 
-            public delegate void DelMotorServoOn(bool servoOn);
+            public delegate Task DelMotorServoOn(bool servoOn);
 
             public delegate Task DelSendMap();
             

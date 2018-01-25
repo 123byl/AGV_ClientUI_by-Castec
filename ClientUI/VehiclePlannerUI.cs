@@ -516,7 +516,7 @@ namespace VehiclePlanner
         }
 
         private bool CheckServoOn() {
-            ITest_MotorServoOn(true);
+            ITest_MotorServoOn(true).Wait();
             return IsMotorServoOn;
         }
 
@@ -818,7 +818,7 @@ namespace VehiclePlanner
         /// 設定伺服馬達激磁
         /// </summary>
         /// <param name="servoOn">是否激磁</param>
-        protected virtual async void ITest_MotorServoOn(bool servoOn) {
+        protected virtual async Task ITest_MotorServoOn(bool servoOn) {
             await Task.Run(() => {
                 try {
                     var servoOnStt = SetServoMode(servoOn);
@@ -2249,24 +2249,25 @@ namespace VehiclePlanner
         }
 
         public void CheckFlag(string description, Action act, bool cont = true) {
-            
             if (!mIsExecuting) {
                 lock (mKey) {
                     try {
                         mIsExecuting = true;
                         if (!IsAllow()) {
                             if (!UserSwitch(description)) {
-                                return;
+                                mIsExecuting = false;
                             }
                             if (!SwitchFlag()) {
                                 FailureMessage();
-                                return;
+                                mIsExecuting = false;
                             }
                             if (!cont || !UserContinue(description)) {
-                                return;
+                                mIsExecuting = false;
                             }
                         }
-                        act?.Invoke();
+                        if (mIsExecuting) {
+                            act?.Invoke();
+                        }
                     } catch (Exception ex) {
                         System.Console.WriteLine("error", ex.Message);
                     } finally {
