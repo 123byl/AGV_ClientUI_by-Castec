@@ -1,9 +1,7 @@
 ﻿using GLUI;
 
-namespace VehiclePlanner.Component
-{
-    partial class AGVMapUI
-    {
+namespace VehiclePlanner {
+    partial class AGVMapUI {
         /// <summary>
         /// Required designer variable.
         /// </summary>
@@ -13,10 +11,8 @@ namespace VehiclePlanner.Component
         /// Clean up any resources being used.
         /// </summary>
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
+        protected override void Dispose(bool disposing) {
+            if (disposing && (components != null)) {
                 components.Dispose();
             }
             base.Dispose(disposing);
@@ -28,8 +24,7 @@ namespace VehiclePlanner.Component
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
-        {
+        private void InitializeComponent() {
             this.pnlShow = new System.Windows.Forms.Panel();
             this.uiControl = new GLUI.GLUserControl();
             this.pnlHide = new System.Windows.Forms.Panel();
@@ -48,8 +43,8 @@ namespace VehiclePlanner.Component
             // 
             // uiControl
             // 
-            this.uiControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.uiControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.uiControl.Location = new System.Drawing.Point(12, 12);
             this.uiControl.Name = "uiControl";
