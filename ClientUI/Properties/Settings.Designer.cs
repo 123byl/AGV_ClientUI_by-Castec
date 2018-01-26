@@ -28,10 +28,10 @@ namespace VehiclePlanner.Properties {
         [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string HostIP {
             get {
-                return this["Host"] as string;
+                return this["HostIP"] as string;
             }
             set {
-                this["Host"] = value;
+                this["HostIP"] = value;
             }
         }
 

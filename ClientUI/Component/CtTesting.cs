@@ -8,6 +8,7 @@ using CtLib.Library;
 using System.Linq;
 using System.Threading;
 using AGVDefine;
+using System.Threading.Tasks;
 
 namespace VehiclePlanner
 {
@@ -45,8 +46,6 @@ namespace VehiclePlanner
 
         public event Events.GoalSettingEvents.DelLoadMap LoadMap;
         public event Events.TestingEvents.DelLoadOri LoadOri;
-        public event Events.TestingEvents.DelMotion_Down Motion_Down;
-        public event Events.TestingEvents.DelMotion_Up Motion_Up;
         public event Events.TestingEvents.DelGetOri GetOri;
         public event Events.TestingEvents.DelGetMap GetMap;
         public event Events.TestingEvents.DelGetLaser GetLaser;
@@ -161,42 +160,24 @@ namespace VehiclePlanner
         #region Function  - UI Events
 
         private void btnConnect_Click(object sender, EventArgs e) {
-            if (btnConnect.Tag == null || (btnConnect.Tag is bool && !(bool)btnConnect.Tag)) {
-                Connect.Invoke(true, cboHostIP.Text);
-            } else {
-                Connect.Invoke(false);
-            }
-        }
+            Task.Run(() => {
+                if (btnConnect.Tag == null || (btnConnect.Tag is bool && !(bool)btnConnect.Tag)) {
+                    Connect.Invoke(true, cboHostIP.InvokeIfNecessary(() =>cboHostIP.Text));
+                } else {
+                    Connect.Invoke(false);
+                }
 
-        /// <summary>
-        /// 移動控制按下
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Motion_MouseDown(object sender, MouseEventArgs e) {
-            string sDirection = (sender as Control)?.Tag?.ToString();
-            int iDirection = 0;
-            if (int.TryParse(sDirection, out iDirection) &&
-                Enum.IsDefined(typeof(MotionDirection), iDirection)) {
-                Motion_Down?.Invoke((MotionDirection)iDirection);
-            }
+            });
         }
-
-        /// <summary>
-        /// 移動控制放開
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Motion_MouseUp(object sender, MouseEventArgs e) {
-            Motion_Up?.Invoke();
-        }
-
+        
         private void btnLoadOri_Click(object sender, EventArgs e) {
             LoadOri?.Invoke();
         }
         
         private void btnGetMap_Click(object sender, EventArgs e) {
-            GetMap?.Invoke();
+            Task.Run(() => {
+                GetMap?.Invoke();
+            });
         }
 
         private void btnLoadMap_Click(object sender, EventArgs e) {
@@ -204,19 +185,21 @@ namespace VehiclePlanner
         }
 
         private void btnGetOri_Click(object sender, EventArgs e) {
-            GetOri.Invoke();
+            Task.Run(() => GetOri.Invoke());
         }
 
         private void btnGetLaser_Click(object sender, EventArgs e) {
-            GetLaser?.Invoke();
+            Task.Run(() => GetLaser?.Invoke());
         }
 
         private void btnGetCarStatus_Click(object sender, EventArgs e) {
-            GetCar?.Invoke();
+            Task.Run(() => GetCar?.Invoke());
         }
 
         private void btnSendMap_Click(object sender, EventArgs e) {
-            SendMap?.Invoke();
+            //Task.Run(() => {
+                SendMap?.Invoke();
+            //});
         }
 
         private void btnSimplyOri_Click(object sender, EventArgs e) {
@@ -224,44 +207,32 @@ namespace VehiclePlanner
         }
 
         private void btnSetVelo_Click(object sender, EventArgs e) {
-            int velocity = 0;
-            if (int.TryParse(txtVelocity.Text, out velocity)){
-                SetVelocity?.Invoke(velocity);
-            }
+            Task.Run(() => {
+                int velocity = 0;
+                if (int.TryParse(txtVelocity.Text, out velocity)) {
+                    SetVelocity?.Invoke(velocity);
+                }
+            });
         }
 
         private void btnClrMap_Click(object sender, EventArgs e) {
             ClearMap?.Invoke();
         }
-
-        /// <summary>
-        /// 依照連線狀態切換介面控制項致能
-        /// </summary>
-        /// <param name="isConnected"></param>
-        private void ChangedConnectStt(bool isConnected) {
-            CtInvoke.ControlEnabled(btnGetLaser, isConnected);
-            CtInvoke.ControlEnabled(btnGetOri, isConnected);
-            CtInvoke.ControlEnabled(btnGetCarStatus, isConnected);
-            CtInvoke.ControlEnabled(btnPosConfirm, isConnected);
-            CtInvoke.ControlEnabled(btnServoOnOff, isConnected);
-
-            CtInvoke.ControlEnabled(btnSetVelo, isConnected);
-            CtInvoke.ControlEnabled(btnGetMap, isConnected);
-            CtInvoke.ControlEnabled(btnSendMap, isConnected);
-            CtInvoke.ControlEnabled(txtVelocity, isConnected);
-
-        }
-
+        
         private void btnServoOnOff_Click(object sender, EventArgs e) {
-            if (btnServoOnOff.Tag == null || (btnServoOnOff.Tag is bool && !(bool)btnServoOnOff.Tag)) {
-                MotorServoOn.Invoke(true);
-            } else {
-                MotorServoOn.Invoke(false);
-            }
+            Task.Run(() => {
+                if (btnServoOnOff.Tag == null || (btnServoOnOff.Tag is bool && !(bool)btnServoOnOff.Tag)) {
+                    MotorServoOn.Invoke(true);
+                } else {
+                    MotorServoOn.Invoke(false);
+                }
+            });
         }
 
         private void btnPosConfirm_Click(object sender, EventArgs e) {
-            CarPosConfirm?.Invoke();
+            Task.Run(() => {
+                CarPosConfirm?.Invoke();
+            });
         }
 
         private void btnSetCar_Click(object sender, EventArgs e) {
@@ -269,8 +240,10 @@ namespace VehiclePlanner
         }
 
         private void btnScan_Click(object sender, EventArgs e) {
-            bool isSacn = btnScan.Tag is bool ? ((bool)btnScan.Tag) : false;
-            StartScan?.Invoke(!isSacn);
+            Task.Run(() => {
+                bool isSacn = btnScan.Tag is bool ? ((bool)btnScan.Tag) : false;
+                StartScan?.Invoke(!isSacn);
+            });
         }
 
         private void btnMotionController_Click(object sender, EventArgs e) {
@@ -278,7 +251,7 @@ namespace VehiclePlanner
         }
 
         #endregion Funciton - UI Events
-
+        
     }
 
     /// <summary>

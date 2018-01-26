@@ -125,7 +125,12 @@ namespace VehiclePlanner
         /// <summary>
         /// 是否持續接收資料
         /// </summary>
-        private bool mIsAtuoReport = false;
+        private bool mIsAutoReport = false;
+
+        /// <summary>
+        /// 是否在手動移動
+        /// </summary>
+        private bool mIsManualMoving = false;
 
         /// <summary>
         /// 是否Bypass Socket通訊
@@ -258,6 +263,11 @@ namespace VehiclePlanner
         /// AGV移動控制器
         /// </summary>
         private CtMotionController mMotionController = null;
+
+        /// <summary>
+        /// 地圖檔選擇清單
+        /// </summary>
+        private MapList mMapList = null;
 
         #endregion UI
 
@@ -515,8 +525,8 @@ namespace VehiclePlanner
             mServoOnFlow = new ServoOnFlow(this.Handle, GetIsServoOn, CheckServoOn, ExecutingInfo);
         }
 
-        private bool CheckServoOn() {
-            ITest_MotorServoOn(true).Wait();
+        private  bool CheckServoOn() {
+            ITest_MotorServoOn(true);
             return IsMotorServoOn;
         }
 
@@ -737,60 +747,57 @@ namespace VehiclePlanner
         /// 通知VehicleConsole開始/停止掃描
         /// </summary>
         /// <param name="scan">True(開始)/False(停止)</param>
-        protected virtual async Task ITest_StartScan(bool scan) {
-            await Task.Run(() => {
-                try {
-                    bool? isScanning = null;
-                    if (mIsScanning != scan) {
-                        if (scan) {//開始掃描
-                            if (mStatus?.Description == EDescription.Idle) {
-                                string oriName = string.Empty;
-                                if (Stat.SUCCESS == CtInput.Text(out oriName, "MAP Name", "Set Map File Name")) {
-                                    isScanning = SetScanningOriFileName(oriName);
-                                }
-                                if (isScanning == true) {
-                                    IConsole.AddMsg($"iTS - The new ori name is {oriName}.ori");
-                                }
-                            } else {
-                                IConsole.AddMsg($"The iTS is now in {mStatus?.Description}, can't start scanning");
+        protected virtual void ITest_StartScan(bool scan) {
+            try {
+                bool? isScanning = null;
+                if (mIsScanning != scan) {
+                    if (scan) {//開始掃描
+                        if (mStatus?.Description == EDescription.Idle) {
+                            string oriName = string.Empty;
+                            if (Stat.SUCCESS == CtInput.Text(out oriName, "MAP Name", "Set Map File Name")) {
+                                isScanning = SetScanningOriFileName(oriName);
                             }
-                        } else {//停止掃描
-                            if (mStatus?.Description == EDescription.Map) {
-                                isScanning = StopScanning();
-                            } else {
-                                IConsole.AddMsg($"The iTS is now in {mStatus?.Description}, can't stop scanning");
+                            if (isScanning == true) {
+                                IConsole.AddMsg($"iTS - The new ori name is {oriName}.ori");
                             }
+                        } else {
+                            IConsole.AddMsg($"The iTS is now in {mStatus?.Description}, can't start scanning");
                         }
-                        if (isScanning != null) {
-                            ITest.ChangedScanStt((bool)isScanning);
-                            IConsole.AddMsg($"iTS - Is {(isScanning == true ? "start" : "stop")} scanning");
+                    } else {//停止掃描
+                        if (true || mStatus?.Description == EDescription.Map) {
+                            isScanning = StopScanning();
+                        } else {
+                            IConsole.AddMsg($"The iTS is now in {mStatus?.Description}, can't stop scanning");
                         }
                     }
-                } catch (Exception ex) {
-                    IConsole.AddMsg("Error:" + ex.Message);
+                    if (isScanning != null) {
+                        mIsScanning = (bool)isScanning;
+                        ITest.ChangedScanStt((bool)isScanning);
+                        IConsole.AddMsg($"iTS - Is {(isScanning == true ? "start" : "stop")} scanning");
+                    }
                 }
-            });
+            } catch (Exception ex) {
+                IConsole.AddMsg("Error:" + ex.Message);
+            }
         }
 
         /// <summary>
         /// 通知VehicleConsole進行位置矯正
         /// </summary>
-        protected virtual async Task ITest_CarPosConfirm() {
-            await Task.Run(() => {
-                try {
-                    var similarity = DoPositionComfirm();
-                    if (similarity != null) {
-                        mSimilarity = (double)similarity;
-                        if (mSimilarity != -1) {
-                            IConsole.AddMsg($"iTS - The map similarity is {mSimilarity:0.0%}");
-                        } else {
-                            IConsole.AddMsg($"iTS - The map is now matched");
-                        }
+        protected virtual void ITest_CarPosConfirm() {
+            try {
+                var similarity = DoPositionComfirm();
+                if (similarity != null) {
+                    mSimilarity = (double)similarity;
+                    if (mSimilarity != -1) {
+                        IConsole.AddMsg($"iTS - The map similarity is {mSimilarity:0.0%}");
+                    } else {
+                        IConsole.AddMsg($"iTS - The map is now matched");
                     }
-                } catch (Exception ex) {
-                    IConsole.AddMsg(ex.Message);
                 }
-            });
+            } catch (Exception ex) {
+                IConsole.AddMsg(ex.Message);
+            }
         }
         
         /// <summary>
@@ -818,18 +825,17 @@ namespace VehiclePlanner
         /// 設定伺服馬達激磁
         /// </summary>
         /// <param name="servoOn">是否激磁</param>
-        protected virtual async Task ITest_MotorServoOn(bool servoOn) {
-            await Task.Run(() => {
-                try {
-                    var servoOnStt = SetServoMode(servoOn);
-                    if (servoOnStt != null) {
-                        IConsole.AddMsg($"iTS - Is Servo{(servoOn ? "On" : "Off")}");
-                        IsMotorServoOn = (bool)servoOnStt;
-                    }
-                } catch (Exception ex) {
-                    IConsole.AddMsg(ex.Message);
+        protected virtual void ITest_MotorServoOn(bool servoOn) {
+            try {
+                var servoOnStt = SetServoMode(servoOn);
+                IConsole.AddMsg("Sent");
+                if (servoOnStt != null) {
+                    IConsole.AddMsg($"iTS - Is Servo{(servoOn ? "On" : "Off")}");
+                    IsMotorServoOn = (bool)servoOnStt;
                 }
-            });
+            } catch (Exception ex) {
+                IConsole.AddMsg(ex.Message);
+            }
         }
 
         /// <summary>
@@ -852,19 +858,17 @@ namespace VehiclePlanner
         /// <summary>
         /// 傳送Map檔
         /// </summary>
-        protected virtual async Task ITest_SendMap() {
-            await Task.Run(() => {
-                try {
-                    OpenFileDialog openMap = new OpenFileDialog();
-                    openMap.InitialDirectory = mDefMapDir;
-                    openMap.Filter = "MAP|*.map";
-                    if (openMap.ShowDialog() == DialogResult.OK) {
-                        SendAndSetMap(openMap.FileName);
-                    }
-                } catch (Exception ex) {
-                    IConsole.AddMsg(ex.Message);
+        protected virtual void ITest_SendMap() {
+            try {
+                OpenFileDialog openMap = new OpenFileDialog();
+                openMap.InitialDirectory = mDefMapDir;
+                openMap.Filter = "MAP|*.map";
+                if (openMap.ShowDialog() == DialogResult.OK) {
+                    Task.Run(() => SendAndSetMap(openMap.FileName));
                 }
-            });
+            } catch (Exception ex) {
+                IConsole.AddMsg(ex.Message);
+            }
         }
 
 
@@ -873,10 +877,12 @@ namespace VehiclePlanner
         /// </summary>
         protected virtual void ITest_GetCar() {
             try {
-                bool isAutoReport = !mIsAtuoReport;
-                Send(FactoryMode.Factory.Order().AutoReportLaser(isAutoReport));
-                Send(FactoryMode.Factory.Order().AutoReportStatus(isAutoReport));
-                Send(FactoryMode.Factory.Order().AutoReportPath(isAutoReport));
+                bool isAutoReport = !mIsAutoReport;
+                var laser =  AutoReportLaser(isAutoReport);
+                var status = AutoReportStatus(isAutoReport);
+                var path = AutoReportPath(isAutoReport);
+                mIsAutoReport = (laser?.Count ?? 0) > 0;
+                ITest.SetLaserStt(mIsAutoReport);
             } catch (Exception ex) {
                 IConsole.AddMsg(ex.Message);
             }
@@ -885,137 +891,156 @@ namespace VehiclePlanner
         /// <summary>
         /// 要求雷射資料
         /// </summary>
-        protected virtual async Task ITest_GetLaser() {
-            await Task.Run(() => {
-                try {
-                    var laser = RequestLaser();
-                    if (laser != null) {
-                        if (laser.Count > 0) {
-                            IConsole.AddMsg($"iTS - Received {laser.Count} laser data");
-                            DrawLaser(laser);
-                        } else {
-                            IConsole.AddMsg($"iTS - Laser data request failed");
-                        }
+        protected virtual void ITest_GetLaser() {
+            try {
+                var laser = RequestLaser();
+                if (laser != null) {
+                    if (laser.Count > 0) {
+                        IConsole.AddMsg($"iTS - Received {laser.Count} laser data");
+                        DrawLaser(laser);
+                    } else {
+                        IConsole.AddMsg($"iTS - Laser data request failed");
                     }
-                } catch (Exception ex) {
-                    IConsole.AddMsg(ex.Message);
                 }
-            });
+            } catch (Exception ex) {
+                IConsole.AddMsg(ex.Message);
+            }
         }
 
         /// <summary>
         /// 要求VehicleConsole端Map檔清單
         /// </summary>
-        protected virtual async Task ITest_GetMap() {
-            await Task.Run(() => {
+        protected virtual void ITest_GetMap() {
+            if (mMapList == null) {
+                bool? success = null;
+                string mapName = null;
                 try {
                     string mapList = RequestMapList();
                     if (!string.IsNullOrEmpty(mapList)) {
-                        using (MapList f = new MapList(mapList)) {
-                            if (f.ShowDialog() == DialogResult.OK) {
-                                var map = RequestMapFile(f.strMapList);
-                                if (map != null) {
-                                    if (map.SaveAs(@"D:\Mapinfo\Client")) {
-                                        IConsole.AddMsg($"Planner - {map.Name} download completed");
-                                    } else {
-                                        IConsole.AddMsg($"Planner - {map.Name} failed to save ");
+                        using (mMapList = new MapList(mapList)) {
+                            this.InvokeIfNecessary(() => {
+                                if (mMapList.ShowDialog(this) == DialogResult.OK) {
+                                    mapName = mMapList.strMapList;
+                                    var map = RequestMapFile(mapName);
+                                    if (map != null) {
+                                        if (map.SaveAs(@"D:\Mapinfo\Client")) {
+                                            success = true;
+                                            IConsole.AddMsg($"Planner - {map.Name} download completed");
+                                        } else {
+                                            success = false;
+                                            IConsole.AddMsg($"Planner - {map.Name} failed to save ");
+                                        }
                                     }
                                 }
-                            }
+                            });
                         }
                     }
                 } catch (Exception ex) {
                     IConsole.AddMsg(ex.Message);
+                } finally {
+                    if (success != null) {
+                        SetBalloonTip("Donwload", $"{mapName}.ori is downloaded {(success == true ? "successfully" : "failed")} ");
+                    }
+                    if (mMapList != null) {
+                        mMapList.Dispose();
+                        mMapList = null;
+                    }
                 }
-            });
+            }
         }
 
         /// <summary>
         /// 要求VehicleConsole端Ori檔清單
         /// </summary>
-        protected virtual async Task ITest_GetORi() {
-            await Task.Run(() => {
+        protected virtual void ITest_GetORi() {
+            if (mMapList == null) {
+                bool? success = null;
+                string oriName = null;
                 try {
                     string oriList = RequestOriList();
                     if (!string.IsNullOrEmpty(oriList)) {
-                        using (MapList f = new MapList(oriList)) {
-                            if (f.ShowDialog() == DialogResult.OK) {
-                                var ori = RequestOriFile(f.strMapList);
-                                if (ori != null) {
-                                    if (ori.SaveAs(@"D:\MapInfo\Client")) {
-                                        IConsole.AddMsg($"Planner - {ori.Name} download completed");
-                                    } else {
-                                        IConsole.AddMsg($"Planner - {ori.Name} failed to save");
+                        using (mMapList = new MapList(oriList)) {
+                            this.InvokeIfNecessary(() => {
+                                if (mMapList.ShowDialog(this) == DialogResult.OK) {
+                                    oriName = mMapList.strMapList;
+                                    var ori = RequestOriFile(oriName);
+                                    if (ori != null) {
+                                        if (ori.SaveAs(@"D:\MapInfo\Client")) {
+                                            success = true;
+                                            IConsole.AddMsg($"Planner - {ori.Name} download completed");
+                                        } else {
+                                            success = false;
+                                            IConsole.AddMsg($"Planner - {ori.Name} failed to save");
+                                        }
                                     }
                                 }
-                            }
+                            });
                         }
                     }
                 } catch (Exception ex) {
                     IConsole.AddMsg(ex.Message);
+                }finally {
+                    if (success != null) {
+                        SetBalloonTip("Donwload", $"{oriName}.ori is downloaded {(success == true ? "successfully" : "failed")} ");
+                    }
+                    if (mMapList != null) {
+                        mMapList.Dispose();
+                        mMapList = null;
+                    }
                 }
-            });
+            }
         }
 
         /// <summary>
         /// 載入Map檔
         /// </summary>
         /// <returns></returns>
-        private async Task ITest_LoadMap() {
-            await Task.Run(() => {
-                try {
-                    LoadFile(FileType.Map);
-                } catch (Exception ex) {
-                    IConsole.AddMsg(ex.Message);
-                }
-            });
+        private void ITest_LoadMap() {
+            try {
+                LoadFile(FileType.Map);
+            } catch (Exception ex) {
+                IConsole.AddMsg(ex.Message);
+            }
         }
 
         /// <summary>
         /// 載入Ori檔
         /// </summary>
         /// <returns></returns>
-        private async Task ITest_LoadOri() {
-            await Task.Run(() => {
-                try {
-                    LoadFile(FileType.Ori);
-                } catch (Exception ex) {
-                    IConsole.AddMsg(ex.Message);
-                }
-            });
+        private void ITest_LoadOri() {
+            try {
+                LoadFile(FileType.Ori);
+            } catch (Exception ex) {
+                IConsole.AddMsg(ex.Message);
+            }
         }
 
         /// <summary>
         /// 停止手動控制
         /// </summary>
-        private async Task ITest_Motion_Up() {
-            await Task.Run(() => {
-                try {
-                    mConnectFlow.CheckFlag("Motion Controller", () => {
-                        IConsole.AddMsg($"[Stop]");
-                        MotionContorl(MotionDirection.Stop);
-                    }, false);
-                } catch (Exception ex) {
-                    IConsole.AddMsg(ex.Message);
-                }
-            });
+        private void ITest_Motion_Up() {
+            try {
+                mConnectFlow.CheckFlag("Motion Controller", () => {
+                    MotionContorl(MotionDirection.Stop);
+                }, false);
+            } catch (Exception ex) {
+                IConsole.AddMsg(ex.Message);
+            }
         }
 
         /// <summary>
         /// 開始手動控制
         /// </summary>
         /// <param name="direction">移動方向</param>
-        private async Task ITest_Motion_Down(MotionDirection direction) {
-            await Task.Run(() => {
-                try {
-                    mServoOnFlow.CheckFlag($"{direction}", () => {
-                        IConsole.AddMsg($"[{direction}]");
-                        MotionContorl(direction);
-                    }, false);
-                } catch (Exception ex) {
-                    IConsole.AddMsg(ex.Message);
-                }
-            });
+        private void ITest_Motion_Down(MotionDirection direction) {
+            try {
+                mServoOnFlow.CheckFlag($"{direction}", () => {
+                    IConsole.AddMsg($"[{direction}]");
+                    MotionContorl(direction);
+                }, false);
+            } catch (Exception ex) {
+                IConsole.AddMsg(ex.Message);
+            }
         }
 
         private void ITest_SimplifyOri() {
@@ -1046,13 +1071,16 @@ namespace VehiclePlanner
                         mNewPos = e.Position;
                     } else {
                         IConsole.AddMsg($"NewPos{mNewPos.ToString()}");
-                        SetPosition(e.Position, mNewPos);
-                        mNewPos = null;
-                        mIsSetting = false;
+                        Task.Run(() => {
+                            SetPosition(e.Position, mNewPos);
+
+                            mNewPos = null;
+                            mIsSetting = false;
+                        });
                     }
                 }
             } else {//顯示滑鼠點擊的座標
-                IGoalSetting.SetCurrentRealPos(e.Position);
+                IGoalSetting.UpdateNowPosition(e.Position);
             }
         }
 
@@ -1064,29 +1092,27 @@ namespace VehiclePlanner
 
         #region IGoalSetting 事件連結   
 
-        private async Task IGoalSetting_Charging(IPower power, int powerIndex) {
-            await Task.Run(() => {
-                try {
-                    if (power != null && powerIndex >= 0) {
-                        var success = DoCharging(powerIndex);
-                        if (success == true) {
-                            IConsole.AddMsg($"iTS - Begin charging at {power.Name}");
-                        } else if (success == false){
-                            IConsole.AddMsg("iTS - Charging failed");
-                        }
-                    } else {
-                        CtMsgBox.Show(mHandle, "No target", "尚未選擇目標Power點", MsgBoxBtn.OK, MsgBoxStyle.Information);
+        private void IGoalSetting_Charging(uint powerID) {
+            try {
+                int index = Database.PowerGM.IndexOf(powerID);
+                if (index >= 0) {
+                    var power = Database.PowerGM[powerID];
+                    var success = DoCharging(index);
+                    if (success == true) {
+                        IConsole.AddMsg($"iTS - Begin charging at {power.Name}");
+                    } else if (success == false) {
+                        IConsole.AddMsg("iTS - Charging failed");
                     }
-                } catch(Exception ex) {
-                    IConsole.AddMsg(ex.Message);
                 }
-            });
+            } catch(Exception ex) {
+                IConsole.AddMsg(ex.Message);
+            }
         }
 
-        private async Task IGoalSetting_SaveGoalEvent() {
+        private void IGoalSetting_SaveGoalEvent() {
             if (string.IsNullOrEmpty(CurMapPath)) {
                 if (MsgBoxBtn.Yes == CtMsgBox.Show("Map not loaded yet", "Whether to load the map?", MsgBoxBtn.YesNo, MsgBoxStyle.Question)) {
-                    await Task.Run(ITest_LoadMap);
+                    ITest_LoadMap();
                 }
                 return;
             }
@@ -1110,41 +1136,40 @@ namespace VehiclePlanner
             }
         }
 
-        private async Task IGoalSetting_RunGoalEvent(IGoal goal, int idxGoal) {
-            await Task.Run(() => {
-                try {
-                    CheckGoal(goal, idxGoal, () => {
-                        mSimilarityFlow.CheckFlag("Run goal", () => {
-                            var success = DoRunningByGoalIndex(idxGoal);
-                            if (success == true) {
-                                IConsole.AddMsg($"iTS - Start moving to {goal.Name}");
-                            }else if (success == false){
-                                IConsole.AddMsg($"Move to goal failure");
-                            }
-                            
-                        });
-                    });
-                } catch(Exception ex) {
-                    IConsole.AddMsg(ex.Message);
-                }
-            });
+        private void IGoalSetting_RunGoalEvent(uint goalID) {
+            try {
+                int index = Database.GoalGM.IndexOf(goalID);
+                if (index >= 0) {
+                    var goal = Database.GoalGM[goalID];
+                    var success = DoRunningByGoalIndex(index);
+                    if (success == true) {
+                        IConsole.AddMsg($"iTS - Start moving to {goal.Name}");
+                    } else if (success == false) {
+                        IConsole.AddMsg($"Move to goal failure");
+                    }
+                }       
+            } catch(Exception ex) {
+                IConsole.AddMsg(ex.Message);
+            }
         }
         
-        private async Task IGoalSetting_FindPathEvent(IGoal goal, int goalIndex) {
-            await Task.Run(() => {
-                try {
-                    var path = RequestPath(goalIndex);
+        private void IGoalSetting_FindPathEvent(uint id) {
+            try {
+                int index = Database.GoalGM.IndexOf(id);
+                if (index >= 0) {
+                    var path = RequestPath(index);
                     if (path != null) {
+                        var goal = Database.GoalGM[id];
                         if (path.Count > 0) {
                             IConsole.AddMsg($"iTS - The path to {goal.Name} is completion. The number of path points is {path.Count}");
                         } else {
                             IConsole.AddMsg($"iTS - Can not plan the path to  {goal.Name}");
                         }
                     }
-                } catch (Exception ex) {
-                    IConsole.AddMsg(ex.Message);
                 }
-            });
+            } catch (Exception ex) {
+                IConsole.AddMsg(ex.Message);
+            }
         }
 
         private void IGoalSetting_DeleteGoalsEvent(IEnumerable<uint> singles) {
@@ -1176,17 +1201,15 @@ namespace VehiclePlanner
         /// <summary>
         /// 取得所有Goal點名稱
         /// </summary>
-        private async Task GoalNames() {
-            await Task.Run(() => {
-                try {
-                    var goalList = RequestGoalList();
-                    if (!string.IsNullOrEmpty(goalList)) {
-                        IConsole.AddMsg($"iTS - GoalNames:{goalList}");
-                    }
-                } catch(Exception ex) {
-                    IConsole.AddMsg(ex.Message);
+        private void GoalNames() {
+            try {
+                var goalList = RequestGoalList();
+                if (!string.IsNullOrEmpty(goalList)) {
+                    IConsole.AddMsg($"iTS - GoalNames:{goalList}");
                 }
-            });
+            } catch(Exception ex) {
+                IConsole.AddMsg(ex.Message);
+            }
         }
 
         #endregion
@@ -1222,17 +1245,18 @@ namespace VehiclePlanner
         /// <param name="direction">移動方向</param>
         /// <param name="velocity">移動速度</param>
         protected virtual void MotionContorl(MotionDirection direction) {
-            bool? isManual = null;
-            if (direction == MotionDirection.Stop) {
-                isManual = StartManualControl(false);
-            } else {
+            bool? isManualMoving = null;
+            if (direction == MotionDirection.Stop && mIsManualMoving) {
+                isManualMoving = StartManualControl(false);
+            } else if (!mIsManualMoving){
                 if (SetManualVelocity(direction) == true) {
                     IConsole.AddMsg($"iTS - is {direction},Velocity is {mVelocity}");
-                    isManual = StartManualControl(true);
+                    isManualMoving = StartManualControl(true);
                 }
             }
-            if (isManual!= null) {
-                IConsole.AddMsg($"iTS - {((isManual == true) ? "Start" : "Stop")} moving");
+            if (isManualMoving!= null && isManualMoving != mIsManualMoving) {
+                mIsManualMoving = (bool)isManualMoving;
+                IConsole.AddMsg($"iTS - {(mIsManualMoving ? "Start" : "Stop")} moving");
             }
         }
         
@@ -1279,6 +1303,7 @@ namespace VehiclePlanner
             #endregion 
             MapGL.Show();
             this.TopMost = false;
+
         }
 
         /// <summary>
@@ -1534,32 +1559,33 @@ namespace VehiclePlanner
             openMap.InitialDirectory = mDefMapDir;
             openMap.Filter = $"MAP|*.{type.ToString().ToLower()}";
             if (openMap.ShowDialog() == DialogResult.OK) {
-                try {
-                    bool isLoaded = false;
-                    switch (type) {
-                        case FileType.Ori:
-                            isLoaded = LoadOri(openMap.FileName);
-                            if (isLoaded) {
-                                Database.AGVGM[mAGVID]?.LaserAPoints.DataList.Clear();
-                                ITest.UnLockOriOperator(true);
-                            }
-                            break;
-                        case FileType.Map:
-                            isLoaded = LoadMap(openMap.FileName);                            
-                            break;
-                        default:
-                            throw new ArgumentException($"無法載入未定義的檔案類型{type}");
+                Task.Run(() => {
+                    try {
+                        bool isLoaded = false;
+                        switch (type) {
+                            case FileType.Ori:
+                                isLoaded = LoadOri(openMap.FileName);
+                                if (isLoaded) {
+                                    Database.AGVGM[mAGVID]?.LaserAPoints.DataList.Clear();
+                                    ITest.UnLockOriOperator(true);
+                                }
+                                break;
+                            case FileType.Map:
+                                isLoaded = LoadMap(openMap.FileName);
+                                break;
+                            default:
+                                throw new ArgumentException($"無法載入未定義的檔案類型{type}");
+                        }
+                        if (isLoaded) {
+                            SetBalloonTip($"Load { type}", $"\'{openMap.FileName}\' is loaded");
+                        } else {
+                            CtMsgBox.Show(mHandle, "Error", "File data is wrong, can not read", MsgBoxBtn.OK, MsgBoxStyle.Error);
+                        }
+                    } catch (Exception ex) {
+                        CtMsgBox.Show(mHandle, "Error", ex.Message);
                     }
-                    if (isLoaded) {
-                        SetBalloonTip($"Load { type}", $"\'{openMap.FileName}\' is loaded");
-                    }else {
-                        CtMsgBox.Show(mHandle, "Error", "File data is wrong, can not read", MsgBoxBtn.OK, MsgBoxStyle.Error);
-                    }
-                } catch (Exception ex) {
-                    CtMsgBox.Show(mHandle,"Error", ex.Message);
-                }
+                });
             }
-            openMap = null;
         }
         
         /// <summary>
@@ -1627,8 +1653,6 @@ namespace VehiclePlanner
             #endregion
 
             #region ITesting 事件連結
-            ITest.Motion_Down += ITest_Motion_Down;
-            ITest.Motion_Up += ITest_Motion_Up;
             ITest.LoadMap += ITest_LoadMap;
             ITest.LoadOri += ITest_LoadOri;
             ITest.GetOri += ITest_GetORi;
@@ -1807,6 +1831,7 @@ namespace VehiclePlanner
             var success = UploadMapToAGV(mapPath);
             string mapName = Path.GetFileName(mapPath);
             if (success == true) {
+                SetBalloonTip("Donwload", $"{mapName}.ori is downloaded {(success == true ? "successfully" : "failed")} ");
                 IConsole.AddMsg($"iTS - The {mapName} uploaded");
                 success = ChangeMap(mapName);
                 if (success == true) {
@@ -2225,6 +2250,8 @@ namespace VehiclePlanner
     
     public abstract class BaseFlowTemplate {
 
+        protected abstract string Name { get; set; } 
+
         protected object mKey = new object();
 
         protected bool mIsExecuting = false;
@@ -2249,27 +2276,25 @@ namespace VehiclePlanner
         }
 
         public void CheckFlag(string description, Action act, bool cont = true) {
+            Console.WriteLine($"{Name} start check. Is executing:{mIsExecuting}");
             if (!mIsExecuting) {
                 lock (mKey) {
                     try {
-                        mIsExecuting = true;
-                        if (!IsAllow()) {
-                            if (!UserSwitch(description)) {
-                                mIsExecuting = false;
-                            }
-                            if (!SwitchFlag()) {
+                        mIsExecuting = IsAllow();
+                        if (!mIsExecuting) {//當前Flag下不可執行
+                            mIsExecuting = UserSwitch(description) && SwitchFlag();
+                            if (mIsExecuting) {//Flag切換成功
+                                mIsExecuting = cont && UserContinue(description);
+                            } else {//Flag切換失敗 
                                 FailureMessage();
-                                mIsExecuting = false;
-                            }
-                            if (!cont || !UserContinue(description)) {
-                                mIsExecuting = false;
                             }
                         }
                         if (mIsExecuting) {
+                            Console.WriteLine($"{Name} Excuting");
                             act?.Invoke();
                         }
                     } catch (Exception ex) {
-                        System.Console.WriteLine("error", ex.Message);
+                        Console.WriteLine("error", ex.Message);
                     } finally {
                         mIsExecuting = false;
                     }
@@ -2277,6 +2302,7 @@ namespace VehiclePlanner
             }else {
                 ExecutingInfo();
             }
+            Console.WriteLine($"{Name} checked.Is executing:{mIsExecuting}");
         }
 
         protected virtual bool UserContinue(string description) {
@@ -2287,6 +2313,8 @@ namespace VehiclePlanner
     }
 
     public class ConnectFlow : BaseFlowTemplate {
+        protected override string Name { get; set; } = "ConnectFlow";
+
         public ConnectFlow(IntPtr hWnd, Events.FlowTemplate.DelIsAllow isAllow, Events.FlowTemplate.DelSwitchFlag switchFlag, Events.FlowTemplate.DelExecutingInfo executingInfo) : base(hWnd, isAllow, switchFlag, executingInfo) {
         }
 
@@ -2301,6 +2329,8 @@ namespace VehiclePlanner
     }
 
     public class ServoOnFlow : BaseFlowTemplate {
+        protected override string Name { get; set; } = "ServoOnFlow";
+
         public ServoOnFlow(IntPtr hWnd, Events.FlowTemplate.DelIsAllow isAllow, Events.FlowTemplate.DelSwitchFlag switchFlag, Events.FlowTemplate.DelExecutingInfo executingInfo) : base(hWnd, isAllow, switchFlag, executingInfo) {
         }
 
@@ -2309,11 +2339,15 @@ namespace VehiclePlanner
         }
 
         protected override bool UserSwitch(string description=null) {
-            return MsgBoxBtn.Yes == CtMsgBox.Show(mMainHandle, "Not ServoOn yet", $"尚未Servo On無法{description}\r\n是否要Server On?",MsgBoxBtn.YesNo,MsgBoxStyle.Question);
+            var ret = CtMsgBox.Show(mMainHandle, "Not ServoOn yet", $"尚未Servo On無法{description}\r\n是否要Server On?", MsgBoxBtn.YesNo, MsgBoxStyle.Question);
+            return MsgBoxBtn.Yes == ret;
         }
     }
 
     public class SimilarityFlow : BaseFlowTemplate {
+
+        protected override string Name { get; set; } = "SimilarityFlow";
+
         public SimilarityFlow(IntPtr hWnd, Events.FlowTemplate.DelIsAllow isAllow, Events.FlowTemplate.DelSwitchFlag switchFlag, Events.FlowTemplate.DelExecutingInfo executingInfo) : base(hWnd, isAllow, switchFlag, executingInfo) {
         }
 

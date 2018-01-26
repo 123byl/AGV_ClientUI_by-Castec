@@ -25,6 +25,7 @@ namespace VehiclePlanner
             foreach (string x in mapList) {
                 lstbMap.Items.Add(x);
             }
+            this.TopMost = true;
         }
 
         private void btnOK_Click(object sender, EventArgs e)

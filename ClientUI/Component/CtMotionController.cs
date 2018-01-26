@@ -113,17 +113,21 @@ namespace VehiclePlanner.Component {
         }
 
         private void Motion_MouseDown(object sender, MouseEventArgs e) {
-            PictureBox pic = sender as PictureBox;
-            if (pic.Tag is Keys) {
-                MotionControl((Keys)pic.Tag);
-            }
+            Task.Run(() => {
+                PictureBox pic = sender as PictureBox;
+                if (pic.Tag is Keys) {
+                    MotionControl((Keys)pic.Tag);
+                }
+            });
         }
 
         private void Motion_MouseUp(object sender, MouseEventArgs e) {
-            PictureBox pic = sender as PictureBox;
-            if (pic.Tag is Keys) {
-                MotionStop();
-            }
+            Task.Run(() => {
+                PictureBox pic = sender as PictureBox;
+                if (pic.Tag is Keys) {
+                    MotionStop();
+                }
+            });
         }
 
         #endregion PictureBox

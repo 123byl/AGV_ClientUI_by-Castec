@@ -70,14 +70,13 @@ namespace VehiclePlanner {
                     case EPurpose.AutoReportLaser:
                         var laser = product.ToIAutoReportLaser().Product;
                         if (laser != null) {
-                            mIsAtuoReport = true;
                             DrawLaser(product.ToIAutoReportLaser().Product);
                         } else {
-                            mIsAtuoReport = false;
+                            mIsAutoReport = false;
                             Database.AGVGM[mAGVID].LaserAPoints.DataList.Clear();
                             Database.AGVGM[mAGVID].Path.DataList.Clear();
+                            ITest.SetLaserStt(mIsAutoReport);
                         }
-                        ITest.SetLaserStt(mIsAtuoReport);
                         break;
                     //case EPurpose.RequestLaser:
                     //    DrawLaser(product.ToIRequestLaser().Product);
@@ -210,46 +209,44 @@ namespace VehiclePlanner {
         /// <param name="cnn">連線/斷線</param>
         /// <param name="hostIP">AGV IP</param>
         /// <exception cref=""
-        protected virtual async Task ConnectToITS(bool cnn, string hostIP = "") {
-            await Task.Run(() => {
-                try {
-                    if (IsConnected != cnn) {
-                        if (cnn) {//連線至VC
-                            /*-- 實例化物件 --*/
-                            if (mSerialClient == null) {
-                                mSerialClient = FactoryMode.Factory.SerialClient(mSerialClient_ReceiveData, mBypassSocket);
-                            }
-                            /*-- IP格式驗證 --*/
-                            if (!VerifyIP(hostIP)) {
-                                throw new FormatException($"{hostIP}是錯誤IP格式");
-                            }
-                            /*-- 測試IP是否存在 --*/
-                            PingStatus pingStt = PingStatus.Unknown;
-                            if ((pingStt = CtNetwork.Ping(hostIP, 500).PingState) != PingStatus.Success) {
-                                throw new PingException(pingStt.ToString());
-                            }
-                            /*-- 連線至VehicleConsole --*/
-                            mSerialClient.Connect(hostIP, (int)EPort.ClientPort);
-                        } else {//斷開與VehicleConsole的連線
-                            mSerialClient?.Stop();
-                            mSerialClient.Dispose();
-                            mSerialClient = null;
+        protected virtual void ConnectToITS(bool cnn, string hostIP = "") {
+            try {
+                if (IsConnected != cnn) {
+                    if (cnn) {//連線至VC
+                        /*-- 實例化物件 --*/
+                        if (mSerialClient == null) {
+                            mSerialClient = FactoryMode.Factory.SerialClient(mSerialClient_ReceiveData, mBypassSocket);
                         }
-                        /*--依連線狀態設定界面--*/
-                        ITest.SetServerStt(IsConnected);
-                        IConsole.AddMsg($"Client - Is {(IsConnected ? "Connected" : "Disconnected")} to {mHostIP}");
-                        if (IsConnected) {
-                            mHostIP = hostIP;
-                            ITest_CarPosConfirm().Wait();
-                            Status = RequestStatus();
+                        /*-- IP格式驗證 --*/
+                        if (!VerifyIP(hostIP)) {
+                            throw new FormatException($"{hostIP}是錯誤IP格式");
                         }
+                        /*-- 測試IP是否存在 --*/
+                        PingStatus pingStt = PingStatus.Unknown;
+                        if ((pingStt = CtNetwork.Ping(hostIP, 500).PingState) != PingStatus.Success) {
+                            throw new PingException(pingStt.ToString());
+                        }
+                        /*-- 連線至VehicleConsole --*/
+                        mSerialClient.Connect(hostIP, (int)EPort.ClientPort);
+                    } else {//斷開與VehicleConsole的連線
+                        mSerialClient?.Stop();
+                        mSerialClient.Dispose();
+                        mSerialClient = null;
                     }
-                } catch (PingException pe) {
-                    IConsole.AddMsg($"Ping fail:{pe.Message}");
-                } catch (Exception ex) {
-                    IConsole.AddMsg(ex.Message);
+                    /*--依連線狀態設定界面--*/
+                    ITest.SetServerStt(IsConnected);
+                    IConsole.AddMsg($"Client - Is {(IsConnected ? "Connected" : "Disconnected")} to {mHostIP}");
+                    if (IsConnected) {
+                        mHostIP = hostIP;
+                        ITest_CarPosConfirm();
+                        Status = RequestStatus();
+                    }
                 }
-            });
+            } catch (PingException pe) {
+                IConsole.AddMsg($"Ping fail:{pe.Message}");
+            } catch (Exception ex) {
+                IConsole.AddMsg(ex.Message);
+            }
         }
 
         /// <summary>
@@ -261,7 +258,6 @@ namespace VehiclePlanner {
             IProductPacket product = null;//回應封包
             Task tsk = null;//等待逾時執行緒
             CtTaskCompletionSource<IProductPacket> tskCompSrc = null;//封包接受完成觸發源
-
             /*-- 檢查封包 --*/
             if (packet == null) {
                 IConsole.AddMsg("The packet is null, unable to send");
@@ -504,6 +500,38 @@ namespace VehiclePlanner {
             return path;
         }
 
+        /// <summary>
+        /// 要求自動回報iTS狀態
+        /// </summary>
+        /// <param name="on">是否自動回報</param>
+        /// <returns>iTS狀態</returns>
+        private IStatus AutoReportStatus(bool on) {
+            var status = Send(FactoryMode.Factory.Order().AutoReportStatus(on))?.ToIAutoReportStatus()?.Product;
+            return status;
+        }
+
+        /// <summary>
+        /// 要求自動回傳雷射資料
+        /// </summary>
+        /// <param name="on">是否自動回報</param>
+        /// <returns>雷射資料</returns>
+        private List<IPair> AutoReportLaser(bool on) {
+            var laser = Send(FactoryMode.Factory.Order().AutoReportLaser(on))?.ToIAutoReportLaser()?.Product;
+            return laser;
+        }
+
+        /// <summary>
+        /// 要求自動回傳路徑
+        /// </summary>
+        /// <param name="on">是否自動回報</param>
+        /// <returns>路徑資料</returns>
+        private List<IPair> AutoReportPath(bool on) {
+            var path = Send(FactoryMode.Factory.Order().AutoReportPath(on))?.ToIAutoReportPath()?.Product;
+            return path;
+        }
+
+
+
         #endregion Methods
 
         #endregion Function - Private Methods
@@ -513,6 +541,8 @@ namespace VehiclePlanner {
     /// Bypass用的假SerialClient類
     /// </summary>
     public class FakeSerialClient : ISerialClient {
+
+        private string mMapPath = @"D:\MapInfo\Client";
 
         public bool Connected { get; private set; }
 
@@ -535,6 +565,8 @@ namespace VehiclePlanner {
 
         public bool Send(ICanSendBySerial msg) {
             IProductPacket product = null;
+
+            //Thread.Sleep(3000);
             if (msg is IOrderPacket) {
                 var order = msg as IOrderPacket;
                 switch (order.Purpose) {
@@ -593,7 +625,7 @@ namespace VehiclePlanner {
                         break;
                     case EPurpose.UploadMapToAGV:
                         var map = order.ToIUploadMapToAGV()?.Design;
-                        bool success = map?.SaveAs(@"D:\MapInfo\") ?? false;
+                        bool success = map?.SaveAs(mMapPath) ?? false;
                         product = order.ToIUploadMapToAGV().CreatProduct(success);
                         break;
                     case EPurpose.ChangeMap:
@@ -606,6 +638,18 @@ namespace VehiclePlanner {
                     case EPurpose.RequestPath:
                         var path = new List<IPair>() { FactoryMode.Factory.Pair(0, 0) };
                         product = order.ToIRequestPath().CreatProduct(path);
+                        break;
+                    case EPurpose.AutoReportStatus:
+                        var status = (order.ToIAutoReportStatus()?.Design == true) ? FactoryMode.Factory.Status() : null;
+                        product = order.ToIAutoReportStatus().CreatProduct(status);
+                        break;
+                    case EPurpose.AutoReportLaser:
+                        var laserData = (order.ToIAutoReportLaser()?.Design == true) ? new List<IPair>() {FactoryMode.Factory.Pair(0,0) } : null;
+                        product = order.ToIAutoReportLaser().CreatProduct(laserData);
+                        break;
+                    case EPurpose.AutoReportPath:
+                        var pathData = (order.ToIAutoReportPath()?.Design == true) ? new List<IPair>() { FactoryMode.Factory.Pair(0, 0)} : null;
+                        product = order.ToIAutoReportPath().CreatProduct(pathData);
                         break;
                 }
                 if (product != null) {

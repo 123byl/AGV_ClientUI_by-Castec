@@ -2,7 +2,6 @@
 using Geometry;
 using GLCore;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using static VehiclePlanner.Events.ConsoleEvents;
 using static VehiclePlanner.Events.GoalSettingEvents;
 using static VehiclePlanner.Events.TestingEvents;
@@ -108,17 +107,7 @@ namespace VehiclePlanner
         /// 目標點個數
         /// </summary>
         int GoalCount { get; }
-        
-        /// <summary>
-        /// 用 ID 尋找 Goal 點所在的引索位置
-        /// </summary>
-        int FindIndexByID(uint ID);
-
-        /// <summary>
-        /// 根據 ID 查詢 Goal 點
-        /// </summary>
-        IGoal GetGoalByID(uint ID);
-
+       
         /// <summary>
         /// 根據表單的列編號查詢 Goal
         /// </summary>
@@ -127,7 +116,7 @@ namespace VehiclePlanner
         /// <summary>
         /// 設定真實座標
         /// </summary>
-        void SetCurrentRealPos(IPair realPos);
+        void UpdateNowPosition(IPair realPos);
 
         /// <summary>
         /// 設定表單選擇項目
@@ -138,12 +127,6 @@ namespace VehiclePlanner
         /// 重新載入標示物
         /// </summary>
         void ReloadSingle();
-
-        /// <summary>
-        /// 解鎖路徑相關操作
-        /// </summary>
-        /// <param name="enb"></param>
-        void EnableGo(bool enb = true);
 
     }
 
@@ -166,10 +149,6 @@ namespace VehiclePlanner
         event DelLoadMap LoadMap;
 
         event DelLoadOri LoadOri;
-
-        event DelMotion_Down Motion_Down;
-
-        event DelMotion_Up Motion_Up;
 
         event DelMotorServoOn MotorServoOn;
 
@@ -261,29 +240,29 @@ namespace VehiclePlanner
             /// <summary>
             /// 尋找路徑
             /// </summary>
-            public delegate Task DelFindPath(IGoal goal, int idxGoal);
+            public delegate void DelFindPath(uint goalID);
 
             /// <summary>
             /// 充電
             /// </summary>
             /// <param name="goal"></param>
             /// <param name="idxGoal"></param>
-            public delegate Task DelCharging(IPower goal, int idxGoal);
+            public delegate void DelCharging(uint powerID);
 
             /// <summary>
             /// 載入地圖
             /// </summary>
-            public delegate Task DelLoadMap();
+            public delegate void DelLoadMap();
 
             /// <summary>
             /// 從 AGV 下載地圖
             /// </summary>
-            public delegate Task DelLoadMapFromAGV();
+            public delegate void DelLoadMapFromAGV();
 
             /// <summary>
             /// 移動
             /// </summary>
-            public delegate Task DelRunGoal(IGoal goal, int idxGoal);
+            public delegate void DelRunGoal(uint idxGoal);
 
             /// <summary>
             /// 按照順序移動全部
@@ -293,12 +272,12 @@ namespace VehiclePlanner
             /// <summary>
             /// 儲存
             /// </summary>
-            public delegate Task DelSaveGoal();
+            public delegate void DelSaveGoal();
 
             /// <summary>
             /// 上傳地圖
             /// </summary>
-            public delegate Task DelSendMapToAGV();
+            public delegate void DelSendMapToAGV();
 
             /// <summary>
             /// 更新 Goal 點
@@ -308,7 +287,7 @@ namespace VehiclePlanner
             /// <summary>
             /// 取得所有Goal點名稱
             /// </summary>
-            public delegate Task DelGetGoalNames();
+            public delegate void DelGetGoalNames();
 
             public delegate void DelSwitchCursor(CursorMode mode);
         }
@@ -318,27 +297,27 @@ namespace VehiclePlanner
         /// </summary>
         public static class TestingEvents
         {
-            public delegate Task DelConnect(bool cnn,string hostIP = "");
+            public delegate void DelConnect(bool cnn,string hostIP = "");
            
             public delegate void DelGetCar();
 
-            public delegate Task DelGetLaser();
+            public delegate void DelGetLaser();
 
-            public delegate Task DelGetMap();
+            public delegate void DelGetMap();
 
-            public delegate Task DelGetOri();
+            public delegate void DelGetOri();
 
-            public delegate Task DelLoadOri();
+            public delegate void DelLoadOri();
 
-            public delegate Task DelMotion_Down(MotionDirection direction);
+            public delegate void DelMotion_Down(MotionDirection direction);
 
-            public delegate Task DelMotion_Up();
+            public delegate void DelMotion_Up();
 
-            public delegate Task DelMotorServoOn(bool servoOn);
+            public delegate void DelMotorServoOn(bool servoOn);
 
-            public delegate Task DelSendMap();
+            public delegate void DelSendMap();
             
-            public delegate Task DelStartScan(bool scan);
+            public delegate void DelStartScan(bool scan);
 
             public delegate void DelSetVelocity(int velocity);
 
@@ -348,7 +327,7 @@ namespace VehiclePlanner
 
             public delegate void DelSettingCarPos();
 
-            public delegate Task DelCarPosConfirm();
+            public delegate void DelCarPosConfirm();
 
             public delegate void DelShowMotionController();
 

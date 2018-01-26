@@ -114,6 +114,9 @@ namespace CtLib.Forms {
 			mMsgBoxStyle = style;
 
 			SetFormLocation();
+            this.TopMost = false;
+            this.TopMost = true;
+            this.BringToFront();
 		}
 
 		/// <summary>建立帶有標題、按鈕、樣式之對話視窗</summary>

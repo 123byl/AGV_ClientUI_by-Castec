@@ -8,6 +8,7 @@ using CtLib.Library;
 using GLCore;
 using Geometry;
 using CtLib.Forms;
+using System.Threading.Tasks;
 
 namespace VehiclePlanner
 {
@@ -171,34 +172,7 @@ namespace VehiclePlanner
                 }
             }
         }
-
-        /// <summary>
-        /// 用 ID 尋找 Goal 點所在的引索位置
-        /// </summary>
-        public int FindIndexByID(uint ID)
-        {
-            lock (mKey)
-            {
-                for (int row = 0; row < dgvGoalPoint.Rows.Count; ++row)
-                {
-                    if ((uint)(dgvGoalPoint[IDColumn, row].Value) == ID) return row;
-                }
-                return -1;
-            }
-        }
-
-        /// <summary>
-        /// 根據 ID 查詢 Goal 點
-        /// </summary>
-        public IGoal GetGoalByID(uint ID)
-        {
-            lock (mKey)
-            {
-                int row = FindIndexByID(ID);
-                return GetSingleByIndex<IGoal>(row);
-            }
-        }
-
+        
         /// <summary>
         /// 根據表單的列編號查詢 Goal
         /// </summary>
@@ -227,74 +201,28 @@ namespace VehiclePlanner
             }
         }
         
-        public uint GetSelectedID() {
+        /// <summary>
+        /// 取得ComboBox所選的標記點ID並執行指定方法
+        /// </summary>
+        /// <returns>標記點ID</returns>
+        public void GetSelectedID(Action<uint> action) {
             lock (mKey) {
-                uint id = uint.MaxValue;
-                int row = cmbGoalList.SelectedIndex;
+                int row = cmbGoalList.InvokeIfNecessary(() => cmbGoalList.SelectedIndex);
                 if (row >= 0 && row < GoalCount) {                    
-                    dgvGoalPoint.InvokeIfNecessary(() => {
-                        id = (uint)dgvGoalPoint[IDColumn, row].Value;
-                    });
+                    uint id = dgvGoalPoint.InvokeIfNecessary(() => (uint)dgvGoalPoint[IDColumn, row].Value);
+                    action(id);
                 }
-                return id;
             }
         }
-
+       
         /// <summary>
-        /// 獲得所有 Goal 點資訊
+        /// 更新現在位置
         /// </summary>
-        private List<IGoal> GetGoals()
-        {
-            lock (mKey)
-            {
-                var list = new List<IGoal>();
-                for (int row = 0; row < GoalCount; ++row)
-                {
-                    uint id = 0;
-                    dgvGoalPoint.InvokeIfNecessary(() =>
-                    {
-                        id = Convert.ToUInt32(dgvGoalPoint[IDColumn, row].Value);
-                    });
-                    if (Database.GoalGM.ContainsID(id)) list.Add(Database.GoalGM[id]);
-                }
-                return list;
-            }
-        }
-
-        /// <summary>
-        /// 獲得所有被選取的 Goal 點資訊
-        /// </summary>
-        private List<uint> GetSelectedSingleID()
-        {
-            lock (mKey)
-            {
-                var list = new List<uint>();
-                for (int row = 0; row < GoalCount; ++row)
-                {
-                    dgvGoalPoint.InvokeIfNecessary(() =>
-                    {
-                        bool isSelected = (bool)dgvGoalPoint[SelectColumn, row].Value;
-                        if (isSelected)
-                        {
-                            uint id = (uint)dgvGoalPoint[IDColumn, row].Value;
-                            list.Add(id);
-                        }
-                    });
-                }
-                return list;
-            }
-        }
-        
-        /// <summary>
-        /// 設定真實座標
-        /// </summary>
-        public void SetCurrentRealPos(IPair realPos) {
+        public void UpdateNowPosition(IPair nowPisition) {
             lock (mKey) {
                 txtAddPx.InvokeIfNecessary(() => {
-                    if (txtAddPx.Text != realPos.X.ToString()) txtAddPx.Text = realPos.X.ToString();
-                });
-                txtAddPy.InvokeIfNecessary(() => {
-                    if (txtAddPy.Text != realPos.Y.ToString()) txtAddPy.Text = realPos.Y.ToString();
+                    if (txtAddPx.Text != nowPisition.X.ToString()) txtAddPx.Text = nowPisition.X.ToString();
+                    if (txtAddPy.Text != nowPisition.Y.ToString()) txtAddPy.Text = nowPisition.Y.ToString();
                 });
             }
         }
@@ -326,18 +254,7 @@ namespace VehiclePlanner
                 Database.PowerGM.SaftyForLoop(LoadSingle);
             }
         }
-
-        /// <summary>
-        /// 解鎖與路徑相關操作
-        /// </summary>
-        /// <param name="enb"></param>
-        public void EnableGo(bool enb = true) {
-            //CtInvoke.ControlEnabled(btnPath, enb);
-            //CtInvoke.ControlEnabled(btnRunAll, enb);
-            //CtInvoke.ControlEnabled(btnRun, enb);
-            //CtInvoke.ControlEnabled(btnCharging, enb);
-        }
-
+        
         #endregion IIGoalSetting
 
         #region UI Event
@@ -346,9 +263,9 @@ namespace VehiclePlanner
 
         private void btnGetGoalList_Click(object sender, EventArgs e)
         {
-            lock (mKey) {
+            Task.Run(() => {
                 GetGoalNames.Invoke();
-            }
+            });
         }
         
         private void btnCurrPos_Click(object sender, EventArgs e)
@@ -361,7 +278,7 @@ namespace VehiclePlanner
         private void btnGetMap_Click(object sender, EventArgs e)
         {
             lock (mKey) {
-                LoadMapFromAGVEvent?.BeginInvoke(null,null);
+                Task.Run(() => LoadMapFromAGVEvent?.Invoke());
             }
         }
 
@@ -374,12 +291,11 @@ namespace VehiclePlanner
         
         private void btnPath_Click(object sender, EventArgs e)
         {
-            lock (mKey) {
-                var goal = GetSingleByIndex<IGoal>(cmbGoalList.SelectedIndex);
-                uint id = GetSelectedID();
-                int index = Database.GoalGM.IndexOf(id);
-                FindPathEvent?.BeginInvoke(goal, index,null,null);
-            }
+            Task.Run(() => {
+                GetSelectedID(id => {
+                    FindPathEvent?.Invoke((uint)id);
+                });
+            });
         }
 
         private void btnSendMap_Click(object sender, EventArgs e)
@@ -393,10 +309,11 @@ namespace VehiclePlanner
         {
             lock (mKey)
             {
-                var goal = GetSingleByIndex<IGoal>(cmbGoalList.SelectedIndex);
-                uint id = GetSelectedID();
-                int index = Database.GoalGM.IndexOf(id);
-                RunGoalEvent?.BeginInvoke(goal, index,null,null);
+                Task.Run(() => {
+                    GetSelectedID(id => {
+                        RunGoalEvent?.Invoke(id);
+                    });
+                });
             }
         }
 
@@ -432,10 +349,9 @@ namespace VehiclePlanner
 
         private void btnCharging_Click(object sender, EventArgs e) {
             lock (mKey) {
-                var power = GetSingleByIndex<IPower>(cmbGoalList.SelectedIndex);
-                uint id = GetSelectedID();
-                int index = Database.PowerGM.IndexOf(id);
-                Charging?.BeginInvoke(power, index,null,null);
+                GetSelectedID(id => {
+                    Charging?.Invoke(id);
+                });
             }
         }
 
@@ -446,7 +362,7 @@ namespace VehiclePlanner
         }
 
         #endregion Button
-        
+
         #endregion UI Event
 
         #region Functin - Public Methods
@@ -454,6 +370,54 @@ namespace VehiclePlanner
         #endregion Funtion - Public Methods
 
         #region Fucnction - Private Methods
+
+        /// <summary>
+        /// 獲得所有 Goal 點資訊
+        /// </summary>
+        private List<IGoal> GetGoals() {
+            lock (mKey) {
+                var list = new List<IGoal>();
+                dgvGoalPoint.InvokeIfNecessary(() => {
+                    for (int row = 0; row < GoalCount; ++row) {
+                        uint id = 0;
+                        id = Convert.ToUInt32(dgvGoalPoint[IDColumn, row].Value);
+                        if (Database.GoalGM.ContainsID(id)) list.Add(Database.GoalGM[id]);
+                    }
+                });
+                return list;
+            }
+        }
+
+        /// <summary>
+        /// 獲得所有被選取的 Goal 點ID
+        /// </summary>
+        private List<uint> GetSelectedSingleID() {
+            lock (mKey) {
+                var list = new List<uint>();
+                dgvGoalPoint.InvokeIfNecessary(() => {
+                    for (int row = 0; row < GoalCount; ++row) {
+                        bool isSelected = (bool)dgvGoalPoint[SelectColumn, row].Value;
+                        if (isSelected) {
+                            uint id = (uint)dgvGoalPoint[IDColumn, row].Value;
+                            list.Add(id);
+                        }
+                    }
+                });
+                return list;
+            }
+        }
+
+        /// <summary>
+        /// 用 ID 尋找 Goal 點所在的引索位置
+        /// </summary>
+        private int FindIndexByID(uint ID) {
+            lock (mKey) {
+                for (int row = 0; row < dgvGoalPoint.Rows.Count; ++row) {
+                    if ((uint)(dgvGoalPoint[IDColumn, row].Value) == ID) return row;
+                }
+                return -1;
+            }
+        }
 
         /// <summary>
         /// 載入標示物

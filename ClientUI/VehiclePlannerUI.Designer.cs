@@ -391,7 +391,7 @@ namespace VehiclePlanner {
             this.miServer.Size = new System.Drawing.Size(143, 26);
             this.miServer.Text = "Server";
             // 
-            // AgvClientUI
+            // VehiclePlannerUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -402,8 +402,8 @@ namespace VehiclePlanner {
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.IsMdiContainer = true;
             this.MainMenuStrip = this.menuStrip1;
-            this.Name = "AgvClientUI";
-            this.Text = "CASTEC - Monitoring and Control System";
+            this.Name = "VehiclePlannerUI";
+            this.Text = "CASTEC - Vehicle planner";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ClientUI_FormClosing);
             this.Load += new System.EventHandler(this.ClientUI_Load);
             this.statusStrip1.ResumeLayout(false);

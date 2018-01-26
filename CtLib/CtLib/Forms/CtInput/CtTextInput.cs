@@ -46,6 +46,7 @@ namespace CtLib.Forms {
 			AdjustFormSize();
 
 			this.Shown += (sender, e) => CtInvoke.ControlFocus(mTxtBox);
+            this.TopMost = true;
 		}
 
 		/// <summary>建構允許單行文字的輸入視窗</summary>
