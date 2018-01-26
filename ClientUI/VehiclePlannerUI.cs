@@ -135,7 +135,7 @@ namespace VehiclePlanner
         /// <summary>
         /// 是否Bypass Socket通訊
         /// </summary>
-        protected bool mBypassSocket = true;
+        protected bool mBypassSocket = false;
 
         /// <summary>
         /// 是否Bypass LoadFile功能
