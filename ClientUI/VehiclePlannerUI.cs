@@ -31,6 +31,7 @@ using AGVDefine;
 using SerialCommunication;
 using SerialCommunicationData;
 using System.Net.NetworkInformation;
+using BroadCast;
 
 namespace VehiclePlanner
 {
@@ -232,7 +233,12 @@ namespace VehiclePlanner
         private SimilarityFlow mSimilarityFlow = null;
 
         private ServoOnFlow mServoOnFlow = null;
-        
+
+        /// <summary>
+        /// iTS位置名稱對照表
+        /// </summary>
+        private Dictionary<IPAddress, string> mAgvList = new Dictionary<IPAddress, string>();
+
         #endregion Declaration - Fields
 
         #region Declaration - Members
@@ -287,6 +293,13 @@ namespace VehiclePlanner
         #endregion Tool
 
         #region Socket
+
+        /// <summary>
+        /// VehicleConsole模擬物件
+        /// </summary>
+        private FakeVehicleConsole mVC = new FakeVehicleConsole();
+
+        private Broadcaster mBroadcast = new Broadcaster();
 
         #endregion Socket
 
@@ -428,7 +441,7 @@ namespace VehiclePlanner
                 if (value != null && mStatus != value) {
                     mStatus = value;
                     this.InvokeIfNecessary(() => {
-                        if (mStatus.Battery != -1) {
+                        if (mStatus.Battery >= 0 && mStatus.Battery <= 100) {
                             tsprgBattery.Value = (int)mStatus.Battery;
                             tslbBattery.Text = $"{mStatus.Battery:0.0}%";
                         }
@@ -460,9 +473,12 @@ namespace VehiclePlanner
             mKeyboardHook.KeyUpEvent += mKeyboardHook_KeyUpEvent;
             mKeyboardHook.Start();
 
-            mHandle = this.Handle;            
-        }
+            mHandle = this.Handle;
 
+            /*-- 委派廣播接收事件 --*/
+            mBroadcast.ReceivedData += mBroadcast_ReceivedData;
+        }
+        
         #endregion Function - Constructors
 
         #region Function - Events
@@ -788,11 +804,14 @@ namespace VehiclePlanner
             try {
                 var similarity = DoPositionComfirm();
                 if (similarity != null) {
-                    mSimilarity = (double)similarity;
-                    if (mSimilarity != -1) {
+                    if (similarity >=0 && similarity <= 1) {
+                        mSimilarity = (double)similarity;
                         IConsole.AddMsg($"iTS - The map similarity is {mSimilarity:0.0%}");
-                    } else {
+                    } else if (mSimilarity == -1){
+                        mSimilarity = (double)similarity;
                         IConsole.AddMsg($"iTS - The map is now matched");
+                    } else {
+                        IConsole.AddMsg($"iTS - The map similarity is 0%");
                     }
                 }
             } catch (Exception ex) {
@@ -849,7 +868,6 @@ namespace VehiclePlanner
                     mVelocity = velocity;
                     IConsole.AddMsg($"iTS - WorkVelocity = {velocity}");
                 }
-                Send(FactoryMode.Factory.Order().SetWorkVelocity(mVelocity));
             }catch(Exception ex) {
                 IConsole.AddMsg(ex.Message);
             }
@@ -870,8 +888,7 @@ namespace VehiclePlanner
                 IConsole.AddMsg(ex.Message);
             }
         }
-
-
+        
         /// <summary>
         /// 要求VehicleConsole自動回傳資料
         /// </summary>
@@ -917,22 +934,18 @@ namespace VehiclePlanner
                 try {
                     string mapList = RequestMapList();
                     if (!string.IsNullOrEmpty(mapList)) {
-                        using (mMapList = new MapList(mapList)) {
-                            this.InvokeIfNecessary(() => {
-                                if (mMapList.ShowDialog(this) == DialogResult.OK) {
-                                    mapName = mMapList.strMapList;
-                                    var map = RequestMapFile(mapName);
-                                    if (map != null) {
-                                        if (map.SaveAs(@"D:\Mapinfo\Client")) {
-                                            success = true;
-                                            IConsole.AddMsg($"Planner - {map.Name} download completed");
-                                        } else {
-                                            success = false;
-                                            IConsole.AddMsg($"Planner - {map.Name} failed to save ");
-                                        }
-                                    }
+                        mapName = SelectFile(mapList);
+                        if (!string.IsNullOrEmpty(mapName)) {
+                            var map = RequestMapFile(mapName);
+                            if (map != null) {
+                                if (map.SaveAs(@"D:\Mapinfo\Client")) {
+                                    success = true;
+                                    IConsole.AddMsg($"Planner - {map.Name} download completed");
+                                } else {
+                                    success = false;
+                                    IConsole.AddMsg($"Planner - {map.Name} failed to save ");
                                 }
-                            });
+                            }
                         }
                     }
                 } catch (Exception ex) {
@@ -959,22 +972,18 @@ namespace VehiclePlanner
                 try {
                     string oriList = RequestOriList();
                     if (!string.IsNullOrEmpty(oriList)) {
-                        using (mMapList = new MapList(oriList)) {
-                            this.InvokeIfNecessary(() => {
-                                if (mMapList.ShowDialog(this) == DialogResult.OK) {
-                                    oriName = mMapList.strMapList;
-                                    var ori = RequestOriFile(oriName);
-                                    if (ori != null) {
-                                        if (ori.SaveAs(@"D:\MapInfo\Client")) {
-                                            success = true;
-                                            IConsole.AddMsg($"Planner - {ori.Name} download completed");
-                                        } else {
-                                            success = false;
-                                            IConsole.AddMsg($"Planner - {ori.Name} failed to save");
-                                        }
-                                    }
+                        oriName = SelectFile(oriList);
+                        if (!string.IsNullOrEmpty(oriName)) {
+                            var ori = RequestOriFile(oriName);
+                            if (ori != null) {
+                                if (ori.SaveAs(@"D:\MapInfo\Client")) {
+                                    success = true;
+                                    IConsole.AddMsg($"Planner - {ori.Name} download completed");
+                                } else {
+                                    success = false;
+                                    IConsole.AddMsg($"Planner - {ori.Name} failed to save");
                                 }
-                            });
+                            }
                         }
                     }
                 } catch (Exception ex) {
@@ -1057,6 +1066,33 @@ namespace VehiclePlanner
                 NewMap();
             }catch(Exception ex) {
                 IConsole.AddMsg(ex.Message);
+            }
+        }
+
+        private void ITest_Find() {
+            if (!mBroadcast.IsReceiving) {
+                Task.Run(() => {
+                    /*-- 開啟廣播接收 --*/
+                    mBroadcast.StartReceive(true);
+                    Console.AddMsg("[Planner]: Start searching iTS.");
+                    /*-- 清除iTS清單 --*/
+                    mAgvList.Clear();
+                    /*-- 廣播要求iTS回應 --*/
+                    for(int i = 0;i< 3; i++) {
+                        mBroadcast.Send("Count off");
+                        Thread.Sleep(30);
+                    }
+                    /*-- 等待iTS回應完畢後停止接收回應 --*/
+                    Thread.Sleep(2000);
+                    mBroadcast.StartReceive(false);
+                    /*-- 取得iTS IP清單 --*/
+                    var ipList = mAgvList.Keys.ToList().ConvertAll(v => v.ToString());
+                    /*-- 反饋至UI --*/
+                    string msg = $"Find {ipList.Count} iTS";
+                    Console.AddMsg($"[Planner]:{msg}");
+                    SetBalloonTip("Search iTS", msg);
+                    ITest.SetIPList(ipList);
+                });
             }
         }
 
@@ -1194,8 +1230,20 @@ namespace VehiclePlanner
             IGoalSetting.ReloadSingle();
         }
 
-        private void AddNewGoalEvent(ITowardPair goalPosition) {
-            IMapCtrl.SetAddMode(FactoryMode.Factory.Goal(goalPosition,$"Goal{Database.GoalGM.Count}"));
+        /// <summary>
+        /// 將當前位置設為Goal點
+        /// </summary>
+        private void AddCurrentGoalEvent() {
+            /*-- 取得當前位置 --*/
+            var currentPosition = Database.AGVGM[mAGVID].Data;
+            /*-- 建構Goal點 --*/
+            var goal = FactoryMode.Factory.Goal(currentPosition, $"Goal{Database.GoalGM.Count}");
+            /*-- 分配ID --*/
+            var goalID = Database.ID.GenerateID();
+            /*-- 將Goal點資料加入Goal點管理集合 --*/
+            Database.GoalGM.Add(goalID, goal);
+            /*-- 重新載入Goal點資訊 --*/
+            IGoalSetting.ReloadSingle();
         }
 
         /// <summary>
@@ -1215,16 +1263,31 @@ namespace VehiclePlanner
         #endregion
 
         #region ISerialClient
-        
+
 
         #endregion ISerialClient
 
-        #endregion Function - Events
+        #region BroadcastReceiver
         
+        /// <summary>
+        /// 廣播接收事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void mBroadcast_ReceivedData(object sender, BroadcastEventArgs e) {
+            if (!mAgvList.ContainsKey(e.Remote.Address)) {
+                mAgvList.Add(e.Remote.Address, e.Message);
+            }
+        }
+
+        #endregion BroadcastReceiver
+
+        #endregion Function - Events
+
         #region Function - Private Methods
 
         #region Communication
-        
+
         /// <summary>
         /// 要求AGV設定新位置
         /// </summary>
@@ -1246,9 +1309,9 @@ namespace VehiclePlanner
         /// <param name="velocity">移動速度</param>
         protected virtual void MotionContorl(MotionDirection direction) {
             bool? isManualMoving = null;
-            if (direction == MotionDirection.Stop && mIsManualMoving) {
+            if (direction == MotionDirection.Stop) {
                 isManualMoving = StartManualControl(false);
-            } else if (!mIsManualMoving){
+            } else {
                 if (SetManualVelocity(direction) == true) {
                     IConsole.AddMsg($"iTS - is {direction},Velocity is {mVelocity}");
                     isManualMoving = StartManualControl(true);
@@ -1628,8 +1691,10 @@ namespace VehiclePlanner
         /// 設定事件連結
         /// </summary>
         private void SetEvents() {
-            #region IGoalSetting 事件連結     
-            IGoalSetting.AddNewGoalEvent += AddNewGoalEvent;
+            
+            #region IGoalSetting 事件連結
+                 
+            IGoalSetting.AddCurrentGoalEvent += AddCurrentGoalEvent;
             IGoalSetting.ClearGoalsEvent += IGoalSetting_ClearGoalsEvent;
             IGoalSetting.DeleteSingleEvent += IGoalSetting_DeleteGoalsEvent;
             IGoalSetting.FindPathEvent += IGoalSetting_FindPathEvent;
@@ -1646,13 +1711,15 @@ namespace VehiclePlanner
             #endregion
 
             #region IMapGL 事件連結
+
             IMapCtrl.GLClickEvent += IMapCtrl_GLClickEvent;
             IMapCtrl.DragTowerPairEvent += IMapCtrl_DragTowerPairEvent;
             IMapCtrl.GLMoveUp += IMapCtrl_GLMoveUp;
-            
+
             #endregion
 
             #region ITesting 事件連結
+
             ITest.LoadMap += ITest_LoadMap;
             ITest.LoadOri += ITest_LoadOri;
             ITest.GetOri += ITest_GetORi;
@@ -1669,9 +1736,11 @@ namespace VehiclePlanner
             ITest.CarPosConfirm += ITest_CarPosConfirm;
             ITest.StartScan += ITest_StartScan;
             ITest.ShowMotionController += ShowMotionController;
+            ITest.Find += ITest_Find;
             #endregion 
 
             (mDockContent[miToolBox] as CtToolBox).SwitchCursor += IGoalSetting_SwitchCursor;
+
         }
         
         private void IMapCtrl_GLMoveUp(object sender, GLMouseEventArgs e) {
@@ -1845,12 +1914,29 @@ namespace VehiclePlanner
         }
 
         #endregion Serial 
+
         ///<summary>IP驗證</summary>
         ///<param name="ip">要驗證的字串</param>
         ///<returns>True:合法IP/False:非法IP</returns>
         private bool VerifyIP(string ip)
         {
             return Regex.IsMatch(ip, @"^((2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(2[0-4]\d|25[0-5]|[01]?\d\d?)$");
+        }
+
+        /// <summary>
+        /// 從檔案清單選擇一個檔案
+        /// </summary>
+        /// <param name="fileList">檔案清單</param>
+        /// <returns>選擇的檔案</returns>
+        private string SelectFile(string fileList) {
+            string fileName = null;
+            using (mMapList = new MapList(fileList)) {
+                var result = this.InvokeIfNecessary(() => mMapList.ShowDialog(this));
+                if (result == DialogResult.OK) {
+                    fileName = mMapList.strMapList;
+                }
+            }
+            return fileName;
         }
 
         #endregion Function - Private Methods

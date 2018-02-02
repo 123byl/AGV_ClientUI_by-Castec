@@ -511,6 +511,10 @@
       <Project>{b7d0f648-6962-4596-b164-c777766bba97}</Project>
       <Name>UIControl</Name>
     </ProjectReference>
+    <ProjectReference Include="..\BroadCast\Broadcast.csproj">
+      <Project>{10d930fd-ce9c-46fa-aa1e-fb8394ba287f}</Project>
+      <Name>Broadcast</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CtLib\CtLib\CtLib.csproj">
       <Project>{a9bed8b3-2f9d-42a8-90bd-9fae0522eb09}</Project>
       <Name>CtLib</Name>
@@ -526,6 +530,7 @@
   <ItemGroup>
     <Content Include="Icon\Drag.png" />
     <Content Include="Icon\Eraser.png" />
+    <Content Include="Icon\find.png" />
     <Content Include="Icon\Goal.png" />
     <Content Include="Icon\Insert.png" />
     <Content Include="Icon\NarrowLine.bmp" />

@@ -47,7 +47,7 @@ namespace VehiclePlanner
         /// <summary>
         /// 加入 Goal 點
         /// </summary>
-        event DelAddNewGoal AddNewGoalEvent;
+        event DelAddCurrentGoal AddCurrentGoalEvent;
         
         /// <summary>
         /// 清除所有目標點
@@ -168,11 +168,15 @@ namespace VehiclePlanner
 
         event DelShowMotionController ShowMotionController;
 
+        event DelFind Find;
+
         void ChangedMotorStt(bool servoOn);
 
         void SetLaserStt(bool isGettingLaser);
 
         void SetServerStt(bool isConnect);
+
+        void SetIPList(IEnumerable<string> ipList);
 
         void UnLockOriOperator(bool v);
         
@@ -187,7 +191,7 @@ namespace VehiclePlanner
         /// </summary>
         /// <param name="isScanning"></param>
         void ChangedScanStt(bool isScanning);
-
+        
     }
 
     /// <summary>
@@ -217,9 +221,9 @@ namespace VehiclePlanner
         public static class GoalSettingEvents
         {
             /// <summary>
-            /// 加入 Goal 點
+            /// 將目前位置設為Goal點
             /// </summary>
-            public delegate void DelAddNewGoal(ITowardPair goalPosition);
+            public delegate void DelAddCurrentGoal();
 
             /// <summary>
             /// 加入充電站
@@ -330,6 +334,8 @@ namespace VehiclePlanner
             public delegate void DelCarPosConfirm();
 
             public delegate void DelShowMotionController();
+
+            public delegate void DelFind();
 
         }
 

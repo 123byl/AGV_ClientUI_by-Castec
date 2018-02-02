@@ -60,6 +60,7 @@ namespace VehiclePlanner
         public event Events.TestingEvents.DelCarPosConfirm CarPosConfirm;
         public event Events.TestingEvents.DelStartScan StartScan;
         public event Events.TestingEvents.DelShowMotionController ShowMotionController;
+        public event Events.TestingEvents.DelFind Find;
 
         /// <summary>
         /// 依照連線狀態變更UI介面狀態
@@ -151,8 +152,21 @@ namespace VehiclePlanner
         /// </summary>
         /// <param name="isScanning"></param>
         public void ChangedScanStt(bool isScanning) {
-            CtInvoke.ControlText(btnScan, isScanning ? "Stop scan" :" Scan");
+            CtInvoke.ControlText(btnScan, isScanning ? "Stop scan" : " Scan");
             CtInvoke.ControlTag(btnScan, isScanning);
+        }
+
+        /// <summary>
+        /// 設定可用的iTS IP
+        /// </summary>
+        /// <param name="ipList">iTS IP 清單</param>
+        public void SetIPList(IEnumerable<string> ipList) {
+            cboHostIP.InvokeIfNecessary(() => {
+                cboHostIP.Items.Clear();
+                foreach(string ip in ipList) {
+                    cboHostIP.Items.Add(ip);
+                }
+            });
         }
 
         #endregion Implement - ITest
@@ -166,7 +180,6 @@ namespace VehiclePlanner
                 } else {
                     Connect.Invoke(false);
                 }
-
             });
         }
         
@@ -247,11 +260,15 @@ namespace VehiclePlanner
         }
 
         private void btnMotionController_Click(object sender, EventArgs e) {
-            ShowMotionController?.Invoke();
+            ShowMotionController.Invoke();
+        }
+
+        private void btnFind_Click(object sender, EventArgs e) {
+            Find.Invoke();
         }
 
         #endregion Funciton - UI Events
-        
+
     }
 
     /// <summary>

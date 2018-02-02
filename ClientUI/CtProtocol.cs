@@ -1,4 +1,5 @@
 ﻿using AGVDefine;
+using BroadCast;
 using CtLib.Library;
 using Geometry;
 using GLCore;
@@ -8,7 +9,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.NetworkInformation;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,7 +24,7 @@ namespace VehiclePlanner {
         /// <summary>
         /// 回應等待逾時時間
         /// </summary>
-        private int mTimeOut = 3000;
+        private int mTimeOut = 1000;
 
         /// <summary>
         /// 序列化傳輸物件
@@ -58,144 +61,58 @@ namespace VehiclePlanner {
         private void mSerialClient_ReceiveData(object sender, ReceiveDataEventArgs e) {
             if (e.Data is IProductPacket) {
                 var product = e.Data as IProductPacket;
+                /*-- 查詢是否有等待該封包 --*/
                 var cmdSrc = mCmdTsk.Find(v => v.SerialNumber == product.SerialNumber);
                 if (cmdSrc != null) {
                     cmdSrc.SetResult(product);
-                    return;
-                }
-                switch (product.Purpose) {
-                    //case EPurpose.RequestStatus:
-                    //    Status = product.ToIRequestStatus()?.Product;
-                    //    break;
-                    case EPurpose.AutoReportLaser:
-                        var laser = product.ToIAutoReportLaser().Product;
-                        if (laser != null) {
-                            DrawLaser(product.ToIAutoReportLaser().Product);
-                        } else {
-                            mIsAutoReport = false;
-                            Database.AGVGM[mAGVID].LaserAPoints.DataList.Clear();
-                            Database.AGVGM[mAGVID].Path.DataList.Clear();
-                            ITest.SetLaserStt(mIsAutoReport);
-                        }
-                        break;
-                    //case EPurpose.RequestLaser:
-                    //    DrawLaser(product.ToIRequestLaser().Product);
-                    //    break;
-                    //case EPurpose.SetServoMode:
-                    //    var servoOn = product.ToISetServoMode().Product;
-                    //    IConsole.AddMsg($"Server - Set:Servo{(servoOn ? "On" : "Off")}:{servoOn}");
-                    //    IsMotorServoOn = servoOn;
-                    //    break;
-                    //case EPurpose.SetWorkVelocity:
-                    //    IConsole.AddMsg($"Server - Set:SerWorkVelocity:{product.ToISetWorkVelocity().Product}");
-                    //    break;
-                    //case EPurpose.SetPosition: {
-                    //        var pack = product.ToISetPosition();
-                    //        Database.AGVGM[mAGVID].SetLocation(pack.Order.Design);
-                    //        IConsole.AddMsg($"Server - Set:POS:{pack.Product}");
-                    //        break;
-                    //    }
-                    //case EPurpose.StartManualControl:
-                    //    bool isMoving = product.ToIStartManualControl().Product;
-                    //    IConsole.AddMsg($"Server - Set:Moving:{isMoving}");
-                    //    break;
-                    //case EPurpose.SetManualVelocity: {
-                    //        var pack = product.ToISetManualVelocity();
-                    //        if (pack.Product) {
-                    //            var manualVelocity = pack.Order.Design;
-                    //            IConsole.AddMsg($"Server - Set:DriveVelo:{manualVelocity.X},{manualVelocity.Y}");
-                    //        } else {
-                    //            IConsole.AddMsg($"Server - Set:DriveVelo:False");
-                    //        }
-                    //        break;
-                    //    }
-                    //case EPurpose.StopScanning: {
-                    //        var pack = product.ToIStopScanning();
-                    //        if (pack != null) {
-                    //            ITest.ChangedScanStt(pack.Product);
-                    //        } else {
-                    //            IConsole.AddMsg("Error:StopScanning response is null");
-                    //        }
-                    //    }
-                    //    break;
-                    //case EPurpose.SetScanningOriFileName: {
-                    //        var pack = product.ToISetScanningOriFileName();
-                    //        if (pack.Product) {
-                    //            ITest.ChangedScanStt(true);
-                    //            IConsole.AddMsg($"Server - Set:OriName:{pack.Order.Design}");
-                    //        } else {
-                    //            ITest.ChangedScanStt(false);
-                    //            IConsole.AddMsg($"Server - Set:OriName:{pack.Product}");
-                    //        }
-                    //        break;
-                    //    }
-                    //case EPurpose.DoPositionComfirm:
-                    //    mSimilarity = product.ToIDoPositionComfirm().Product;
-                    //    IConsole.AddMsg($"Server - Set:POSComfirm:{mSimilarity}");
-                    //    break;
-                    case EPurpose.AutoReportPath: {
-                            var pack = product.ToIAutoReportPath();
-                            //IConsole.AddMsg($"Server - SetPathPlan:idx({pack.Order.Design}):Count({pack.Product.Count})");
-                            DrawPath(pack.Product);
+                }else {
+                    switch (product.Purpose) {
+                        case EPurpose.AutoReportLaser:
+                            var laser = product.ToIAutoReportLaser().Product;
+                            if (laser != null) {
+                                DrawLaser(product.ToIAutoReportLaser().Product);
+                            } else {
+                                mIsAutoReport = false;
+                                Database.AGVGM[mAGVID].LaserAPoints.DataList.Clear();
+                                Database.AGVGM[mAGVID].Path.DataList.Clear();
+                                ITest.SetLaserStt(mIsAutoReport);
+                            }
                             break;
-                        }
-                    //case EPurpose.DoRunningByGoalIndex: {
-                    //        var pack = product.ToIDoRunningByGoalIndex();
-                    //        IConsole.AddMsg($"Server - SetRun:idx({pack.Order.Design}):{pack.Product}");
-                    //        break;
-                    //    }
-                    //case EPurpose.DoCharging: {
-                    //        var pack = product.ToIDoCharging();
-                    //        IConsole.AddMsg($"Server - SetCharging:idx({pack.Order.Design}):{pack.Product}");
-                    //        break;
-                    //    }
-                    //case EPurpose.RequestMapList:
-                    //    var mapList = product.ToIRequestMapList().Product;
-                    //    using (MapList f = new MapList(mapList)) {
-                    //        if (f.ShowDialog() == DialogResult.OK) {
-                    //            Send(FactoryMode.Factory.Order().RequestMapFile(f.strMapList));
-                    //        }
-                    //    }
-                    //    break;
-                    //case EPurpose.RequestMapFile:
-                    //    product.ToIRequestMapFile().Product.SaveAs(@"D:\Mapinfo\Client");
-                    //    break;
-                    //case EPurpose.RequestOriFileList:
-                    //    var oriList = product.ToIRequestOriFileList().Product;
-                    //    using (MapList f = new MapList(oriList)) {
-                    //        if (f.ShowDialog() == DialogResult.OK) {
-                    //            Send(FactoryMode.Factory.Order().RequestOriFile(f.strMapList));
-                    //        }
-                    //    }
-                    //    break;
-                    //case EPurpose.RequestOriFile:
-                    //    product.ToIRequestOriFile().Product.SaveAs(@"D:\Mapinfo\Client");
-                    //    break;
-                    //case EPurpose.UploadMapToAGV: {
-                    //        var pack = product.ToIUploadMapToAGV();
-                    //        IConsole.AddMsg($"Server - Send:Map:{pack.Order.Design.Name}:{pack.Product}");
-                    //        break;
-                    //    }
-                    //case EPurpose.ChangeMap: {
-                    //        var pack = product.ToIChangeMap();
-                    //        IConsole.AddMsg($"Server - Set:MapName:{(pack.Product ? pack.Order.Design : "False")}");
-                    //        break;
-                    //    }
-                    //case EPurpose.RequestGoalList:
-                    //    mCmdTsk.Last().SetResult(product);
-                    //    mCmdTsk.Remove(mCmdTsk.Last());
-                    //    break;
-                    case EPurpose.AutoReportStatus:
-                        Status = product.ToIAutoReportStatus()?.Product;
-                        break;
-                    case EPurpose.RequestPath:
-                        var path = product.ToIRequestPath().Product;
-                        DrawPath(path);
-                        break;
+                        case EPurpose.AutoReportPath: {
+                                var path = product.ToIAutoReportPath().Product;
+                                if (path != null) {
+                                    DrawPath(path);
+                                }
+                                break;
+                            }
+                        case EPurpose.AutoReportStatus:
+                            Status = product.ToIAutoReportStatus()?.Product;
+                            break;
+                    }
                 }
             }
         }
 
+        /// <summary>
+        /// 連線狀態變更事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void mSerialClient_OnConnectChange(object sender, ConnectStatusChangeEventArgs e) {
+            /*--依連線狀態設定界面--*/
+            ITest.SetServerStt(e.IsConnected);
+            IConsole.AddMsg($"Client - Is {(e.IsConnected ? "Connected" : "Disconnected")} to {e.IP}:{e.Port}");
+            if (e.IsConnected) {
+                mHostIP = e.IP;
+                ITest_CarPosConfirm();
+                Status = RequestStatus();
+            }else {
+                if (mSerialClient != null) {
+                    mSerialClient.Dispose();
+                    mSerialClient = null;
+                }
+            }
+        }
 
         #endregion Funciton - Evnets
 
@@ -216,6 +133,7 @@ namespace VehiclePlanner {
                         /*-- 實例化物件 --*/
                         if (mSerialClient == null) {
                             mSerialClient = FactoryMode.Factory.SerialClient(mSerialClient_ReceiveData, mBypassSocket);
+                            mSerialClient.ConnectChange += mSerialClient_OnConnectChange;
                         }
                         /*-- IP格式驗證 --*/
                         if (!VerifyIP(hostIP)) {
@@ -227,25 +145,21 @@ namespace VehiclePlanner {
                             throw new PingException(pingStt.ToString());
                         }
                         /*-- 連線至VehicleConsole --*/
-                        mSerialClient.Connect(hostIP, (int)EPort.ClientPort);
+                        mSerialClient.Connect(hostIP, (int)EPort.VehiclePlanner);
                     } else {//斷開與VehicleConsole的連線
-                        mSerialClient?.Stop();
-                        mSerialClient.Dispose();
-                        mSerialClient = null;
-                    }
-                    /*--依連線狀態設定界面--*/
-                    ITest.SetServerStt(IsConnected);
-                    IConsole.AddMsg($"Client - Is {(IsConnected ? "Connected" : "Disconnected")} to {mHostIP}");
-                    if (IsConnected) {
-                        mHostIP = hostIP;
-                        ITest_CarPosConfirm();
-                        Status = RequestStatus();
+                        mSerialClient.Stop();
                     }
                 }
             } catch (PingException pe) {
                 IConsole.AddMsg($"Ping fail:{pe.Message}");
+                SetBalloonTip("Connect failed", pe.Message);
             } catch (Exception ex) {
                 IConsole.AddMsg(ex.Message);
+                SetBalloonTip("Connect failed", ex.Message);
+                if (mSerialClient != null) {
+                    mSerialClient.Dispose();
+                    mSerialClient = null;
+                }
             }
         }
 
@@ -544,6 +458,8 @@ namespace VehiclePlanner {
 
         private string mMapPath = @"D:\MapInfo\Client";
 
+        private IPEndPoint mRemotePoint = null;
+
         public bool Connected { get; private set; }
 
         public string LocalIPPort { get; private set; }
@@ -556,9 +472,11 @@ namespace VehiclePlanner {
         }
 
         public void Connect(string IP, int port) {
+            mRemotePoint = new IPEndPoint(IPAddress.Parse(IP), port);
             Connected = true;
             LocalIPPort = "127.0.0.1:8080";
             ServerIPPort = IP + ":" + port;
+            ConnectChange?.Invoke(this, new ConnectStatusChangeEventArgs() { IP = mRemotePoint.Address.ToString(), Port = mRemotePoint.Port, IsConnected = true });
         }
 
         public bool Send(string msg) { return true; }
@@ -663,10 +581,13 @@ namespace VehiclePlanner {
 
         public void Stop() {
             Connected = false;
+            ConnectChange?.Invoke(this, new ConnectStatusChangeEventArgs() { IP = mRemotePoint.Address.ToString(),Port = mRemotePoint.Port,IsConnected= false});
         }
 
         #region IDisposable Support
         private bool disposedValue = false; // 偵測多餘的呼叫
+
+        public event DelConnectStatusChangeEvent ConnectChange;
 
         protected virtual void Dispose(bool disposing) {
             if (!disposedValue) {
@@ -697,6 +618,134 @@ namespace VehiclePlanner {
         #endregion
     }
 
+    /// <summary>
+    /// 模擬VehicleConle交握
+    /// </summary>
+    public class FakeVehicleConsole {
+
+        #region Declaration - Fields
+
+        /// <summary>
+        /// 序列傳輸Server
+        /// </summary>
+        private ISerialServer mServer = null;
+
+        /// <summary>
+        /// 自動回報執行緒
+        /// </summary>
+        private Thread t_VPSender = null;
+
+        private BroadcastReceiver mBroadcastReceiver = null;
+
+        #endregion Declaration - Fields
+
+        #region Function - Constructors
+
+        public FakeVehicleConsole() {
+            mServer = FactoryMode.Factory.SerialServer();
+            mServer = FactoryMode.Factory.SerialServer();
+            mServer.ConnectedEvent += MServer_ConnectedEvent;
+            mServer.StartListening((int)EPort.VehiclePlanner, 3, VehiclePlannerReceiver);
+            CtThread.CreateThread(ref t_VPSender, "mTdClientSender", tsk_AutoReportToVehiclePlanner);//iTS狀態自動回報(-> VehiclePlanner)
+            mBroadcastReceiver = new BroadcastReceiver();
+            mBroadcastReceiver.ReceivedData += mBroadcastReceiver_ReceivedData;
+            mBroadcastReceiver.StartReceive(true);
+        }
+
+        #endregion Function - Constructors
+
+        #region Function - Events
+        private int count = 0;
+        /// <summary>
+        /// 廣播接收事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void mBroadcastReceiver_ReceivedData(object sender, BroadcastEventArgs e) {
+            if (e.Message == "Count off") {
+                mBroadcastReceiver.Send($"VehicleConsole {count++}", e.Remote);
+            }
+        }
+
+        /// <summary>
+        /// VP連線事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MServer_ConnectedEvent(object sender, ConnectStatusChangeEventArgs e) {
+            ConsoleDisplay($"[VP]:{e.IP}:{e.Port} connected");
+        }
+
+        /// <summary>
+        /// 接收來自Client指令
+        /// </summary>
+        private void VehiclePlannerReceiver(object sneder, ReceiveDataEventArgs e) {
+            if (e.Data is IOrderPacket) {
+                var pack = e.Data as IOrderPacket;
+                IProductPacket product = null;
+                switch (pack.Purpose) {
+                    case EPurpose.RequestStatus:
+                        var order = pack.ToIRequestStatus();
+                        product = order.CreatProduct(FactoryMode.Factory.Status());
+                        break;
+                }
+                if (product != null) {
+                    string ipport = e.Remote.RemoteEndPoint.ToString();
+                    mServer.Send(ipport, product);
+                }
+            }
+        }
+
+        #endregion Funciton - Events
+
+        #region Function - Task
+
+        /// <summary>
+        /// iTS狀態自動回報(ToVehiclePlanner)
+        /// </summary>
+        private void tsk_AutoReportToVehiclePlanner() {
+            while (mServer.IsListening) {
+                //var laser = CreateLaser();
+                //var path = CreatePath();
+                //var status = CreateStatus();
+                //if (mStatusPacket != null && mStatusSubscribers.Any()) {
+                //    var product = mStatusPacket.ToIAutoReportStatus().CreatProduct(CreateStatus());
+                //    foreach (string ipport in mStatusSubscribers) {
+                //        mServer.Send(ipport, product);
+                //    }
+                //}
+                //if (laser != null && mLaserPacket != null && mLaserSubscribers.Any()) {
+                //    var product = mLaserPacket.ToIAutoReportLaser().CreatProduct(laser);
+                //    foreach (string ipport in mLaserSubscribers) {
+                //        mServer.Send(ipport, product);
+                //    }
+                //}
+                //if (path != null && mPathPacket != null && mPathSubscribers.Any()) {
+                //    var product = mPathPacket.ToIAutoReportPath().CreatProduct(path);
+                //    foreach (string ipport in mPathSubscribers) {
+                //        mServer.Send(ipport, product);
+                //    }
+                //}
+                Thread.Sleep(200);
+            }
+        }
+        
+        #endregion Funciton - Task
+
+        #region Function - Private Methods
+
+        private void ConsoleDisplay(string msg) {
+            Console.WriteLine(msg);
+        }
+
+        #endregion Funciton - Privagte Methods
+
+    }
+
+    /// <summary>
+    /// 等待任務
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class CtTaskCompletionSource<T> : TaskCompletionSource<T> {
         /// <summary>
         /// 任務序列號

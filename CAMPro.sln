@@ -39,6 +39,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AGVDefine", "..\AGVBase\AGV
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscriptExtention", "..\AGVBase\DiscriptExtention\DiscriptExtention.csproj", "{6F51946D-DC9E-4A62-98DD-6A4E6401DD20}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Broadcast", "BroadCast\Broadcast.csproj", "{10D930FD-CE9C-46FA-AA1E-FB8394BA287F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -154,6 +156,14 @@ Global
 		{6F51946D-DC9E-4A62-98DD-6A4E6401DD20}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6F51946D-DC9E-4A62-98DD-6A4E6401DD20}.Release|x86.ActiveCfg = Release|Any CPU
 		{6F51946D-DC9E-4A62-98DD-6A4E6401DD20}.Release|x86.Build.0 = Release|Any CPU
+		{10D930FD-CE9C-46FA-AA1E-FB8394BA287F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10D930FD-CE9C-46FA-AA1E-FB8394BA287F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10D930FD-CE9C-46FA-AA1E-FB8394BA287F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{10D930FD-CE9C-46FA-AA1E-FB8394BA287F}.Debug|x86.Build.0 = Debug|Any CPU
+		{10D930FD-CE9C-46FA-AA1E-FB8394BA287F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10D930FD-CE9C-46FA-AA1E-FB8394BA287F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10D930FD-CE9C-46FA-AA1E-FB8394BA287F}.Release|x86.ActiveCfg = Release|Any CPU
+		{10D930FD-CE9C-46FA-AA1E-FB8394BA287F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

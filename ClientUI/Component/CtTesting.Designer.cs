@@ -23,6 +23,7 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CtTesting));
             this.btnMotionController = new System.Windows.Forms.Button();
             this.lbHostIP = new System.Windows.Forms.Label();
@@ -47,6 +48,8 @@
             this.lbVelocity = new System.Windows.Forms.Label();
             this.txtVelocity = new System.Windows.Forms.TextBox();
             this.btnServoOnOff = new System.Windows.Forms.Button();
+            this.btnFind = new System.Windows.Forms.Button();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.grbMap.SuspendLayout();
             this.grbInfo.SuspendLayout();
             this.gpbShift.SuspendLayout();
@@ -68,7 +71,7 @@
             // 
             this.lbHostIP.AutoSize = true;
             this.lbHostIP.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.lbHostIP.Location = new System.Drawing.Point(12, 18);
+            this.lbHostIP.Location = new System.Drawing.Point(12, 29);
             this.lbHostIP.Name = "lbHostIP";
             this.lbHostIP.Size = new System.Drawing.Size(79, 25);
             this.lbHostIP.TabIndex = 64;
@@ -78,7 +81,7 @@
             // 
             this.cboHostIP.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.cboHostIP.FormattingEnabled = true;
-            this.cboHostIP.Location = new System.Drawing.Point(11, 46);
+            this.cboHostIP.Location = new System.Drawing.Point(11, 57);
             this.cboHostIP.Name = "cboHostIP";
             this.cboHostIP.Size = new System.Drawing.Size(184, 33);
             this.cboHostIP.TabIndex = 63;
@@ -87,7 +90,7 @@
             // btnScan
             // 
             this.btnScan.Font = new System.Drawing.Font("微軟正黑體", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.btnScan.Location = new System.Drawing.Point(460, 21);
+            this.btnScan.Location = new System.Drawing.Point(460, 24);
             this.btnScan.Margin = new System.Windows.Forms.Padding(4);
             this.btnScan.Name = "btnScan";
             this.btnScan.Size = new System.Drawing.Size(105, 65);
@@ -99,7 +102,7 @@
             // btnPosConfirm
             // 
             this.btnPosConfirm.Font = new System.Drawing.Font("微軟正黑體", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.btnPosConfirm.Location = new System.Drawing.Point(586, 21);
+            this.btnPosConfirm.Location = new System.Drawing.Point(586, 24);
             this.btnPosConfirm.Margin = new System.Windows.Forms.Padding(4);
             this.btnPosConfirm.Name = "btnPosConfirm";
             this.btnPosConfirm.Size = new System.Drawing.Size(109, 65);
@@ -111,7 +114,7 @@
             // btnSetCar
             // 
             this.btnSetCar.Font = new System.Drawing.Font("微軟正黑體", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.btnSetCar.Location = new System.Drawing.Point(505, 388);
+            this.btnSetCar.Location = new System.Drawing.Point(503, 402);
             this.btnSetCar.Margin = new System.Windows.Forms.Padding(4);
             this.btnSetCar.Name = "btnSetCar";
             this.btnSetCar.Size = new System.Drawing.Size(90, 85);
@@ -123,7 +126,7 @@
             // btnSimplyOri
             // 
             this.btnSimplyOri.Font = new System.Drawing.Font("微軟正黑體", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.btnSimplyOri.Location = new System.Drawing.Point(242, 273);
+            this.btnSimplyOri.Location = new System.Drawing.Point(240, 287);
             this.btnSimplyOri.Margin = new System.Windows.Forms.Padding(4);
             this.btnSimplyOri.Name = "btnSimplyOri";
             this.btnSimplyOri.Size = new System.Drawing.Size(90, 85);
@@ -137,7 +140,7 @@
             this.btnConnect.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.btnConnect.Image = global::VehiclePlanner.Properties.Resources.Disconnect;
             this.btnConnect.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnConnect.Location = new System.Drawing.Point(202, 21);
+            this.btnConnect.Location = new System.Drawing.Point(202, 24);
             this.btnConnect.Margin = new System.Windows.Forms.Padding(4);
             this.btnConnect.Name = "btnConnect";
             this.btnConnect.Size = new System.Drawing.Size(231, 65);
@@ -150,7 +153,7 @@
             // btnGetOri
             // 
             this.btnGetOri.Font = new System.Drawing.Font("微軟正黑體", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.btnGetOri.Location = new System.Drawing.Point(128, 273);
+            this.btnGetOri.Location = new System.Drawing.Point(126, 287);
             this.btnGetOri.Margin = new System.Windows.Forms.Padding(4);
             this.btnGetOri.Name = "btnGetOri";
             this.btnGetOri.Size = new System.Drawing.Size(90, 85);
@@ -162,7 +165,7 @@
             // btnLoadOri
             // 
             this.btnLoadOri.Font = new System.Drawing.Font("微軟正黑體", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.btnLoadOri.Location = new System.Drawing.Point(32, 273);
+            this.btnLoadOri.Location = new System.Drawing.Point(30, 287);
             this.btnLoadOri.Margin = new System.Windows.Forms.Padding(4);
             this.btnLoadOri.Name = "btnLoadOri";
             this.btnLoadOri.Size = new System.Drawing.Size(90, 85);
@@ -174,7 +177,7 @@
             // btnClrMap
             // 
             this.btnClrMap.Font = new System.Drawing.Font("微軟正黑體", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.btnClrMap.Location = new System.Drawing.Point(603, 388);
+            this.btnClrMap.Location = new System.Drawing.Point(601, 402);
             this.btnClrMap.Margin = new System.Windows.Forms.Padding(4);
             this.btnClrMap.Name = "btnClrMap";
             this.btnClrMap.Size = new System.Drawing.Size(90, 85);
@@ -190,7 +193,7 @@
             this.grbMap.Controls.Add(this.btnLoadMap);
             this.grbMap.Controls.Add(this.btnSendMap);
             this.grbMap.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.grbMap.Location = new System.Drawing.Point(370, 241);
+            this.grbMap.Location = new System.Drawing.Point(368, 255);
             this.grbMap.Name = "grbMap";
             this.grbMap.Size = new System.Drawing.Size(323, 140);
             this.grbMap.TabIndex = 62;
@@ -239,7 +242,7 @@
             this.grbInfo.Controls.Add(this.btnGetLaser);
             this.grbInfo.Controls.Add(this.btnGetCarStatus);
             this.grbInfo.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.grbInfo.Location = new System.Drawing.Point(370, 93);
+            this.grbInfo.Location = new System.Drawing.Point(368, 107);
             this.grbInfo.Name = "grbInfo";
             this.grbInfo.Size = new System.Drawing.Size(222, 142);
             this.grbInfo.TabIndex = 12;
@@ -279,7 +282,7 @@
             this.gpbShift.Controls.Add(this.txtVelocity);
             this.gpbShift.Controls.Add(this.btnServoOnOff);
             this.gpbShift.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.gpbShift.Location = new System.Drawing.Point(13, 93);
+            this.gpbShift.Location = new System.Drawing.Point(11, 107);
             this.gpbShift.Margin = new System.Windows.Forms.Padding(4);
             this.gpbShift.Name = "gpbShift";
             this.gpbShift.Padding = new System.Windows.Forms.Padding(4);
@@ -336,11 +339,25 @@
             this.btnServoOnOff.UseVisualStyleBackColor = false;
             this.btnServoOnOff.Click += new System.EventHandler(this.btnServoOnOff_Click);
             // 
+            // btnFind
+            // 
+            this.btnFind.Font = new System.Drawing.Font("微軟正黑體", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.btnFind.Image = ((System.Drawing.Image)(resources.GetObject("btnFind.Image")));
+            this.btnFind.Location = new System.Drawing.Point(150, 10);
+            this.btnFind.Margin = new System.Windows.Forms.Padding(4);
+            this.btnFind.Name = "btnFind";
+            this.btnFind.Size = new System.Drawing.Size(44, 39);
+            this.btnFind.TabIndex = 65;
+            this.toolTip1.SetToolTip(this.btnFind, "Search iTS");
+            this.btnFind.UseVisualStyleBackColor = true;
+            this.btnFind.Click += new System.EventHandler(this.btnFind_Click);
+            // 
             // CtTesting
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(708, 767);
+            this.Controls.Add(this.btnFind);
             this.Controls.Add(this.lbHostIP);
             this.Controls.Add(this.cboHostIP);
             this.Controls.Add(this.grbMap);
@@ -394,5 +411,7 @@
         private System.Windows.Forms.ComboBox cboHostIP;
         private System.Windows.Forms.Label lbHostIP;
         private System.Windows.Forms.Button btnMotionController;
+        private System.Windows.Forms.Button btnFind;
+        private System.Windows.Forms.ToolTip toolTip1;
     }
 }

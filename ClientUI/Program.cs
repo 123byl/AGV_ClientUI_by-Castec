@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Text.RegularExpressions;
 
 namespace VehiclePlanner {
     static class Program {
@@ -25,7 +26,6 @@ namespace VehiclePlanner {
 
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new VehiclePlannerUI());
-            //Application.Run(new TaskCompletionSourceTest());
 
         }
 

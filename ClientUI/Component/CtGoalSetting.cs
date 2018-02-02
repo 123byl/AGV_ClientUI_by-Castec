@@ -57,7 +57,7 @@ namespace VehiclePlanner
         /// <summary>
         /// 加入 Goal 點
         /// </summary>
-        public event DelAddNewGoal AddNewGoalEvent;
+        public event DelAddCurrentGoal AddCurrentGoalEvent;
 
         /// <summary>
         /// 清除所有目標點
@@ -271,7 +271,7 @@ namespace VehiclePlanner
         private void btnCurrPos_Click(object sender, EventArgs e)
         {
             lock (mKey) {
-                AddNewGoalEvent?.Invoke(Database.AGVGM[0].Data);
+                AddCurrentGoalEvent?.Invoke();
             }
         }
 
@@ -349,8 +349,10 @@ namespace VehiclePlanner
 
         private void btnCharging_Click(object sender, EventArgs e) {
             lock (mKey) {
-                GetSelectedID(id => {
-                    Charging?.Invoke(id);
+                Task.Run(() => {
+                    GetSelectedID(id => {
+                        Charging?.Invoke(id);
+                    });
                 });
             }
         }
