@@ -19,7 +19,7 @@ namespace VehiclePlanner
     /// <summary>
     /// Console介面
     /// </summary>
-    public partial class CtConsole : CtDockContent, IIConsole
+    public partial class CtConsole : CtDockContent, IConsole
     {
 
         #region Declaration - Fields

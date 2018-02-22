@@ -80,9 +80,8 @@
     <Compile Include="Component\AGVMapUI.Designer.cs">
       <DependentUpon>AGVMapUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="CtProtocol.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="CtProtocol.cs" />
+    <Compile Include="SystemLayer.cs" />
     <Compile Include="VehiclePlannerUI.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -541,6 +540,7 @@
     <Content Include="OpenGLDLL\SharpGL.dll" />
     <Content Include="OpenGLDLL\SharpGL.SceneGraph.dll" />
     <Content Include="OpenGLDLL\SharpGL.WinForms.dll" />
+    <Content Include="Resources\CASTEC.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

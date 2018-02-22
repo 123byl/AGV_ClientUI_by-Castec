@@ -311,6 +311,16 @@ namespace VehiclePlanner.Properties {
         }
         
         /// <summary>
+        ///   查詢類似 (圖示) 的類型 System.Drawing.Icon 當地語系化資源。
+        /// </summary>
+        internal static System.Drawing.Icon CASTEC {
+            get {
+                object obj = ResourceManager.GetObject("CASTEC", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   查詢類型 System.Drawing.Bitmap 的當地語系化資源。
         /// </summary>
         internal static System.Drawing.Bitmap CASTEC_Logo_Full {

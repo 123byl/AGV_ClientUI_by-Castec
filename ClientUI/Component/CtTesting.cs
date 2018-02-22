@@ -15,7 +15,7 @@ namespace VehiclePlanner
     /// <summary>
     /// 測試功能介面
     /// </summary>
-    public partial class CtTesting : CtDockContent ,IITesting{
+    public partial class CtTesting : CtDockContent ,ITesting{
 
         #region Declaration - Fields
 

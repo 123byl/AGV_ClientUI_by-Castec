@@ -11,7 +11,7 @@ namespace VehiclePlanner
     /// <summary>
     /// Console 視窗公開操作方法
     /// </summary>
-    public interface IIConsole
+    public interface IConsole:ICtDockContent
     {
         /// <summary>
         /// 加入文字
@@ -133,7 +133,7 @@ namespace VehiclePlanner
     /// <summary>
     /// Test視窗公開操作方法
     /// </summary>
-    public interface IITesting
+    public interface ITesting:ICtDockContent
     {
 
         event DelConnect Connect;

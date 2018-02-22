@@ -25,7 +25,8 @@ namespace VehiclePlanner {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new VehiclePlannerUI());
+            CtVehiclePlanner planner = new CtVehiclePlanner();
+            Application.Run(new VehiclePlannerUI(planner));
 
         }
 
