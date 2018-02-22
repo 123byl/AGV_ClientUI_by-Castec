@@ -273,8 +273,7 @@ namespace VehiclePlanner.Partial.CtVehiclePlanner {
     #endregion EvnetArgs
 
     #region Fake
-
-
+    
     /// <summary>
     /// Bypass用的假SerialClient類
     /// </summary>

@@ -997,7 +997,7 @@ namespace VehiclePlanner
             mGoalSetting.LoadMapFromAGVEvent += rVehiclePlanner.GetMap;
             mGoalSetting.RunGoalEvent += rVehiclePlanner.DoRunningByGoalIndex;
             mGoalSetting.RunLoopEvent += IGoalSetting_RunLoopEvent;
-            mGoalSetting.SaveGoalEvent += rVehiclePlanner.SaveGoal;
+            mGoalSetting.SaveGoalEvent += rVehiclePlanner.SaveMap;
             mGoalSetting.SendMapToAGVEvent += ITest_SendMap;
             mGoalSetting.GetGoalNames += rVehiclePlanner.GetGoalNames;
             mGoalSetting.Charging += rVehiclePlanner.DoCharging;

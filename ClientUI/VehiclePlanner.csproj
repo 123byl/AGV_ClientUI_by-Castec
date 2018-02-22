@@ -79,17 +79,15 @@
     <Compile Include="Module\Implement\AGVMapUI.Designer.cs">
       <DependentUpon>AGVMapUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="CtProtocol.cs" />
     <Compile Include="Module\Interface\ModuleInterface.cs" />
     <Compile Include="Partial\CtVehiclePlanner\VehiclePlanner_Define.cs" />
     <Compile Include="Partial\CtVehiclePlanner\VehiclePlanner_Extension.cs" />
     <Compile Include="Partial\CtVehiclePlanner\VehiclePlanner_SupportClass.cs" />
-    <Compile Include="Partial\VehiclePlannerUI\Events.cs" />
     <Compile Include="Partial\VehiclePlannerUI\VehiclePlannerUI_Define.cs" />
     <Compile Include="Partial\VehiclePlannerUI\VehiclePlannerUI_Extension.cs" />
     <Compile Include="Partial\VehiclePlannerUI\VehiclePlannerUI_MethodLibrary.cs" />
     <Compile Include="Partial\VehiclePlannerUI\VehiclePlanner_SupportClass.cs" />
-    <Compile Include="SystemLayer.cs" />
+    <Compile Include="CtVehiclePlanner.cs" />
     <Compile Include="VehiclePlannerUI.cs">
       <SubType>Form</SubType>
     </Compile>
