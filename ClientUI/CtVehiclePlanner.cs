@@ -84,8 +84,10 @@ namespace VehiclePlanner {
         ///         \ 將所有按鈕解鎖，當無法處於執行按鈕功能狀態，以對話視窗引導使用者進行狀態修正
         ///         \ 重寫模組權限(加入CtToolBox控制)
         ///         \ 重寫AGVMapUI的ShowWindow與HideWindow方法
+        ///     1.0.0   Jay [2018/02/22]
+        ///         \ 架構重整，分離底層與介面
         /// </remarks>
-        public CtVersion Version { get { return new CtVersion(0, 0, 13, "2017/12/14", "Jay Chang"); } }
+        public CtVersion Version { get { return new CtVersion(1, 0, 0, "2018/02/22", "Jay Chang"); } }
 
         #endregion Version - Information
 

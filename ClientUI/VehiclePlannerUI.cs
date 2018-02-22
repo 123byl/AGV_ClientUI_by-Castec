@@ -324,7 +324,6 @@ namespace VehiclePlanner
                     mTesting.ChangedMotorStt(rVehiclePlanner.IsMotorServoOn);
                     break;
                 case PropertyDeclaration.IsConnected:
-                    /*--依連線狀態設定界面--*/
                     mTesting.SetServerStt(rVehiclePlanner.IsConnected);
                     break;
                 case PropertyDeclaration.IsScanning:
@@ -356,6 +355,9 @@ namespace VehiclePlanner
                     this.InvokeIfNecessary(() => {
                         tslbHostIP.Text = rVehiclePlanner.HostIP;
                     });
+                    break;
+                case PropertyDeclaration.UserData:
+                    UserChanged(rVehiclePlanner.UserData);
                     break;
             }
         }
