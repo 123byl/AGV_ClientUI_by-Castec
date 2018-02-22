@@ -24,11 +24,14 @@ namespace VehiclePlanner {
                 mDockContent.Clear();
                 mDockContent = null;
 
+                mNotifyIcon?.Dispose();
+                mNotifyIcon = null;
 
+                mMenuItems?.Dispose();
+                mMenuItems = null;
 
                 components.Dispose();
-
-
+                
             }
             base.Dispose(disposing);
         }

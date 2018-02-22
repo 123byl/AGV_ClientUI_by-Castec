@@ -9,9 +9,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using UIControl;
+using VehiclePlanner.Module.Implement;
 using WeifenLuo.WinFormsUI.Docking;
 
-namespace VehiclePlanner {
+namespace VehiclePlanner.Forms {
     public partial class CtMapInsert : CtDockContent , IMouseInsertPanel {
 
         #region Declaration - Declaration - Fields

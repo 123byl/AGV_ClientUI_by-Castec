@@ -1,4 +1,4 @@
-﻿namespace VehiclePlanner {
+﻿namespace VehiclePlanner.Module.Implement {
     partial class CtConsole {
         /// <summary>
         /// Required designer variable.

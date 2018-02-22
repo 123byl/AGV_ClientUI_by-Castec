@@ -1,4 +1,4 @@
-﻿namespace VehiclePlanner.Component {
+﻿namespace VehiclePlanner.Forms {
     partial class CtMotionController {
         /// <summary>
         /// Required designer variable.

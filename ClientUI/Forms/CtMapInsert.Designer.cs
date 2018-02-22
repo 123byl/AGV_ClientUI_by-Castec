@@ -1,4 +1,4 @@
-﻿namespace VehiclePlanner {
+﻿namespace VehiclePlanner.Forms {
     partial class CtMapInsert {
         /// <summary>
         /// Required designer variable.

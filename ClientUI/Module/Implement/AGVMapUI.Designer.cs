@@ -1,6 +1,6 @@
 ﻿using GLUI;
 
-namespace VehiclePlanner {
+namespace VehiclePlanner.Module.Implement {
     partial class AGVMapUI {
         /// <summary>
         /// Required designer variable.

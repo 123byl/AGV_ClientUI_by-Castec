@@ -18,7 +18,6 @@ using CtLib.Forms;
 using System.Threading;
 using System.Net;
 using System.Net.Sockets;
-using VehiclePlanner.Component;
 using System.IO;
 using System.Diagnostics;
 using CtLib.Module.Utility;
@@ -32,6 +31,11 @@ using SerialCommunication;
 using SerialCommunicationData;
 using System.Net.NetworkInformation;
 using BroadCast;
+using VehiclePlanner.Module.Interface;
+using VehiclePlanner.Module.Implement;
+using VehiclePlanner.Forms;
+using VehiclePlanner.Partial.CtVehiclePlanner;
+using VehiclePlanner.Partial.VehiclePlannerUI;
 
 namespace VehiclePlanner
 {
@@ -127,7 +131,12 @@ namespace VehiclePlanner
         private IPair mNewPos = null;
         
         private IntPtr mHandle = IntPtr.Zero;
-        
+
+        /// <summary>
+        /// 系統列圖示標題
+        /// </summary>
+        protected string mNotifyCaption = "Vehicle planner";
+
         #endregion Declaration - Fields
 
         #region Declaration - Members
@@ -154,10 +163,20 @@ namespace VehiclePlanner
         /// </summary>
         private MapList mMapList = null;
 
+        /// <summary>
+        /// 系統列圖示物件
+        /// </summary>
+        private CtNotifyIcon mNotifyIcon = null;
+
+        /// <summary>
+        /// 系統列圖示右鍵選單
+        /// </summary>
+        private MenuItems mMenuItems = null;
+
         #endregion UI
 
         #region Tool
-        
+
         /// <summary>
         /// 模組版本集合
         /// </summary>
@@ -181,9 +200,9 @@ namespace VehiclePlanner
         /// <summary>
         /// MapGL子視窗
         /// </summary>
-        private AGVMapUI MapGL {
+        private IMapGL MapGL {
             get {
-                return mDockContent.ContainsKey(miMapGL) ? mDockContent[miMapGL] as AGVMapUI : null;
+                return mDockContent.ContainsKey(miMapGL) ? mDockContent[miMapGL] as IMapGL : null;
             }
         }
 
@@ -208,35 +227,33 @@ namespace VehiclePlanner
         /// <summary>
         /// Goal點設定子視窗
         /// </summary>
-        private CtGoalSetting GoalSetting {
+        private IGoalSetting mGoalSetting {
             get {
-                return mDockContent.ContainsKey(miGoalSetting) ? mDockContent[miGoalSetting] as CtGoalSetting : null;
+                return mDockContent.ContainsKey(miGoalSetting) ? mDockContent[miGoalSetting] as IGoalSetting : null;
             }
         }
-
-        private IIGoalSetting IGoalSetting { get { return GoalSetting; } }
-        private IScene IMapCtrl { get { return MapGL != null ? MapGL.Ctrl : null; } }
+        
+        private IScene IMapCtrl { get { return MapGL?.Ctrl; } }
         
         #endregion Declaration - Properties
 
         #region Functin - Constructors
         
-        public VehiclePlannerUI(CtVehiclePlanner vehiclePlanner) {
-            if (vehiclePlanner != null) {
-                rVehiclePlanner = vehiclePlanner;
-                InitializeComponent();
+        public VehiclePlannerUI(CtVehiclePlanner vehiclePlanner = null) {
+            InitializeComponent();
 
-                mHandle = this.Handle;
-                rVehiclePlanner = new CtVehiclePlanner();
-                rVehiclePlanner.PropertyChanged += rVehiclePlanner_PropertyChanged;
-                rVehiclePlanner.ConsoleMessage += rVehiclePlanner_ConsoleMessage;
-                rVehiclePlanner.VehiclePlannerEvent += rVehiclePlanner_VehiclePlannerEvent;
-                rVehiclePlanner.ErrorMessage += rVehiclePlanner_ErrorMessage;
-                rVehiclePlanner.SelectFile = SelectFile;
-                rVehiclePlanner.Initial();
-            } else {
-                this.Close();
-            }
+            mHandle = this.Handle;
+            /*-- 系統底層實例取得 --*/
+            rVehiclePlanner = vehiclePlanner ?? new CtVehiclePlanner();
+            /*-- 事件委派 --*/
+            rVehiclePlanner.PropertyChanged += rVehiclePlanner_PropertyChanged;
+            rVehiclePlanner.ConsoleMessage += rVehiclePlanner_ConsoleMessage;
+            rVehiclePlanner.VehiclePlannerEvent += rVehiclePlanner_VehiclePlannerEvent;
+            rVehiclePlanner.ErrorMessage += rVehiclePlanner_ErrorMessage;
+            /*-- 方法委派 --*/
+            rVehiclePlanner.SelectFile = SelectFile;
+            /*-- 初始化 --*/
+            rVehiclePlanner.Initial();
         }
 
         #endregion Function - Constructors
@@ -261,7 +278,7 @@ namespace VehiclePlanner
         private void rVehiclePlanner_VehiclePlannerEvent(object sender, VehiclePlannerEventArgs e) {
             switch (e.Events) {
                 case VehiclePlannerEvents.MarkerChanged:
-                    IGoalSetting.ReloadSingle();
+                    mGoalSetting.ReloadSingle();
                     break;
                 case VehiclePlannerEvents.Dispose:
                     this.Dispose();
@@ -356,7 +373,9 @@ namespace VehiclePlanner
         {
             /*-- 載入ICtDockContent物件 --*/
             LoadICtDockContent();
-            
+
+            LoadCtNotifyIcon();
+
             /*-- 依照使用者權限進行配置 --*/
             UserChanged(rVehiclePlanner.UserData);
 
@@ -384,7 +403,7 @@ namespace VehiclePlanner
             //當直接關閉表單時，改為隱藏至系統列
             #endregion 
             e.Cancel = true;
-            rVehiclePlanner.HideWindow();
+            HideWindow();
         }
 
         #endregion Form
@@ -526,9 +545,31 @@ namespace VehiclePlanner
         }
 
         #endregion DockContent
+
+        #region NotityIcon
+
+        /// <summary>
+        /// 滑鼠雙擊系統列圖示事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void mNotifyIcon_OnMouseDoubleClick(object sender, MouseEventArgs e) {
+            ShowWindow();
+        }
+
+        /// <summary>
+        /// ShowWindow選項被點擊
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ShowWindow_OnClick(object sender, EventArgs e) {
+            ShowWindow();
+        }
         
+        #endregion NotifyIcon
+
         #region ITest
-        
+
         /// <summary>
         /// 切換SetCar旗標
         /// </summary>
@@ -539,7 +580,7 @@ namespace VehiclePlanner
         /// <summary>
         /// 傳送Map檔
         /// </summary>
-        protected virtual void ITest_SendMap() {
+        private void ITest_SendMap() {
             OpenFileDialog openMap = new OpenFileDialog();
             openMap.InitialDirectory = rVehiclePlanner.DefMapDir;
             openMap.Filter = "MAP|*.map";
@@ -608,11 +649,11 @@ namespace VehiclePlanner
                     }
             } 
             //顯示滑鼠點擊的座標
-            IGoalSetting.UpdateNowPosition(e.Position);
+            mGoalSetting.UpdateNowPosition(e.Position);
         }
 
         private void IMapCtrl_DragTowerPairEvent(object sender, TowerPairEventArgs e) {
-            IGoalSetting.ReloadSingle();
+            mGoalSetting.ReloadSingle();
         }
 
         /// <summary>
@@ -624,7 +665,7 @@ namespace VehiclePlanner
             switch (mCursorMode) {
                 case CursorMode.Goal:
                 case CursorMode.Power:
-                    IGoalSetting.ReloadSingle();
+                    mGoalSetting.ReloadSingle();
                     mCursorMode = CursorMode.Select;
                     break;
             }
@@ -702,13 +743,6 @@ namespace VehiclePlanner
         #region Function - Private Methods
 
         #region UI
-
-        /// <summary>
-        /// 離開程式
-        /// </summary>
-        private void Exit() {
-            rVehiclePlanner.Exit();
-        }
 
         /// <summary>
         /// 依照使用者權限切換介面配置
@@ -794,7 +828,43 @@ namespace VehiclePlanner
                 mMotionController.Show();
             }
         }
-        
+
+        /// <summary>
+        /// 顯示氣球提示
+        /// </summary>
+        /// <param name="title">提示標題</param>
+        /// <param name="context">提示內容</param>
+        /// <param name="icon">提示Icon</param>
+        /// <param name="tmo">顯示時間</param>
+        private void SetBalloonTip(string title, string context, ToolTipIcon icon = ToolTipIcon.Info, int tmo = 5) {
+            mNotifyIcon.ShowBalloonTip(title, context, tmo, icon);
+        }
+
+        /// <summary>
+        /// 顯示主介面
+        /// </summary>
+        public void ShowWindow() {
+            mNotifyIcon.HideIcon();
+            this.Show();
+        }
+
+        /// <summary>
+        /// 將主介面縮小至系統列
+        /// </summary>
+        public void HideWindow() {
+            this.Hide();
+            mNotifyIcon.ShowIcon();
+        }
+
+        /// <summary>
+        /// 離開程式
+        /// </summary>
+        public void Exit() {
+            mNotifyIcon.HideIcon();
+            rVehiclePlanner.Dispose();
+            this.Dispose();
+        }
+
         #endregion UI
 
         #region DockContent
@@ -873,7 +943,7 @@ namespace VehiclePlanner
 
             DockContentVisible(MapGL, mapGL);
             DockContentVisible(mConsole, console);
-            DockContentVisible(GoalSetting, goalSetting);
+            DockContentVisible(mGoalSetting, goalSetting);
             DockContentVisible(mTesting, testing);
         }
 
@@ -919,19 +989,19 @@ namespace VehiclePlanner
             
             #region IGoalSetting 事件連結
                  
-            IGoalSetting.AddCurrentGoalEvent += rVehiclePlanner.AddCurrentAsGoal;
-            IGoalSetting.ClearGoalsEvent += rVehiclePlanner.ClearMarker;
-            IGoalSetting.DeleteSingleEvent += rVehiclePlanner.DeleteMarker;
-            IGoalSetting.FindPathEvent += rVehiclePlanner.FindPath;
-            IGoalSetting.LoadMapEvent += ITest_LoadMap;
-            IGoalSetting.LoadMapFromAGVEvent += rVehiclePlanner.GetMap;
-            IGoalSetting.RunGoalEvent += rVehiclePlanner.DoRunningByGoalIndex;
-            IGoalSetting.RunLoopEvent += IGoalSetting_RunLoopEvent;
-            IGoalSetting.SaveGoalEvent += rVehiclePlanner.SaveGoal;
-            IGoalSetting.SendMapToAGVEvent += ITest_SendMap;
-            IGoalSetting.GetGoalNames += rVehiclePlanner.GetGoalNames;
-            IGoalSetting.Charging += rVehiclePlanner.DoCharging;
-            IGoalSetting.ClearMap += rVehiclePlanner.ClearMap;
+            mGoalSetting.AddCurrentGoalEvent += rVehiclePlanner.AddCurrentAsGoal;
+            mGoalSetting.ClearGoalsEvent += rVehiclePlanner.ClearMarker;
+            mGoalSetting.DeleteSingleEvent += rVehiclePlanner.DeleteMarker;
+            mGoalSetting.FindPathEvent += rVehiclePlanner.FindPath;
+            mGoalSetting.LoadMapEvent += ITest_LoadMap;
+            mGoalSetting.LoadMapFromAGVEvent += rVehiclePlanner.GetMap;
+            mGoalSetting.RunGoalEvent += rVehiclePlanner.DoRunningByGoalIndex;
+            mGoalSetting.RunLoopEvent += IGoalSetting_RunLoopEvent;
+            mGoalSetting.SaveGoalEvent += rVehiclePlanner.SaveGoal;
+            mGoalSetting.SendMapToAGVEvent += ITest_SendMap;
+            mGoalSetting.GetGoalNames += rVehiclePlanner.GetGoalNames;
+            mGoalSetting.Charging += rVehiclePlanner.DoCharging;
+            mGoalSetting.ClearMap += rVehiclePlanner.ClearMap;
 
             #endregion
 
@@ -1019,8 +1089,32 @@ namespace VehiclePlanner
 
         }
 
+        /// <summary>
+        /// 載入CtNotifyIcon物件
+        /// </summary>
+        private void LoadCtNotifyIcon() {
+            if (mNotifyIcon == null) {
+                Icon icon = Properties.Resources.CASTEC;
+                mNotifyIcon = new CtNotifyIcon(null, mNotifyCaption, icon);
+                mNotifyIcon.OnMouseDoubleClick += mNotifyIcon_OnMouseDoubleClick;
+                mNotifyIcon.Visible = true;
+                mMenuItems = new MenuItems();
+
+                mMenuItems.AddMenuItem(
+                    "Show Window",
+                    ShowWindow_OnClick
+                );
+
+                mMenuItems.AddMenuItem(
+                    "Exit",
+                    (sender, e) => Exit()
+                    );
+                mNotifyIcon.MenuItems = mMenuItems;
+            }
+        }
+
         #endregion Load
-        
+
         /// <summary>
         /// 從檔案清單選擇一個檔案
         /// </summary>
@@ -1047,507 +1141,8 @@ namespace VehiclePlanner
 
     #region Suppor - Class
 
-    /// <summary>
-    /// 系統列圖示類
-    /// </summary>
-    public class CtNotifyIcon : IDisposable
-    {
 
-        #region Declaration - Field
-
-        /// <summary>
-        /// 系統列圖示右鍵選單物件
-        /// </summary>
-        private ContextMenu mContextMenu = new ContextMenu();
-
-        /// <summary>
-        /// 右鍵圖示物件
-        /// </summary>
-        private NotifyIcon mNotifyIcon = new NotifyIcon();
-
-        /// <summary>
-        /// 要隱藏的表單參考
-        /// </summary>
-        private Form rForm = null;
-
-        /// <summary>
-        /// 右鍵選項集合
-        /// </summary>
-        private MenuItems mMenuItems = null;
-
-        #endregion Declaration - Field
-
-        #region Declaration - Properties
-
-        /// <summary>
-        /// 系統列圖示是否可視
-        /// </summary>
-        public bool Visible { get { return mNotifyIcon.Visible; } set { mNotifyIcon.Visible = value; } }
-
-        /// <summary>
-        /// 右鍵選項集合
-        /// </summary>
-        public MenuItems MenuItems {
-            get {
-                return mMenuItems;
-            }
-            set {
-                mMenuItems = value;
-                mContextMenu.MenuItems.AddRange(mMenuItems.Items.ToArray());
-            }
-        }
-
-        #endregion Declaration - Properties
-
-        #region Declaration - Events
-
-        /// <summary>
-        /// 滑鼠雙擊系統列視窗事件
-        /// </summary>
-        public event MouseEventHandler OnMouseDoubleClick {
-            add {
-                mNotifyIcon.MouseDoubleClick += value;
-            }
-            remove {
-                mNotifyIcon.MouseDoubleClick -= value;
-            }
-        }
-
-        /// <summary>
-        /// 滑鼠放開事件
-        /// </summary>
-        public event MouseEventHandler OnMouseUp {
-            add {
-                mNotifyIcon.MouseUp += value;
-            }
-            remove {
-                mNotifyIcon.MouseUp -= value;
-            }
-
-        }
-
-        #endregion Declaration - Events
-
-        #region Function - Consturctors
-
-        /// <summary>
-        /// 一般建構方法
-        /// </summary>
-        /// <param name="form">要隱藏的表單參考</param>
-        /// <param name="caption">系統列圖示標題</param>
-        /// <param name="icon">系統列圖示Icon</param>
-        public CtNotifyIcon(Form form, string caption = "NotifyIcon", Icon icon = null)
-        {
-            rForm = form;
-            mNotifyIcon.Icon = icon ?? rForm.Icon;
-            mNotifyIcon.Text = caption;
-            mNotifyIcon.ContextMenu = mContextMenu;
-        }
-
-        #endregion Function - Consturctors
-
-        #region Function - Public Methods
-
-        /// <summary>
-        /// 增加右鍵選項
-        /// </summary>
-        /// <param name="item"></param>
-        public void MenuItemAdd(MenuItem item)
-        {
-            if (!mContextMenu.MenuItems.Contains(item)) mContextMenu.MenuItems.Add(item);
-        }
-
-        /// <summary>
-        /// 移除右鍵選項
-        /// </summary>
-        /// <param name="item"></param>
-        public void MenuItemRemove(MenuItem item)
-        {
-            if (mContextMenu.MenuItems.Contains(item)) mContextMenu.MenuItems.Remove(item);
-        }
-
-        /// <summary>
-        /// 顯示系統列圖示
-        /// </summary>
-        public void ShowIcon()
-        {
-            mNotifyIcon.Visible = true;
-        }
-
-        /// <summary>
-        /// 隱藏系統列圖示
-        /// </summary>
-        public void HideIcon()
-        {
-            mNotifyIcon.Visible = false;
-        }
-
-        /// <summary>
-        /// 顯示系統列提示
-        /// </summary>
-        /// <param name="title"></param>
-        /// <param name="context"></param>
-        /// <param name="tmo">多久以後關閉</param>
-        /// <param name="icon">Icon類型</param>
-        public void ShowBalloonTip(string title, string context, int tmo = 15, ToolTipIcon icon = ToolTipIcon.Info)
-        {
-            mNotifyIcon.ShowBalloonTip(tmo, title, context, icon);
-        }
-
-        /// <summary>
-        /// 顯示右鍵選單
-        /// </summary>
-        public void ShowMenuItem()
-        {
-            /*-- 以反射方式執行ShowContextMenu方法顯示右鍵選單 --*/
-            Type t = typeof(NotifyIcon);
-            MethodInfo mi = t.GetMethod("ShowContextMenu", BindingFlags.NonPublic | BindingFlags.Instance);
-            mi.Invoke(this.mNotifyIcon, null);
-        }
-
-        #endregion Function - Public Methods
-
-        #region IDisposable Support
-        private bool disposedValue = false; // 偵測多餘的呼叫
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposedValue)
-            {
-                if (disposing)
-                {
-                    // TODO: 處置 Managed 狀態 (Managed 物件)。
-
-                }
-
-                // TODO: 釋放 Unmanaged 資源 (Unmanaged 物件) 並覆寫下方的完成項。
-                // TODO: 將大型欄位設為 null。
-
-                HideIcon();
-
-                (mMenuItems as MenuItems)?.Dispose();
-                mMenuItems = null;
-
-                mNotifyIcon?.Dispose();
-                mNotifyIcon = null;
-
-                mContextMenu?.Dispose();
-                mContextMenu = null;
-
-                disposedValue = true;
-            }
-        }
-
-        // TODO: 僅當上方的 Dispose(bool disposing) 具有會釋放 Unmanaged 資源的程式碼時，才覆寫完成項。
-        // ~CtNotifyIcon() {
-        //   // 請勿變更這個程式碼。請將清除程式碼放入上方的 Dispose(bool disposing) 中。
-        //   Dispose(false);
-        // }
-
-        // 加入這個程式碼的目的在正確實作可處置的模式。
-        public void Dispose()
-        {
-            // 請勿變更這個程式碼。請將清除程式碼放入上方的 Dispose(bool disposing) 中。
-            Dispose(true);
-            // TODO: 如果上方的完成項已被覆寫，即取消下行的註解狀態。
-            // GC.SuppressFinalize(this);
-        }
-        #endregion
-
-
-    }
-
-    /// <summary>
-    /// 右鍵選單管理類
-    /// </summary>
-    /// <remarks>
-    /// 用於建立
-    /// </remarks>
-    public class MenuItems : IDisposable
-    {
-
-        #region Declaration - Fields
-
-        /// <summary>
-        /// 右鍵選單集合
-        /// </summary>
-        private List<MenuItem> mMenuItems = new List<MenuItem>();
-
-        /// <summary>
-        /// 右鍵選單事件集合
-        /// </summary>
-        private List<EventHandler> mClickEvents = new List<EventHandler>();
-
-        #endregion Declaration -Fields
-
-        #region Declaration Properties
-
-        /// <summary>
-        /// 右鍵選單集合
-        /// </summary>
-        public List<MenuItem> Items {
-            get {
-                return mMenuItems;
-            }
-        }
-
-        #endregion Declaration - Properties
-
-        #region Function - Public Methods
-
-        /// <summary>
-        /// 傳入選單標題、方法、是否可視，建立新的右鍵選單後加入集合
-        /// </summary>
-        /// <param name="caption">選單標題</param>
-        /// <param name="even">選單觸發時的處理方法</param>
-        /// <param name="enable">是否可視</param>
-        /// <returns>建構出的<see cref="MenuItem"/></returns>
-        public MenuItem AddMenuItem(string caption, Action<object, EventArgs> even = null, bool enable = true)
-        {
-            MenuItem item = new MenuItem();
-            item.Text = caption;
-            item.Index = mMenuItems.Count;
-            item.Enabled = enable;
-            EventHandler handler = even == null ? null : new EventHandler(even);
-            mClickEvents.Add(handler);
-
-            if (even != null) item.Click += handler;
-
-            mMenuItems.Add(item);
-            return item;
-        }
-
-        /// <summary>
-        /// 從右鍵選單集合中移除指定物件
-        /// </summary>
-        /// <param name="item">目標物件</param>
-        public void RemoveMenuItem(MenuItem item)
-        {
-            if (!mMenuItems.Contains(item)) return;
-
-            int index = mMenuItems.IndexOf(item);
-
-            if (mClickEvents[index] != null) item.Click -= mClickEvents[index];
-        }
-
-        /// <summary>
-        /// 清空右鍵選單集合
-        /// </summary>
-        public void Clear()
-        {
-            for (int i = 0; i < mMenuItems.Count; i++)
-            {
-                if (mClickEvents[i] != null) mMenuItems[i].Click -= mClickEvents[i];
-                mMenuItems[i].Dispose();
-                mMenuItems[i] = null;
-            }
-            mMenuItems.Clear();
-            mMenuItems = null;
-
-            mClickEvents.Clear();
-            mClickEvents = null;
-        }
-
-        #endregion Funciton - Public Methods
-
-        #region IDisposable Support
-        private bool disposedValue = false; // 偵測多餘的呼叫
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposedValue)
-            {
-                if (disposing)
-                {
-                    // TODO: 處置 Managed 狀態 (Managed 物件)。
-                    Clear();
-                }
-
-                // TODO: 釋放 Unmanaged 資源 (Unmanaged 物件) 並覆寫下方的完成項。
-                // TODO: 將大型欄位設為 null。
-
-                disposedValue = true;
-            }
-        }
-
-        // TODO: 僅當上方的 Dispose(bool disposing) 具有會釋放 Unmanaged 資源的程式碼時，才覆寫完成項。
-        // ~MenuItems() {
-        //   // 請勿變更這個程式碼。請將清除程式碼放入上方的 Dispose(bool disposing) 中。
-        //   Dispose(false);
-        // }
-
-        // 加入這個程式碼的目的在正確實作可處置的模式。
-        public void Dispose()
-        {
-            // 請勿變更這個程式碼。請將清除程式碼放入上方的 Dispose(bool disposing) 中。
-            Dispose(true);
-            // TODO: 如果上方的完成項已被覆寫，即取消下行的註解狀態。
-            // GC.SuppressFinalize(this);
-        }
-        #endregion
-
-    }
-
-    /// <summary>
-    /// 提供框線顏色設定功能之GroupBox
-    /// </summary>
-    public class CtGroupBox : GroupBox
-    {
-        private System.Drawing.Color _BorderColor = System.Drawing.Color.Red;
-        [Description("設定或取得外框顏色")]
-        public System.Drawing.Color BorderColor {
-            get { return _BorderColor; }
-            set { _BorderColor = value; }
-        }
-
-        protected override void OnPaint(PaintEventArgs e)
-        {
-            //取得text字型大小
-            Size FontSize = TextRenderer.MeasureText(this.Text,
-                                                     this.Font);
-
-            //畫框線
-            #region 原始範例
-            //Rectangle rec = new Rectangle(e.ClipRectangle.Y,
-            //                              this.Font.Height / 2,
-            //                              e.ClipRectangle.Width - 1,
-            //                              e.ClipRectangle.Height - 1 -
-            //                              this.Font.Height / 2);
-            //e.ClipRectangle這個值在自動隱藏停靠視窗下似乎是變動
-            //因此改用固定的GroupBox.Size
-            #endregion 原始範例
-
-            Rectangle rec = new Rectangle(0,
-                                          this.Font.Height / 2,
-                                          this.Width - 1,
-                                          this.Height - 1 -
-                                          this.Font.Height / 2);
-
-
-            e.Graphics.DrawRectangle(new Pen(BorderColor), rec);
-
-            //填滿text的背景
-            e.Graphics.FillRectangle(new SolidBrush(this.BackColor),
-                new Rectangle(6, 0, FontSize.Width, FontSize.Height));
-
-            //text
-            e.Graphics.DrawString(this.Text, this.Font,
-                new Pen(this.ForeColor).Brush, 6, 0);
-        }
-    }
     
-    public abstract class BaseFlowTemplate {
-
-        protected abstract string Name { get; set; } 
-
-        protected object mKey = new object();
-
-        protected bool mIsExecuting = false;
-
-        protected IntPtr mMainHandle = IntPtr.Zero;
-
-        protected Events.FlowTemplate.DelIsAllow IsAllow = null;
-
-        protected Events.FlowTemplate.DelSwitchFlag SwitchFlag = null;
-
-        protected Events.FlowTemplate.DelExecutingInfo ExecutingInfo = null;
-
-        public BaseFlowTemplate(
-            IntPtr hWnd,
-            Events.FlowTemplate.DelIsAllow isAllow,
-            Events.FlowTemplate.DelSwitchFlag switchFlag,
-            Events.FlowTemplate.DelExecutingInfo executingInfo) {
-            mMainHandle = hWnd;
-            IsAllow = isAllow;
-            SwitchFlag = switchFlag;
-            ExecutingInfo = executingInfo;
-        }
-
-        public void CheckFlag(string description, Action act, bool cont = true) {
-            Console.WriteLine($"{Name} start check. Is executing:{mIsExecuting}");
-            if (!mIsExecuting) {
-                lock (mKey) {
-                    try {
-                        mIsExecuting = IsAllow();
-                        if (!mIsExecuting) {//當前Flag下不可執行
-                            mIsExecuting = UserSwitch(description) && SwitchFlag();
-                            if (mIsExecuting) {//Flag切換成功
-                                mIsExecuting = cont && UserContinue(description);
-                            } else {//Flag切換失敗 
-                                FailureMessage();
-                            }
-                        }
-                        if (mIsExecuting) {
-                            Console.WriteLine($"{Name} Excuting");
-                            act?.Invoke();
-                        }
-                    } catch (Exception ex) {
-                        Console.WriteLine("error", ex.Message);
-                    } finally {
-                        mIsExecuting = false;
-                    }
-                }
-            }else {
-                ExecutingInfo();
-            }
-            Console.WriteLine($"{Name} checked.Is executing:{mIsExecuting}");
-        }
-
-        protected virtual bool UserContinue(string description) {
-            return MsgBoxBtn.Yes == CtMsgBox.Show(mMainHandle,"Continue", $"是否繼續{description}?", MsgBoxBtn.YesNo, MsgBoxStyle.Question);
-        }
-        protected abstract void FailureMessage();
-        protected abstract bool UserSwitch(string description);
-    }
-
-    public class ConnectFlow : BaseFlowTemplate {
-        protected override string Name { get; set; } = "ConnectFlow";
-
-        public ConnectFlow(IntPtr hWnd, Events.FlowTemplate.DelIsAllow isAllow, Events.FlowTemplate.DelSwitchFlag switchFlag, Events.FlowTemplate.DelExecutingInfo executingInfo) : base(hWnd, isAllow, switchFlag, executingInfo) {
-        }
-
-        protected override void FailureMessage() {
-            CtMsgBox.Show(mMainHandle,"Failure", "無法與AGV連線", MsgBoxBtn.OK, MsgBoxStyle.Information);
-        }
-        
-        protected override bool UserSwitch(string description) {
-            return MsgBoxBtn.Yes == CtMsgBox.Show(mMainHandle,"Not connected yet", $"尚未與AGV連線無法{description}\r\n是否要連線至AGV?", MsgBoxBtn.YesNo, MsgBoxStyle.Information);
-        }
-
-    }
-
-    public class ServoOnFlow : BaseFlowTemplate {
-        protected override string Name { get; set; } = "ServoOnFlow";
-
-        public ServoOnFlow(IntPtr hWnd, Events.FlowTemplate.DelIsAllow isAllow, Events.FlowTemplate.DelSwitchFlag switchFlag, Events.FlowTemplate.DelExecutingInfo executingInfo) : base(hWnd, isAllow, switchFlag, executingInfo) {
-        }
-
-        protected override void FailureMessage() {
-            CtMsgBox.Show(mMainHandle, "Failure", "ServoOn失敗", MsgBoxBtn.OK, MsgBoxStyle.Information);
-        }
-
-        protected override bool UserSwitch(string description=null) {
-            var ret = CtMsgBox.Show(mMainHandle, "Not ServoOn yet", $"尚未Servo On無法{description}\r\n是否要Server On?", MsgBoxBtn.YesNo, MsgBoxStyle.Question);
-            return MsgBoxBtn.Yes == ret;
-        }
-    }
-
-    public class SimilarityFlow : BaseFlowTemplate {
-
-        protected override string Name { get; set; } = "SimilarityFlow";
-
-        public SimilarityFlow(IntPtr hWnd, Events.FlowTemplate.DelIsAllow isAllow, Events.FlowTemplate.DelSwitchFlag switchFlag, Events.FlowTemplate.DelExecutingInfo executingInfo) : base(hWnd, isAllow, switchFlag, executingInfo) {
-        }
-
-        protected override void FailureMessage() {
-            CtMsgBox.Show(mMainHandle, "Failure", "地圖相似度過低", MsgBoxBtn.OK, MsgBoxStyle.Information);
-        }
-
-        protected override bool UserSwitch(string description) {
-            return MsgBoxBtn.Yes == CtMsgBox.Show("Similarity is too low", $"地圖匹配度過低無法{description}，是否再Confirm一次?", MsgBoxBtn.YesNo, MsgBoxStyle.Question);
-        }
-    }
-
     #endregion Support - Class
 
 }

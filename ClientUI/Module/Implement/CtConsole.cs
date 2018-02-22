@@ -11,10 +11,10 @@ using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 
 using CtLib.Library;
-using static VehiclePlanner.Events.ConsoleEvents;
+using VehiclePlanner.Module.Interface;
+using static VehiclePlanner.Partial.VehiclePlannerUI.Events.ConsoleEvents;
 
-namespace VehiclePlanner
-{
+namespace VehiclePlanner.Module.Implement {
     
     /// <summary>
     /// Console介面

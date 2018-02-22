@@ -1,36 +1,14 @@
-﻿using System;
+﻿using CtOutLookBar.Public;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-
-using System.Net;
-using System.Net.Sockets;
-using System.Threading;
-using System.Windows.Forms;
 using System.Drawing;
-
-using CtLib.Library;
-
-using GLUI;
-using GLCore;
-using Geometry;
-using static FactoryMode;
-using CtOutLookBar.Public;
 using System.IO;
-using SerialCommunication;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace VehiclePlanner
-{
-    #region Declaration Extenstion
-
-    /// <summary>
-    /// 擴充方法定義
-    /// </summary>
-    internal static class AgvExtenstion {
-
-        #region UI
-        
-        #endregion UI
-        
+namespace VehiclePlanner.Partial.VehiclePlannerUI {
+    internal static class VehiclePlannerUI_Extension {
         #region OutlookBar
 
         /// <summary>
@@ -57,29 +35,5 @@ namespace VehiclePlanner
         }
 
         #endregion OutlookBar
-
-        public static ISerialClient SerialClient(this IFactory factory,DelReceiveDataEvent receiveDataEvent, bool bypass) {
-            if (bypass) {
-                return new FakeSerialClient(receiveDataEvent);
-            }else {
-                return FactoryMode.Factory.SerialClient(receiveDataEvent);
-            }
-        }
-
     }
-
-    #endregion Declaration  - Extenstion
-
-    #region Declaration - Enum
-
-    /// <summary>
-    /// 檔案類型
-    /// </summary>
-    public enum FileType {
-        Ori,
-        Map,
-    }
-
-    #endregion Declaration - Enum
-    
 }

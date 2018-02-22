@@ -8,11 +8,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using VehiclePlanner.Module.Interface;
 using WeifenLuo.WinFormsUI.Docking;
 
-namespace VehiclePlanner
-{
-    public partial class AGVMapUI : CtDockContent
+namespace VehiclePlanner.Module.Implement {
+    public partial class AGVMapUI : CtDockContent,IMapGL
     {
         
         /// <summary>

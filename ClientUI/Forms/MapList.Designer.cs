@@ -1,5 +1,4 @@
-﻿namespace VehiclePlanner
-{
+﻿namespace VehiclePlanner.Forms {
     partial class MapList
     {
         /// <summary>

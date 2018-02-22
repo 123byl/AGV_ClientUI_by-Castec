@@ -3,19 +3,20 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
-using static VehiclePlanner.Events.GoalSettingEvents;
 using CtLib.Library;
 using GLCore;
 using Geometry;
 using CtLib.Forms;
 using System.Threading.Tasks;
+using VehiclePlanner.Module.Interface;
+using VehiclePlanner.Partial.VehiclePlannerUI;
+using static VehiclePlanner.Partial.VehiclePlannerUI.Events.GoalSettingEvents;
 
-namespace VehiclePlanner
-{
+namespace VehiclePlanner.Module.Implement {
     /// <summary>
     /// Goal點設定介面
     /// </summary>
-    public partial class CtGoalSetting : CtDockContent, IIGoalSetting
+    public partial class CtGoalSetting : CtDockContent, IGoalSetting
     {
 
         #region Declaration - Fields
@@ -476,41 +477,5 @@ namespace VehiclePlanner
 
     }
 
-    /// <summary>
-    /// 鼠標模式
-    /// </summary>
-    public enum CursorMode {
-        /// <summary>
-        /// 選擇模式
-        /// </summary>
-        Select,
-        /// <summary>
-        /// 新增Goal點模式
-        /// </summary>
-        Goal,
-        /// <summary>
-        /// 新增充電站模式
-        /// </summary>
-        Power,
-        /// <summary>
-        /// 拖曳模式
-        /// </summary>
-        Drag,
-        /// <summary>
-        /// 畫筆模式
-        /// </summary>
-        Pen,
-        /// <summary>
-        /// 橡皮擦模式
-        /// </summary>
-        Eraser,
-        /// <summary>
-        /// 地圖插入模式
-        /// </summary>
-        Insert,
-        /// <summary>
-        /// 禁止區模式
-        /// </summary>
-        ForbiddenArea
-    }
+
 }

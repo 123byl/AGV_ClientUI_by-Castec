@@ -1,4 +1,4 @@
-﻿namespace VehiclePlanner.Component {
+﻿namespace VehiclePlanner.Module.Implement {
     partial class CtToolBox {
         /// <summary>
         /// Required designer variable.

@@ -18,7 +18,8 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using VehiclePlanner.Component;
+using VehiclePlanner.Partial.CtVehiclePlanner;
+using VehiclePlanner.Partial.VehiclePlannerUI;
 
 namespace VehiclePlanner {
 
@@ -100,12 +101,7 @@ namespace VehiclePlanner {
         /// iTS位置名稱對照表
         /// </summary>
         private Dictionary<IPAddress, string> mAgvList = new Dictionary<IPAddress, string>();
-
-        /// <summary>
-        /// 系統列圖示標題
-        /// </summary>
-        protected string mNotifyCaption = "AGV Client";
-
+        
         /// <summary>
         /// 主畫面是否可視
         /// </summary>
@@ -225,8 +221,7 @@ namespace VehiclePlanner {
         /// 地圖檔儲存路徑
         /// </summary>
         public string DefMapDir { get; private set; } = @"D:\MapInfo\";
-
-
+        
         /// <summary>
         /// 使用者操作權限
         /// </summary>
@@ -241,6 +236,7 @@ namespace VehiclePlanner {
             }
 
         }
+
         #endregion Declaration - Properties
 
         #region Declaration - Members
@@ -249,17 +245,7 @@ namespace VehiclePlanner {
         /// 廣播發送物件
         /// </summary>
         private Broadcaster mBroadcast = new Broadcaster();
-
-        /// <summary>
-        /// 系統列圖示物件
-        /// </summary>
-        private CtNotifyIcon mNotifyIcon = null;
-
-        /// <summary>
-        /// 系統列圖示右鍵選單
-        /// </summary>
-        private MenuItems mMenuItems = null;
-
+        
         ///<summary>全域鍵盤鉤子</summary>
         private KeyboardHook mKeyboardHook = new KeyboardHook();
 
@@ -305,8 +291,6 @@ namespace VehiclePlanner {
             mKeyboardHook.KeyUpEvent += mKeyboardHook_KeyUpEvent;
             mKeyboardHook.Start();
 
-            LoadCtNotifyIcon();
-
             /*-- 委派廣播接收事件 --*/
             mBroadcast.ReceivedData += mBroadcast_ReceivedData;
         }
@@ -334,31 +318,6 @@ namespace VehiclePlanner {
                     OnPropertyChanged(PropertyDeclaration.iTSs);
                 });
             }
-        }
-
-        /// <summary>
-        /// 顯示主介面
-        /// </summary>
-        public void ShowWindow() {
-            mNotifyIcon.HideIcon();
-            MainVisible = true;
-        }
-
-        /// <summary>
-        /// 將主介面縮小至系統列
-        /// </summary>
-        public void HideWindow() {
-            MainVisible = false;
-            mNotifyIcon.ShowIcon();
-        }
-
-        /// <summary>
-        /// 離開程式
-        /// </summary>
-        public void Exit() {
-            mNotifyIcon.HideIcon();
-            OnVehiclePlanner(VehiclePlannerEvents.Dispose);
-            this.Dispose();
         }
         
         /// <summary>
@@ -392,39 +351,6 @@ namespace VehiclePlanner {
         }
 
         #endregion BroadcastReceiver
-
-        #region NotityIcon
-
-        /// <summary>
-        /// 滑鼠雙擊系統列圖示事件
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void mNotifyIcon_OnMouseDoubleClick(object sender, MouseEventArgs e) {
-            ShowWindow();
-        }
-
-        /// <summary>
-        /// ShowWindow選項被點擊
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ShowWindow_OnClick(object sender, EventArgs e) {
-            ShowWindow();
-        }
-
-        /// <summary>
-        /// 顯示氣球提示
-        /// </summary>
-        /// <param name="title">提示標題</param>
-        /// <param name="context">提示內容</param>
-        /// <param name="icon">提示Icon</param>
-        /// <param name="tmo">顯示時間</param>
-        public void SetBalloonTip(string title, string context, ToolTipIcon icon = ToolTipIcon.Info, int tmo = 5) {
-            mNotifyIcon.ShowBalloonTip(title, context, tmo, icon);
-        }
-
-        #endregion NotifyIcon
 
         #region KeyboardHook
         
@@ -491,32 +417,16 @@ namespace VehiclePlanner {
             ErrorMessage?.Invoke(err);
         }
 
-        #endregion Raise Events
-
-
         /// <summary>
-        /// 載入CtNotifyIcon物件
+        /// 氣球提示發報
         /// </summary>
-        private void LoadCtNotifyIcon() {
-            if (mNotifyIcon == null) {
-                Icon icon = Properties.Resources.CASTEC;
-                mNotifyIcon = new CtNotifyIcon(null, mNotifyCaption,icon);
-                mNotifyIcon.OnMouseDoubleClick += mNotifyIcon_OnMouseDoubleClick;
-                mNotifyIcon.Visible = true;
-                mMenuItems = new MenuItems();
+        /// <param name="title"></param>
+        /// <param name="context"></param>
+        protected virtual void SetBalloonTip(string title, string context) {
 
-                mMenuItems.AddMenuItem(
-                    "Show Window",
-                    ShowWindow_OnClick
-                );
-
-                mMenuItems.AddMenuItem(
-                    "Exit",
-                    (sender, e) => Exit()
-                    );
-                mNotifyIcon.MenuItems = mMenuItems;
-            }
         }
+
+        #endregion Raise Events
 
         #endregion Funciotn - Private Methods
 
@@ -527,11 +437,7 @@ namespace VehiclePlanner {
             if (!disposedValue) {
                 if (disposing) {
                     // TODO: 處置 Managed 狀態 (Managed 物件)。
-                    mNotifyIcon?.Dispose();
-                    mNotifyIcon = null;
 
-                    mMenuItems?.Dispose();
-                    mMenuItems = null;
 
                     mKeyboardHook.KeyUpEvent -= mKeyboardHook_KeyUpEvent;
                     mKeyboardHook.Stop();
@@ -560,74 +466,5 @@ namespace VehiclePlanner {
         #endregion
 
     }
-
-    /// <summary>
-    /// 屬性名稱宣告
-    /// </summary>
-    public static class PropertyDeclaration {
-        public const string iTSs = "iTSs";
-        public const string MainVisible = "MainVisible";
-        public const string IsMotorServoOn = "IsMotorServoOn";
-        public const string IsConnected = "IsConnected";
-        public const string IsScanning = "IsScanning";
-        public const string Status = "Status";
-        public const string IsAutoReport = "IsAutoReport";
-        public const string Velocity = "Velocity";
-        public const string MapCenter = "MapCenter";
-        public const string IsBypassSocket = "IsBypassSocket";
-        public const string IsBypassLoadFile = "IsBypassLoadFile";
-        public const string HostIP = "HostIP";
-        public const string UserData = "UserData";
-
-        public const string Culture = "Culture";
-    }
-
-    /// <summary>
-    /// VehiclePlanner事件參數
-    /// </summary>
-    public class VehiclePlannerEventArgs : EventArgs {
-        public VehiclePlannerEvents Events { get; }
-        public VehiclePlannerEventArgs(VehiclePlannerEvents events) {
-            this.Events = events;
-        }
-    }
-
-    /// <summary>
-    /// VehiclePlanner事件列舉
-    /// </summary>
-    public enum VehiclePlannerEvents {
-        /// <summary>
-        /// 標示物變更事件
-        /// </summary>
-        MarkerChanged,
-        /// <summary>
-        /// 清空地圖
-        /// </summary>
-        NewMap,
-        /// <summary>
-        /// 程式關閉
-        /// </summary>
-        Dispose,
-
-    }
-
-    /// <summary>
-    /// Console顯示訊息事件
-    /// </summary>
-    /// <param name="msg"></param>
-    public delegate void ConsoleMessagEventHandler(string msg);
-
-    /// <summary>
-    /// 錯誤訊息事件
-    /// </summary>
-    /// <param name="err"></param>
-    public delegate void ErrorMessageEventHandler(string err);
-
-    /// <summary>
-    /// 檔案選擇方法委派
-    /// </summary>
-    /// <param name="fileList"></param>
-    /// <returns></returns>
-    public delegate string DelSelectFile(string fileList);
-
+    
 }

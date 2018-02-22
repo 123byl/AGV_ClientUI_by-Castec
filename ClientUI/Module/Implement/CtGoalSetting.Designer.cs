@@ -1,4 +1,6 @@
-﻿namespace VehiclePlanner {
+﻿using VehiclePlanner.Partial.VehiclePlannerUI;
+
+namespace VehiclePlanner.Module.Implement {
     partial class CtGoalSetting {
         /// <summary>
         /// Required designer variable.
@@ -24,7 +26,7 @@
         /// </summary>
         private void InitializeComponent() {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CtGoalSetting));
-            this.grbMap = new VehiclePlanner.CtGroupBox();
+            this.grbMap = new CtGroupBox();
             this.btnGetMap = new System.Windows.Forms.Button();
             this.btnLoadMap = new System.Windows.Forms.Button();
             this.btnSendMap = new System.Windows.Forms.Button();

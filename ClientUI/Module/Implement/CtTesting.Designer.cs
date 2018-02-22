@@ -1,4 +1,6 @@
-﻿namespace VehiclePlanner {
+﻿using VehiclePlanner.Partial.VehiclePlannerUI;
+
+namespace VehiclePlanner.Module.Implement {
     partial class CtTesting {
         /// <summary>
         /// Required designer variable.
@@ -36,14 +38,14 @@
             this.btnGetOri = new System.Windows.Forms.Button();
             this.btnLoadOri = new System.Windows.Forms.Button();
             this.btnClrMap = new System.Windows.Forms.Button();
-            this.grbMap = new VehiclePlanner.CtGroupBox();
+            this.grbMap = new CtGroupBox();
             this.btnGetMap = new System.Windows.Forms.Button();
             this.btnLoadMap = new System.Windows.Forms.Button();
             this.btnSendMap = new System.Windows.Forms.Button();
-            this.grbInfo = new VehiclePlanner.CtGroupBox();
+            this.grbInfo = new CtGroupBox();
             this.btnGetLaser = new System.Windows.Forms.Button();
             this.btnGetCarStatus = new System.Windows.Forms.Button();
-            this.gpbShift = new VehiclePlanner.CtGroupBox();
+            this.gpbShift = new CtGroupBox();
             this.btnSetVelo = new System.Windows.Forms.Button();
             this.lbVelocity = new System.Windows.Forms.Label();
             this.txtVelocity = new System.Windows.Forms.TextBox();

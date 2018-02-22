@@ -9,10 +9,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using VehiclePlanner.Partial.VehiclePlannerUI;
 using WeifenLuo.WinFormsUI.Docking;
-using static VehiclePlanner.Events.GoalSettingEvents;
+using static VehiclePlanner.Partial.VehiclePlannerUI.Events.GoalSettingEvents;
 
-namespace VehiclePlanner.Component {
+namespace VehiclePlanner.Module.Implement {
 
     public partial class CtToolBox : CtDockContent {
 

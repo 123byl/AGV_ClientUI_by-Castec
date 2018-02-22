@@ -8,9 +8,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using VehiclePlanner.Module.Implement;
+using VehiclePlanner.Partial.CtVehiclePlanner;
+using VehiclePlanner.Partial.VehiclePlannerUI;
 using WeifenLuo.WinFormsUI.Docking;
 
-namespace VehiclePlanner.Component {
+namespace VehiclePlanner.Forms {
     public partial class CtMotionController : Form {
 
         #region Declaration - Fields
