@@ -97,14 +97,13 @@ namespace VehiclePlanner.Partial.VehiclePlannerUI {
             /// <summary>
             /// 尋找路徑
             /// </summary>
-            public delegate void DelFindPath(uint goalID);
+            public delegate void DelFindPath(string goalName);
 
             /// <summary>
             /// 充電
             /// </summary>
-            /// <param name="goal"></param>
-            /// <param name="idxGoal"></param>
-            public delegate void DelCharging(uint powerID);
+            /// <param name="powerName">充電站名稱</param>
+            public delegate void DelCharging(string powerNmae);
 
             /// <summary>
             /// 載入地圖
@@ -119,7 +118,7 @@ namespace VehiclePlanner.Partial.VehiclePlannerUI {
             /// <summary>
             /// 移動
             /// </summary>
-            public delegate void DelRunGoal(uint idxGoal);
+            public delegate void DelRunGoal(string goalName);
 
             /// <summary>
             /// 按照順序移動全部

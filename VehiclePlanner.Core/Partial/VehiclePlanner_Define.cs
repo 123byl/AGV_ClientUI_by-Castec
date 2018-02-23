@@ -207,9 +207,9 @@ namespace VehiclePlanner.Core {
         /// <summary>
         /// 到指定充電站進行充電
         /// </summary>
-        /// <param name="powerIndex">充電站索引</param>
+        /// <param name="powerName">充電站名稱</param>
         /// <returns>是否開始進行充電</returns>
-        void DoCharging(uint powerID);
+        void DoCharging(string powerName);
         /// <summary>
         /// 進行位置矯正
         /// </summary>
@@ -220,12 +220,12 @@ namespace VehiclePlanner.Core {
         /// </summary>
         /// <param name="goalIndex">Goal點索引</param>
         /// <returns>是否成功開始移動</returns>
-        void DoRunningByGoalIndex(uint goalID);
+        void DoRunningByGoalName(string goalName);
         /// <summary>
         /// 搜尋至Goal點路徑(透過Goal索引)
         /// </summary>
         /// <param name="id"></param>
-        void FindPath(uint id);
+        void FindPath(string goalName);
         /// <summary>
         /// 顯示當前Goal點名稱清單
         /// </summary>

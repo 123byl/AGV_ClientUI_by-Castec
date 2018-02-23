@@ -1012,7 +1012,7 @@ namespace VehiclePlanner
             mGoalSetting.FindPathEvent += rVehiclePlanner.FindPath;
             mGoalSetting.LoadMapEvent += ITest_LoadMap;
             mGoalSetting.LoadMapFromAGVEvent += rVehiclePlanner.GetMap;
-            mGoalSetting.RunGoalEvent += rVehiclePlanner.DoRunningByGoalIndex;
+            mGoalSetting.RunGoalEvent += rVehiclePlanner.DoRunningByGoalName;
             mGoalSetting.RunLoopEvent += IGoalSetting_RunLoopEvent;
             mGoalSetting.SaveGoalEvent += rVehiclePlanner.SaveMap;
             mGoalSetting.SendMapToAGVEvent += ITest_SendMap;

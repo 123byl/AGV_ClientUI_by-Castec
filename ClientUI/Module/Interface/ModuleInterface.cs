@@ -161,11 +161,6 @@ namespace VehiclePlanner.Module.Interface {
         int GoalCount { get; }
 
         /// <summary>
-        /// 根據表單的列編號查詢 Goal
-        /// </summary>
-        T GetSingleByIndex<T>(int row) where T : ISingle<ITowardPair>;
-
-        /// <summary>
         /// 設定真實座標
         /// </summary>
         void UpdateNowPosition(IPair realPos);

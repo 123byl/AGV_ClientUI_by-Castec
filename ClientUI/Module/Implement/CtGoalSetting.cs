@@ -13,6 +13,7 @@ using VehiclePlanner.Partial.VehiclePlannerUI;
 using static VehiclePlanner.Partial.VehiclePlannerUI.Events.GoalSettingEvents;
 
 namespace VehiclePlanner.Module.Implement {
+    
     /// <summary>
     /// Goal點設定介面
     /// </summary>
@@ -110,6 +111,9 @@ namespace VehiclePlanner.Module.Implement {
         /// </summary>
         public event DelGetGoalNames GetGoalNames;
         
+        /// <summary>
+        /// 充電
+        /// </summary>
         public event DelCharging Charging;
         
         public event Events.TestingEvents.DelClearMap ClearMap;
@@ -174,48 +178,6 @@ namespace VehiclePlanner.Module.Implement {
             }
         }
         
-        /// <summary>
-        /// 根據表單的列編號查詢 Goal
-        /// </summary>
-        public T GetSingleByIndex<T>(int row)where T:ISingle<ITowardPair>
-        {
-            lock (mKey)
-            {
-                T single = default(T);
-                if (row >= 0 && row < GoalCount) {
-                    uint id = 0;
-                    dgvGoalPoint.InvokeIfNecessary(() =>
-                    {
-                        id = (uint)dgvGoalPoint[IDColumn, row].Value;
-                    });
-                    if (Database.GoalGM.ContainsID(id)) {
-                        if (!Database.GoalGM.ContainsID(id)) throw new Exception($"GoalGM中不存在{id}");
-                        single = (T)Database.GoalGM[id];
-                    }else if (Database.PowerGM.ContainsID(id)) {
-                        if (!Database.PowerGM.ContainsID(id)) throw new Exception($"PowerGM中不存在{id}");
-                        single = (T)Database.PowerGM[id];
-                    }else {
-                        throw new Exception($"未知的標記形態{typeof(T).Name}");
-                    }
-                }
-                return single;
-            }
-        }
-        
-        /// <summary>
-        /// 取得ComboBox所選的標記點ID並執行指定方法
-        /// </summary>
-        /// <returns>標記點ID</returns>
-        public void GetSelectedID(Action<uint> action) {
-            lock (mKey) {
-                int row = cmbGoalList.InvokeIfNecessary(() => cmbGoalList.SelectedIndex);
-                if (row >= 0 && row < GoalCount) {                    
-                    uint id = dgvGoalPoint.InvokeIfNecessary(() => (uint)dgvGoalPoint[IDColumn, row].Value);
-                    action(id);
-                }
-            }
-        }
-       
         /// <summary>
         /// 更新現在位置
         /// </summary>
@@ -293,9 +255,8 @@ namespace VehiclePlanner.Module.Implement {
         private void btnPath_Click(object sender, EventArgs e)
         {
             Task.Run(() => {
-                GetSelectedID(id => {
-                    FindPathEvent?.Invoke((uint)id);
-                });
+                    string goalName = cmbGoalList.InvokeIfNecessary(() => cmbGoalList.Text);
+                    FindPathEvent?.Invoke(goalName);
             });
         }
 
@@ -311,9 +272,8 @@ namespace VehiclePlanner.Module.Implement {
             lock (mKey)
             {
                 Task.Run(() => {
-                    GetSelectedID(id => {
-                        RunGoalEvent?.Invoke(id);
-                    });
+                    string goalName = cmbGoalList.InvokeIfNecessary(() => cmbGoalList.Text);
+                    RunGoalEvent?.Invoke(goalName);
                 });
             }
         }
@@ -351,9 +311,9 @@ namespace VehiclePlanner.Module.Implement {
         private void btnCharging_Click(object sender, EventArgs e) {
             lock (mKey) {
                 Task.Run(() => {
-                    GetSelectedID(id => {
-                        Charging?.Invoke(id);
-                    });
+                    string powerName = cmbGoalList.InvokeIfNecessary(() => cmbGoalList.Text);
+                    Charging?.Invoke(powerName);
+                    
                 });
             }
         }

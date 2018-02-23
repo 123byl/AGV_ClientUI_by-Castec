@@ -470,14 +470,14 @@ namespace VehiclePlanner.Core {
         /// </summary>
         /// <param name="goalIndex">Goal點索引</param>
         /// <returns>是否成功開始移動</returns>
-        public abstract void DoRunningByGoalIndex(uint goalID);
+        public abstract void DoRunningByGoalName(string goalName);
 
         /// <summary>
         /// 到指定充電站進行充電
         /// </summary>
-        /// <param name="powerIndex">充電站索引</param>
+        /// <param name="powerName">充電站名稱</param>
         /// <returns>是否開始進行充電</returns>
-        public abstract void DoCharging(uint powerID);
+        public abstract void DoCharging(string powerName);
 
         /// <summary>
         /// 要求Map檔清單
@@ -612,18 +612,14 @@ namespace VehiclePlanner.Core {
             }
         }
 
-        public void FindPath(uint id) {
+        public void FindPath(string goalName) {
             try {
-                int index = mMapGL.IndexOfGoal(id);
-                if (index >= 0) {
-                    var path = RequestPath(index);
-                    if (path != null) {
-                        var goal = mMapGL.GetGoal(id);
-                        if (path.Count > 0) {
-                            OnConsoleMessage($"iTS - The path to {goal.Name} is completion. The number of path points is {path.Count}");
-                        } else {
-                            OnConsoleMessage($"iTS - Can not plan the path to  {goal.Name}");
-                        }
+                var path = RequestPath(goalName);
+                if (path != null) {
+                    if (path.Count > 0) {
+                        OnConsoleMessage($"iTS - The path to {goalName} is completion. The number of path points is {path.Count}");
+                    } else {
+                        OnConsoleMessage($"iTS - Can not plan the path to  {goalName}");
                     }
                 }
             } catch (Exception ex) {
@@ -724,7 +720,7 @@ namespace VehiclePlanner.Core {
         /// </summary>
         /// <param name="goalIndex">目標Goal點索引</param>
         /// <returns>路徑(Count為0表示規劃失敗)</returns>
-        protected abstract List<IPair> RequestPath(int goalIndex);
+        protected abstract List<IPair> RequestPath(string goalName);
 
         /// <summary>
         /// 要求自動回報iTS狀態
@@ -1025,17 +1021,13 @@ namespace VehiclePlanner.Core {
         /// </summary>
         /// <param name="goalIndex">Goal點索引</param>
         /// <returns>是否成功開始移動</returns>
-        public override void DoRunningByGoalIndex(uint goalID) {
+        public override void DoRunningByGoalName(string goalName) {
             try {
-                int index = mMapGL.IndexOfGoal(goalID);
-                if (index >= 0) {
-                    var goal = mMapGL.GetGoal(goalID);
-                    var success = Send(FactoryMode.Factory.Order().DoRunningByGoalIndex(index))?.ToIDoRunningByGoalIndex()?.Product;
-                    if (success == true) {
-                        OnConsoleMessage($"iTS - Start moving to {goal.Name}");
-                    } else if (success == false) {
-                        OnConsoleMessage($"Move to goal failure");
-                    }
+                var success = Send(FactoryMode.Factory.Order().DoRuningByGoalName(goalName))?.ToIDoRuningByGoalName()?.Product;
+                if (success == true) {
+                    OnConsoleMessage($"iTS - Start moving to {goalName}");
+                } else if (success == false) {
+                    OnConsoleMessage($"Move to goal failure");
                 }
             } catch (Exception ex) {
                 OnConsoleMessage(ex.Message);
@@ -1047,17 +1039,13 @@ namespace VehiclePlanner.Core {
         /// </summary>
         /// <param name="powerIndex">充電站索引</param>
         /// <returns>是否開始進行充電</returns>
-        public override void DoCharging(uint powerID) {
+        public override void DoCharging(string powerName) {
             try {
-                int index = mMapGL.IndexOfPower(powerID);
-                if (index >= 0) {
-                    var power = mMapGL.GetPower(powerID);
-                    var success = Send(FactoryMode.Factory.Order().DoCharging(index))?.ToIDoCharging()?.Product;
-                    if (success == true) {
-                        OnConsoleMessage($"iTS - Begin charging at {power.Name}");
-                    } else if (success == false) {
-                        OnConsoleMessage("iTS - Charging failed");
-                    }
+                var success = Send(FactoryMode.Factory.Order().DoCharging(powerName))?.ToIDoCharging()?.Product;
+                if (success == true) {
+                    OnConsoleMessage($"iTS - Begin charging at {powerName}");
+                } else if (success == false) {
+                    OnConsoleMessage("iTS - Charging failed");
                 }
             } catch (Exception ex) {
                 OnConsoleMessage(ex.Message);
@@ -1206,8 +1194,8 @@ namespace VehiclePlanner.Core {
         /// </summary>
         /// <param name="goalIndex">目標Goal點索引</param>
         /// <returns>路徑(Count為0表示規劃失敗)</returns>
-        protected override List<IPair> RequestPath(int goalIndex) {
-            var path = Send(FactoryMode.Factory.Order().RequestPath(goalIndex))?.ToIRequestPath()?.Product;
+        protected override List<IPair> RequestPath(string goalName) {
+            var path = Send(FactoryMode.Factory.Order().RequestPath(goalName))?.ToIRequestPath()?.Product;
             return path;
         }
 

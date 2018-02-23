@@ -106,20 +106,20 @@ namespace VehiclePlanner.Core {
             mITS.ConnectToITS(cnn, hostIP);
         }
 
-        public void DoCharging(uint powerID) {
-            mITS.DoCharging(powerID);
+        public void DoCharging(string powerName) {
+            mITS.DoCharging(powerName);
         }
 
         public void DoPositionComfirm() {
             mITS.DoPositionComfirm();
         }
 
-        public void DoRunningByGoalIndex(uint goalID) {
-            mITS.DoRunningByGoalIndex(goalID);
+        public void DoRunningByGoalName(string goalName) {
+            mITS.DoRunningByGoalName(goalName);
         }
 
-        public void FindPath(uint id) {
-            mITS.FindPath(id);
+        public void FindPath(string goalName) {
+            mITS.FindPath(goalName);
         }
 
         public void GetGoalNames() {

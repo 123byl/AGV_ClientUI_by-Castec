@@ -343,8 +343,8 @@ namespace VehiclePlanner.Core {
                     case EPurpose.DoPositionComfirm:
                         product = order.ToIDoPositionComfirm().CreatProduct(-1);
                         break;
-                    case EPurpose.DoRunningByGoalIndex:
-                        product = order.ToIDoRunningByGoalIndex().CreatProduct(true);
+                    case EPurpose.DoRuningByGoalName:
+                        product = order.ToIDoRunningByGoalName().CreatProduct(true);
                         break;
                     case EPurpose.DoCharging:
                         product = order.ToIDoCharging()?.CreatProduct(true);
