@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
+using VehiclePlanner.Core;
 
 namespace VehiclePlanner {
     static class Program {
@@ -24,8 +25,7 @@ namespace VehiclePlanner {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
             Application.SetCompatibleTextRenderingDefault(false);
-            CtVehiclePlanner planner = new CtVehiclePlanner();
-            Application.Run(new VehiclePlannerUI(planner));
+            Application.Run(new VehiclePlannerUI(FactoryMode.Factory.CtVehiclePlanner()));
 
         }
 

@@ -80,14 +80,10 @@
       <DependentUpon>AGVMapUI.cs</DependentUpon>
     </Compile>
     <Compile Include="Module\Interface\ModuleInterface.cs" />
-    <Compile Include="Partial\CtVehiclePlanner\VehiclePlanner_Define.cs" />
-    <Compile Include="Partial\CtVehiclePlanner\VehiclePlanner_Extension.cs" />
-    <Compile Include="Partial\CtVehiclePlanner\VehiclePlanner_SupportClass.cs" />
-    <Compile Include="Partial\VehiclePlannerUI\VehiclePlannerUI_Define.cs" />
-    <Compile Include="Partial\VehiclePlannerUI\VehiclePlannerUI_Extension.cs" />
-    <Compile Include="Partial\VehiclePlannerUI\VehiclePlannerUI_MethodLibrary.cs" />
-    <Compile Include="Partial\VehiclePlannerUI\VehiclePlanner_SupportClass.cs" />
-    <Compile Include="CtVehiclePlanner.cs" />
+    <Compile Include="Partial\VehiclePlannerUI_Define.cs" />
+    <Compile Include="Partial\VehiclePlannerUI_Extension.cs" />
+    <Compile Include="Partial\VehiclePlannerUI_MethodLibrary.cs" />
+    <Compile Include="Partial\VehiclePlanner_SupportClass.cs" />
     <Compile Include="VehiclePlannerUI.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -177,7 +173,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <None Include="D1703.opc" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -525,6 +520,10 @@
     <ProjectReference Include="..\CtOutLookBar\CtOutLookBar.csproj">
       <Project>{1bea4f2d-0a48-4a1c-aff2-0b44efa08442}</Project>
       <Name>CtOutLookBar</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\VehiclePlanner.Core\VehiclePlanner.Core.csproj">
+      <Project>{03034d39-18c7-449a-95d3-b941dc4df743}</Project>
+      <Name>VehiclePlanner.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

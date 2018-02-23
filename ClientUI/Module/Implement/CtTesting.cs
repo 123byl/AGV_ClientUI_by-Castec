@@ -7,11 +7,10 @@ using WeifenLuo.WinFormsUI.Docking;
 using CtLib.Library;
 using System.Linq;
 using System.Threading;
-using AGVDefine;
 using System.Threading.Tasks;
 using VehiclePlanner.Module.Interface;
 using VehiclePlanner.Partial.VehiclePlannerUI;
-using VehiclePlanner.Partial.CtVehiclePlanner;
+using VehiclePlanner.Core;
 
 namespace VehiclePlanner.Module.Implement {
     /// <summary>

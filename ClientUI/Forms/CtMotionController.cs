@@ -8,8 +8,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using VehiclePlanner.Core;
 using VehiclePlanner.Module.Implement;
-using VehiclePlanner.Partial.CtVehiclePlanner;
 using VehiclePlanner.Partial.VehiclePlannerUI;
 using WeifenLuo.WinFormsUI.Docking;
 

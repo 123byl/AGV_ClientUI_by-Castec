@@ -34,8 +34,8 @@ using BroadCast;
 using VehiclePlanner.Module.Interface;
 using VehiclePlanner.Module.Implement;
 using VehiclePlanner.Forms;
-using VehiclePlanner.Partial.CtVehiclePlanner;
 using VehiclePlanner.Partial.VehiclePlannerUI;
+using VehiclePlanner.Core;
 
 namespace VehiclePlanner
 {
@@ -123,7 +123,7 @@ namespace VehiclePlanner
         /// <summary>
         /// 系統底層物件參考
         /// </summary>
-        private CtVehiclePlanner rVehiclePlanner = null;
+        private ICtVehiclePlanner rVehiclePlanner = null;
         
         /// <summary>
         /// Car Position 設定位置
@@ -239,21 +239,27 @@ namespace VehiclePlanner
 
         #region Functin - Constructors
         
-        public VehiclePlannerUI(CtVehiclePlanner vehiclePlanner = null) {
+        public VehiclePlannerUI(ICtVehiclePlanner vehiclePlanner = null) {
             InitializeComponent();
 
             mHandle = this.Handle;
             /*-- 系統底層實例取得 --*/
-            rVehiclePlanner = vehiclePlanner ?? new CtVehiclePlanner();
-            /*-- 事件委派 --*/
-            rVehiclePlanner.PropertyChanged += rVehiclePlanner_PropertyChanged;
-            rVehiclePlanner.ConsoleMessage += rVehiclePlanner_ConsoleMessage;
-            rVehiclePlanner.VehiclePlannerEvent += rVehiclePlanner_VehiclePlannerEvent;
-            rVehiclePlanner.ErrorMessage += rVehiclePlanner_ErrorMessage;
-            /*-- 方法委派 --*/
-            rVehiclePlanner.SelectFile = SelectFile;
-            /*-- 初始化 --*/
-            rVehiclePlanner.Initial();
+            rVehiclePlanner = vehiclePlanner ?? FactoryMode.Factory.CtVehiclePlanner();
+            if (rVehiclePlanner != null) {
+                /*-- 初始化 --*/
+                rVehiclePlanner.Initial();
+                /*-- 事件委派 --*/
+                rVehiclePlanner.PropertyChanged += rVehiclePlanner_PropertyChanged;
+                rVehiclePlanner.ConsoleMessage += rVehiclePlanner_ConsoleMessage;
+                rVehiclePlanner.VehiclePlannerEvent += rVehiclePlanner_VehiclePlannerEvent;
+                rVehiclePlanner.ErrorMessage += rVehiclePlanner_ErrorMessage;
+                rVehiclePlanner.BalloonTip += rVehiclePlanner_BalloonTip; ;
+                /*-- 方法委派 --*/
+                rVehiclePlanner.SelectFile = SelectFile;
+                rVehiclePlanner.InputBox = InputBox;
+            } else {
+                this.Close();
+            }
         }
 
         #endregion Function - Constructors
@@ -261,7 +267,16 @@ namespace VehiclePlanner
         #region Function - Events
 
         #region CtVehiclePlanner
-        
+
+        /// <summary>
+        /// 氣球提示事件處理
+        /// </summary>
+        /// <param name="title"></param>
+        /// <param name="context"></param>
+        private void rVehiclePlanner_BalloonTip(string title, string context) {
+            SetBalloonTip(title, context);
+        }
+
         /// <summary>
         /// 錯誤訊息事件處理
         /// </summary>
@@ -1133,6 +1148,21 @@ namespace VehiclePlanner
             return fileName;
         }
 
+        /// <summary>
+        /// 文字輸入方法
+        /// </summary>
+        /// <param name="oriName"></param>
+        /// <param name="title"></param>
+        /// <param name="describe"></param>
+        /// <returns></returns>
+        private bool InputBox(out string oriName, string title, string describe) {
+            return Stat.SUCCESS == CtInput.Text(out oriName, title, describe);
+        }
+
+        /// <summary>
+        /// 顯示Console訊息
+        /// </summary>
+        /// <param name="msg"></param>
         private void OnConsoleMessage(string msg) {
             mConsole.AddMsg(msg);
         }
@@ -1140,11 +1170,5 @@ namespace VehiclePlanner
         #endregion Function - Private Methods
 
     }
-
-    #region Suppor - Class
-
-
-    
-    #endregion Support - Class
 
 }
