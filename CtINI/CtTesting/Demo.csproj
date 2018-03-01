@@ -1,0 +1,139 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{3D5B539E-E99C-4920-B703-D2ADC8764E27}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>CtTesting</RootNamespace>
+    <AssemblyName>CtTesting</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CtrlIni.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CtrlIni.Designer.cs">
+      <DependentUpon>CtrlIni.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CtrlParamEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CtrlParamEditor.Designer.cs">
+      <DependentUpon>CtrlParamEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CtrlParamGenarator.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CtrlParamGenarator.Designer.cs">
+      <DependentUpon>CtrlParamGenarator.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ICtPoint.cs" />
+    <Compile Include="StartUp.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="StartUp.Designer.cs">
+      <DependentUpon>StartUp.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tool.cs" />
+    <EmbeddedResource Include="CtrlIni.resx">
+      <DependentUpon>CtrlIni.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CtrlParamEditor.resx">
+      <DependentUpon>CtrlParamEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CtrlParamGenarator.resx">
+      <DependentUpon>CtrlParamGenarator.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="StartUp.resx">
+      <DependentUpon>StartUp.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\CtLib\CtLib\CtLib.csproj">
+      <Project>{a9bed8b3-2f9d-42a8-90bd-9fae0522eb09}</Project>
+      <Name>CtLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CtINI\CtINI.csproj">
+      <Project>{023378c0-67e4-4424-ad75-13572f89e9a5}</Project>
+      <Name>CtINI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CtParamEditor.Comm\CtParamEditor.Comm.csproj">
+      <Project>{4304d4b0-4172-4148-becf-65210ed3c6c5}</Project>
+      <Name>CtParamEditor.Comm</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CtParamEditor.Core\CtParamEditor.Core.csproj">
+      <Project>{31B4923E-C9AD-4322-BCEB-F46B3ECDCFC6}</Project>
+      <Name>CtParamEditor.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
