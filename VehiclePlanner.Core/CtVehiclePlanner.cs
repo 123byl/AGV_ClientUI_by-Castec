@@ -395,7 +395,7 @@ namespace VehiclePlanner.Core {
             OnVehiclePlanner(VehiclePlannerEvents.NewMap);
             if (!mBypassLoadFile) {//無BypassLoadFile
                 /*-- 載入Map並取得Map中心點 --*/
-                IPair center = mMapGL.LoadOri(CurMapPath)?.Center();
+                IPair center = mMapGL.LoadOri(CurOriPath)?.Center();
                 if (center != null) {
                     MapCenter = center;
                 } else {
