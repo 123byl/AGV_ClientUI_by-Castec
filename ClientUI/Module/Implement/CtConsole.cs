@@ -13,6 +13,7 @@ using WeifenLuo.WinFormsUI.Docking;
 using CtLib.Library;
 using VehiclePlanner.Module.Interface;
 using static VehiclePlanner.Partial.VehiclePlannerUI.Events.ConsoleEvents;
+using VehiclePlanner.Core;
 
 namespace VehiclePlanner.Module.Implement {
     
@@ -45,7 +46,7 @@ namespace VehiclePlanner.Module.Implement {
 
         #endregion Function - Constructors
 
-        #region IIConsole
+        #region Implement - IIConsole
         
         /// <summary>
         /// 文字已被加入
@@ -91,7 +92,19 @@ namespace VehiclePlanner.Module.Implement {
             }
             ConsoleClearedEvent();
         }
-        #endregion
+        #endregion Implement - IConsole
 
+        #region Implement - IDataDisplay<VehiclePlanner>
+
+        /// <summary>
+        /// 資料綁定
+        /// </summary>
+        /// <param name="source">資料來源</param>
+        public void Bindings(ICtVehiclePlanner source) {
+            if (source.DelInvoke == null) source.DelInvoke = invk => this.InvokeIfNecessary(invk);
+        }
+
+        #endregion Implement - IDataDisplay<VehiclePlanner>
+        
     }
 }

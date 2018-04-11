@@ -10,6 +10,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace VehiclePlanner.Core {
 
@@ -115,27 +116,6 @@ namespace VehiclePlanner.Core {
 
     #region Declaration - Const
 
-    /// <summary>
-    /// 屬性名稱宣告
-    /// </summary>
-    public static class PropertyDeclaration {
-        public const string iTSs = "iTSs";
-        public const string MainVisible = "MainVisible";
-        public const string IsMotorServoOn = "IsMotorServoOn";
-        public const string IsConnected = "IsConnected";
-        public const string IsScanning = "IsScanning";
-        public const string Status = "Status";
-        public const string IsAutoReport = "IsAutoReport";
-        public const string Velocity = "Velocity";
-        public const string MapCenter = "MapCenter";
-        public const string IsBypassSocket = "IsBypassSocket";
-        public const string IsBypassLoadFile = "IsBypassLoadFile";
-        public const string HostIP = "HostIP";
-        public const string UserData = "UserData";
-
-        public const string Culture = "Culture";
-    }
-
     #endregion Declaration - Const
 
     #region Declaration - Interface
@@ -143,7 +123,7 @@ namespace VehiclePlanner.Core {
     /// <summary>
     /// iTS控制器
     /// </summary>
-    public interface IiTSController:INotifyPropertyChanged {
+    public interface IiTSController:IDataSource {
         /// <summary>
         /// Vehicle Console端IP
         /// </summary>
@@ -373,6 +353,28 @@ namespace VehiclePlanner.Core {
 
     }
 
+    /// <summary>
+    /// 資料顯示介面
+    /// </summary>
+    /// <typeparam name="TSource">資料來源</typeparam>
+    public interface IDataDisplay<TSource> where TSource : IDataSource {
+        /// <summary>
+        /// 資料綁定
+        /// </summary>
+        /// <param name="source">資料來源</param>
+        void Bindings(TSource source);
+    }
+
+    /// <summary>
+    /// 資料來源
+    /// </summary>
+    public interface IDataSource : INotifyPropertyChanged {
+        /// <summary>
+        /// Invoke委派方法
+        /// </summary>
+        Action<MethodInvoker> DelInvoke { get; set; }
+    }
+
     #endregion Declaration - Interface
 
     /// <summary>
@@ -466,7 +468,7 @@ namespace VehiclePlanner.Core {
             private set {
                 if (mMainVisible != value) {
                     mMainVisible = value;
-                    OnPropertyChanged(PropertyDeclaration.MainVisible);
+                    OnPropertyChanged();
                 }
             }
         }
@@ -481,7 +483,7 @@ namespace VehiclePlanner.Core {
             set {
                 if (mBypassLoadFile != value) {
                     mBypassLoadFile = value;
-                    OnPropertyChanged(PropertyDeclaration.IsBypassLoadFile);
+                    OnPropertyChanged();
                 }
             }
         }
@@ -501,7 +503,7 @@ namespace VehiclePlanner.Core {
             set {
                 if (mUserData != value && value != null) {
                     mUserData = value;
-                    OnPropertyChanged(PropertyDeclaration.UserData);
+                    OnPropertyChanged();
                 }
             }
 
@@ -517,7 +519,7 @@ namespace VehiclePlanner.Core {
             set {
                 if (mMapCenter != value && value != null) {
                     mMapCenter = value;
-                    OnPropertyChanged(PropertyDeclaration.MapCenter);
+                    OnPropertyChanged();
                 }
             }
         }
@@ -530,12 +532,16 @@ namespace VehiclePlanner.Core {
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged {
             add {
-                mPropertyChanged += value;
-                mITS.PropertyChanged += value;
+                if (value != null) {
+                    mPropertyChanged += value;
+                    mITS.PropertyChanged += value;
+                }
             }
             remove {
-                mPropertyChanged -= value;
-                mITS.PropertyChanged -= value;
+                if (value != null) {
+                    mPropertyChanged -= value;
+                    mITS.PropertyChanged -= value;
+                }
             }
         }
         /// <summary>

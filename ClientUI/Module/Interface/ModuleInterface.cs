@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using VehiclePlanner.Core;
 using VehiclePlanner.Module.Implement;
 using WeifenLuo.WinFormsUI.Docking;
 using static VehiclePlanner.Partial.VehiclePlannerUI.Events.ConsoleEvents;
@@ -65,7 +66,7 @@ namespace VehiclePlanner.Module.Interface {
     /// <summary>
     /// Console 視窗公開操作方法
     /// </summary>
-    public interface IConsole : ICtDockContent {
+    public interface IConsole : ICtDockContent,IDataDisplay<ICtVehiclePlanner> {
         /// <summary>
         /// 加入文字
         /// </summary>
@@ -95,7 +96,7 @@ namespace VehiclePlanner.Module.Interface {
     /// <summary>
     /// GoalSetting 視窗公開操作方法
     /// </summary>
-    public interface IGoalSetting : ICtDockContent {
+    public interface IGoalSetting : ICtDockContent ,IDataDisplay<ICtVehiclePlanner>{
         /// <summary>
         /// 加入 Goal 點
         /// </summary>
@@ -180,7 +181,7 @@ namespace VehiclePlanner.Module.Interface {
     /// <summary>
     /// Test視窗公開操作方法
     /// </summary>
-    public interface ITesting : ICtDockContent {
+    public interface ITesting : ICtDockContent,IDataDisplay<ICtVehiclePlanner> {
 
         event DelConnect Connect;
 
@@ -243,7 +244,7 @@ namespace VehiclePlanner.Module.Interface {
     /// <summary>
     /// MapGL視窗公開操作方法
     /// </summary>
-    public interface IMapGL : ICtDockContent {
+    public interface IMapGL : ICtDockContent,IDataDisplay<ICtVehiclePlanner> {
         IScene Ctrl { get; }
         void Show();
     }

@@ -18,14 +18,15 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using Geometry;
+using System.Runtime.CompilerServices;
 
 namespace VehiclePlanner.Core {
-    
+
     /// <summary>
     /// 系統主體
     /// </summary>
     internal partial class CtVehiclePlanner : ICtVehiclePlanner {
-        
+
         #region Version - Information
 
         /// <summary>
@@ -153,7 +154,7 @@ namespace VehiclePlanner.Core {
             mBroadcast = new Broadcaster();
 
             mMapGL.Initial();
-            
+
             /*-- 開啟全域鍵盤鉤子 --*/
             mKeyboardHook.KeyDownEvent += mKeyboardHook_KeyDownEvent;
             mKeyboardHook.KeyUpEvent += mKeyboardHook_KeyUpEvent;
@@ -161,6 +162,7 @@ namespace VehiclePlanner.Core {
 
             /*-- 委派廣播接收事件 --*/
             mBroadcast.ReceivedData += mBroadcast_ReceivedData;
+
         }
 
         /// <summary>
@@ -186,11 +188,11 @@ namespace VehiclePlanner.Core {
                     string msg = $"Find {iTSs.Count} iTS";
                     OnConsoleMessage($"[Planner]:{msg}");
                     SetBalloonTip("Search iTS", msg);
-                    OnPropertyChanged(PropertyDeclaration.iTSs);
+                    OnPropertyChanged(nameof(iTSs));
                 });
             }
         }
-        
+
         /// <summary>
         /// 清除地圖
         /// </summary>
@@ -236,7 +238,7 @@ namespace VehiclePlanner.Core {
                 OnErrorMessage(ex.Message);
             }
         }
-        
+
         /// <summary>
         /// 將ori檔轉為map檔
         /// </summary>
@@ -307,7 +309,7 @@ namespace VehiclePlanner.Core {
             /*-- 重新載入Goal點資訊 --*/
             OnVehiclePlanner(VehiclePlannerEvents.MarkerChanged);
         }
-        
+
         #endregion Funciton - Public Mehtods
 
         #region Funciton - Private Methods
@@ -317,10 +319,11 @@ namespace VehiclePlanner.Core {
         /// <summary>
         /// 屬性變更事件發報
         /// </summary>
-        /// <param name="prop"></param>
-        protected virtual void OnPropertyChanged(string prop) {
-            mPropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+        /// <param name="propertyName"></param>
+        protected virtual void OnPropertyChanged([CallerMemberName]string propertyName="") {
+            DelInvoke(() => mPropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)));
         }
+        
 
         /// <summary>
         /// Console訊息發報

@@ -27,6 +27,7 @@ namespace VehiclePlanner.Module.Implement {
         /// </summary>
         private List<MotionDirection> mDirs = new List<MotionDirection>();
 
+        private AGV mAGV = new AGV();
         #endregion Declaration - Fields
 
         #region Function - Construcotrs
@@ -77,6 +78,9 @@ namespace VehiclePlanner.Module.Implement {
             CtInvoke.ControlTag(btnConnect, isConnect);
             CtInvoke.ControlText(btnConnect, btnTxt);
             CtInvoke.ButtonImage(btnConnect, btnImg);
+
+            mAGV.IsConnected = isConnect;
+            mAGV.Status = btnTxt;
             //CtInvoke.ControlEnabled(btnGetLaser, isConnect);
             //CtInvoke.ControlEnabled(btnGetOri, isConnect);
             //CtInvoke.ControlEnabled(btnIdleMode, isConnect);
@@ -270,6 +274,35 @@ namespace VehiclePlanner.Module.Implement {
 
         #endregion Funciton - UI Events
 
+        #region Implement - IDataDisplay<ICtVehiclePlanner>
+        
+        /// <summary>
+        /// 資料綁定
+        /// </summary>
+        /// <param name="source">資料來源</param>
+        public void Bindings(ICtVehiclePlanner source) {
+            if (source.DelInvoke == null) source.DelInvoke = invk => this.InvokeIfNecessary(invk);
+            //btnTest.DataBindings.Add("Text", source, "IsConnected").Format += (sender, e) => e.Value = (bool)e.Value ? "Connected" : "Disconnected";
+            //btnTest.DataBindings.Add("BackColor", source, "IsConnected").Format += (sneder, e) => e.Value = (bool)e.Value ? Color.Green : Color.Red;
+
+            //btnTest.DataBindings.Add("BackColor", mAGV, "IsConnected").Format += (sender, e) => {
+            //    e.Value = (bool)e.Value ? Color.Green : Color.Red;
+            //};
+            //btnConnect.DataBindings.Add("Tag", source, "IsConnected");
+            //btnConnect.DataBindings.Add("Image", source, "IsConnected").Format += (sneder, e) => {
+            //    Image img = (bool)e.Value ? Properties.Resources.Connect : Properties.Resources.Disconnect;
+            //    e.Value = img;
+            //};
+
+        }
+
+        #endregion Implement - IDataDisplay<ICtVehiclPlanner>
+
+    }
+
+    public class AGV {
+        public bool IsConnected { get; set; } = false;
+        public string Status { get; set; } = "Disconnected";
     }
 
 }

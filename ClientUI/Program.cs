@@ -26,6 +26,7 @@ namespace VehiclePlanner {
 
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new VehiclePlannerUI(FactoryMode.Factory.CtVehiclePlanner()));
+            //Application.Run(new Test());
 
         }
 

@@ -38,14 +38,14 @@ namespace VehiclePlanner.Module.Implement {
             this.btnGetOri = new System.Windows.Forms.Button();
             this.btnLoadOri = new System.Windows.Forms.Button();
             this.btnClrMap = new System.Windows.Forms.Button();
-            this.grbMap = new CtGroupBox();
+            this.grbMap = new VehiclePlanner.Partial.VehiclePlannerUI.CtGroupBox();
             this.btnGetMap = new System.Windows.Forms.Button();
             this.btnLoadMap = new System.Windows.Forms.Button();
             this.btnSendMap = new System.Windows.Forms.Button();
-            this.grbInfo = new CtGroupBox();
+            this.grbInfo = new VehiclePlanner.Partial.VehiclePlannerUI.CtGroupBox();
             this.btnGetLaser = new System.Windows.Forms.Button();
             this.btnGetCarStatus = new System.Windows.Forms.Button();
-            this.gpbShift = new CtGroupBox();
+            this.gpbShift = new VehiclePlanner.Partial.VehiclePlannerUI.CtGroupBox();
             this.btnSetVelo = new System.Windows.Forms.Button();
             this.lbVelocity = new System.Windows.Forms.Label();
             this.txtVelocity = new System.Windows.Forms.TextBox();

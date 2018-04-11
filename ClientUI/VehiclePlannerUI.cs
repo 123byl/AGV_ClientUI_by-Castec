@@ -43,7 +43,7 @@ namespace VehiclePlanner
     /// <summary>
     /// 客戶端介面
     /// </summary>
-    public partial class VehiclePlannerUI : Form, ICtVersion
+    public partial class VehiclePlannerUI : Form, ICtVersion,IDataDisplay<ICtVehiclePlanner>
     {
 
         #region Version - Information
@@ -257,6 +257,23 @@ namespace VehiclePlanner
                 /*-- 方法委派 --*/
                 rVehiclePlanner.SelectFile = SelectFile;
                 rVehiclePlanner.InputBox = InputBox;
+
+                /*-- 載入ICtDockContent物件 --*/
+                LoadICtDockContent();
+
+                LoadCtNotifyIcon();
+
+                /*-- 依照使用者權限進行配置 --*/
+                UserChanged(rVehiclePlanner.UserData);
+
+                /*-- 檢查Bypass狀態 --*/
+                CtInvoke.ToolStripItemChecked(miBypassSocket, rVehiclePlanner.IsBypassSocket);
+                CtInvoke.ToolStripItemChecked(miLoadFile, rVehiclePlanner.IsBypassLoadFile);
+
+                /*-- 檢查遠端設備IP --*/
+                tslbHostIP.Text = rVehiclePlanner.HostIP;
+                mTesting.SetHostIP(rVehiclePlanner.HostIP);
+
             } else {
                 this.Close();
             }
@@ -316,11 +333,11 @@ namespace VehiclePlanner
         /// <param name="e"></param>
         private void rVehiclePlanner_PropertyChanged(object sender, PropertyChangedEventArgs e) {
             switch (e.PropertyName) {
-                case PropertyDeclaration.iTSs:
+                case nameof(ICtVehiclePlanner.iTSs):
                     var ipList = rVehiclePlanner.iTSs;
                     mTesting.SetIPList(ipList);
                     break;
-                case PropertyDeclaration.MainVisible:
+                case nameof(ICtVehiclePlanner.MainVisible):
                     if (rVehiclePlanner.MainVisible) {
                         this.Show();
                         this.TopMost = true;
@@ -335,16 +352,16 @@ namespace VehiclePlanner
                         this.Hide();
                     }
                     break;
-                case PropertyDeclaration.IsMotorServoOn:
+                case nameof(ICtVehiclePlanner.IsMotorServoOn):
                     mTesting.ChangedMotorStt(rVehiclePlanner.IsMotorServoOn);
                     break;
-                case PropertyDeclaration.IsConnected:
+                case nameof(ICtVehiclePlanner.IsConnected):
                     mTesting.SetServerStt(rVehiclePlanner.IsConnected);
                     break;
-                case PropertyDeclaration.IsScanning:
+                case nameof(ICtVehiclePlanner.IsScanning):
                     mTesting.ChangedScanStt(rVehiclePlanner.IsScanning);
                     break;
-                case PropertyDeclaration.Status:
+                case nameof(ICtVehiclePlanner.Status):
                     var status = rVehiclePlanner.Status;
                     this.InvokeIfNecessary(() => {
                         if (status.Battery >= 0 && status.Battery <= 100) {
@@ -354,24 +371,24 @@ namespace VehiclePlanner
                         tslbStatus.Text = status.Description.ToString();
                     });
                     break;
-                case PropertyDeclaration.IsAutoReport:
+                case nameof(ICtVehiclePlanner.IsAutoReport):
                     mTesting.SetLaserStt(rVehiclePlanner.IsAutoReport);
                     break;
-                case PropertyDeclaration.MapCenter:
+                case nameof(ICtVehiclePlanner.MapCenter):
                     IMapCtrl.Focus(rVehiclePlanner.MapCenter);
                     break;
-                case PropertyDeclaration.IsBypassSocket:
+                case nameof(ICtVehiclePlanner.IsBypassSocket):
                     CtInvoke.ToolStripItemChecked(miBypassSocket, rVehiclePlanner.IsBypassSocket);
                     break;
-                case PropertyDeclaration.IsBypassLoadFile:
+                case nameof(ICtVehiclePlanner.IsBypassLoadFile):
                     CtInvoke.ToolStripItemChecked(miLoadFile, rVehiclePlanner.IsBypassLoadFile);
                     break;
-                case PropertyDeclaration.HostIP:
+                case nameof(ICtVehiclePlanner.HostIP):
                     this.InvokeIfNecessary(() => {
                         tslbHostIP.Text = rVehiclePlanner.HostIP;
                     });
                     break;
-                case PropertyDeclaration.UserData:
+                case nameof(ICtVehiclePlanner.UserData):
                     UserChanged(rVehiclePlanner.UserData);
                     break;
             }
@@ -388,21 +405,6 @@ namespace VehiclePlanner
         /// <param name="e"></param>
         private void ClientUI_Load(object sender, EventArgs e)
         {
-            /*-- 載入ICtDockContent物件 --*/
-            LoadICtDockContent();
-
-            LoadCtNotifyIcon();
-
-            /*-- 依照使用者權限進行配置 --*/
-            UserChanged(rVehiclePlanner.UserData);
-
-            /*-- 檢查Bypass狀態 --*/
-            CtInvoke.ToolStripItemChecked(miBypassSocket, rVehiclePlanner.IsBypassSocket);
-            CtInvoke.ToolStripItemChecked(miLoadFile, rVehiclePlanner.IsBypassLoadFile);
-
-            /*-- 檢查遠端設備IP --*/
-            tslbHostIP.Text = rVehiclePlanner.HostIP;
-            mTesting.SetHostIP(rVehiclePlanner.HostIP);
             
         }
         
@@ -1103,7 +1105,8 @@ namespace VehiclePlanner
 
             }
             mMapInsert.AssignmentDockPanel(dockPanel);
-
+            /*-- 資料綁定 --*/
+            Bindings(rVehiclePlanner);
         }
 
         /// <summary>
@@ -1169,6 +1172,21 @@ namespace VehiclePlanner
 
         #endregion Function - Private Methods
 
+        #region Implement - IDataDisplay<ICtVehiclePlanner>
+
+        /// <summary>
+        /// 資料綁定
+        /// </summary>
+        /// <param name="source">資料來源</param>
+        public void Bindings(ICtVehiclePlanner source) {
+            if (source.DelInvoke == null) source.DelInvoke = invk => this.InvokeIfNecessary(invk);
+            var subDisplay = mDockContent.Where(kvp => kvp.Value is IDataDisplay<ICtVehiclePlanner>).Select(kvp => kvp.Value);
+            foreach(IDataDisplay<ICtVehiclePlanner> display in subDisplay) {
+                display.Bindings(source);
+            }
+        }
+
+        #endregion Implement - IDataDisplay<ICtVehiclePlanner>
     }
 
 }

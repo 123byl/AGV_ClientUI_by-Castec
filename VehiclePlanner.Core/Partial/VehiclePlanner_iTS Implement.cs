@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Geometry;
 using SerialCommunicationData;
+using System.Windows.Forms;
 
 namespace VehiclePlanner.Core {
 
@@ -170,6 +171,12 @@ namespace VehiclePlanner.Core {
             mITS.StartScan(scan);
         }
 
+        public Action<MethodInvoker> DelInvoke {
+            get => mITS.DelInvoke;
+            set {
+                mITS.DelInvoke = value;
+            }
+        }
     }
 
 }

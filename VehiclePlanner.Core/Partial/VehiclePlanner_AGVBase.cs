@@ -14,6 +14,8 @@ using System.Net.NetworkInformation;
 using System.Text.RegularExpressions;
 using System.ComponentModel;
 using System.IO;
+using System.Windows.Forms;
+using System.Runtime.CompilerServices;
 
 namespace VehiclePlanner.Core {
 
@@ -224,7 +226,7 @@ namespace VehiclePlanner.Core {
         /// <summary>
         /// 是否已建立連線
         /// </summary>
-        public abstract bool IsConnected {get;}
+        public abstract bool IsConnected { get;protected set; }
 
         /// <summary>
         /// Vehicle Console端IP
@@ -237,7 +239,7 @@ namespace VehiclePlanner.Core {
                 if (Properties.Settings.Default.HostIP != value && !string.IsNullOrEmpty(value)) {
                     Properties.Settings.Default.HostIP = value;
                     Properties.Settings.Default.Save();
-                    OnPropertyChanged(PropertyDeclaration.HostIP);
+                    OnPropertyChangedCaller();
                 }
             }
         }
@@ -252,8 +254,8 @@ namespace VehiclePlanner.Core {
             protected set {
                 if (value != null && mStatus != value) {
                     mStatus = value;
-                    OnPropertyChanged(PropertyDeclaration.Status);
                     mMapGL.SetLocation(mStatus.Data);
+                    OnPropertyChangedCaller();
                 }
             }
         }
@@ -268,7 +270,7 @@ namespace VehiclePlanner.Core {
             protected set {
                 if (mIsAutoReport != value) {
                     mIsAutoReport = value;
-                    OnPropertyChanged(PropertyDeclaration.IsAutoReport);
+                    OnPropertyChangedCaller();
                 }
             }
         }
@@ -283,7 +285,7 @@ namespace VehiclePlanner.Core {
             set {
                 if (mIsMotorServoOn != value) {
                     mIsMotorServoOn = value;
-                    OnPropertyChanged(PropertyDeclaration.IsMotorServoOn);
+                    OnPropertyChangedCaller();
                 }
             }
         }
@@ -298,8 +300,8 @@ namespace VehiclePlanner.Core {
             set {
                 if (mVelocity != value) {
                     mVelocity = value;
-                    OnPropertyChanged(PropertyDeclaration.Velocity);
                     OnConsoleMessage($"iTS - WorkVelocity = {mVelocity}");
+                    OnPropertyChangedCaller();
                 }
             }
         }
@@ -314,7 +316,7 @@ namespace VehiclePlanner.Core {
             private set {
                 if (mIsScanning != value) {
                     mIsScanning = value;
-                    OnPropertyChanged(PropertyDeclaration.IsScanning);
+                    OnPropertyChangedCaller();
                     OnConsoleMessage($"iTS - Is {(mIsScanning ? "start" : "stop")} scanning");
                 }
             }
@@ -330,7 +332,7 @@ namespace VehiclePlanner.Core {
             set {
                 if (mBypassSocket != value) {
                     mBypassSocket = value;
-                    OnPropertyChanged(PropertyDeclaration.IsBypassSocket);
+                    OnPropertyChangedCaller();
                 }
             }
         }
@@ -644,7 +646,11 @@ namespace VehiclePlanner.Core {
         /// </summary>
         /// <param name="prop"></param>
         protected virtual void OnPropertyChanged(string prop) {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+            DelInvoke(() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop)));            
+        }
+
+        protected virtual void OnPropertyChangedCaller([CallerMemberName]string propertyName = "") {
+            DelInvoke(() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)));
         }
 
         protected virtual void OnBalloonTip(string title, string context) {
@@ -802,6 +808,31 @@ namespace VehiclePlanner.Core {
 
         #endregion Funciton - Private Methdos
 
+        #region Implement - IDataSource
+
+        /// <summary>
+        /// Invoke委派方法
+        /// </summary>
+        protected Action<MethodInvoker> mInvoke = null;
+
+        /// <summary>
+        /// 預設Invoke委派方法
+        /// </summary>
+        protected Action<MethodInvoker> mDefInvoke = invk => invk();
+
+        /// <summary>
+        /// Invoke委派方法
+        /// </summary>
+        public Action<MethodInvoker> DelInvoke {
+            get => mInvoke;
+            set {
+                if (value != null) {
+                    mInvoke = value;
+                }
+            }
+        }
+
+        #endregion Implement - IDataSource
     }
 
     /// <summary>
@@ -825,17 +856,32 @@ namespace VehiclePlanner.Core {
 
         #region Declaration - Properties
 
+        private bool mIsConnected = false;
         /// <summary>
         /// 是否已建立連線
         /// </summary>
         public override bool IsConnected {
             get {
-                return mSerialClient?.Connected ?? false;
+                return mIsConnected;
+            }
+            protected set {
+                if (mIsConnected != value) {
+                    mIsConnected = value;
+                    OnPropertyChangedCaller();
+                }
             }
         }
 
         #endregion Declaration - Properties
 
+        #region Funciotn - Constructors
+
+        public iTSControllerSerial() {
+            mSerialClient = FactoryMode.Factory.SerialClient(mSerialClient_ReceiveData, mBypassSocket);
+            mSerialClient.ConnectChange += mSerialClient_OnConnectChange;
+        }
+
+        #endregion Funciotn - Constructors
         #region Funciton - Events
 
         /// <summary>
@@ -883,7 +929,7 @@ namespace VehiclePlanner.Core {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void mSerialClient_OnConnectChange(object sender, ConnectStatusChangeEventArgs e) {
-            OnPropertyChanged(PropertyDeclaration.IsConnected);
+            IsConnected = e.IsConnected;
 
             OnConsoleMessage($"Client - Is {(e.IsConnected ? "Connected" : "Disconnected")} to {e.IP}:{e.Port}");
             if (e.IsConnected) {

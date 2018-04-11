@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using VehiclePlanner.Module.Interface;
 using VehiclePlanner.Partial.VehiclePlannerUI;
 using static VehiclePlanner.Partial.VehiclePlannerUI.Events.GoalSettingEvents;
+using VehiclePlanner.Core;
 
 namespace VehiclePlanner.Module.Implement {
     
@@ -435,6 +436,17 @@ namespace VehiclePlanner.Module.Implement {
 
         #endregion Function - Private Methods
 
+        #region Implement - IDataDisplay<ICtVehiclePlanner>
+
+        /// <summary>
+        /// 資料綁定
+        /// </summary>
+        /// <param name="source">資料來源</param>
+        public void Bindings(ICtVehiclePlanner source) {
+            if (source.DelInvoke == null) source.DelInvoke = invk => this.InvokeIfNecessary(invk);
+        }
+
+        #endregion Implement - IDataDisplay<ICtVehiclePlanner>
     }
 
 
