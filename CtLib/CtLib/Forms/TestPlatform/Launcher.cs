@@ -16,22 +16,34 @@ namespace CtLib.Forms {
     /// </summary>
     public partial class Launcher : Form {
 
-        private Dictionary<string, Form> DEFAULT_FORM_LIST = new Dictionary<string, Form>{
-            {"System Info", new TestPlatform.SystemInfo()},
-            {"Serial", new TestPlatform.Test_Serial()},
-            {"Socket (Sync)", new TestPlatform.Test_Sockets()},
-            {"Socket (Async)", new TestPlatform.Test_AsyncSockets()},
-            {"Adept ACE", new TestPlatform.Test_ACE()},
-            {"Beckhoff PLC", new TestPlatform.Test_BkfPLC()},
-            {"Wago I/O", new TestPlatform.Test_WagoIO()},
-            {"Universal Robots", new TestPlatform.Test_UniversalRobots()},
-            {"Modbus RTU", new TestPlatform.Test_ModbusRTU()},
-            {"XML Editor", new TestPlatform.XML_Editor()},
-            {"DENSO ORiN2", new TestPlatform.Test_Denso()},
-            {"FESTO CMMO", new TestPlatform.Test_FestoCMMO()}
-        };
+        private Dictionary<string, Type> DEFAULT_FORM_LIST = new Dictionary<string, Type>{
+			{ "System Info", typeof(TestPlatform.SystemInfo)},
+			{ "Serial", typeof(TestPlatform.Test_Serial)},
+			{ "Socket", typeof(TestPlatform.Test_Socket)},
+			{ "Pipe", typeof(TestPlatform.Test_AsyncPipe)},
+			//{ "Adept ACE", typeof(TestPlatform.Test_ACE)},
+			//{ "Beckhoff PLC", typeof(TestPlatform.Test_BkfPLC)},
+			//{ "Wago I/O", typeof(TestPlatform.Test_WagoIO)},
+			{ "Universal Robots", typeof(TestPlatform.Test_UniversalRobots)},
+			{ "Modbus RTU", typeof(TestPlatform.Test_ModbusRTU)},
+			{ "XML Editor", typeof(TestPlatform.XML_Editor)},
+			//{ "DENSO ORiN2", typeof(TestPlatform.Test_Denso)},
+			//{ "FESTO CMMO", typeof(TestPlatform.Test_FestoCMMO)},
+			//{ "Delta ASDA-A2", typeof(TestPlatform.Test_Delta_ASDA_A2)},
+			//{ "Delta SE", typeof(TestPlatform.Delta_SE)},
+			//{ "Oriental BLE", typeof(TestPlatform.Oriental_BLE_FLEX)},
+			//{ "IAI PCON", typeof(TestPlatform.IAI_PCON)},
+			//{ "Dimmer (荃達)", typeof(TestPlatform.DimmerCtrl)},
+			//{ "Dimmer (5CH RS232)", typeof(TestPlatform.Dimmer_CH5I700RS232)},
+			//{ "Dimmer (4CH RS485)", typeof(TestPlatform.Dimmer_CH4I700RS485)},
+			//{ "Keyence DL-RS1A", typeof(TestPlatform.Keyence_DL_RS1A)},
+			{ "繁簡轉換", typeof(TestPlatform.ChineseTranslator)},
+			{ "Console Monitor", typeof(TestPlatform.ProcessMonitor)},
+			//{ "ICT", typeof(Module.PCB.ICT.ICTReader)},
+			//{ "Stäubli", typeof(TestPlatform.Test_Staubli)}
+		};
 
-        private static readonly int DEFAULT_ROW_COUNT = 5;
+        private static readonly int DEFAULT_ROW_COUNT = 6;
 
         private static readonly Point DEFAULT_BUTTON_LOC = new Point(60, 30);
         private static readonly Size DEFAULT_BUTTON_SIZE = new Size(250, 65);
@@ -59,7 +71,7 @@ namespace CtLib.Forms {
         private void CreateButtons() {
 
             int index = 0;
-            foreach (KeyValuePair<string, Form> item in DEFAULT_FORM_LIST) {
+            foreach (KeyValuePair<string, Type> item in DEFAULT_FORM_LIST) {
                 Button btn = new Button();
                 btn.Text = item.Key;
                 btn.Size = DEFAULT_BUTTON_SIZE;
@@ -80,8 +92,10 @@ namespace CtLib.Forms {
         }
 
         private void btn_Click(object sender, EventArgs e) {
-            mFormChoosed = DEFAULT_FORM_LIST[((sender as Button).Text)];
-            DialogResult = DialogResult.OK;
+			Type frm = DEFAULT_FORM_LIST[((sender as Button).Text)];
+			mFormChoosed = Activator.CreateInstance(frm) as Form;
+
+			DialogResult = DialogResult.OK;
             Close();
         }
 

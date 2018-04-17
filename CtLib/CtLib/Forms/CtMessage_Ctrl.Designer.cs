@@ -23,35 +23,42 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
-            this.pbLogo = new System.Windows.Forms.PictureBox();
-            ((System.ComponentModel.ISupportInitialize)(this.pbLogo)).BeginInit();
-            this.SuspendLayout();
-            // 
-            // pbLogo
-            // 
-            this.pbLogo.Dock = System.Windows.Forms.DockStyle.Left;
-            this.pbLogo.Image = global::CtLib.Properties.Resources.CASTEC_Logo_Vertical;
-            this.pbLogo.Location = new System.Drawing.Point(0, 0);
-            this.pbLogo.Name = "pbLogo";
-            this.pbLogo.Size = new System.Drawing.Size(144, 311);
-            this.pbLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pbLogo.TabIndex = 1;
-            this.pbLogo.TabStop = false;
-            this.pbLogo.Paint += new System.Windows.Forms.PaintEventHandler(this.pbLogo_Paint);
-            // 
-            // CtMessage_Ctrl
-            // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(534, 311);
-            this.Controls.Add(this.pbLogo);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.Name = "CtMessage_Ctrl";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "CtMessage";
-            this.TopMost = true;
-            ((System.ComponentModel.ISupportInitialize)(this.pbLogo)).EndInit();
-            this.ResumeLayout(false);
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CtMessage_Ctrl));
+			this.pbLogo = new System.Windows.Forms.PictureBox();
+			((System.ComponentModel.ISupportInitialize)(this.pbLogo)).BeginInit();
+			this.SuspendLayout();
+			// 
+			// pbLogo
+			// 
+			this.pbLogo.Dock = System.Windows.Forms.DockStyle.Left;
+			this.pbLogo.Image = global::CtLib.Properties.Resources.CASTEC_Logo_Vertical;
+			this.pbLogo.Location = new System.Drawing.Point(0, 0);
+			this.pbLogo.Margin = new System.Windows.Forms.Padding(4);
+			this.pbLogo.Name = "pbLogo";
+			this.pbLogo.Size = new System.Drawing.Size(175, 389);
+			this.pbLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+			this.pbLogo.TabIndex = 1;
+			this.pbLogo.TabStop = false;
+			// 
+			// CtMessage_Ctrl
+			// 
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+			this.ClientSize = new System.Drawing.Size(712, 389);
+			this.ControlBox = false;
+			this.Controls.Add(this.pbLogo);
+			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+			this.Margin = new System.Windows.Forms.Padding(4);
+			this.MaximizeBox = false;
+			this.MinimizeBox = false;
+			this.Name = "CtMessage_Ctrl";
+			this.ShowInTaskbar = false;
+			this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
+			this.Text = "CtMessage";
+			this.TopMost = true;
+			this.Shown += new System.EventHandler(this.CtMessage_Ctrl_Shown);
+			((System.ComponentModel.ISupportInitialize)(this.pbLogo)).EndInit();
+			this.ResumeLayout(false);
 
         }
 

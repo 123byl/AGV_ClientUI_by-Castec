@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Comment CommentText="先由 DragManager 擁有者設定 DragTarget，&#xD;&#xA;接著呼叫 TakeCtrol 自動取得控制點。&#xD;&#xA;最後拖曳 Drag">
+    <Position X="8.677" Y="1.552" Height="1.302" Width="3.179" />
+  </Comment>
+  <Interface Name="AGV.Map.Common.IDragPoint">
+    <Position X="3.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAACAAAABAAAAA=</HashCode>
+      <FileName>Drag\IDragPoint.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="AGV.Map.Common.IDragable">
+    <Position X="5.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAABAAA=</HashCode>
+      <FileName>Drag\IDragable.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="AGV.Map.Common.IDragManager">
+    <Position X="7" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgAAAAEAAIAAAAAAAAAAAAAAQEAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Drag\IDragManager.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="AGV.Map.Common.EDragStatus">
+    <Position X="1.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAABAAAAAAAEAAAAACAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Drag\EDragStatus.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Microsoft JhengHei UI" Size="9" />
+</ClassDiagram>

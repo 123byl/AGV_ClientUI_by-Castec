@@ -1,31 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-
 using System.Windows.Forms;
 
 using CtLib.Library;
-using CtLib.Module.Ultity;
+using CtLib.Module.Utility;
 
 namespace CtLib.Forms {
     /// <summary>CASTEC Style 啟動視窗</summary>
-    internal partial class CtStartUp_Ctrl : Form {
+    internal partial class CtStartUp_Ctrl : Form, ICtVersion {
 
         #region Version
 
         /// <summary>CtStartUp_Ctrl 版本訊息</summary>
-        /// <remarks><code>
+        /// <remarks><code language="C#">
         /// 1.0.0  Ahern [2014/09/14]
         ///     + 建立基礎介面與功能
         ///     
         /// 1.0.1  Ahern [2014/09/15]
         ///     + 介面拖曳
         /// </code></remarks>
-        public static CtVersion @Version = new CtVersion(1, 0, 1, "2014/09/15", "Ahern Kuo");
+        public CtVersion Version { get { return new CtVersion(1, 0, 1, "2014/09/15", "Ahern Kuo"); } }
 
         #endregion
 
@@ -37,7 +31,7 @@ namespace CtLib.Forms {
 
         #endregion
 
-        #region Declaration - Members
+        #region Declaration - Fields
 
         /// <summary>拖曳事件用之滑鼠X座標</summary>
         private int mMouseX = 0;
@@ -89,10 +83,10 @@ namespace CtLib.Forms {
             try {
                 if (!this.Visible) this.Show();
 
-                CtInvoke.LabelText(lbInfo, info);
+                CtInvoke.ControlText(lbInfo, info);
                 int currPercent = CalcPercent(currStep);
                 CtInvoke.ProgressBarValue(progProcess, currPercent);
-                CtInvoke.LabelText(lbProc, CtConvert.CStr(currPercent) + "%");
+                CtInvoke.ControlText(lbProc, CtConvert.CStr(currPercent) + "%");
                 //Application.DoEvents();
             } catch (Exception ex) {
                 stt = Stat.ER_SYSTEM;

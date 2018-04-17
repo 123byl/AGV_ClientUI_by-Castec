@@ -1,23 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Threading;
 
 using System.Windows.Forms;
 
 using CtLib.Library;
-using CtLib.Module.Ultity;
+using CtLib.Module.Utility;
 
 namespace CtLib.Forms {
     /// <summary>
     /// 使用者登入視窗
     /// <para>可讓使用者輸入帳號與密碼，並與 UserManage 檔案檢查是否存在該筆帳號與密碼是否正確</para>
     /// </summary>
-    /// <example><code>
+    /// <example><code language="C#">
     /// UserData usr;
     /// CtLogin login = new CtLogin();
     /// 
@@ -25,99 +20,24 @@ namespace CtLib.Forms {
     /// MessageBox.Show("使用者: " + usr.Account + "  權限: " + Enum.GetName(typeof(AccessLevel), usr.Level));
     /// login.Dispose();
     /// </code></example>
-    public partial class CtLogin : Form {
+    public partial class CtLogin : Form, ICtVersion {
 
         #region Version
 
         /// <summary>CtLogin 版本訊息</summary>
-        /// <remarks><code>
+        /// <remarks><code language="C#">
         /// 1.0.0  Ahern [2014/09/13]
         ///     + 完成基礎介面，建議使用Start方法來啟動並直接獲取帳號
         ///     
         /// 1.0.1  Ahern [2014/09/14]
         ///     \ 補上按下Enter將會觸發驗證 (使用 AcceptButton 屬性)
+        /// 
+        /// 1.0.2  Ahern [2015/11/17]
+        ///     + 於「確認」旁新增快速登入按鈕 (for Administrator)
+        /// 
         /// </code></remarks>
-        public static CtVersion @Version = new CtVersion(1, 0, 1, "2014/09/14", "Ahern Kuo");
+        public CtVersion Version { get { return new CtVersion(1, 0, 2, "2015/11/17", "Ahern Kuo"); } }
 
-        #endregion
-
-        #region Declaration - Support Class
-
-        /// <summary>
-        /// 紀錄使用者相關資料，包含帳號、密碼、權限等資訊
-        /// </summary>
-        public class UserData {
-            /// <summary>帳號</summary>
-            public string Account { get; set; }
-            /// <summary>密碼</summary>
-            public string Password { get; set; }
-
-            /// <summary>使用者等級</summary>
-            public AccessLevel Level { get; set; }
-
-            /// <summary>建立日期</summary>
-            public DateTime BuiltTime { get; set; }
-
-            /// <summary>由誰建立</summary>
-            public string Creator { get; set; }
-
-            /// <summary>建立一全空的資料，請手動指定屬性</summary>
-            public UserData() {
-                Account = "N/A";
-                Password = "";
-                Level = AccessLevel.OPERATOR;
-            }
-
-            /// <summary>建立一包含預設值之使用者資料</summary>
-            public UserData(string usrAccount, string usrPassword, AccessLevel usrLevel) {
-                Account = usrAccount;
-                Password = usrPassword;
-                Level = usrLevel;
-                BuiltTime = DateTime.Now;
-                Creator = LOGIN_ADMIN_ACCOUNT;
-            }
-
-            /// <summary>建立一包含預設值之使用者資料</summary>
-            public UserData(string usrAccount, string usrPassword, AccessLevel usrLevel, DateTime usrTime, string usrBuilt) {
-                Account = usrAccount;
-                Password = usrPassword;
-                Level = usrLevel;
-                BuiltTime = usrTime;
-                Creator = usrBuilt;
-            }
-        }
-
-        #endregion
-
-        #region Declaration - Enumerations
-
-        /// <summary>使用者層級</summary>
-        public enum AccessLevel : byte {
-            /// <summary>CASTEC 管理員</summary>
-            /// <remarks>包含軟體工程師、客服等</remarks>
-            ADMINISTRATOR = 0,
-            /// <summary>[客戶端] 工程師</summary>
-            ENGINEER = 1,
-            /// <summary>[客戶端] 操作員</summary>
-            OPERATOR = 2,
-            /// <summary>尚未登入，或是已登出</summary>
-            NONE = 3
-        }
-
-        /// <summary>決定讀/寫檔案時之檔案內容順序</summary>
-        /// <remarks>建議可以混放，這樣加上AES256加密比較不容易被破解</remarks>
-        public enum UserDataSequence : byte {
-            /// <summary>使用者資料檔 之 帳號名稱存放順序</summary>
-            ACCOUNT = 2,
-            /// <summary>使用者資料檔 之 密碼存放順序</summary>
-            PASSWORD = 1,
-            /// <summary>使用者資料檔 之 等級存放順序</summary>
-            ACCESS_LEVEL = 4,
-            /// <summary>使用者資料檔 之 建立日期存放順序</summary>
-            BUILT_DATE = 0,
-            /// <summary>使用者資料檔 之 建立者存放順序</summary>
-            CREATOR = 3
-        }
         #endregion
 
         #region Declaration - Definitions
@@ -129,7 +49,7 @@ namespace CtLib.Forms {
 
         #endregion
 
-        #region Declaration - Members
+        #region Declaration - Fields
 
         /// <summary>使用者資料</summary>
         /// <remarks>為了讓Start/Show/ShowDialog都可以彈性化，所以把最後的結果丟到全域</remarks>
@@ -183,7 +103,7 @@ namespace CtLib.Forms {
             List<UserData> tempData = new List<UserData>();
             try {
                 /*-- 組合路徑，預設於Config資料夾裡 --*/
-                string strPath = CtDefaultPath.GetPath(SystemPath.USER_MANAGER);
+                string strPath = CtDefaultPath.GetPath(SystemPath.UserManagement);
 
                 /*-- 檢查是否有該檔案 --*/
                 if (CtFile.IsFileExist(strPath)) {
@@ -208,11 +128,11 @@ namespace CtLib.Forms {
                                 //如果資料正確，將資料存進去List裡
                                 tempData.Add(
                                     new UserData(
-                                        strSplit[(int)UserDataSequence.ACCOUNT],
-                                        strSplit[(int)UserDataSequence.PASSWORD],
-                                        (AccessLevel)(CtConvert.CByte(strSplit[(int)UserDataSequence.ACCESS_LEVEL])),
-                                        DateTime.Parse(strSplit[(int)UserDataSequence.BUILT_DATE]),
-                                        strSplit[(int)UserDataSequence.CREATOR]
+                                        strSplit[(int)UserDataSequence.Account],
+                                        strSplit[(int)UserDataSequence.Password],
+                                        (AccessLevel)(CtConvert.CByte(strSplit[(int)UserDataSequence.AccessLevel])),
+                                        DateTime.Parse(strSplit[(int)UserDataSequence.BuiltDate]),
+                                        strSplit[(int)UserDataSequence.Creator]
                                     )
                                 );
                             } else {
@@ -253,7 +173,7 @@ namespace CtLib.Forms {
                     tempData = new UserData(
                                     LOGIN_ADMIN_ACCOUNT,
                                     LOGIN_ADMIN_PASSWORD,
-                                    AccessLevel.ADMINISTRATOR,
+                                    AccessLevel.Administrator,
                                     DateTime.Parse("2005/03/10"),
                                     LOGIN_ADMIN_ACCOUNT
                                );
@@ -296,8 +216,8 @@ namespace CtLib.Forms {
                 /*-- 獲取輸入的帳號與密碼，取得後把介面上的訊息刪掉 --*/
                 string usrAccount = txtAccount.Text;
                 string usrPassword = txtPWD.Text;
-                CtInvoke.TextBoxText(txtAccount, "");
-                CtInvoke.TextBoxText(txtPWD, "");
+                CtInvoke.ControlText(txtAccount, "");
+                CtInvoke.ControlText(txtPWD, "");
 
                 /*-- 搜尋是否有相符的帳號 --*/
                 UserData usrData;
@@ -310,23 +230,23 @@ namespace CtLib.Forms {
                 if (mStt == Stat.ER_SYS_USRACN) {
                     /* 找不到帳號，顯示錯誤訊息，並且丟Exception寫到Log裡 */
                     if (Thread.CurrentThread.CurrentUICulture.Name == "zh-TW") {
-                        CtInvoke.LabelText(lbError, "無相符帳號資料!!");
-                        CtInvoke.LabelVisible(lbError, true);
+                        CtInvoke.ControlText(lbError, "無相符帳號資料!!");
+                        CtInvoke.ControlVisible(lbError, true);
                     } else {
-                        CtInvoke.LabelText(lbError, "No match acoount");
-                        CtInvoke.LabelVisible(lbError, true);
+                        CtInvoke.ControlText(lbError, "No match acoount");
+                        CtInvoke.ControlVisible(lbError, true);
                     }
-                    throw (new Exception("使用者 " + usrAccount + "嘗試登入，但找無相對應帳號"));
+                    throw (new Exception("使用者 " + usrAccount + " 嘗試登入，但找無相對應帳號"));
                 } else if (mStt == Stat.ER_SYS_USRPWD) {
                     /* 密碼錯誤，顯示錯誤訊息，並且丟Exception寫到Log裡 */
                     if (Thread.CurrentThread.CurrentUICulture.Name == "zh-TW") {
-                        CtInvoke.LabelText(lbError, "密碼錯誤!!");
-                        CtInvoke.LabelVisible(lbError, true);
+                        CtInvoke.ControlText(lbError, "密碼錯誤!!");
+                        CtInvoke.ControlVisible(lbError, true);
                     } else {
-                        CtInvoke.LabelText(lbError, "Invalid password");
-                        CtInvoke.LabelVisible(lbError, true);
+                        CtInvoke.ControlText(lbError, "Invalid password");
+                        CtInvoke.ControlVisible(lbError, true);
                     }
-                    throw (new Exception("使用者 " + usrAccount + "嘗試登入，但密碼錯誤"));
+                    throw (new Exception("使用者 " + usrAccount + " 嘗試登入，但密碼錯誤"));
                 } else if (mStt == Stat.SUCCESS) {
                     /* 如果成功登入，關閉視窗，並讓後續接手 */
                     this.DialogResult = DialogResult.OK;
@@ -348,8 +268,24 @@ namespace CtLib.Forms {
             this.Close();
         }
 
+        private void picAdmin_Click(object sender, EventArgs e) {
+            /*-- 檢查是不是自己人按的快速登入 --*/
+            /* 條件: 密碼全空、帳號輸入 CASTEC 其中 1 個字 */
+            if (txtAccount.Text.Length == 1 && "CASTECcastec".Contains(txtAccount.Text) && string.IsNullOrEmpty(txtPWD.Text)) {
+                mUserData = new UserData(
+                                    LOGIN_ADMIN_ACCOUNT,
+                                    LOGIN_ADMIN_PASSWORD,
+                                    AccessLevel.Administrator,
+                                    DateTime.Parse("2005/03/10"),
+                                    LOGIN_ADMIN_ACCOUNT
+                               );
+
+                /* 如果成功登入，關閉視窗，並讓後續接手 */
+                this.DialogResult = DialogResult.OK;
+                this.Close();
+            }
+        }
+
         #endregion
-
-
     }
 }

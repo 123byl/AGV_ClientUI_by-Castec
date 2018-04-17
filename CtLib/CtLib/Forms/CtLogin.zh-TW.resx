@@ -125,7 +125,7 @@
     <value>125, 39</value>
   </data>
   <data name="lbAccount.Size" type="System.Drawing.Size, System.Drawing">
-    <value>32, 16</value>
+    <value>39, 19</value>
   </data>
   <data name="lbAccount.Text" xml:space="preserve">
     <value>帳號</value>
@@ -137,7 +137,7 @@
     <value>125, 92</value>
   </data>
   <data name="lbPWD.Size" type="System.Drawing.Size, System.Drawing">
-    <value>32, 16</value>
+    <value>39, 19</value>
   </data>
   <data name="lbPWD.Text" xml:space="preserve">
     <value>密碼</value>
@@ -146,13 +146,13 @@
     <value>128, 57</value>
   </data>
   <data name="txtAccount.Size" type="System.Drawing.Size, System.Drawing">
-    <value>236, 23</value>
+    <value>236, 27</value>
   </data>
   <data name="txtPWD.Location" type="System.Drawing.Point, System.Drawing">
     <value>128, 110</value>
   </data>
   <data name="txtPWD.Size" type="System.Drawing.Size, System.Drawing">
-    <value>236, 23</value>
+    <value>236, 27</value>
   </data>
   <data name="lbError.Font" type="System.Drawing.Font, System.Drawing">
     <value>微軟正黑體, 9pt</value>
@@ -161,7 +161,7 @@
     <value>125, 12</value>
   </data>
   <data name="lbError.Size" type="System.Drawing.Size, System.Drawing">
-    <value>92, 16</value>
+    <value>114, 19</value>
   </data>
   <data name="lbError.Text" xml:space="preserve">
     <value>帳號或密碼錯誤</value>
@@ -189,6 +189,9 @@
   </data>
   <data name="btnCancel.Text" xml:space="preserve">
     <value>取消</value>
+  </data>
+  <data name="picAdmin.Location" type="System.Drawing.Point, System.Drawing">
+    <value>214, 176</value>
   </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

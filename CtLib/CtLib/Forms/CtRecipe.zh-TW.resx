@@ -119,40 +119,23 @@
   </resheader>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="lbID.Font" type="System.Drawing.Font, System.Drawing">
-    <value>微軟正黑體, 11.25pt</value>
+    <value>微軟正黑體, 12pt</value>
   </data>
-  <data name="lbID.Size" type="System.Drawing.Size, System.Drawing">
-    <value>39, 19</value>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="lbID.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
   </data>
   <data name="lbID.Text" xml:space="preserve">
     <value>名稱</value>
   </data>
   <data name="lbComment.Font" type="System.Drawing.Font, System.Drawing">
-    <value>微軟正黑體, 11.25pt</value>
+    <value>微軟正黑體, 12pt</value>
   </data>
-  <data name="lbComment.Size" type="System.Drawing.Size, System.Drawing">
-    <value>39, 19</value>
+  <data name="lbComment.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
   </data>
   <data name="lbComment.Text" xml:space="preserve">
     <value>註解</value>
-  </data>
-  <data name="txtID.Font" type="System.Drawing.Font, System.Drawing">
-    <value>微軟正黑體, 9.75pt</value>
-  </data>
-  <data name="txtID.Location" type="System.Drawing.Point, System.Drawing">
-    <value>207, 86</value>
-  </data>
-  <data name="txtID.Size" type="System.Drawing.Size, System.Drawing">
-    <value>325, 25</value>
-  </data>
-  <data name="txtComment.Font" type="System.Drawing.Font, System.Drawing">
-    <value>微軟正黑體, 9.75pt</value>
-  </data>
-  <data name="txtComment.Location" type="System.Drawing.Point, System.Drawing">
-    <value>207, 114</value>
-  </data>
-  <data name="txtComment.Size" type="System.Drawing.Size, System.Drawing">
-    <value>325, 25</value>
   </data>
   <data name="colName.HeaderText" xml:space="preserve">
     <value>名稱</value>
@@ -163,66 +146,62 @@
   <data name="colComment.HeaderText" xml:space="preserve">
     <value>註解</value>
   </data>
-  <data name="btnDownload.Font" type="System.Drawing.Font, System.Drawing">
-    <value>微軟正黑體, 11.25pt</value>
+  <data name="btnEditFinish.Font" type="System.Drawing.Font, System.Drawing">
+    <value>微軟正黑體, 10.2pt</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="btnDownload.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>0, 0, 3, 0</value>
+  <data name="btnEditFinish.Text" xml:space="preserve">
+    <value>取消編輯</value>
+  </data>
+  <data name="btnEdit.Font" type="System.Drawing.Font, System.Drawing">
+    <value>微軟正黑體, 10.2pt</value>
+  </data>
+  <data name="btnEdit.Text" xml:space="preserve">
+    <value>編輯</value>
+  </data>
+  <data name="btnDownload.Font" type="System.Drawing.Font, System.Drawing">
+    <value>微軟正黑體, 10.2pt</value>
+  </data>
+  <data name="btnDownload.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
   </data>
   <data name="btnDownload.Text" xml:space="preserve">
     <value>寫入設備</value>
   </data>
   <data name="btnExit.Font" type="System.Drawing.Font, System.Drawing">
-    <value>微軟正黑體, 11.25pt</value>
+    <value>微軟正黑體, 10.2pt</value>
   </data>
-  <data name="btnExit.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>0, 0, 3, 0</value>
+  <data name="btnExit.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
   </data>
   <data name="btnExit.Text" xml:space="preserve">
     <value>離開</value>
   </data>
   <data name="btnSave.Font" type="System.Drawing.Font, System.Drawing">
-    <value>微軟正黑體, 11.25pt</value>
+    <value>微軟正黑體, 12pt</value>
   </data>
-  <data name="btnSave.Location" type="System.Drawing.Point, System.Drawing">
-    <value>548, 91</value>
-  </data>
-  <data name="btnSave.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>0, 0, 3, 0</value>
+  <data name="btnSave.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
   </data>
   <data name="btnSave.Text" xml:space="preserve">
     <value>存檔</value>
   </data>
   <data name="btnDelete.Font" type="System.Drawing.Font, System.Drawing">
-    <value>微軟正黑體, 11.25pt</value>
+    <value>微軟正黑體, 10.2pt</value>
   </data>
-  <data name="btnDelete.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>0, 0, 3, 0</value>
+  <data name="btnDelete.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
   </data>
   <data name="btnDelete.Text" xml:space="preserve">
-    <value>刪除</value>
+    <value>刪除檔案</value>
   </data>
   <data name="btnRenew.Font" type="System.Drawing.Font, System.Drawing">
-    <value>微軟正黑體, 11.25pt</value>
+    <value>微軟正黑體, 10.2pt</value>
   </data>
-  <data name="btnRenew.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>0, 0, 3, 0</value>
-  </data>
-  <data name="btnRenew.Size" type="System.Drawing.Size, System.Drawing">
-    <value>124, 44</value>
+  <data name="btnRenew.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
   </data>
   <data name="btnRenew.Text" xml:space="preserve">
-    <value>更新資料</value>
-  </data>
-  <data name="btnCreate.Font" type="System.Drawing.Font, System.Drawing">
-    <value>微軟正黑體, 11.25pt</value>
-  </data>
-  <data name="btnCreate.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>0, 0, 3, 0</value>
-  </data>
-  <data name="btnCreate.Text" xml:space="preserve">
-    <value>建立</value>
+    <value>更新數值</value>
   </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
@@ -481,6 +460,6 @@
 </value>
   </data>
   <data name="$this.Text" xml:space="preserve">
-    <value>設備參數設定</value>
+    <value>參數視窗</value>
   </data>
 </root>

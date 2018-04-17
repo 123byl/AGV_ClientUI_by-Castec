@@ -118,13 +118,19 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="lbCaption.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
+  <data name="&gt;&gt;pbLogo.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
   <data name="lbPercent.Location" type="System.Drawing.Point, System.Drawing">
-    <value>656, 69</value>
+    <value>875, 86</value>
+  </data>
+  <data name="lbCaption.Location" type="System.Drawing.Point, System.Drawing">
+    <value>121, 44</value>
   </data>
   <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="lbPercent.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
   <data name="lbCaption.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
   </data>
@@ -385,7 +391,7 @@
 </value>
   </data>
   <data name="progProcess.Size" type="System.Drawing.Size, System.Drawing">
-    <value>533, 37</value>
+    <value>711, 46</value>
   </data>
   <data name="&gt;&gt;progProcess.ZOrder" xml:space="preserve">
     <value>3</value>
@@ -400,11 +406,11 @@
   <data name="progProcess.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
   </data>
-  <data name="lbCaption.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>MiddleLeft</value>
+  <data name="progProcess.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="lbCaption.Size" type="System.Drawing.Size, System.Drawing">
-    <value>54, 20</value>
+    <value>69, 25</value>
   </data>
   <data name="&gt;&gt;lbPercent.ZOrder" xml:space="preserve">
     <value>2</value>
@@ -415,11 +421,14 @@
   <data name="pbLogo.SizeMode" type="System.Windows.Forms.PictureBoxSizeMode, System.Windows.Forms">
     <value>Zoom</value>
   </data>
+  <data name="lbPercent.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
+  </data>
   <data name="pbLogo.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 0</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>766, 149</value>
+    <value>1021, 186</value>
   </data>
   <data name="&gt;&gt;lbPercent.Parent" xml:space="preserve">
     <value>$this</value>
@@ -434,16 +443,16 @@
     <value>微軟正黑體, 12pt</value>
   </data>
   <data name="lbPercent.Size" type="System.Drawing.Size, System.Drawing">
-    <value>98, 26</value>
+    <value>126, 33</value>
   </data>
   <data name="progProcess.Location" type="System.Drawing.Point, System.Drawing">
-    <value>95, 64</value>
+    <value>127, 80</value>
   </data>
   <data name="lbPercent.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
   </data>
   <data name="pbLogo.Size" type="System.Drawing.Size, System.Drawing">
-    <value>70, 149</value>
+    <value>93, 186</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>CtProgress_Ctrl</value>
@@ -451,8 +460,11 @@
   <data name="lbCaption.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
-  <data name="progProcess.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
+  <data name="$this.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="pbLogo.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="lbCaption.Text" xml:space="preserve">
     <value>label1</value>
@@ -469,8 +481,8 @@
   <data name="&gt;&gt;pbLogo.Type" xml:space="preserve">
     <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="lbCaption.Location" type="System.Drawing.Point, System.Drawing">
-    <value>91, 35</value>
+  <data name="lbCaption.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
   </data>
   <data name="lbPercent.Font" type="System.Drawing.Font, System.Drawing">
     <value>Candara, 15.75pt</value>
@@ -478,8 +490,8 @@
   <data name="&gt;&gt;lbPercent.Name" xml:space="preserve">
     <value>lbPercent</value>
   </data>
-  <data name="pbLogo.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
+  <data name="lbPercent.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
   </data>
   <data name="&gt;&gt;lbCaption.Type" xml:space="preserve">
     <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -490,17 +502,20 @@
   <data name="&gt;&gt;lbCaption.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;progProcess.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ProgressBar, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="progProcess.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="&gt;&gt;pbLogo.Parent" xml:space="preserve">
+    <value>$this</value>
   </data>
   <data name="lbPercent.Text" xml:space="preserve">
     <value>lbPercent</value>
   </data>
-  <data name="&gt;&gt;pbLogo.ZOrder" xml:space="preserve">
-    <value>0</value>
+  <data name="&gt;&gt;progProcess.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ProgressBar, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
-    <value>6, 12</value>
+    <value>8, 15</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
     <value>CtProgress</value>
@@ -508,13 +523,10 @@
   <data name="&gt;&gt;progProcess.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;pbLogo.Parent" xml:space="preserve">
-    <value>$this</value>
+  <data name="pbLogo.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
-  </metadata>
-  <metadata name="$this.Language" type="System.Globalization.CultureInfo, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>zh-TW</value>
   </metadata>
 </root>

@@ -1,10 +1,12 @@
-﻿using System;
+﻿using VehiclePlanner.Component;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Text.RegularExpressions;
 
-namespace ClientUI {
+namespace VehiclePlanner {
     static class Program {
         /// <summary>
         /// 應用程式的主要進入點。
@@ -23,7 +25,8 @@ namespace ClientUI {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new AgvClientUI(new AgvClient()));
+            Application.Run(new VehiclePlannerUI());
+
         }
 
         /// <summary>非 UI 執行緒錯誤的處理方法</summary>

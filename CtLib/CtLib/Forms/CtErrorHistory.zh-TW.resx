@@ -117,64 +117,64 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="tpickStart.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="tpickStart.Location" type="System.Drawing.Point, System.Drawing">
-    <value>38, 48</value>
-  </data>
   <data name="tpickStart.Size" type="System.Drawing.Size, System.Drawing">
-    <value>134, 23</value>
-  </data>
-  <data name="tpickEnd.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="tpickEnd.Location" type="System.Drawing.Point, System.Drawing">
-    <value>200, 48</value>
+    <value>134, 27</value>
   </data>
   <data name="tpickEnd.Size" type="System.Drawing.Size, System.Drawing">
-    <value>134, 23</value>
+    <value>134, 27</value>
   </data>
-  <data name="lbTo.Location" type="System.Drawing.Point, System.Drawing">
-    <value>176, 52</value>
-  </data>
-  <data name="lbTo.Size" type="System.Drawing.Size, System.Drawing">
-    <value>20, 16</value>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="lbTo.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
   </data>
   <data name="lbTo.Text" xml:space="preserve">
     <value>至</value>
   </data>
+  <data name="rdbTime_Custom.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
   <data name="rdbTime_Custom.Location" type="System.Drawing.Point, System.Drawing">
-    <value>187, 21</value>
+    <value>302, 20</value>
   </data>
   <data name="rdbTime_Custom.Size" type="System.Drawing.Size, System.Drawing">
-    <value>50, 20</value>
+    <value>60, 23</value>
   </data>
   <data name="rdbTime_Custom.Text" xml:space="preserve">
     <value>自訂</value>
   </data>
+  <data name="rdbTime_Month.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
   <data name="rdbTime_Month.Location" type="System.Drawing.Point, System.Drawing">
-    <value>131, 21</value>
+    <value>224, 19</value>
   </data>
   <data name="rdbTime_Month.Size" type="System.Drawing.Size, System.Drawing">
-    <value>50, 20</value>
+    <value>60, 23</value>
   </data>
   <data name="rdbTime_Month.Text" xml:space="preserve">
     <value>本月</value>
   </data>
+  <data name="rdbTime_Week.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
   <data name="rdbTime_Week.Location" type="System.Drawing.Point, System.Drawing">
-    <value>75, 21</value>
+    <value>150, 19</value>
   </data>
   <data name="rdbTime_Week.Size" type="System.Drawing.Size, System.Drawing">
-    <value>50, 20</value>
+    <value>60, 23</value>
   </data>
   <data name="rdbTime_Week.Text" xml:space="preserve">
     <value>本周</value>
   </data>
+  <data name="rdbTime_Today.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="rdbTime_Today.Location" type="System.Drawing.Point, System.Drawing">
+    <value>73, 19</value>
+  </data>
   <data name="rdbTime_Today.Size" type="System.Drawing.Size, System.Drawing">
-    <value>50, 20</value>
+    <value>60, 23</value>
   </data>
   <data name="rdbTime_Today.Text" xml:space="preserve">
     <value>今日</value>
@@ -182,17 +182,11 @@
   <data name="gbSelect.Font" type="System.Drawing.Font, System.Drawing">
     <value>微軟正黑體, 9pt</value>
   </data>
-  <data name="gbSelect.Size" type="System.Drawing.Size, System.Drawing">
-    <value>344, 75</value>
-  </data>
   <data name="gbSelect.Text" xml:space="preserve">
     <value>時間選項</value>
   </data>
   <data name="colTime.HeaderText" xml:space="preserve">
     <value>時間</value>
-  </data>
-  <data name="colTime.Width" type="System.Int32, mscorlib">
-    <value>200</value>
   </data>
   <data name="colKind.HeaderText" xml:space="preserve">
     <value>訊息種類</value>
@@ -206,56 +200,29 @@
   <data name="colMsg.HeaderText" xml:space="preserve">
     <value>錯誤訊息</value>
   </data>
-  <data name="dgvMsg.Size" type="System.Drawing.Size, System.Drawing">
-    <value>954, 437</value>
-  </data>
-  <data name="cbLv.Items" xml:space="preserve">
-    <value>All</value>
-  </data>
-  <data name="cbLv.Items1" xml:space="preserve">
-    <value>Warning</value>
-  </data>
-  <data name="cbLv.Items2" xml:space="preserve">
-    <value>Light Error</value>
-  </data>
-  <data name="cbLv.Items3" xml:space="preserve">
-    <value>Normal Error</value>
+  <data name="cbLv.Location" type="System.Drawing.Point, System.Drawing">
+    <value>63, 44</value>
   </data>
   <data name="cbLv.Size" type="System.Drawing.Size, System.Drawing">
-    <value>152, 24</value>
+    <value>121, 27</value>
   </data>
-  <data name="cbLv.Visible" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="lbLv.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="lbLv.Size" type="System.Drawing.Size, System.Drawing">
-    <value>32, 16</value>
+  <data name="lbLv.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
   </data>
   <data name="lbLv.Text" xml:space="preserve">
     <value>等級</value>
   </data>
-  <data name="lbLv.Visible" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="cbType.Items1" xml:space="preserve">
-    <value>Operation Trace</value>
-  </data>
-  <data name="cbType.Items2" xml:space="preserve">
-    <value>Equipment Alarm</value>
-  </data>
   <data name="cbType.Location" type="System.Drawing.Point, System.Drawing">
-    <value>63, 19</value>
+    <value>63, 15</value>
   </data>
   <data name="cbType.Size" type="System.Drawing.Size, System.Drawing">
-    <value>152, 24</value>
+    <value>121, 27</value>
+  </data>
+  <data name="lbType.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
   </data>
   <data name="lbType.Location" type="System.Drawing.Point, System.Drawing">
-    <value>21, 22</value>
-  </data>
-  <data name="lbType.Size" type="System.Drawing.Size, System.Drawing">
-    <value>32, 16</value>
+    <value>11, 19</value>
   </data>
   <data name="lbType.Text" xml:space="preserve">
     <value>種類</value>
@@ -263,35 +230,26 @@
   <data name="gbType.Font" type="System.Drawing.Font, System.Drawing">
     <value>微軟正黑體, 9pt</value>
   </data>
-  <data name="gbType.Location" type="System.Drawing.Point, System.Drawing">
-    <value>362, 2</value>
-  </data>
-  <data name="gbType.Size" type="System.Drawing.Size, System.Drawing">
-    <value>253, 75</value>
-  </data>
   <data name="gbType.Text" xml:space="preserve">
     <value>篩選</value>
   </data>
   <data name="btnExit.Font" type="System.Drawing.Font, System.Drawing">
-    <value>微軟正黑體, 9.75pt</value>
+    <value>微軟正黑體, 12pt</value>
   </data>
-  <data name="btnExit.Location" type="System.Drawing.Point, System.Drawing">
-    <value>836, 529</value>
+  <data name="btnExit.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
   </data>
   <data name="btnExit.Text" xml:space="preserve">
     <value>離開</value>
   </data>
   <data name="btnSearch.Font" type="System.Drawing.Font, System.Drawing">
-    <value>微軟正黑體, 9.75pt</value>
+    <value>微軟正黑體, 12pt</value>
   </data>
-  <data name="btnSearch.Location" type="System.Drawing.Point, System.Drawing">
-    <value>634, 28</value>
+  <data name="btnSearch.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
   </data>
   <data name="btnSearch.Text" xml:space="preserve">
     <value>查詢</value>
-  </data>
-  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>957, 580</value>
   </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

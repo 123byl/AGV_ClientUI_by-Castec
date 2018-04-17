@@ -118,28 +118,12 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="listFile.Font" type="System.Drawing.Font, System.Drawing">
-    <value>SimSun-ExtB, 9.75pt</value>
-  </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="listFile.ItemHeight" type="System.Int32, mscorlib">
-    <value>13</value>
-  </data>
-  <data name="listFile.Size" type="System.Drawing.Size, System.Drawing">
-    <value>120, 498</value>
-  </data>
   <data name="lbID.Font" type="System.Drawing.Font, System.Drawing">
     <value>SimSun-ExtB, 12pt</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="lbID.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
-  </data>
-  <data name="lbID.Location" type="System.Drawing.Point, System.Drawing">
-    <value>171, 89</value>
-  </data>
-  <data name="lbID.Size" type="System.Drawing.Size, System.Drawing">
-    <value>40, 16</value>
   </data>
   <data name="lbID.Text" xml:space="preserve">
     <value>名称</value>
@@ -150,14 +134,8 @@
   <data name="lbComment.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
-  <data name="lbComment.Location" type="System.Drawing.Point, System.Drawing">
-    <value>171, 117</value>
-  </data>
-  <data name="lbComment.Size" type="System.Drawing.Size, System.Drawing">
-    <value>40, 16</value>
-  </data>
   <data name="lbComment.Text" xml:space="preserve">
-    <value>备注</value>
+    <value>批注</value>
   </data>
   <data name="colName.HeaderText" xml:space="preserve">
     <value>名称</value>
@@ -166,10 +144,22 @@
     <value>数值</value>
   </data>
   <data name="colComment.HeaderText" xml:space="preserve">
-    <value>备注</value>
+    <value>批注</value>
+  </data>
+  <data name="btnEditFinish.Font" type="System.Drawing.Font, System.Drawing">
+    <value>SimSun-ExtB, 10.2pt</value>
+  </data>
+  <data name="btnEditFinish.Text" xml:space="preserve">
+    <value>取消编辑</value>
+  </data>
+  <data name="btnEdit.Font" type="System.Drawing.Font, System.Drawing">
+    <value>SimSun-ExtB, 10.2pt</value>
+  </data>
+  <data name="btnEdit.Text" xml:space="preserve">
+    <value>编辑</value>
   </data>
   <data name="btnDownload.Font" type="System.Drawing.Font, System.Drawing">
-    <value>SimSun-ExtB, 12pt</value>
+    <value>SimSun-ExtB, 10.2pt</value>
   </data>
   <data name="btnDownload.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
@@ -178,49 +168,40 @@
     <value>写入设备</value>
   </data>
   <data name="btnExit.Font" type="System.Drawing.Font, System.Drawing">
-    <value>SimSun-ExtB, 12pt</value>
+    <value>SimSun-ExtB, 10.2pt</value>
   </data>
   <data name="btnExit.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
   <data name="btnExit.Text" xml:space="preserve">
-    <value>关闭</value>
+    <value>离开</value>
   </data>
   <data name="btnSave.Font" type="System.Drawing.Font, System.Drawing">
-    <value>SimSun-ExtB, 12pt</value>
+    <value>SimSun-ExtB, 10.2pt</value>
   </data>
   <data name="btnSave.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
   <data name="btnSave.Text" xml:space="preserve">
-    <value>储存</value>
+    <value>存档</value>
   </data>
   <data name="btnDelete.Font" type="System.Drawing.Font, System.Drawing">
-    <value>SimSun-ExtB, 12pt</value>
+    <value>SimSun-ExtB, 10.2pt</value>
   </data>
   <data name="btnDelete.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
   <data name="btnDelete.Text" xml:space="preserve">
-    <value>删除</value>
+    <value>删除档案</value>
   </data>
   <data name="btnRenew.Font" type="System.Drawing.Font, System.Drawing">
-    <value>SimSun-ExtB, 12pt</value>
+    <value>SimSun-ExtB, 10.2pt</value>
   </data>
   <data name="btnRenew.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
   <data name="btnRenew.Text" xml:space="preserve">
-    <value>更新</value>
-  </data>
-  <data name="btnCreate.Font" type="System.Drawing.Font, System.Drawing">
-    <value>SimSun-ExtB, 12pt</value>
-  </data>
-  <data name="btnCreate.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="btnCreate.Text" xml:space="preserve">
-    <value>建立</value>
+    <value>更新数值</value>
   </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
@@ -478,10 +459,7 @@
         //8AAAAAAAD//wAAAAAAAP//AAAAAAAA//8=
 </value>
   </data>
-  <data name="$this.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
   <data name="$this.Text" xml:space="preserve">
-    <value>参数</value>
+    <value>参数窗口</value>
   </data>
 </root>

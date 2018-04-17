@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 
 using CtLib.Library;
-using CtLib.Module.TCPIP;
-using CtLib.Module.Ultity;
+using CtLib.Module.Net;
+using CtLib.Module.Utility;
 
 namespace CtLib.Module.UniversalRobot {
     /// <summary>
@@ -14,12 +13,12 @@ namespace CtLib.Module.UniversalRobot {
     /// <para>透過 Socket 作為溝通管道與 UR 進行連接</para>
     /// <para>[Server]UR [Client]CASTEC</para>
     /// </summary>
-    public class CtUrServer {
+    public class CtUrServer : ICtVersion {
 
         #region Version
 
         /// <summary>CtUrServer 版本相關訊息</summary>
-        /// <remarks><code>
+        /// <remarks><code language="C#">
         /// 0.0.0  William [2015/04/16]
         ///     + CtUrServer
         ///     
@@ -27,7 +26,7 @@ namespace CtLib.Module.UniversalRobot {
         ///     + Translate from VB
         ///     
         /// </code></remarks>
-        public static readonly CtVersion @Version = new CtVersion(1, 0, 0, "2015/05/01", "Ahern Kuo");
+        public CtVersion Version { get { return new CtVersion(1, 0, 0, "2015/05/01", "Ahern Kuo"); } }
 
         #endregion
 
@@ -63,7 +62,7 @@ namespace CtLib.Module.UniversalRobot {
             /// <summary>尚未連接</summary>
             NOT_CONNECTED = 8,
             /// <summary>關機</summary>
-            SHUTDOWN = 9
+            Shutdown = 9
         }
 
         /// <summary>UR 程式執行狀態</summary>
@@ -122,9 +121,9 @@ namespace CtLib.Module.UniversalRobot {
         private static readonly int SCAN_DELAY_TIME = 50;
         #endregion
 
-        #region Declaration - Members
+        #region Declaration - Fields
         /// <summary>用於 Socket 連線之物件</summary>
-        private CtAsyncSocket mSocket;
+        private CtTcpSocket mSocket;
 
         /// <summary>UR 命令集合</summary>
         private Dictionary<URCommand, string> mUrCommands = new Dictionary<URCommand, string>();
@@ -137,30 +136,30 @@ namespace CtLib.Module.UniversalRobot {
 
         #region Declaration - Properties
         /// <summary>取得當前 UR 模式</summary>
-        public URModes UR_Mode { get; internal set; }
+        public URModes UR_Mode { get; private set; }
         /// <summary>取得當前 UR 執行狀態</summary>
-        public URRunStates UR_RunState { get; internal set; }
+        public URRunStates UR_RunState { get; private set; }
         /// <summary>取得當前 UR 程式執行狀態</summary>
-        public URProgramStates UR_ProgState { get; internal set; }
+        public URProgramStates UR_ProgState { get; private set; }
         /// <summary>Polyscope Version</summary>
-        public string PolyscopeVersion { get; internal set; }
+        public string PolyscopeVersion { get; private set; }
 
         /// <summary>與 UR 連接之網際網路位址</summary>
         public string UR_IP {
             get {
-                return (mSocket != null && mSocket.IsConnected) ? mSocket.IP : "";
+                return (mSocket != null && mSocket.IsConnected) ? mSocket.EndPoint.IP : "";
             }
         }
 
         /// <summary>與 UR 連接之埠號</summary>
         public int UR_Port {
             get {
-                return (mSocket != null && mSocket.IsConnected) ? mSocket.Port : -1;
+                return (mSocket != null && mSocket.IsConnected) ? mSocket.EndPoint.Port : -1;
             }
         }
 
         /// <summary>取得當前載入程式之路徑</summary>
-        public string UR_ProgPath { get; internal set; }
+        public string UR_ProgPath { get; private set; }
 
         /// <summary>取得當前與 UR 之連接狀態</summary>
         public bool IsConnected {
@@ -173,44 +172,44 @@ namespace CtLib.Module.UniversalRobot {
         public enum UrEvents : byte {
             /// <summary>
             /// 與 UR 之 Socket 連線狀態改變
-            /// <para>Value 參數為 Bool 型態 (True)連線  (False)中斷連線</para>
+            /// <para>Value 參數為 Bool 型態 (<see langword="true"/>)連線  (<see langword="false"/>)中斷連線</para>
             /// </summary>
-            CONNECTION,
+            Connection,
             /// <summary>
             /// UR 執行狀態改變
             /// <para>Value 參數為 <see cref="URRunStates"/> 型態</para>
             /// </summary>
-            UR_STATE_RUN,
+            RunState,
             /// <summary>
             /// UR 模式改變
             /// <para>Value 參數為 <see cref="URModes"/> 型態</para>
             /// </summary>
-            UR_STATE_MODE,
+            Mode,
             /// <summary>
             /// UR 程式狀態改變
             /// <para>Value 參數為 <see cref="URProgramStates"/> 型態</para>
             /// </summary>
-            UR_STATE_PROGRAM,
+            ProgramState,
             /// <summary>
             /// UR 載入新的程式
             /// <para>Value 參數為 String 型態。即為當前載入的程式名稱</para>
             /// </summary>
-            LOAD_PROG_NAME,
+            LoadedProgram,
             /// <summary>
             /// UR 關機
             /// <para>Value 不具任何意義！</para>
             /// </summary>
-            SHUTDOWN,
+            Shutdown,
             /// <summary>
             /// CtUrServer 發生錯誤
             /// <para>Value 參數為 String 型態。即為 Exception 之 Message</para>
             /// </summary>
-            EXCEPTION,
+            Exception,
             /// <summary>
             /// 從 UR 所接收到的資料
             /// <para>Value 參數為 String 型態</para>
             /// </summary>
-            RECEIVED_DATA
+            DataReceived
         }
 
         /// <summary>CtUrServer 事件參數</summary>
@@ -247,24 +246,20 @@ namespace CtLib.Module.UniversalRobot {
         public CtUrServer() {
             CreateCmdString();
 
-            mSocket = new CtAsyncSocket();
-            mSocket.CommunicationMode = CommunicationModes.TELNET;
-            mSocket.OnSocketEvents += mSocket_OnSocketEvents;
+			mSocket = new CtTcpSocket(TransDataFormats.String, true);
+			mSocket.OnSocketEvents += mSocket_OnSocketEvents;
         }
 
         /// <summary>建構 CtUrServer，同時帶入 IP 與 Port</summary>
         /// <param name="ip">UR 連接之網際網路位址</param>
         /// <param name="port">UR 連接之埠號</param>
-        /// <param name="autoConnect">是否建構後直接連線？  (True)直接連線 (False)後續再自行連接</param>
+        /// <param name="autoConnect">是否建構後直接連線？  (<see langword="true"/>)直接連線 (<see langword="false"/>)後續再自行連接</param>
         public CtUrServer(string ip, int port, bool autoConnect = false) {
             CreateCmdString();
 
-            mSocket = new CtAsyncSocket();
-            mSocket.CommunicationMode = CommunicationModes.TELNET;
-            mSocket.OnSocketEvents += mSocket_OnSocketEvents;
-            mSocket.IP = ip;
-            mSocket.Port = port;
-            if (autoConnect) mSocket.ClientConnect();
+			mSocket = new CtTcpSocket(TransDataFormats.String, true);
+			mSocket.OnSocketEvents += mSocket_OnSocketEvents;
+            if (autoConnect) mSocket.ClientConnect(ip, port);
         }
 
         #endregion
@@ -276,7 +271,7 @@ namespace CtLib.Module.UniversalRobot {
         private void ExceptionHandler(Stat stt, Exception ex) {
             string title = "";
             CtStatus.Report(stt, ex, out title);
-            RaiseEvents(UrEvents.EXCEPTION, "[" + title + "] " + ex.Message);
+            RaiseEvents(UrEvents.Exception, "[" + title + "] " + ex.Message);
         }
 
         /// <summary>建立 UR 命令集合</summary>
@@ -324,18 +319,18 @@ namespace CtLib.Module.UniversalRobot {
 
         #region Function - Events
 
-        private void mSocket_OnSocketEvents(object sender, CtAsyncSocket.SocketEventArgs e) {
+        private void mSocket_OnSocketEvents(object sender, SocketEventArgs e) {
             switch (e.Event) {
-                case CtAsyncSocket.SocketEvents.CONNECTED_WITH_SERVER:
-                    if ((e.Value as CtAsyncSocket.ConnectInfo).Status)
+                case SocketEvents.ConnectionWithServer:
+                    if ((e.Value as SocketConnection).Status)
                         CtThread.CreateThread(ref mThread_ScanStt, SCAN_THREAD_NAME, tsk_ScanUrStt);
                     else CtThread.KillThread(ref mThread_ScanStt);
-                    RaiseEvents(UrEvents.CONNECTION, (e.Value as CtAsyncSocket.ConnectInfo).Status);
+                    RaiseEvents(UrEvents.Connection, (e.Value as SocketConnection).Status);
                     break;
-                case CtAsyncSocket.SocketEvents.EXCEPTION:
+                case SocketEvents.Exception:
                     break;
-                case CtAsyncSocket.SocketEvents.DATA_RECEIVED:
-                    CtThread.AddWorkItem(tsk_AddQueue, (e.Value as CtAsyncSocket.DataInfo).Data);
+                case SocketEvents.DataReceived:
+                    CtThread.AddWorkItem(tsk_AddQueue, (e.Value as SocketRxData).Data);
                     break;
                 default:
                     break;
@@ -352,7 +347,7 @@ namespace CtLib.Module.UniversalRobot {
                 lock (mQueue) {
                     mQueue.Enqueue(data.Trim());
                 }
-                RaiseEvents(UrEvents.RECEIVED_DATA, data);
+                RaiseEvents(UrEvents.DataReceived, data);
             }
         }
 
@@ -382,19 +377,19 @@ namespace CtLib.Module.UniversalRobot {
                             strTemp = strData[0];
                             switch (strTemp) {
                                 case "connected":
-                                    RaiseEvents(UrEvents.CONNECTION, true);
+                                    RaiseEvents(UrEvents.Connection, true);
                                     break;
                                 case "loading program":
                                     break;
                                 case "program running":
                                     UR_RunState = strData[1] == "false" ? URRunStates.STOPPED : URRunStates.RUNNING;
-                                    RaiseEvents(UrEvents.UR_STATE_RUN, UR_RunState);
+                                    RaiseEvents(UrEvents.RunState, UR_RunState);
                                     break;
                                 case "robotmode":
                                     if (strData[1] == "running")
-                                        RaiseEvents(UrEvents.UR_STATE_MODE, URModes.RUNNING);
+                                        RaiseEvents(UrEvents.Mode, URModes.RUNNING);
                                     else
-                                        RaiseEvents(UrEvents.UR_STATE_MODE, URModes.FAULT);
+                                        RaiseEvents(UrEvents.Mode, URModes.FAULT);
                                     break;
                                 case "loaded program":
                                     UR_ProgPath = strData[1];
@@ -406,7 +401,7 @@ namespace CtLib.Module.UniversalRobot {
                                 case "stopped":
                                     if (strData.Length > 1) {
                                         UR_ProgState = URProgramStates.STOPPED;
-                                        RaiseEvents(UrEvents.UR_STATE_PROGRAM, UR_ProgState);
+                                        RaiseEvents(UrEvents.ProgramState, UR_ProgState);
                                     }
                                     break;
                                 case "staring":
@@ -414,18 +409,18 @@ namespace CtLib.Module.UniversalRobot {
                                 case "paused":
                                     if (strData.Length > 1) {
                                         UR_ProgState = URProgramStates.PAUSE;
-                                        RaiseEvents(UrEvents.UR_STATE_PROGRAM, UR_ProgState);
+                                        RaiseEvents(UrEvents.ProgramState, UR_ProgState);
                                     }
                                     break;
                                 case "playing":
                                     if (strData.Length > 1) {
                                         UR_ProgState = URProgramStates.PLAYING;
-                                        RaiseEvents(UrEvents.UR_STATE_PROGRAM, UR_ProgState);
-                                        RaiseEvents(UrEvents.LOAD_PROG_NAME, strData[1]);
+                                        RaiseEvents(UrEvents.ProgramState, UR_ProgState);
+                                        RaiseEvents(UrEvents.LoadedProgram, strData[1]);
                                     }
                                     break;
                                 case "shutting":
-                                    RaiseEvents(UrEvents.SHUTDOWN, false);
+                                    RaiseEvents(UrEvents.Shutdown, false);
                                     break;
                                 case "no":
                                     if (strQueue.Trim() == "no program loaded")
@@ -442,7 +437,7 @@ namespace CtLib.Module.UniversalRobot {
                         }
                     }
 
-                    Thread.Sleep(SCAN_DELAY_TIME);
+                    CtTimer.Delay(SCAN_DELAY_TIME);
 
                 } catch (ThreadInterruptedException) {
                     /*-- Using to catch exception of exit thread, but not report --*/

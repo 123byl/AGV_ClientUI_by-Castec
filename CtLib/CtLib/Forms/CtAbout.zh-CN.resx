@@ -122,8 +122,11 @@
     <value>NoControl</value>
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="lbProduct.Location" type="System.Drawing.Point, System.Drawing">
+    <value>173, 17</value>
+  </data>
   <data name="lbProduct.Size" type="System.Drawing.Size, System.Drawing">
-    <value>52, 23</value>
+    <value>63, 29</value>
   </data>
   <data name="lbProduct.Text" xml:space="preserve">
     <value>产品</value>
@@ -134,32 +137,38 @@
   <data name="lbVersion.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
+  <data name="lbVersion.Location" type="System.Drawing.Point, System.Drawing">
+    <value>174, 55</value>
+  </data>
   <data name="lbVersion.Size" type="System.Drawing.Size, System.Drawing">
-    <value>40, 16</value>
+    <value>49, 20</value>
   </data>
   <data name="lbVersion.Text" xml:space="preserve">
     <value>版本</value>
   </data>
   <data name="lbVersion_val.Font" type="System.Drawing.Font, System.Drawing">
-    <value>方正等线, 12pt</value>
+    <value>Consolas, 12pt</value>
   </data>
   <data name="lbVersion_val.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
   <data name="lbVersion_val.Location" type="System.Drawing.Point, System.Drawing">
-    <value>255, 71</value>
+    <value>265, 52</value>
   </data>
   <data name="lbVersion_val.Size" type="System.Drawing.Size, System.Drawing">
-    <value>106, 19</value>
+    <value>153, 23</value>
   </data>
   <data name="lbDate_val.Font" type="System.Drawing.Font, System.Drawing">
-    <value>方正等线, 12pt</value>
+    <value>Consolas, 12pt</value>
   </data>
   <data name="lbDate_val.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
+  <data name="lbDate_val.Location" type="System.Drawing.Point, System.Drawing">
+    <value>265, 80</value>
+  </data>
   <data name="lbDate_val.Size" type="System.Drawing.Size, System.Drawing">
-    <value>86, 19</value>
+    <value>120, 23</value>
   </data>
   <data name="lbDate.Font" type="System.Drawing.Font, System.Drawing">
     <value>SimSun-ExtB, 12pt</value>
@@ -167,8 +176,11 @@
   <data name="lbDate.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
+  <data name="lbDate.Location" type="System.Drawing.Point, System.Drawing">
+    <value>174, 80</value>
+  </data>
   <data name="lbDate.Size" type="System.Drawing.Size, System.Drawing">
-    <value>72, 16</value>
+    <value>89, 20</value>
   </data>
   <data name="lbDate.Text" xml:space="preserve">
     <value>组译日期</value>
@@ -179,8 +191,11 @@
   <data name="lbCopyright.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
+  <data name="lbCopyright.Location" type="System.Drawing.Point, System.Drawing">
+    <value>174, 107</value>
+  </data>
   <data name="lbCopyright.Size" type="System.Drawing.Size, System.Drawing">
-    <value>72, 16</value>
+    <value>89, 20</value>
   </data>
   <data name="lbCopyright.Text" xml:space="preserve">
     <value>版权声明</value>
@@ -188,11 +203,26 @@
   <data name="txtDescription.Font" type="System.Drawing.Font, System.Drawing">
     <value>SimSun-ExtB, 9.75pt</value>
   </data>
+  <data name="txtDescription.Location" type="System.Drawing.Point, System.Drawing">
+    <value>177, 150</value>
+  </data>
   <data name="pictureBox1.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
   <data name="pbLogo.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
+  </data>
+  <data name="colName.HeaderText" xml:space="preserve">
+    <value>名稱</value>
+  </data>
+  <data name="colVer.HeaderText" xml:space="preserve">
+    <value>版本</value>
+  </data>
+  <data name="dgvModule.Location" type="System.Drawing.Point, System.Drawing">
+    <value>177, 210</value>
+  </data>
+  <data name="dgvModule.Size" type="System.Drawing.Size, System.Drawing">
+    <value>289, 142</value>
   </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

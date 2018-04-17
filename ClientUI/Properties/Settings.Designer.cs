@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClientUI.Properties {
+namespace VehiclePlanner.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
@@ -22,5 +22,18 @@ namespace ClientUI.Properties {
                 return defaultInstance;
             }
         }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string HostIP {
+            get {
+                return this["HostIP"] as string;
+            }
+            set {
+                this["HostIP"] = value;
+            }
+        }
+
     }
 }

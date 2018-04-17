@@ -1,0 +1,557 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{E03A4197-BA64-4EED-A628-8DE3B8B9BA9A}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>VehiclePlanner</RootNamespace>
+    <AssemblyName>VehiclePlanner</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="SharpGL, Version=2.4.0.0, Culture=neutral, PublicKeyToken=27fc851303210b27, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>OpenGLDLL\SharpGL.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpGL.SceneGraph, Version=2.4.0.0, Culture=neutral, PublicKeyToken=27fc851303210b27, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>OpenGLDLL\SharpGL.SceneGraph.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpGL.WinForms, Version=2.4.0.0, Culture=neutral, PublicKeyToken=27fc851303210b27, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>OpenGLDLL\SharpGL.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization.Formatters.Soap" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="UtilityLibrary">
+      <HintPath>..\..\..\..\Downloads\UtilityLibrary\UtilityLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="WeifenLuo.WinFormsUI.Docking">
+      <HintPath>C:\Users\Jay\Downloads\DockPanel_2.4_Bin\WeifenLuo.WinFormsUI.Docking.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Component\CtMapInsert.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Component\CtMapInsert.Designer.cs">
+      <DependentUpon>CtMapInsert.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Component\AgvClient.cs" />
+    <Compile Include="Component\AGVMapUI.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Component\AGVMapUI.Designer.cs">
+      <DependentUpon>AGVMapUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CtProtocol.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="VehiclePlannerUI.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="VehiclePlannerUI.Designer.cs">
+      <DependentUpon>VehiclePlannerUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Component\CtConsole.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Component\CtConsole.Designer.cs">
+      <DependentUpon>CtConsole.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Component\CtDockContent.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Component\CtGoalSetting.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Component\CtGoalSetting.Designer.cs">
+      <DependentUpon>CtGoalSetting.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Component\CtMotionController.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Component\CtMotionController.Designer.cs">
+      <DependentUpon>CtMotionController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Component\CtTesting.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Component\CtTesting.Designer.cs">
+      <DependentUpon>CtTesting.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Component\CtToolBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Component\CtToolBox.Designer.cs">
+      <DependentUpon>CtToolBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Component\Events.cs" />
+    <Compile Include="Component\KeyboardHook.cs" />
+    <Compile Include="Component\MapList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Component\MapList.Designer.cs">
+      <DependentUpon>MapList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Component\CtMapInsert.resx">
+      <DependentUpon>CtMapInsert.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Component\AGVMapUI.resx">
+      <DependentUpon>AGVMapUI.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="VehiclePlannerUI.resx">
+      <DependentUpon>VehiclePlannerUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Component\CtConsole.resx">
+      <DependentUpon>CtConsole.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Component\CtDockContent.resx">
+      <DependentUpon>CtDockContent.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Component\CtGoalSetting.resx">
+      <DependentUpon>CtGoalSetting.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Component\CtMotionController.resx">
+      <DependentUpon>CtMotionController.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Component\CtTesting.resx">
+      <DependentUpon>CtTesting.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Component\CtToolBox.resx">
+      <DependentUpon>CtToolBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Component\MapList.resx">
+      <DependentUpon>MapList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <None Include="D1703.opc" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Image1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Add.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Add_2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Add_3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Alert.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Alert_2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Arrow_Down.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Arrow_Left.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Arrow_Left_2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Arrow_Next.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Arrow_Right.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Arrow_Right_2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Arrow_RotationL.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Arrow_RotationR.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Arrow_Up.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Bar_Vertial.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Bar_Vertial_2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Blue Ball.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Button_black.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Button_blue.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Button_gray.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Button_green.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Button_purple.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Button_red.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Button_yellow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Cancel.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\CASTEC_Logo_Full.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\CASTEC_Logo_Vertical.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Check.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Check-S.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Config.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Connect.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\D1403_Teach.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Delete_2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Disconnect.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Edit.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\EMS.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Eraser.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Eraser-S.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Exit.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Finish.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Folder files.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Folder open.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Green Ball.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Grey Ball.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Hand.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\HighPower.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Home.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Info.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Info-S.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\LED-L_Blue.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\LED-L_Gray.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\LED-L_Green.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\LED-L_Red.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\LED-S_Gray.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\LED-S_Green.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\LED-S_Red.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Load.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Lock.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Logout.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Mute.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Mute_2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Open.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Pause.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Pause_2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Pause-S.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\play.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Play-S.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Red Ball.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Refresh.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Refresh_2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Run.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Save.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Save_2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Save-L.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Shutdown.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\SquareBlack.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\SquareBlue.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\SquareGreen.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\SquareSliver.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\StartupLogo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Stop.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Stop_2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Sub.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Sub_2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\User.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\UserAdd.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\UserMange.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\UserOut.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Warning.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Warning_2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Yellow Ball.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Zoom.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\AGVBase\AGVDefine\AGVDefine.csproj">
+      <Project>{51E35835-6673-443B-8926-9AD3117DBCE2}</Project>
+      <Name>AGVDefine</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\AGVBase\FactoryMode\FactoryMode.csproj">
+      <Project>{b66dd409-3bf6-488d-b887-d00a59c6396d}</Project>
+      <Name>FactoryMode</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\AGVBase\Geometry\Geometry.csproj">
+      <Project>{07e11b21-0d87-4446-8ee8-91135dcae089}</Project>
+      <Name>Geometry</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\AGVBase\GLCore\GLCore.csproj">
+      <Project>{805B8702-0FAC-4104-8F41-5337130CA0C6}</Project>
+      <Name>GLCore</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\AGVBase\GLUI\GLUI.csproj">
+      <Project>{D2E7804D-ADE5-4C82-AE04-8F505D04711A}</Project>
+      <Name>GLUI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\AGVBase\NetExtention\NetExtention.csproj">
+      <Project>{cfcc1d01-fd8d-4885-9181-7c6750395d84}</Project>
+      <Name>NetExtention</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\AGVBase\NetFunction\NetFunction.csproj">
+      <Project>{853b5ea0-8387-49aa-b37b-9fa1dd24a72a}</Project>
+      <Name>NetFunction</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\AGVBase\SerialCommunicationData\SerialCommunicationData.csproj">
+      <Project>{7eafe444-e185-4d5e-acfe-65c7e1016425}</Project>
+      <Name>SerialCommunicationData</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\AGVBase\SerialCommunication\SerialCommunication.csproj">
+      <Project>{2e90a64e-9a09-4950-8b65-aedd47f8f6d4}</Project>
+      <Name>SerialCommunication</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\VehicleManager\UIControl\UIControl.csproj">
+      <Project>{b7d0f648-6962-4596-b164-c777766bba97}</Project>
+      <Name>UIControl</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BroadCast\Broadcast.csproj">
+      <Project>{10d930fd-ce9c-46fa-aa1e-fb8394ba287f}</Project>
+      <Name>Broadcast</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CtLib\CtLib\CtLib.csproj">
+      <Project>{a9bed8b3-2f9d-42a8-90bd-9fae0522eb09}</Project>
+      <Name>CtLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CtOutLookBar\CtOutLookBar.csproj">
+      <Project>{1bea4f2d-0a48-4a1c-aff2-0b44efa08442}</Project>
+      <Name>CtOutLookBar</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Dynamic Link Libraries\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Icon\Drag.png" />
+    <Content Include="Icon\Eraser.png" />
+    <Content Include="Icon\find.png" />
+    <Content Include="Icon\Goal.png" />
+    <Content Include="Icon\Insert.png" />
+    <Content Include="Icon\NarrowLine.bmp" />
+    <Content Include="Icon\Parking.png" />
+    <Content Include="Icon\Pen.png" />
+    <Content Include="Icon\Power.png" />
+    <Content Include="Icon\Select.png" />
+    <Content Include="OpenGLDLL\SharpGL.dll" />
+    <Content Include="OpenGLDLL\SharpGL.SceneGraph.dll" />
+    <Content Include="OpenGLDLL\SharpGL.WinForms.dll" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>copy "$(ProjectDir)D1703.opc" "D:\CASTEC\Config\"
+xcopy /i /y /e "$(ProjectDir)Icon\*.*" "$(TargetDir)Icon"</PreBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

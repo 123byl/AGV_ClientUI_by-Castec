@@ -118,53 +118,83 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="lbProduct.Location" type="System.Drawing.Point, System.Drawing">
+    <value>172, 24</value>
+  </data>
   <data name="lbProduct.Size" type="System.Drawing.Size, System.Drawing">
-    <value>74, 23</value>
+    <value>94, 29</value>
   </data>
   <data name="lbProduct.Text" xml:space="preserve">
     <value>Product</value>
   </data>
   <data name="lbVersion.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Candara, 12pt</value>
+    <value>Cambria, 12pt</value>
+  </data>
+  <data name="lbVersion.Location" type="System.Drawing.Point, System.Drawing">
+    <value>173, 62</value>
   </data>
   <data name="lbVersion.Size" type="System.Drawing.Size, System.Drawing">
-    <value>60, 19</value>
+    <value>76, 23</value>
   </data>
   <data name="lbVersion.Text" xml:space="preserve">
     <value>Version</value>
   </data>
   <data name="lbVersion_val.Font" type="System.Drawing.Font, System.Drawing">
-    <value>方正等线, 12pt</value>
+    <value>Consolas, 12pt</value>
+  </data>
+  <data name="lbVersion_val.Location" type="System.Drawing.Point, System.Drawing">
+    <value>272, 61</value>
   </data>
   <data name="lbVersion_val.Size" type="System.Drawing.Size, System.Drawing">
-    <value>106, 19</value>
+    <value>153, 23</value>
   </data>
   <data name="lbDate_val.Font" type="System.Drawing.Font, System.Drawing">
-    <value>方正等线, 12pt</value>
+    <value>Consolas, 12pt</value>
+  </data>
+  <data name="lbDate_val.Location" type="System.Drawing.Point, System.Drawing">
+    <value>272, 86</value>
   </data>
   <data name="lbDate_val.Size" type="System.Drawing.Size, System.Drawing">
-    <value>86, 19</value>
+    <value>120, 23</value>
   </data>
   <data name="lbDate.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Candara, 12pt</value>
+    <value>Cambria, 12pt</value>
+  </data>
+  <data name="lbDate.Location" type="System.Drawing.Point, System.Drawing">
+    <value>173, 87</value>
   </data>
   <data name="lbDate.Size" type="System.Drawing.Size, System.Drawing">
-    <value>78, 19</value>
+    <value>99, 23</value>
   </data>
   <data name="lbDate.Text" xml:space="preserve">
     <value>Build Date</value>
   </data>
   <data name="lbCopyright.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Candara, 12pt</value>
+    <value>Cambria, 12pt</value>
+  </data>
+  <data name="lbCopyright.Location" type="System.Drawing.Point, System.Drawing">
+    <value>173, 114</value>
   </data>
   <data name="lbCopyright.Size" type="System.Drawing.Size, System.Drawing">
-    <value>76, 19</value>
+    <value>95, 23</value>
   </data>
   <data name="lbCopyright.Text" xml:space="preserve">
     <value>Copyright</value>
   </data>
+  <data name="txtDescription.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Cambria, 10.2pt</value>
+  </data>
+  <data name="txtDescription.Location" type="System.Drawing.Point, System.Drawing">
+    <value>177, 160</value>
+  </data>
   <data name="txtDescription.Text" xml:space="preserve">
     <value>Description</value>
+  </data>
+  <data name="dgvModule.Location" type="System.Drawing.Point, System.Drawing">
+    <value>177, 220</value>
+  </data>
+  <data name="dgvModule.Size" type="System.Drawing.Size, System.Drawing">
+    <value>289, 132</value>
   </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

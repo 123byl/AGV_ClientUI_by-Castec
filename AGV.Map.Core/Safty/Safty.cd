@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="AGV.Map.Core.SaftyDictionary&lt;T&gt;">
+    <Position X="4" Y="2" Width="1.75" />
+    <Members>
+      <Field Name="mData" Hidden="true" />
+      <Field Name="mKey" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAEAAAAEAGAAABAQAwAAAAAAAAAAAAABAAAA=</HashCode>
+      <FileName>Safty\SaftyDictionary.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="AGV.Map.Core.SaftyList&lt;T&gt;">
+    <Position X="6" Y="2" Width="1.75" />
+    <Members>
+      <Field Name="mData" Hidden="true" />
+      <Field Name="mKey" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAEAAAAAAEAAAAAQAgAAAAAAAIAAAAAFEAAA=</HashCode>
+      <FileName>Safty\SaftyList.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Font Name="Microsoft JhengHei UI" Size="9" />
+</ClassDiagram>

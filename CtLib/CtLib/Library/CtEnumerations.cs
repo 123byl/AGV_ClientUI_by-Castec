@@ -3,49 +3,52 @@
     /// <summary>數字進制</summary>
     public enum NumericFormats : byte {
         /// <summary>二進制</summary>
-        BINARY = 2,
+        Binary = 2,
         /// <summary>八進制</summary>
-        OCTAL = 8,
+        Octal = 8,
         /// <summary>十進制</summary>
-        DECIMAL = 10,
+        Decimal = 10,
         /// <summary>十六進制</summary>
-        HEXADECIMAL = 16
+        Hexadecimal = 16
     }
 
     /// <summary>路徑種類</summary>
     public enum SystemPath : byte {
         /// <summary>CtLib 或 CAMPro 之資料夾主路徑</summary>
-        MAIN_DIRECTORY = 0,
+        MainDirectory = 0,
         /// <summary>Config 資料夾</summary>
-        CONFIG = 1,
+        Configuration = 1,
         /// <summary>Log 記錄檔資料夾</summary>
-        LOG = 2,
+        Log = 2,
         /// <summary>Recipe 參數資料夾</summary>
-        RECIPE = 3,
+        Recipe = 3,
         /// <summary>Project 專案程式資料夾</summary>
-        PROJECT = 4,
+        Project = 4,
         /// <summary>使用者帳號與密碼紀錄檔案</summary>
-        USER_MANAGER = 5
+        UserManagement = 5,
+        ///<summary>影像辨識模組</summary>
+        Model = 6
+        
     }
 
     /// <summary>指定事件記錄檔項目的事件型別</summary>
     public enum EventLogType : byte {
         /// <summary>錯誤事件。 這表示是使用者應該知道的重要問題，通常是功能或資料的遺失。</summary>
-        ERROR = 1,
+        Error = 1,
         /// <summary>警告事件。 這表示不是立即重要的問題，但是可能表示將來會引發問題的狀況。</summary>
-        WARNING = 2,
+        Warning = 2,
         /// <summary>資訊事件。 這表示重要成功的作業。</summary>
-        INFORMATION = 4,
+        Information = 4,
         /// <summary>失敗稽核事件。 這表示受稽核的存取嘗試失敗時發生的安全性事件，例如無法開啟檔案。</summary>
-        FAILURE_AUDIT = 16,
+        FailureAudit = 16,
         /// <summary>成功稽核事件。 這表示受稽核存取嘗試成功時所發生的安全性事件，例如登錄成功。</summary>
-        SUCCESS_AUDIT = 8
+        SuccessAudit = 8
     }
 
     /// <summary>加解密模式</summary>
     public enum CryptoMode : byte {
         /// <summary>Base64</summary>
-        BASE64 = 64,
+        Base64 = 64,
         /// <summary>Advanced Encryption Standard</summary>
         AES256 = 255
     }
@@ -67,109 +70,33 @@
     /// <summary>I/O 類型</summary>
     public enum IOTypes : byte {
         /// <summary>Input 輸入端點</summary>
-        INPUT,
+        Input,
         /// <summary>Output 輸出端點</summary>
-        OUTPUT,
+        Output,
         /// <summary>In/Out 可輸出輸入之端點</summary>
-        INOUT
-    }
-
-    /// <summary>各類 Opcode 範圍</summary>
-    public enum OpcodeRange : ushort {
-
-        /*-- System --*/
-        /// <summary>Opcode 於 System 的基數</summary>
-        SYSTEM_BASE = 0,
-        /// <summary>Opcode 於 System 的範圍結尾</summary>
-        SYSTEM_RANGE = 999,
-
-        /*-- CAMPro --*/
-        /// <summary>Opcode 於 CAMPro 的基數</summary>
-        CAMPRO_BASE = 1000,
-        /// <summary>Opcode 於 CAMPro 的範圍結尾</summary>
-        CAMPRO_RANGE = 1999,
-
-        /*-- Mobile Robot --*/
-        /// <summary>Opcode 於 Mobile 的基數</summary>
-        MOBILE_BASE = 2000,
-        /// <summary>Opcode 於 Mobile 的範圍結尾</summary>
-        MOBILE_RANGE = 2999,
-
-        /*-- WAGO --*/
-        /// <summary>Opcode 於 WAGO module 的基數</summary>
-        WAGO_IO_BASE = 11000,
-        /// <summary>Opcode 於 WAGO module 的範圍結尾</summary>
-        WAGO_IO_RANGE = 11999,
-
-        /*-- Beckhoff --*/
-        /// <summary>Opcode 於 Beckhoff module 的基數</summary>
-        BECKHOFF_BASE = 12000,
-        /// <summary>Opcode 於 Beckhoff module 的範圍結尾</summary>
-        BECKHOFF_RANGE = 12999,
-
-        /*-- ARCL --*/
-        /// <summary>Opcode 於 ARCL module 的基數</summary>
-        ARCL_BASE = 21000,
-        /// <summary>Opcode 於 ARCL module 的範圍結尾</summary>
-        ARCL_RANGE = 21999,
-
-        /*-- ACE --*/
-        /// <summary>Opcode 於 Ace module 的基數</summary>
-        ACE_BASE = 22000,
-        /// <summary>Opcode 於 Ace module 的範圍結尾</summary>
-        ACE_RANGE = 22999,
-
-        /*-- Vision --*/
-        /// <summary>Opcode 於 Vision module 的基數</summary>
-        VISION_BASE = 30000,
-        /// <summary>Opcode 於 Vision module 的範圍結尾</summary>
-        VISION_RANGE = 30999,
-
-        /*-- Dimmer --*/
-        /// <summary>Opcode 於 調光器模組 的基數</summary>
-        DIMMER_BASE = 31000,
-        /// <summary>Opcode 於 調光器模組 的範圍結尾</summary>
-        DIMMER_RANGE = 31999,
-
-        /*-- Stäubli --*/
-        /// <summary>Opcode 於 Stäubli Module 的基數</summary>
-        STAUBLI_BASE = 40000,
-        /// <summary>Opcode 於 Stäubli Module 的範圍結尾</summary>
-        STAUBLI_RANGE = 40999,
-
-        /*-- Delta --*/
-        /// <summary>Opcode 於 Delta Module 的基數</summary>
-        DELTA_BASE = 50000,
-        /// <summary>Opcode 於 Delta Module 的範圍結尾</summary>
-        DELTA_RANGE = 50999,
-
-        /*-- Other --*/
-        /// <summary>Opcode 於 MySQL module 的基數</summary>
-        MYSQL_BASE = 60000,
-        /// <summary>Opcode 於 MySQL module 的範圍結尾</summary>
-        MYSQL_RANGE = 60099,
-        /// <summary>Opcode 於 SECS/GEM module 的基數</summary>
-        CIM_BASE = 60100,
-        /// <summary>Opcode 於 SECS/GEM module 的範圍結尾</summary>
-        CIM_RANGE = 60199,
-        /// <summary>Opcode 於 Brillian RFID module 的基數</summary>
-        BRILLIAN_RFID_BASE = 60300,
-        /// <summary>Opcode 於 Brillian RFID module 的範圍結尾</summary>
-        BRILLIAN_RFID_RANGE = 60399
+        InOut
     }
 
     /// <summary>設備類型</summary>
     public enum Devices : byte {
         /// <summary>Adept ACE</summary>
-        ADEPT_ACE,
+        AdeptACE,
         /// <summary>Beckhoff Ads Devices</summary>
-        BECKHOFF_PLC,
+        Beckhoff,
         /// <summary>CAMPro System Objects</summary>
         CAMPro,
         /// <summary>Wago Devices</summary>
         WAGO,
         /// <summary>Delta Devices</summary>
-        DELTA
+        DELTA,
+        /// <summary>Universal Robots</summary>
+        UR,
+        /// <summary>Oriental Motors</summary>
+        Oriental,
+        /// <summary>IAI Devices</summary>
+        IAI,
+        ///<summary>HighFreq Devices</summary>
+        MITSUBISHI_PLC
     }
 
     /// <summary>設備狀態</summary>
@@ -272,88 +199,123 @@
     /// <summary>用於讀取/寫入串流資料時之結尾符號</summary>
     public enum EndChar : byte {
         /// <summary>不帶任何結尾符號</summary>
-        NONE,
+        None,
         /// <summary>回車符號(Carriage Return) 即 "\r" "0x0D"</summary>
-        CR,
+        Cr,
         /// <summary>換行符號(Line feed) 即 "\n" "0x0A"</summary>
-        LF,
+        Lf,
         /// <summary>MS DOS/Windows 之換行符號，即 "\r\n" "0x0D 0x0A" "<see cref="System.Environment.NewLine"/>"</summary>
-        CRLF,
+        CrLf,
         /// <summary>使用者自訂</summary>
-        CUSTOM
+        Custom
     }
 
     /// <summary>介面語系</summary>
     public enum UILanguage : byte {
         /// <summary>中文(繁體)</summary>
-        TRADITIONAL_CHINESE = 0,
+        TraditionalChinese = 0,
         /// <summary>中文(簡體)</summary>
-        SIMPLIFIED_CHINESE = 1,
+        SimplifiedChinese = 1,
         /// <summary>英文</summary>
-        ENGLISH = 2
-    }
-
-    /// <summary>Socket 對應端點</summary>
-    public enum SocketModes : byte {
-        /// <summary>用戶端</summary>
-        CLIENT = 0,
-        /// <summary>伺服端</summary>
-        SERVER = 1
-    }
-
-    /// <summary>Socket 連線協議</summary>
-    public enum CommunicationModes : byte {
-        /// <summary>此連線為 TCP/IP</summary>
-        TCP_IP,
-        /// <summary>此連線為 Telnet</summary>
-        TELNET
+        English = 2
     }
 
     /// <summary>Windows CodePage for Encoding。請參考 "http://en.wikipedia.org/wiki/Windows_code_page"</summary>
     public enum CodePages : int {
-        /// <summary>Traditional Chinese (Taiwan, HongKong)</summary>
+		/// <summary>簡體中文 (GB2312) 《信息技术信息交换用汉字编码字符集 基本集》又稱 GB0</summary>
+		GB2312 = 936,
+        /// <summary>繁體中文 (Big5)</summary>
         BIG5 = 950,
-        /// <summary>ASCII Latin 1 / Western European</summary>
-        ASCII = 1252,
-        /// <summary>BMP of ISO-10646, UTF-8</summary>
-        UTF8 = 65001
+		/// <summary>Unicode (UTF-16)</summary>
+		UTF16 = 1200,
+		/// <summary>西歐語系 (Mac)</summary>
+		MACINTOSH = 10000,
+		/// <summary>Unicode (UTF-32)</summary>
+		UTF32 = 12000,
+		/// <summary>Unicode (UTF-32 位元組由大到小)</summary>
+		UTF32BE = 12001,
+		/// <summary>US-ASCII</summary>
+		ASCII = 20127,
+		/// <summary>簡體中文 (GB18030) 《信息技术信息交换用汉字编码字符集 基本集的扩充》</summary>
+		GB18030 = 54936,
+		/// <summary>Unicode (UTF-8)</summary>
+		UTF8 = 65001
     }
 
-    /// <summary>事件回傳的資料格式</summary>
-    public enum TransmissionDataFormats : byte {
-        /// <summary>以 string 方式回傳，會以 CodePage 屬性將資料轉為 string 並回傳</summary>
-        STRING,
-        /// <summary>以 List(Of byte) 方式回傳</summary>
-        BYTE_ARRAY
-    }
+    /// <summary>通訊交握之資料格式</summary>
+    public enum TransDataFormats : byte {
+        /// <summary>以 <see cref="string"/> 方式回傳，會以 <seealso cref="CodePages"/> 將資料轉為相對應的編碼並回傳</summary>
+        @String = 0,
+		/// <summary>以 <see cref="System.Collections.Generic.IEnumerable{T}"/> 方式回傳，可能為 <see cref="System.Array"/> 或 <seealso cref="System.Collections.Generic.List{T}"/>。 T 為 <seealso cref="byte"/></summary>
+		EnumerableOfByte = 1
+	}
 
     /// <summary>CtMsgBox 所使用的按鈕</summary>
-    public enum MsgBoxButton : byte {
+    public enum MsgBoxBtn : byte {
         /// <summary>確認(OK)鈕</summary>
         OK = 1,
         /// <summary>取消(Cancel)鈕</summary>
-        CANCEL = 2,
+        Cancel = 2,
         /// <summary>是(Yes)鈕</summary>
-        YES = 4,
+        Yes = 4,
         /// <summary>否(Yes)鈕</summary>
-        NO = 8,
+        No = 8,
         /// <summary>確認與取消 (OK + Cancel)</summary>
-        OK_CANCEL = 3,
+        OkCancel = 3,
         /// <summary>是與否 (Yes + No)</summary>
-        YES_NO = 12
+        YesNo = 12
     }
 
     /// <summary>CtMsgBox 樣式</summary>
     public enum MsgBoxStyle : byte {
         /// <summary>資訊。圖案為藍底「i」</summary>
-        INFORMATION,
+        Information,
         /// <summary>警告。圖案為黃底「!」</summary>
-        WARNING,
+        Warning,
         /// <summary>詢問。圖案為藍底「？」</summary>
-        QUESTION,
+        Question,
         /// <summary>錯誤。圖案為紅底「X」</summary>
-        ERROR,
+        Error,
         /// <summary>無樣式</summary>
-        NONE
+        None
     }
+
+    /// <summary>資料排列順序</summary>
+    public enum BitSequence : byte {
+        /// <summary>閱讀順序。如 [0]0x01 [1]0xFF，實際上為 0x01FF</summary>
+        Reading,
+        /// <summary>電腦傳送順序。如 [0]0x02 [1]0xFE，實際上為 0xFE02</summary>
+        Computer
+    }
+
+	/// <summary>網際網路控制訊息通訊協定(ICMP)回應訊息傳送至電腦的狀態</summary>
+	/// <remarks>已對應至 <see cref="System.Net.NetworkInformation.IPStatus"/></remarks>
+	public enum PingStatus {
+		/// <summary>ICMP 回應要求失敗，原因不明</summary>
+		Unknown = -1,
+		/// <summary>ICMP 回應要求成功；已收到 ICMP 回應的回覆，<see cref="System.Net.NetworkInformation.PingReply"/> 將包含有效資料</summary>
+		Success = 0,
+		/// <summary>沒有在指定時間內收到 ICMP 回應的回覆。回覆允許的預設時間為 5 秒，請於 Send / AsyncSend 更改此逾時設定時間</summary>
+		Timeout = 11010,
+		/// <summary>ICMP 回應要求失敗，因為來源和目的電腦之間沒有有效的路由</summary>
+		BadRoute = 11012,
+		/// <summary>ICMP 回應要求失敗，因為目的端 IP 位址無法接收 ICMP 回應要求或不應該出現在任何 IP 資料包的目的位址欄位中</summary>
+		BadDestination = 11018,
+		/// <summary>ICMP 回應要求失敗，因為無法連接 ICMP 回應訊息中指定的目的電腦；問題的實際原因不明</summary>
+		Unreachable = 11040,
+		/// <summary>ICMP 回應要求失敗，因為 ICMP 回應訊息中指定的來源位址和目的位址不在同一個範圍內</summary>
+		ScopeMismatch = 11045
+	}
+
+	/// <summary>序列化之方法</summary>
+	public enum Serialization {
+		/// <summary>使用物件序列化為二進位資料</summary>
+		Binary,
+		/// <summary>使用 SOAP 格式序列化物件</summary>
+		SOAP,
+		/// <summary>使用 XML 格式進行物件的序列化</summary>
+		XML,
+		/// <summary>使用 .Net 的資料合約序列化</summary>
+		DataContract
+	}
 }

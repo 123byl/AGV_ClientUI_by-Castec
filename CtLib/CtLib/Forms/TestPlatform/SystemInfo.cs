@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 using CtLib.Library;
@@ -16,8 +14,8 @@ namespace CtLib.Forms.TestPlatform {
     public partial class SystemInfo : Form {
 
         List<DriveInfo> mDiskInfo;
-        List<CtApplication.LogicalDiskInfo> mLogicalInfo;
-        List<CtApplication.PhysicalDiskInfo> mPhysicalInfo;
+        List<LogicalDiskInfo> mLogicalInfo;
+        List<PhysicalDiskInfo> mPhysicalInfo;
 
         /// <summary>建立系統相關資訊</summary>
         public SystemInfo() {
@@ -32,14 +30,14 @@ namespace CtLib.Forms.TestPlatform {
             CtApplication.GetPhysicalDiskInfo(out mPhysicalInfo);
 
             CtInvoke.ListBoxClear(listBox4);
-            CtApplication.BIOSInfo bios;
+            BiosInfo bios;
             CtApplication.GetBIOSInfo(out bios);
             CtInvoke.ListBoxAdd(listBox4, "Name = " + bios.Name);
             CtInvoke.ListBoxAdd(listBox4, "Version = " + bios.Version);
             CtInvoke.ListBoxAdd(listBox4, "SerialNumber = " + bios.SerialNumber);
 
             CtInvoke.ListBoxClear(listBox5);
-            CtApplication.CPUInfo cpu;
+            CpuInfo cpu;
             CtApplication.GetCPUInfo(out cpu);
             CtInvoke.ListBoxAdd(listBox5, "ID = " + cpu.ID);
             CtInvoke.ListBoxAdd(listBox5, "Name = " + cpu.Name);
@@ -48,7 +46,7 @@ namespace CtLib.Forms.TestPlatform {
             CtInvoke.ListBoxAdd(listBox5, "Version = " + cpu.Version);
 
             CtInvoke.ListBoxClear(listBox6);
-            CtApplication.MBInfo mb;
+            MotherBoardInfo mb;
             CtApplication.GetMBInfo(out mb);
             CtInvoke.ListBoxAdd(listBox6, "Product = " + mb.Product);
             CtInvoke.ListBoxAdd(listBox6, "Manufacturer = " + mb.Manufacturer);
@@ -71,7 +69,7 @@ namespace CtLib.Forms.TestPlatform {
             }
 
             CtInvoke.ListBoxClear(listBox3);
-            CtApplication.PerformanceInfo pmInfo;
+            PerformanceInfo pmInfo;
             CtApplication.GetPerformance(out pmInfo);
             CtInvoke.ListBoxAdd(listBox3, "CommitLimit = " + pmInfo.CommitLimit.ToInt64().ToString());
             CtInvoke.ListBoxAdd(listBox3, "CommitPeak = " + pmInfo.CommitPeak.ToInt64().ToString());
@@ -88,7 +86,7 @@ namespace CtLib.Forms.TestPlatform {
             CtInvoke.ListBoxAdd(listBox3, "SystemCache = " + pmInfo.SystemCache.ToString());
 
             CtInvoke.ListBoxClear(listBox7);
-            CtApplication.OSInfo osInfo;
+            OsInfo osInfo;
             CtApplication.GetOSInfo(out osInfo);
             CtInvoke.ListBoxAdd(listBox7, "Caption = " + osInfo.Caption);
             CtInvoke.ListBoxAdd(listBox7, "Name = " + osInfo.Name);
@@ -126,7 +124,7 @@ namespace CtLib.Forms.TestPlatform {
 
                 /*-- 使用 CtApplication.LogicalInfo 讀取相關訊息 --*/
                 string[] strSplit = listBox1.SelectedItem.ToString().Split(CtConst.CHR_BRACKET, StringSplitOptions.RemoveEmptyEntries);
-                CtApplication.LogicalDiskInfo info = mLogicalInfo.Find(disk => disk.Name.Contains(strSplit[0]));
+                LogicalDiskInfo info = mLogicalInfo.Find(disk => disk.Name.Contains(strSplit[0]));
 
                 string temp = "";
                 temp += "Name = " + info.Name + CtConst.NewLine;
@@ -147,7 +145,7 @@ namespace CtLib.Forms.TestPlatform {
 
                 /*-- 使用 CtApplication.LogicalInfo 讀取相關訊息 --*/
                 string[] strSplit = listBox2.SelectedItem.ToString().Split(CtConst.CHR_BRACKET, StringSplitOptions.RemoveEmptyEntries);
-                CtApplication.PhysicalDiskInfo info = mPhysicalInfo.Find(disk => disk.Name.Contains(strSplit[0]));
+                PhysicalDiskInfo info = mPhysicalInfo.Find(disk => disk.Name.Contains(strSplit[0]));
 
                 string temp = "";
                 temp += "Name = " + info.Name + CtConst.NewLine;

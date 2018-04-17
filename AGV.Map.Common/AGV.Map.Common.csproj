@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{D5B19A54-59DB-42B0-B7F4-A3AF97A1D274}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>AGV.Map.Common</RootNamespace>
+    <AssemblyName>AGV.Map.Common</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="SharpGL, Version=2.3.0.1, Culture=neutral, PublicKeyToken=27fc851303210b27, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>DLL\SharpGL.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpGL.SceneGraph, Version=2.3.0.1, Culture=neutral, PublicKeyToken=27fc851303210b27, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>DLL\SharpGL.SceneGraph.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpGL.WinForms, Version=2.3.0.1, Culture=neutral, PublicKeyToken=27fc851303210b27, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>DLL\SharpGL.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Drag\IDragable.cs" />
+    <Compile Include="Drag\IDragPoint.cs" />
+    <Compile Include="Drag\EDragStatus.cs" />
+    <Compile Include="Drag\IDragManager.cs" />
+    <Compile Include="Others\ELineStyle.cs" />
+    <Compile Include="UI\IUBaseCtrl.cs" />
+    <Compile Include="UI\IUStatus.cs" />
+    <Compile Include="Others\IDraw.cs" />
+    <Compile Include="Single\IForbiddenArea.cs" />
+    <Compile Include="Others\IHasGLSetting.cs" />
+    <Compile Include="Others\IBound.cs" />
+    <Compile Include="Others\IRecode.cs" />
+    <Compile Include="Muti\ILaserPoints.cs" />
+    <Compile Include="Muti\IMuti.cs" />
+    <Compile Include="Muti\IObstacleLines.cs" />
+    <Compile Include="Muti\IObstaclePoints.cs" />
+    <Compile Include="Single\IForbiddenLine.cs" />
+    <Compile Include="Single\INarrowLine.cs" />
+    <Compile Include="Single\IParking.cs" />
+    <Compile Include="Single\IAGV.cs" />
+    <Compile Include="Single\IGoal.cs" />
+    <Compile Include="Single\IPower.cs" />
+    <Compile Include="Single\ISingle.cs" />
+    <Compile Include="Geometry\ITowardPair.cs" />
+    <Compile Include="Others\EType.cs" />
+    <Compile Include="Others\IGLSetting.cs" />
+    <Compile Include="Others\IName.cs" />
+    <Compile Include="Others\IColor.cs" />
+    <Compile Include="Geometry\IGeometry.cs" />
+    <Compile Include="Geometry\IAngle.cs" />
+    <Compile Include="Geometry\IArea.cs" />
+    <Compile Include="Geometry\ILine.cs" />
+    <Compile Include="Geometry\IPair.cs" />
+    <Compile Include="Safty\ISafty.cs" />
+    <Compile Include="Safty\ISaftyDictionary.cs" />
+    <Compile Include="Safty\ISaftyList.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Drag\Drag.cd" />
+    <None Include="Geometry\Geometry.cd" />
+    <None Include="Safty\Safty.cd" />
+    <None Include="Muti\Muti.cd" />
+    <None Include="Others\Others.cd" />
+    <None Include="Single\Single.cd" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="DLL\SharpGL.dll" />
+    <Content Include="DLL\SharpGL.SceneGraph.dll" />
+    <Content Include="DLL\SharpGL.WinForms.dll" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

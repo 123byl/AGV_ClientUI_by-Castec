@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <metadata name="lbProduct.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
   <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="lbProduct.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -129,7 +132,7 @@
     <value>173, 36</value>
   </data>
   <data name="lbProduct.Size" type="System.Drawing.Size, System.Drawing">
-    <value>90, 23</value>
+    <value>113, 29</value>
   </data>
   <data name="lbProduct.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -149,6 +152,9 @@
   <data name="&gt;&gt;lbProduct.ZOrder" xml:space="preserve">
     <value>8</value>
   </data>
+  <metadata name="lbVersion.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
   <data name="lbVersion.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -159,7 +165,7 @@
     <value>174, 74</value>
   </data>
   <data name="lbVersion.Size" type="System.Drawing.Size, System.Drawing">
-    <value>58, 15</value>
+    <value>77, 21</value>
   </data>
   <data name="lbVersion.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -179,6 +185,9 @@
   <data name="&gt;&gt;lbVersion.ZOrder" xml:space="preserve">
     <value>7</value>
   </data>
+  <metadata name="lbVersion_val.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
   <data name="lbVersion_val.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -189,7 +198,7 @@
     <value>255, 74</value>
   </data>
   <data name="lbVersion_val.Size" type="System.Drawing.Size, System.Drawing">
-    <value>80, 15</value>
+    <value>106, 21</value>
   </data>
   <data name="lbVersion_val.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
@@ -209,6 +218,9 @@
   <data name="&gt;&gt;lbVersion_val.ZOrder" xml:space="preserve">
     <value>6</value>
   </data>
+  <metadata name="lbDate_val.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
   <data name="lbDate_val.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -219,7 +231,7 @@
     <value>255, 99</value>
   </data>
   <data name="lbDate_val.Size" type="System.Drawing.Size, System.Drawing">
-    <value>65, 15</value>
+    <value>86, 21</value>
   </data>
   <data name="lbDate_val.TabIndex" type="System.Int32, mscorlib">
     <value>5</value>
@@ -239,6 +251,9 @@
   <data name="&gt;&gt;lbDate_val.ZOrder" xml:space="preserve">
     <value>4</value>
   </data>
+  <metadata name="lbDate.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
   <data name="lbDate.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -249,7 +264,7 @@
     <value>174, 99</value>
   </data>
   <data name="lbDate.Size" type="System.Drawing.Size, System.Drawing">
-    <value>43, 15</value>
+    <value>57, 21</value>
   </data>
   <data name="lbDate.TabIndex" type="System.Int32, mscorlib">
     <value>4</value>
@@ -269,6 +284,9 @@
   <data name="&gt;&gt;lbDate.ZOrder" xml:space="preserve">
     <value>5</value>
   </data>
+  <metadata name="lbCopyright.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
   <data name="lbCopyright.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -279,7 +297,7 @@
     <value>174, 126</value>
   </data>
   <data name="lbCopyright.Size" type="System.Drawing.Size, System.Drawing">
-    <value>71, 15</value>
+    <value>93, 21</value>
   </data>
   <data name="lbCopyright.TabIndex" type="System.Int32, mscorlib">
     <value>6</value>
@@ -299,6 +317,49 @@
   <data name="&gt;&gt;lbCopyright.ZOrder" xml:space="preserve">
     <value>3</value>
   </data>
+  <metadata name="txtDescription.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="txtDescription.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Left, Right</value>
+  </data>
+  <data name="txtDescription.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Candara, 9.75pt</value>
+  </data>
+  <data name="txtDescription.Location" type="System.Drawing.Point, System.Drawing">
+    <value>178, 161</value>
+  </data>
+  <data name="txtDescription.Multiline" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="txtDescription.Size" type="System.Drawing.Size, System.Drawing">
+    <value>289, 54</value>
+  </data>
+  <data name="txtDescription.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="txtDescription.Text" xml:space="preserve">
+    <value>txtDescription</value>
+  </data>
+  <data name="&gt;&gt;txtDescription.Name" xml:space="preserve">
+    <value>txtDescription</value>
+  </data>
+  <data name="&gt;&gt;txtDescription.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;txtDescription.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;txtDescription.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <metadata name="pnModule.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="pictureBox1.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
   <data name="pictureBox1.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
@@ -308,7 +369,6 @@
   <data name="pictureBox1.Size" type="System.Drawing.Size, System.Drawing">
     <value>10, 341</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="pictureBox1.SizeMode" type="System.Windows.Forms.PictureBoxSizeMode, System.Windows.Forms">
     <value>StretchImage</value>
   </data>
@@ -349,8 +409,11 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;pnModule.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>1</value>
   </data>
+  <metadata name="pbLogo.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
   <data name="pbLogo.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Left</value>
   </data>
@@ -378,6 +441,9 @@
   <data name="&gt;&gt;pbLogo.ZOrder" xml:space="preserve">
     <value>9</value>
   </data>
+  <metadata name="dgvModule.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
   <data name="dgvModule.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
   </data>
@@ -385,22 +451,22 @@
     <value>True</value>
   </metadata>
   <data name="colName.HeaderText" xml:space="preserve">
-    <value>名稱</value>
+    <value>Name</value>
   </data>
   <metadata name="colVer.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
   <data name="colVer.HeaderText" xml:space="preserve">
-    <value>版本</value>
+    <value>Version</value>
   </data>
   <data name="dgvModule.Location" type="System.Drawing.Point, System.Drawing">
-    <value>177, 218</value>
+    <value>177, 221</value>
   </data>
   <data name="dgvModule.Size" type="System.Drawing.Size, System.Drawing">
-    <value>289, 126</value>
+    <value>289, 123</value>
   </data>
   <data name="dgvModule.TabIndex" type="System.Int32, mscorlib">
-    <value>12</value>
+    <value>10</value>
   </data>
   <data name="&gt;&gt;dgvModule.Name" xml:space="preserve">
     <value>dgvModule</value>
@@ -414,42 +480,15 @@
   <data name="&gt;&gt;dgvModule.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="txtDescription.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Top, Left, Right</value>
-  </data>
-  <data name="txtDescription.Font" type="System.Drawing.Font, System.Drawing">
-    <value>微軟正黑體, 9.75pt</value>
-  </data>
-  <data name="txtDescription.Location" type="System.Drawing.Point, System.Drawing">
-    <value>177, 149</value>
-  </data>
-  <data name="txtDescription.Multiline" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="txtDescription.Size" type="System.Drawing.Size, System.Drawing">
-    <value>289, 63</value>
-  </data>
-  <data name="txtDescription.TabIndex" type="System.Int32, mscorlib">
-    <value>11</value>
-  </data>
-  <data name="txtDescription.Text" xml:space="preserve">
-    <value>描述</value>
-  </data>
-  <data name="&gt;&gt;txtDescription.Name" xml:space="preserve">
-    <value>txtDescription</value>
-  </data>
-  <data name="&gt;&gt;txtDescription.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;txtDescription.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;txtDescription.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
+  <metadata name="$this.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+    <value>8, 15</value>
+  </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
     <value>666, 352</value>
   </data>

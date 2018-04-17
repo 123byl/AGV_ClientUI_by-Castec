@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 
 using System.Windows.Forms;
 
 using CtLib.Library;
-using CtLib.Module.Ultity;
+using CtLib.Module.Utility;
 
 namespace CtLib.Forms {
 
@@ -17,7 +14,7 @@ namespace CtLib.Forms {
     /// </summary>
     /// <example>
     /// 以下為利用 Enum 方式建立 StartUp 之示範
-    /// <code>
+    /// <code language="C#">
     /// enum Step : byte {
     ///     LOADING = 0,
     ///     STEP_1 = 1,
@@ -60,20 +57,24 @@ namespace CtLib.Forms {
     ///     }
     /// }
     /// </code></example>
-    public class CtStartUp {
+    public class CtStartUp : ICtVersion {
 
         #region Version
 
         /// <summary>CtStartUp 版本訊息</summary>
-        /// <remarks><code>
+        /// <remarks><code language="C#">
         /// 1.0.0  Ahern [2014/09/24]
         ///     + 建立基礎模組
+        /// 
+        /// 1.0.1  Ahern [2015/10/28]
+        ///     \ 改用 Flag 來讓執行緒離開並關閉
+        /// 
         /// </code></remarks>
-        public static readonly CtVersion @Version = new CtVersion(1, 0, 0, "2014/09/24", "Ahern Kuo");
+        public CtVersion Version { get { return new CtVersion(1, 0, 1, "2015/10/28", "Ahern Kuo"); } }
 
         #endregion
 
-        #region Declaration - Members
+        #region Declaration - Fields
 
         /// <summary>最大步數</summary>
         private int mMaxStep = -1;
@@ -86,6 +87,10 @@ namespace CtLib.Forms {
         private string mInfo = "";
         /// <summary>儲存欲更新之當前步數</summary>
         private int mCurrStep = -1;
+        /// <summary>啟動視窗</summary>
+        private CtStartUp_Ctrl mStartUp;
+        /// <summary>是否進行關閉</summary>
+        private bool mFlag_IsTerminate = false;
 
         #endregion
 
@@ -114,16 +119,18 @@ namespace CtLib.Forms {
 
         /// <summary>關閉視窗</summary>
         public void Close() {
-            CtThread.KillThread(ref mThrForm);
+            mFlag_IsTerminate = true;
         }
 
         /// <summary>[Thread] 建立CtStart_Ctrl，並等待觸發更新</summary>
         private void tsk_Startup() {
+
             /*-- 建立CtStartUp_Ctrl --*/
-            CtStartUp_Ctrl mStartUp = new CtStartUp_Ctrl(mMaxStep);
+            mStartUp = new CtStartUp_Ctrl(mMaxStep);
 
             try {
-                do {
+
+                while (!mFlag_IsTerminate) {
                     /* 如有觸發更新，更新介面 */
                     if (mUpdate) {
                         //將Flag清掉
@@ -131,11 +138,10 @@ namespace CtLib.Forms {
                         //更新介面
                         mStartUp.UpdateProcess(mInfo, mCurrStep);
                     }
-                    Thread.Sleep(1);
+                    CtTimer.Delay(1);
                     Application.DoEvents();
-                } while (mThrForm.IsAlive);
-            } catch (ThreadAbortException) {
-            } catch (ThreadInterruptedException) {
+                }
+
             } catch (Exception) {
                 /*-- 此Try_Catch是用來避免執行緒關閉時會跳Exception的問題，所以Catch裡不做任何事 --*/
             } finally {

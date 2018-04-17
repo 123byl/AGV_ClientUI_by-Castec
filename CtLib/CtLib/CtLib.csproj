@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>CtLib</RootNamespace>
     <AssemblyName>CtLib</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
@@ -29,7 +29,7 @@
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
+    <GenerateResourceNeverLockTypeAssemblies>true</GenerateResourceNeverLockTypeAssemblies>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -54,6 +54,8 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DocumentationFile>bin\Release\CtLib.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>CtLib.Program</StartupObject>
@@ -64,65 +66,35 @@
   <PropertyGroup>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
-    <PlatformTarget>x86</PlatformTarget>
-    <OutputPath>bin\x86\Debug\</OutputPath>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <PlatformTarget>x86</PlatformTarget>
-    <OutputPath>bin\x86\Release\</OutputPath>
-    <Prefer32Bit>false</Prefer32Bit>
+  <PropertyGroup />
+  <PropertyGroup />
+  <PropertyGroup />
+  <PropertyGroup />
+  <PropertyGroup />
+  <PropertyGroup />
+  <PropertyGroup />
+  <PropertyGroup>
+    <NoWin32Manifest>true</NoWin32Manifest>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Ace.Adept">
-      <HintPath>..\..\..\..\..\..\..\Program Files\Omron\ACE 3.6\bin\Ace.Adept.dll</HintPath>
-    </Reference>
-    <Reference Include="Ace.Adept.Common">
-      <HintPath>..\..\..\..\..\..\..\Program Files\Omron\ACE 3.6\bin\Ace.Adept.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="Ace.AdeptSight.Common">
-      <HintPath>..\..\..\..\..\..\..\Program Files\Omron\ACE 3.6\bin\Ace.AdeptSight.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="Ace.Core">
-      <HintPath>..\..\..\..\..\..\..\Program Files\Omron\ACE 3.6\bin\Ace.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Ace.Feeder.Common">
-      <HintPath>..\..\..\..\..\..\..\Program Files\Omron\ACE 3.6\bin\Ace.Feeder.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="Ace.HSVision.Common">
-      <HintPath>..\..\..\..\..\..\..\Program Files\Omron\ACE 3.6\bin\Ace.HSVision.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="Ace.ProcessManager.Common">
-      <HintPath>..\..\..\..\..\..\..\Program Files\Omron\ACE 3.6\bin\Ace.ProcessManager.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="Ace.UIBuilder.Common">
-      <HintPath>..\..\..\..\..\..\..\Program Files\Omron\ACE 3.6\bin\Ace.UIBuilder.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="CaoRCW">
-      <HintPath>..\..\..\CtLib\CtLib\Dynamic Link Libraries\ORiN2\CaoRCW.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </Reference>
-    <Reference Include="Interop.HSDISPLAYLib">
-      <HintPath>C:\Program Files\Omron\ACE 3.6\bin\Interop.HSDISPLAYLib.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
     <Reference Include="System.Management" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Runtime.Serialization.Formatters.Soap" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Services" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="TwinCAT.Ads">
-      <HintPath>..\..\..\CtLib\CtLib\Dynamic Link Libraries\Beckhoff\TwinCAT.Ads.dll</HintPath>
-    </Reference>
+    <Reference Include="System.Xml.Serialization" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Forms\CtAbout.cs">
@@ -131,11 +103,36 @@
     <Compile Include="Forms\CtAbout.Designer.cs">
       <DependentUpon>CtAbout.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\CtInput\CtCheckListSelector.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\CtInput\CtCheckListSelector.Designer.cs">
+      <DependentUpon>CtCheckListSelector.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\CtErrorHistory.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\CtErrorHistory.Designer.cs">
       <DependentUpon>CtErrorHistory.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\CtInput\CtInputBase.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\CtInput\CtInputBase.Designer.cs">
+      <DependentUpon>CtInputBase.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\CtInput\CtInput.cs" />
+    <Compile Include="Forms\CtInput\CtNumericPad.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\CtInput\CtNumericPad.Designer.cs">
+      <DependentUpon>CtNumericPad.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\CtInput\CtPasswordInput.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\CtInput\CtPasswordInput.Designer.cs">
+      <DependentUpon>CtPasswordInput.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\CtMessage.cs" />
     <Compile Include="Forms\CtMessage_Ctrl.cs">
@@ -144,23 +141,48 @@
     <Compile Include="Forms\CtMessage_Ctrl.Designer.cs">
       <DependentUpon>CtMessage_Ctrl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\CtInput\CtComboBoxSelector.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\CtInput\CtComboBoxSelector.Designer.cs">
+      <DependentUpon>CtComboBoxSelector.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\CtPlexiglass.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\CtPlexiglass.Designer.cs">
+      <DependentUpon>CtPlexiglass.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\CtRecipe.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\CtRecipe.Designer.cs">
       <DependentUpon>CtRecipe.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\TestPlatform\CmmoForm.cs">
+    <Compile Include="Forms\CtInput\CtMultiLineTextInput.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\TestPlatform\CmmoForm.Designer.cs">
-      <DependentUpon>CmmoForm.cs</DependentUpon>
+    <Compile Include="Forms\CtInput\CtMultiLineTextInput.Designer.cs">
+      <DependentUpon>CtMultiLineTextInput.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\TestPlatform\Denso.cs">
+    <Compile Include="Forms\CtInput\CtTextInput.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\TestPlatform\Denso.Designer.cs">
-      <DependentUpon>Denso.cs</DependentUpon>
+    <Compile Include="Forms\CtInput\CtTextInput.Designer.cs">
+      <DependentUpon>CtTextInput.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\CtInput\ICtInput.cs" />
+    <Compile Include="Forms\TestPlatform\AsyncPipe.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\TestPlatform\AsyncPipe.Designer.cs">
+      <DependentUpon>AsyncPipe.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\TestPlatform\ChineseTranslator.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\TestPlatform\ChineseTranslator.Designer.cs">
+      <DependentUpon>ChineseTranslator.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\TestPlatform\Launcher.cs">
       <SubType>Form</SubType>
@@ -174,11 +196,22 @@
     <Compile Include="Forms\TestPlatform\ModbusRTU.Designer.cs">
       <DependentUpon>ModbusRTU.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\TestPlatform\AsyncSocket.cs">
+    <Compile Include="Forms\TestPlatform\Socket.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\TestPlatform\AsyncSocket.Designer.cs">
-      <DependentUpon>AsyncSocket.cs</DependentUpon>
+    <Compile Include="Forms\TestPlatform\Socket.Designer.cs">
+      <DependentUpon>Socket.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\TestPlatform\ProcessMonitor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\TestPlatform\ProcessMonitor.Designer.cs">
+      <DependentUpon>ProcessMonitor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\TestPlatform\SocketSetting.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>SocketSetting.settings</DependentUpon>
     </Compile>
     <Compile Include="Forms\TestPlatform\SystemInfo.cs">
       <SubType>Form</SubType>
@@ -198,22 +231,38 @@
     <Compile Include="Forms\TestPlatform\XML_Editor.Designer.cs">
       <DependentUpon>XML_Editor.cs</DependentUpon>
     </Compile>
+    <Compile Include="Library\CtAttribute.cs" />
     <Compile Include="Library\CtDefaultPath.cs" />
+    <Compile Include="Library\CtEmbeddedResource.cs" />
     <Compile Include="Library\CtEnumerations.cs" />
     <Compile Include="Data\CtErrorInformation.cs" />
+    <Compile Include="Library\CtExtension.cs" />
     <Compile Include="Library\CtIO.cs" />
     <Compile Include="Data\CtIOData.cs" />
-    <Compile Include="Library\CtLanguage.cs" />
+    <Compile Include="Library\CtNetwork.cs" />
+    <Compile Include="Module\Communication\Net\BaseClasses.cs" />
+    <Compile Include="Module\Communication\Net\TCP\CtTcpSocket.cs" />
+    <Compile Include="Module\Communication\Net\Enumerations.cs" />
+    <Compile Include="Module\Communication\Net\Extension.cs" />
+    <Compile Include="Module\Communication\Net\SupportClasses.cs" />
+    <Compile Include="Module\Communication\Net\UDP\CtUdpSocket.cs" />
+    <Compile Include="Module\XML\IXmlOperable.cs" />
+    <Compile Include="Module\Communication\Pipe\CtAsyncPipe.cs" />
+    <Compile Include="Module\Communication\Pipe\PipeCommonData.cs" />
+    <Compile Include="Module\Communication\Serial\CtSerial_Events.cs" />
+    <Compile Include="Module\Utility\CtConfig.cs" />
+    <Compile Include="Module\Utility\CtDraw.cs" />
+    <Compile Include="Module\Utility\CtLanguage.cs" />
     <Compile Include="Forms\CtLogin.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\CtLogin.Designer.cs">
       <DependentUpon>CtLogin.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\CtSerialSetup.cs">
+    <Compile Include="Module\Communication\Serial\CtSerialSetup.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\CtSerialSetup.Designer.cs">
+    <Compile Include="Module\Communication\Serial\CtSerialSetup.Designer.cs">
       <DependentUpon>CtSerialSetup.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\CtStartUp.cs" />
@@ -229,24 +278,6 @@
     <Compile Include="Forms\CtUserManager.Designer.cs">
       <DependentUpon>CtUserManager.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\TestPlatform\ACE.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\TestPlatform\ACE.Designer.cs">
-      <DependentUpon>ACE.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\TestPlatform\BkfPLC.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\TestPlatform\BkfPLC.Designer.cs">
-      <DependentUpon>BkfPLC.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\CtInput.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\CtInput.Designer.cs">
-      <DependentUpon>CtInput.cs</DependentUpon>
-    </Compile>
     <Compile Include="Forms\CtProgress.cs" />
     <Compile Include="Forms\CtProgress_Ctrl.cs">
       <SubType>Form</SubType>
@@ -260,18 +291,6 @@
     <Compile Include="Forms\TestPlatform\Serial.Designer.cs">
       <DependentUpon>Serial.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\TestPlatform\SyncSockets.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\TestPlatform\SyncSockets.Designer.cs">
-      <DependentUpon>SyncSockets.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\TestPlatform\WagoIO.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\TestPlatform\WagoIO.Designer.cs">
-      <DependentUpon>WagoIO.cs</DependentUpon>
-    </Compile>
     <Compile Include="Library\CtApplication.cs" />
     <Compile Include="Library\CtConst.cs" />
     <Compile Include="Library\CtConvert.cs" />
@@ -282,59 +301,28 @@
     <Compile Include="Data\CtRecipeData.cs" />
     <Compile Include="Library\CtStatus.cs" />
     <Compile Include="Library\CtThread.cs" />
-    <Compile Include="Library\CtXML.cs" />
-    <Compile Include="Module\Adept MobileRobot\CtArcl.cs" />
-    <Compile Include="Module\Adept MobileRobot\CtMobileStatus.cs" />
-    <Compile Include="Module\Adept ACE\CtAce.cs" />
-    <Compile Include="Module\Adept ACE\CtAceIO.cs" />
-    <Compile Include="Module\Adept ACE\CtAceModelEditor.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Module\Adept ACE\CtAceModelEditor.Designer.cs">
-      <DependentUpon>CtAceModelEditor.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Module\Adept ACE\CtAceMotion.cs" />
-    <Compile Include="Module\Adept ACE\CtAcePendant.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Module\Adept ACE\CtAcePendant.Designer.cs">
-      <DependentUpon>CtAcePendant.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Module\Adept ACE\CtAceSingleVision.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Module\Adept ACE\CtAceSingleVision.Designer.cs">
-      <DependentUpon>CtAceSingleVision.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Module\Adept ACE\CtAceTask.cs" />
-    <Compile Include="Module\Adept ACE\CtAceVariable.cs" />
-    <Compile Include="Module\Adept ACE\CtAceVision.cs" />
-    <Compile Include="Module\Adept ACE\CtAceVisionWindow.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Module\Adept ACE\CtAceVisionWindow.Designer.cs">
-      <DependentUpon>CtAceVisionWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Module\Beckhoff\CtBeckhoff.cs" />
-    <Compile Include="Library\CtOpcode.cs" />
-    <Compile Include="Module\Communication\CtAsyncSocket.cs" />
+    <Compile Include="Module\Utility\CtRenderer.cs" />
+    <Compile Include="Module\Utility\CtTimer.cs" />
+    <Compile Include="Module\Utility\CtUser.cs" />
+    <Compile Include="Module\Utility\CtVersion.cs" />
+    <Compile Include="Module\XML\CtXML.cs" />
+    <Compile Include="Module\Utility\CtOpcode.cs" />
     <Compile Include="Module\Communication\Modbus\CtModbus_ASCII.cs" />
     <Compile Include="Module\Communication\Modbus\CtModbus_Define.cs" />
     <Compile Include="Module\Communication\Modbus\CtModbus_RTU.cs" />
     <Compile Include="Module\Communication\Modbus\CtModbus_TCP.cs" />
-    <Compile Include="Module\Communication\CtSerial.cs" />
-    <Compile Include="Module\Communication\CtSyncSocket.cs" />
+    <Compile Include="Module\Communication\Serial\CtSerial.cs" />
     <Compile Include="Module\Communication\Modbus\ICtModbus.cs" />
-    <Compile Include="Module\Festo\CtFestoCMMO.cs" />
-    <Compile Include="Module\Festo\SVE_Object.cs" />
-    <Compile Include="Module\ORiN2\CtORiN2.cs" />
-    <Compile Include="Module\Delta\CtDeltaPLC.CS" />
-    <Compile Include="Module\Ultity\CtTimer.cs" />
-    <Compile Include="Module\Ultity\CtVersion.cs" />
     <Compile Include="Module\UniversalRobots\CtUrServer.cs" />
+    <Compile Include="Module\XML\XmlCommonData.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Module\Wago\CtWagoIO.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Settings.cs" />
     <EmbeddedResource Include="Forms\CtAbout.en-US.resx">
       <DependentUpon>CtAbout.cs</DependentUpon>
     </EmbeddedResource>
@@ -359,8 +347,17 @@
     <EmbeddedResource Include="Forms\CtErrorHistory.zh-TW.resx">
       <DependentUpon>CtErrorHistory.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\CtInput.zh-CN.resx">
-      <DependentUpon>CtInput.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\CtInput\CtInputBase.en-US.resx">
+      <DependentUpon>CtInputBase.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\CtInput\CtInputBase.resx">
+      <DependentUpon>CtInputBase.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\CtInput\CtInputBase.zh-CN.resx">
+      <DependentUpon>CtInputBase.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\CtInput\CtInputBase.zh-TW.resx">
+      <DependentUpon>CtInputBase.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\CtLogin.en-US.resx">
       <DependentUpon>CtLogin.cs</DependentUpon>
@@ -377,6 +374,12 @@
     <EmbeddedResource Include="Forms\CtMessage_Ctrl.resx">
       <DependentUpon>CtMessage_Ctrl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\CtPlexiglass.resx">
+      <DependentUpon>CtPlexiglass.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\CtProgress_Ctrl.zh-CN.resx">
+      <DependentUpon>CtProgress_Ctrl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\CtRecipe.en-US.resx">
       <DependentUpon>CtRecipe.cs</DependentUpon>
     </EmbeddedResource>
@@ -389,16 +392,25 @@
     <EmbeddedResource Include="Forms\CtRecipe.zh-TW.resx">
       <DependentUpon>CtRecipe.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\CtSerialSetup.en-US.resx">
+    <EmbeddedResource Include="Forms\TestPlatform\AsyncPipe.resx">
+      <DependentUpon>AsyncPipe.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\TestPlatform\Socket.zh-CN.resx">
+      <DependentUpon>Socket.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\TestPlatform\Socket.zh-TW.resx">
+      <DependentUpon>Socket.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Module\Communication\Serial\CtSerialSetup.en-US.resx">
       <DependentUpon>CtSerialSetup.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\CtSerialSetup.resx">
+    <EmbeddedResource Include="Module\Communication\Serial\CtSerialSetup.resx">
       <DependentUpon>CtSerialSetup.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\CtSerialSetup.zh-CN.resx">
+    <EmbeddedResource Include="Module\Communication\Serial\CtSerialSetup.zh-CN.resx">
       <DependentUpon>CtSerialSetup.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\CtSerialSetup.zh-TW.resx">
+    <EmbeddedResource Include="Module\Communication\Serial\CtSerialSetup.zh-TW.resx">
       <DependentUpon>CtSerialSetup.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\CtStartUp_Ctrl.resx">
@@ -416,32 +428,14 @@
     <EmbeddedResource Include="Forms\CtUserManager.zh-TW.resx">
       <DependentUpon>CtUserManager.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\TestPlatform\ACE.resx">
-      <DependentUpon>ACE.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\TestPlatform\BkfPLC.resx">
-      <DependentUpon>BkfPLC.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\CtInput.en-US.resx">
-      <DependentUpon>CtInput.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\CtInput.resx">
-      <DependentUpon>CtInput.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\CtInput.zh-TW.resx">
-      <DependentUpon>CtInput.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\CtProgress_Ctrl.resx">
       <DependentUpon>CtProgress_Ctrl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\CtProgress_Ctrl.zh-TW.resx">
       <DependentUpon>CtProgress_Ctrl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\TestPlatform\CmmoForm.resx">
-      <DependentUpon>CmmoForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\TestPlatform\Denso.resx">
-      <DependentUpon>Denso.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\TestPlatform\ChineseTranslator.resx">
+      <DependentUpon>ChineseTranslator.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\TestPlatform\Launcher.resx">
       <DependentUpon>Launcher.cs</DependentUpon>
@@ -449,14 +443,14 @@
     <EmbeddedResource Include="Forms\TestPlatform\ModbusRTU.resx">
       <DependentUpon>ModbusRTU.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\TestPlatform\ProcessMonitor.resx">
+      <DependentUpon>ProcessMonitor.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\TestPlatform\Serial.resx">
       <DependentUpon>Serial.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\TestPlatform\AsyncSocket.resx">
-      <DependentUpon>AsyncSocket.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\TestPlatform\SyncSockets.resx">
-      <DependentUpon>SyncSockets.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\TestPlatform\Socket.resx">
+      <DependentUpon>Socket.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\TestPlatform\SystemInfo.resx">
       <DependentUpon>SystemInfo.cs</DependentUpon>
@@ -464,36 +458,25 @@
     <EmbeddedResource Include="Forms\TestPlatform\UniversalRobots.resx">
       <DependentUpon>UniversalRobots.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\TestPlatform\WagoIO.resx">
-      <DependentUpon>WagoIO.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\TestPlatform\XML_Editor.resx">
       <DependentUpon>XML_Editor.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Module\Adept ACE\CtAceModelEditor.resx">
-      <DependentUpon>CtAceModelEditor.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Module\Adept ACE\CtAcePendant.resx">
-      <DependentUpon>CtAcePendant.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Module\Adept ACE\CtAceSingleVision.resx">
-      <DependentUpon>CtAceSingleVision.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Module\Adept ACE\CtAceVisionWindow.resx">
-      <DependentUpon>CtAceVisionWindow.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
+    <None Include="CtLib.exe.manifest">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Dynamic Link Libraries\Adept ACE\CopyDlls.cmd" />
     <None Include="Dynamic Link Libraries\Staubli\StaubliSoap.dll.config" />
+    <None Include="Forms\TestPlatform\SocketSetting.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>SocketSetting.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="PostBuildEventScript.cmd" />
     <None Include="Properties\Settings.settings">
       <Generator>PublicSettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -503,9 +486,13 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="README.md" />
+    <None Include="RunScriptAsAdmin.cmd" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0">
@@ -531,16 +518,28 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="CASTEC.ico" />
-    <Content Include="Dynamic Link Libraries\Beckhoff\ReadMe_Ads.txt" />
-    <Content Include="Dynamic Link Libraries\Beckhoff\TwinCAT.Ads.dll" />
-    <Content Include="Dynamic Link Libraries\Beckhoff\TwinCAT.Ads.XML" />
-    <Content Include="Dynamic Link Libraries\Delta\DMT.dll" />
-    <Content Include="Dynamic Link Libraries\Note.txt" />
-    <Content Include="Dynamic Link Libraries\ORiN2\CaoRCW.dll" />
+    <None Include="Dynamic Link Libraries\Beckhoff\TwinCAT.Ads.dll" />
+    <None Include="Dynamic Link Libraries\Beckhoff\TwinCAT.Ads.XML" />
+    <None Include="Dynamic Link Libraries\Delta\DMT.dll" />
+    <None Include="Dynamic Link Libraries\Note.txt" />
+    <None Include="Dynamic Link Libraries\ORiN2\CaoRCW.dll" />
     <Content Include="Dynamic Link Libraries\Staubli\StaubliSoap.dll" />
-    <Content Include="Module\Delta\DMT.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Content Include="Module\7-Zip\7z.exe" />
+    <None Include="Resources\List_2.png" />
+    <None Include="Resources\List.png" />
+    <None Include="Resources\Import.png" />
+    <None Include="Resources\Eexport.png" />
+    <None Include="Resources\Arrow_RightDouble_4.png" />
+    <None Include="Resources\Arrow_LeftDouble_4.png" />
+    <None Include="Resources\Zoom_Flip.png" />
+    <None Include="Resources\Beckhoff_TwinCAT_Normal.png" />
+    <None Include="Resources\Beckhoff_TwinCAT_Machine_Normal.png" />
+    <None Include="Resources\Beckhoff_TwinCAT_Machine_Fade.png" />
+    <None Include="Resources\Beckhoff_TwinCAT_Fade.png" />
+    <None Include="Resources\Adept_EnablePower.png" />
+    <None Include="Resources\Adept_DisablePower.png" />
+    <None Include="Resources\Adept_ACE_Normal.png" />
+    <None Include="Resources\Adept_ACE_Fade.png" />
     <None Include="Resources\Sub_4.png" />
     <None Include="Resources\Sub_3.png" />
     <None Include="Resources\Add_5.png" />
@@ -653,8 +652,12 @@
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>::CALL "$(ProjectDir)RunScriptAsAdmin.cmd" "$(SolutionDir)$(SolutionName)\$(OutDir)"  "$(SolutionDir)$(SolutionName)\$(OutDir)$(SolutionName)$(TargetExt)" "$(TargetPath)"  "$(TargetDir)$(TargetName).xml"</PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>::COPY "$(ProjectDir)Dynamic Link Libraries\Delta\DMT.dll" "$(SolutionDir)$(SolutionName)\$(OutDir)"
+
+::COPY "$(ProjectDir)Module\7-Zip\7z.exe" "$(SolutionDir)$(SolutionName)\$(OutDir)"</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

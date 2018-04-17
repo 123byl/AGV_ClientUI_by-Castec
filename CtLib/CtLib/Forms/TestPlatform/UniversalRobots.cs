@@ -32,37 +32,37 @@ namespace CtLib.Forms.TestPlatform {
 
         void mUR_OnUrEvents(object sender, CtUrServer.UrEventArgs e) {
             switch (e.Event) {
-                case CtUrServer.UrEvents.CONNECTION:
+                case CtUrServer.UrEvents.Connection:
                     if (CtConvert.CBool(e.Value)) {
                         ShowMessage("已與 UR 連線。 IP = " + mUR.UR_IP + "  Port = " + mUR.UR_Port.ToString());
-                        CtInvoke.ButtonEnable(btnSend, true);
-                        CtInvoke.ButtonText(btnConnect, "Disconnect");
-                        CtInvoke.ComboBoxEnable(cbCommand, true);
-                        CtInvoke.TextBoxEnable(txtParameter, true);
+                        CtInvoke.ControlEnabled(btnSend, true);
+                        CtInvoke.ControlText(btnConnect, "Disconnect");
+                        CtInvoke.ControlEnabled(cbCommand, true);
+                        CtInvoke.ControlEnabled(txtParameter, true);
                     } else {
                         ShowMessage("已與 UR 中斷連線");
-                        CtInvoke.ButtonEnable(btnSend, false);
-                        CtInvoke.ButtonText(btnConnect, "Connect");
-                        CtInvoke.ComboBoxEnable(cbCommand, false);
-                        CtInvoke.TextBoxEnable(txtParameter, false);
+                        CtInvoke.ControlEnabled(btnSend, false);
+                        CtInvoke.ControlText(btnConnect, "Connect");
+                        CtInvoke.ControlEnabled(cbCommand, false);
+                        CtInvoke.ControlEnabled(txtParameter, false);
                     }
                     break;
-                case CtUrServer.UrEvents.UR_STATE_RUN:
+                case CtUrServer.UrEvents.RunState:
                     ShowMessage("Running State = " + e.Value.ToString());
                     break;
-                case CtUrServer.UrEvents.UR_STATE_MODE:
+                case CtUrServer.UrEvents.Mode:
                     ShowMessage("Mode State = " + e.Value.ToString());
                     break;
-                case CtUrServer.UrEvents.UR_STATE_PROGRAM:
+                case CtUrServer.UrEvents.ProgramState:
                     ShowMessage("Program State = " + e.Value.ToString());
                     break;
-                case CtUrServer.UrEvents.LOAD_PROG_NAME:
+                case CtUrServer.UrEvents.LoadedProgram:
                     ShowMessage("Load Program = " + e.Value.ToString());
                     break;
-                case CtUrServer.UrEvents.SHUTDOWN:
+                case CtUrServer.UrEvents.Shutdown:
                     ShowMessage("UR Shutdown");
                     break;
-                case CtUrServer.UrEvents.EXCEPTION:
+                case CtUrServer.UrEvents.Exception:
                     ShowMessage("[Exception] " + e.Value.ToString());
                     break;
                 default:
@@ -88,7 +88,7 @@ namespace CtLib.Forms.TestPlatform {
         private void btnSend_Click(object sender, EventArgs e) {
             CtUrServer.URCommand cmd = (CtUrServer.URCommand)Enum.Parse(typeof(CtUrServer.URCommand), cbCommand.Text, true);
             mUR.SendCommand(cmd, txtParameter.Text);
-            CtInvoke.TextBoxText(txtParameter, "");
+            CtInvoke.ControlText(txtParameter, "");
         }
     }
 }

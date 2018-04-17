@@ -65,7 +65,7 @@ namespace CAMPro {
         public bool bGetLaser;
 
         private List<Point> ObstaclePoint = new List<Point>();
-        private List<CastecMapUI.Line> ObstacleLine = new List<CastecMapUI.Line>();
+        private List<CastecMapUI.MapLIne> ObstacleLine = new List<CastecMapUI.MapLIne>();
         private List<Point> obstacle = new List<Point>();
         private List<Point> ptCar = new List<Point>();
         private List<Point> DefineArea = new List<Point>();
@@ -1376,7 +1376,7 @@ namespace CAMPro {
             oriMap = tmpPath[0] + ".map";
             MapSimplication mapSimp = new MapSimplication(oriMap);
             mapSimp.Reset();
-            List<Line> obstacleLines = new List<Line>();
+            List<MapLIne> obstacleLines = new List<MapLIne>();
             List<Point> obstaclePoints = new List<Point>();
             List<CartesianPos> resultPoints;
             List<MapSimplication.Line> resultlines;
@@ -1385,7 +1385,7 @@ namespace CAMPro {
 
             for (int i = 0; i < resultlines.Count; i++) {
                 obstacleLines.Add(
-                    new Line(resultlines[i].startX, resultlines[i].startY,
+                    new MapLIne(resultlines[i].startX, resultlines[i].startY,
                     resultlines[i].endX, resultlines[i].endY)
                 );
             }
@@ -1406,7 +1406,7 @@ namespace CAMPro {
         /// Read map file
         /// </summary>
         private void ReadMapFile() {
-            List<Line> dispLines = new List<Line>();
+            List<MapLIne> dispLines = new List<MapLIne>();
             List<Point> dispPoint = new List<Point>();
             List<CartesianPos> goalList;
             List<CartesianPos> obstaclePoints;
@@ -1443,7 +1443,7 @@ namespace CAMPro {
 
             for (int i = 0; i < obstacleLine.Count; i++) {
                 dispLines.Add(
-                    new Line((int)obstacleLine[i].start.x, (int)obstacleLine[i].start.y,
+                    new MapLIne((int)obstacleLine[i].start.x, (int)obstacleLine[i].start.y,
                     (int)obstacleLine[i].end.x, (int)obstacleLine[i].end.y)
                 );
             }

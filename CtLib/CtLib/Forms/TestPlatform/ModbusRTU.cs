@@ -34,14 +34,14 @@ namespace CtLib.Forms.TestPlatform {
             CtInvoke.ListBoxInsert(lstBxMsg, 0, DateTime.Now.ToString("[HH:mm:ss.ff] ") + msg);
         }
 
-        void mRTU_OnSerialEvents(object sender, CtSerial.SerialEventArgs e) {
+        void mRTU_OnSerialEvents(object sender, SerialEventArgs e) {
             switch (e.Event) {
-                case CtSerial.SerialPortEvents.CONNECTION:
+                case SerialPortEvents.Connection:
                     ShowMessage(((bool)e.Value) ? "連線成功" : "中斷連線");
                     break;
-                case CtSerial.SerialPortEvents.DATA_RECEIVED:
+                case SerialPortEvents.DataReceived:
                     break;
-                case CtSerial.SerialPortEvents.ERROR:
+                case SerialPortEvents.Error:
                     ShowMessage(e.Value.ToString());
                     break;
             }
@@ -50,10 +50,10 @@ namespace CtLib.Forms.TestPlatform {
         private void btnConnect_Click(object sender, EventArgs e) {
             if (mRTU.IsOpen) {
                 mRTU.Close();
-                CtInvoke.ButtonText(btnConnect, "Connect");
+                CtInvoke.ControlText(btnConnect, "Connect");
             } else {
                 mRTU.Open();
-                CtInvoke.ButtonText(btnConnect, "Disconnect");
+                CtInvoke.ControlText(btnConnect, "Disconnect");
             }
         }
 
@@ -156,7 +156,7 @@ namespace CtLib.Forms.TestPlatform {
 
         private void btnCRC_Click(object sender, EventArgs e) {
             List<string> strTemp = txtCRC.Text.Replace(" ", ",").Split(CtConst.CHR_COMMA, StringSplitOptions.RemoveEmptyEntries).ToList();
-            List<byte> crcOri = strTemp.ConvertAll(new Converter<string, byte>(val => (byte)CtConvert.ToInteger(val, NumericFormats.HEXADECIMAL)));
+            List<byte> crcOri = strTemp.ConvertAll(new Converter<string, byte>(val => (byte)CtConvert.ToInteger(val, NumericFormats.Hexadecimal)));
             List<byte> crcVal = mRTU.CRC(crcOri);
             if (crcVal != null && crcVal.Count > 0) {
                 string strCRC = "";
@@ -174,44 +174,44 @@ namespace CtLib.Forms.TestPlatform {
         private void cbFC_SelectedIndexChanged(object sender, EventArgs e) {
             switch (cbFC.SelectedIndex) {
                 case 0: /* FC01 */
-                    CtInvoke.ComboBoxVisible(cbBolVal, false);
-                    CtInvoke.TextBoxVisible(txtData, false);
-                    CtInvoke.LabelVisible(lbHex, false);
+                    CtInvoke.ControlVisible(cbBolVal, false);
+                    CtInvoke.ControlVisible(txtData, false);
+                    CtInvoke.ControlVisible(lbHex, false);
                     break;
                 case 1: /* FC02 */
-                    CtInvoke.ComboBoxVisible(cbBolVal, false);
-                    CtInvoke.TextBoxVisible(txtData, false);
-                    CtInvoke.LabelVisible(lbHex, false);
+                    CtInvoke.ControlVisible(cbBolVal, false);
+                    CtInvoke.ControlVisible(txtData, false);
+                    CtInvoke.ControlVisible(lbHex, false);
                     break;
                 case 2: /* FC03 */
-                    CtInvoke.ComboBoxVisible(cbBolVal, false);
-                    CtInvoke.TextBoxVisible(txtData, false);
-                    CtInvoke.LabelVisible(lbHex, false);
+                    CtInvoke.ControlVisible(cbBolVal, false);
+                    CtInvoke.ControlVisible(txtData, false);
+                    CtInvoke.ControlVisible(lbHex, false);
                     break;
                 case 3: /* FC04 */
-                    CtInvoke.ComboBoxVisible(cbBolVal, false);
-                    CtInvoke.TextBoxVisible(txtData, false);
-                    CtInvoke.LabelVisible(lbHex,false);
+                    CtInvoke.ControlVisible(cbBolVal, false);
+                    CtInvoke.ControlVisible(txtData, false);
+                    CtInvoke.ControlVisible(lbHex,false);
                     break;
                 case 4: /* FC05 */
-                    CtInvoke.ComboBoxVisible(cbBolVal, true);
-                    CtInvoke.TextBoxVisible(txtData, false);
-                    CtInvoke.LabelVisible(lbHex, false);
+                    CtInvoke.ControlVisible(cbBolVal, true);
+                    CtInvoke.ControlVisible(txtData, false);
+                    CtInvoke.ControlVisible(lbHex, false);
                     break;
                 case 5: /* FC06 */
-                    CtInvoke.ComboBoxVisible(cbBolVal, false);
-                    CtInvoke.TextBoxVisible(txtData, true);
-                    CtInvoke.LabelVisible(lbHex, true);
+                    CtInvoke.ControlVisible(cbBolVal, false);
+                    CtInvoke.ControlVisible(txtData, true);
+                    CtInvoke.ControlVisible(lbHex, true);
                     break;
                 case 6: /* FC15 */
-                    CtInvoke.ComboBoxVisible(cbBolVal, false);
-                    CtInvoke.TextBoxVisible(txtData, true);
-                    CtInvoke.LabelVisible(lbHex, true);
+                    CtInvoke.ControlVisible(cbBolVal, false);
+                    CtInvoke.ControlVisible(txtData, true);
+                    CtInvoke.ControlVisible(lbHex, true);
                     break;
                 case 7: /* FC16 */
-                    CtInvoke.ComboBoxVisible(cbBolVal, false);
-                    CtInvoke.TextBoxVisible(txtData, true);
-                    CtInvoke.LabelVisible(lbHex, true);
+                    CtInvoke.ControlVisible(cbBolVal, false);
+                    CtInvoke.ControlVisible(txtData, true);
+                    CtInvoke.ControlVisible(lbHex, true);
                     break;
                 default:
                     break;
