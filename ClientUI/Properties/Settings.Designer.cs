@@ -23,17 +23,5 @@ namespace VehiclePlanner.Properties {
             }
         }
 
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string HostIP {
-            get {
-                return this["HostIP"] as string;
-            }
-            set {
-                this["HostIP"] = value;
-            }
-        }
-
     }
 }

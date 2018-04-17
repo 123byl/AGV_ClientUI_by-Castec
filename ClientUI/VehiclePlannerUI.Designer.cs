@@ -31,10 +31,7 @@ namespace VehiclePlanner {
                 mMenuItems = null;
 
                 components.Dispose();
-
-                mKeyboardHook.KeyUpEvent -= mKeyboardHook_KeyUpEvent;
-                mKeyboardHook.Stop();
-
+                
             }
             base.Dispose(disposing);
         }
@@ -194,7 +191,7 @@ namespace VehiclePlanner {
             // tslbSpring
             // 
             this.tslbSpring.Name = "tslbSpring";
-            this.tslbSpring.Size = new System.Drawing.Size(499, 23);
+            this.tslbSpring.Size = new System.Drawing.Size(460, 23);
             this.tslbSpring.Spring = true;
             this.tslbSpring.Text = "　";
             // 

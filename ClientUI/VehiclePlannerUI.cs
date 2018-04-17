@@ -18,7 +18,6 @@ using CtLib.Forms;
 using System.Threading;
 using System.Net;
 using System.Net.Sockets;
-using VehiclePlanner.Component;
 using System.IO;
 using System.Diagnostics;
 using CtLib.Module.Utility;
@@ -32,6 +31,11 @@ using SerialCommunication;
 using SerialCommunicationData;
 using System.Net.NetworkInformation;
 using BroadCast;
+using VehiclePlanner.Module.Interface;
+using VehiclePlanner.Module.Implement;
+using VehiclePlanner.Forms;
+using VehiclePlanner.Partial.VehiclePlannerUI;
+using VehiclePlanner.Core;
 
 namespace VehiclePlanner
 {
@@ -39,7 +43,7 @@ namespace VehiclePlanner
     /// <summary>
     /// 客戶端介面
     /// </summary>
-    public partial class VehiclePlannerUI : Form, ICtVersion
+    public partial class VehiclePlannerUI : Form, ICtVersion,IDataDisplay<ICtVehiclePlanner>
     {
 
         #region Version - Information
@@ -105,139 +109,33 @@ namespace VehiclePlanner
         #endregion Version - Information
         
         #region Declaration - Fields
-
-        #region Flag
-
+        
         /// <summary>
         /// 是否正在設定Car Position
         /// </summary>
         private bool mIsSetting = false;
-
-        /// <summary>
-        /// 伺服馬達激磁狀態
-        /// </summary>
-        private bool mIsMotorServoOn = false;
-
-        /// <summary>
-        /// 是否已建立連線
-        /// </summary>
-        protected bool mIsConnected = false;
-
-        /// <summary>
-        /// 是否持續接收資料
-        /// </summary>
-        private bool mIsAutoReport = false;
-
-        /// <summary>
-        /// 是否在手動移動
-        /// </summary>
-        private bool mIsManualMoving = false;
-
-        /// <summary>
-        /// 是否Bypass Socket通訊
-        /// </summary>
-        protected bool mBypassSocket = false;
-
-        /// <summary>
-        /// 是否Bypass LoadFile功能
-        /// </summary>
-        private bool mBypassLoadFile = false;
-
-        /// <summary>
-        /// 是否正在掃描中
-        /// </summary>
-        private bool mIsScanning = false;
-
-        /// <summary>
-        /// 當前語系
-        /// </summary>
-        /// <remarks>
-        /// 未來開發多語系用
-        /// </remarks>
-        private UILanguage mCulture = UILanguage.English;
-
+        
         /// <summary>
         /// MapGL當前滑鼠模式
         /// </summary>
         private CursorMode mCursorMode = CursorMode.Select;
-
-        #endregion Flag
-
-        /// <summary>
-        /// 當前Map檔路徑
-        /// </summary>
-        private string mCurMapPath = string.Empty;
-
-        /// <summary>
-        /// 系統列圖示標題
-        /// </summary>
-        protected string mNotifyCaption = "AGV Client";
-
-        /// <summary>
-        /// 地圖檔儲存路徑
-        /// </summary>
-        public string mDefMapDir = @"D:\MapInfo\";
-
-        /// <summary>Opcode 檔案名稱</summary>
-        //private static readonly string FILENAME_OPCODE = "D1703.opc";
-
-        /// <summary>
-        /// Vehicle Console端IP
-        /// </summary>
-        protected string mHostIP {
-            get {
-                return Properties.Settings.Default.HostIP;
-            }
-            set {
-                if (Properties.Settings.Default.HostIP != value && !string.IsNullOrEmpty(value)) {
-                    Properties.Settings.Default.HostIP = value;
-                    Properties.Settings.Default.Save();
-                }
-            }
-        }
         
         /// <summary>
-        /// 車子馬達轉速
+        /// 系統底層物件參考
         /// </summary>
-        protected int mVelocity = 500;
-        
-        /// <summary>
-        /// 使用者操作權限
-        /// </summary>
-        private UserData mUser = new UserData("CASTEC", "", AccessLevel.Administrator);
-        
-        /// <summary>
-        /// AGV ID
-        /// </summary>
-        protected uint mAGVID = 1;
-
-        /// <summary>
-        /// 地圖相似度，範圍0%～100%，超過門檻值為-100%
-        /// </summary>
-        protected double mSimilarity = 0;
+        private ICtVehiclePlanner rVehiclePlanner = null;
         
         /// <summary>
         /// Car Position 設定位置
         /// </summary>
         private IPair mNewPos = null;
-
-        /// <summary>
-        /// iTS狀態
-        /// </summary>
-        private IStatus mStatus;
-
-        private IntPtr mHandle = IntPtr.Zero;
         
-        private ConnectFlow mConnectFlow = null;
-
-        private SimilarityFlow mSimilarityFlow = null;
-
-        private ServoOnFlow mServoOnFlow = null;
+        private IntPtr mHandle = IntPtr.Zero;
 
         /// <summary>
-        /// iTS位置名稱對照表
+        /// 系統列圖示標題
         /// </summary>
-        private Dictionary<IPAddress, string> mAgvList = new Dictionary<IPAddress, string>();
+        protected string mNotifyCaption = "Vehicle planner";
 
         #endregion Declaration - Fields
 
@@ -256,16 +154,6 @@ namespace VehiclePlanner
         private Dictionary<ToolStripMenuItem, ICtDockContent> mDockContent = null;
 
         /// <summary>
-        /// 系統列圖示物件
-        /// </summary>
-        private CtNotifyIcon mNotifyIcon = null;
-
-        /// <summary>
-        /// 系統列圖示右鍵選單
-        /// </summary>
-        private MenuItems mMenuItems = null;
-
-        /// <summary>
         /// AGV移動控制器
         /// </summary>
         private CtMotionController mMotionController = null;
@@ -275,15 +163,19 @@ namespace VehiclePlanner
         /// </summary>
         private MapList mMapList = null;
 
+        /// <summary>
+        /// 系統列圖示物件
+        /// </summary>
+        private CtNotifyIcon mNotifyIcon = null;
+
+        /// <summary>
+        /// 系統列圖示右鍵選單
+        /// </summary>
+        private MenuItems mMenuItems = null;
+
         #endregion UI
 
         #region Tool
-
-        ///<summary>全域鍵盤鉤子</summary>
-        private KeyboardHook mKeyboardHook = new KeyboardHook();
-
-        /// <summary>CtOpcode Object</summary>
-        private CtOpcode mOpcode = new CtOpcode();
 
         /// <summary>
         /// 模組版本集合
@@ -298,218 +190,212 @@ namespace VehiclePlanner
         /// VehicleConsole模擬物件
         /// </summary>
         private FakeVehicleConsole mVC = new FakeVehicleConsole();
-
-        private Broadcaster mBroadcast = new Broadcaster();
-
+        
         #endregion Socket
 
         #endregion Declaration - Members
 
         #region Declaration - Properties
-
-        #region Flag
-
-        
-
-        /// <summary>
-        /// 伺服馬達是否激磁
-        /// </summary>
-        public bool IsMotorServoOn {
-            get {
-                return mIsMotorServoOn;
-            }set {
-                if (mIsMotorServoOn != value) {
-                    mIsMotorServoOn = value;
-                    ITest.ChangedMotorStt(value);
-                }
-            }
-        }
-
-        /// <summary>
-        /// 是否Bypass Socket功能
-        /// </summary>
-        public bool IsBypassSocket { get { return mBypassSocket; } set { mBypassSocket = value; } }
-
-        /// <summary>
-        /// 是否Bypass LoadFile功能
-        /// </summary>
-        public bool IsBypassLoadFile { get { return mBypassLoadFile; } set { mBypassLoadFile = value; } }
-
-        /// <summary>
-        /// 使用者操作權限
-        /// </summary>
-        public AccessLevel UserLv { get { return mUser.Level; } }
-
-        /// <summary>
-        /// 當前語系
-        /// </summary>
-        /// <remarks>
-        /// 未來開發多語系的時候使用
-        /// </remarks>
-        public UILanguage Culture { get { return mCulture; } }
-
-        
-        #endregion Flag
-
-        /// <summary>
-        /// 車子馬達速度
-        /// </summary>
-        public int Velocity {
-            get {
-                return mVelocity;
-            }
-            set {
-                mVelocity = value;
-            }
-        }
-
-        /// <summary>
-        /// Ori檔路徑
-        /// </summary>
-        public string CurOriPath { get; set; } = string.Empty;
-
-        /// <summary>
-        /// Map檔路徑
-        /// </summary>
-        public string CurMapPath {
-            get {
-                return mCurMapPath;
-            }
-            set {
-                mCurMapPath = value;
-                //RaiseGoalSettingEvent(GoalSettingEventType.CurMapPath, !string.IsNullOrEmpty(value));
-            }
-        }
-
-        /// <summary>
-        /// 使用者資料
-        /// </summary>
-        public UserData UserData { get { return mUser; } }
         
         /// <summary>
         /// MapGL子視窗
         /// </summary>
-        private AGVMapUI MapGL {
+        private IMapGL MapGL {
             get {
-                return mDockContent.ContainsKey(miMapGL) ? mDockContent[miMapGL] as AGVMapUI : null;
+                return mDockContent.ContainsKey(miMapGL) ? mDockContent[miMapGL] as IMapGL : null;
             }
         }
 
         /// <summary>
         /// Console子視窗
         /// </summary>
-        private CtConsole Console {
+        private IConsole mConsole {
             get {
-                return mDockContent.ContainsKey(miConsole) ? mDockContent[miConsole] as CtConsole : null;
+                return mDockContent.ContainsKey(miConsole) ? mDockContent[miConsole] as IConsole : null;
             }
         }
 
         /// <summary>
         /// 測試子視窗
         /// </summary>
-        private CtTesting Testing {
+        private ITesting mTesting {
             get {
-                return mDockContent.ContainsKey(miTesting) ? mDockContent[miTesting] as CtTesting : null;
+                return mDockContent.ContainsKey(miTesting) ? mDockContent[miTesting] as ITesting : null;
             }
         }
 
         /// <summary>
         /// Goal點設定子視窗
         /// </summary>
-        private CtGoalSetting GoalSetting {
+        private IGoalSetting mGoalSetting {
             get {
-                return mDockContent.ContainsKey(miGoalSetting) ? mDockContent[miGoalSetting] as CtGoalSetting : null;
+                return mDockContent.ContainsKey(miGoalSetting) ? mDockContent[miGoalSetting] as IGoalSetting : null;
             }
         }
-
-        /// <summary>
-        /// Console子視窗
-        /// </summary>
-        protected IIConsole IConsole { get { return Console; } }
-        private IIGoalSetting IGoalSetting { get { return GoalSetting; } }
-        private IScene IMapCtrl { get { return MapGL != null ? MapGL.Ctrl : null; } }
-        protected IITesting ITest { get { return Testing; } }
         
-        /// <summary>
-        /// iTS狀態
-        /// </summary>
-        protected IStatus Status {
-            get {
-                return mStatus;
-            }
-            private set {
-                if (value != null && mStatus != value) {
-                    mStatus = value;
-                    this.InvokeIfNecessary(() => {
-                        if (mStatus.Battery >= 0 && mStatus.Battery <= 100) {
-                            tsprgBattery.Value = (int)mStatus.Battery;
-                            tslbBattery.Text = $"{mStatus.Battery:0.0}%";
-                        }
-                        tslbStatus.Text = mStatus.Description.ToString();
-                    });
-                    Database.AGVGM[mAGVID].SetLocation(mStatus.Data);
-                }
-            }
-        }
-
+        private IScene IMapCtrl { get { return MapGL?.Ctrl; } }
+        
         #endregion Declaration - Properties
 
         #region Functin - Constructors
-
-        /// <summary>
-        /// 共用建構方法
-        /// </summary>
-        public VehiclePlannerUI()
-        {
+        
+        public VehiclePlannerUI(ICtVehiclePlanner vehiclePlanner = null) {
             InitializeComponent();
-            
-            /*-- 載入AVG物件 --*/
-            if (!Database.AGVGM.ContainsID(mAGVID)) {
-                Database.AGVGM.Add(mAGVID, FactoryMode.Factory.AGV(0, 0, 0, "AGV"));
-            }
-
-            /*-- 開啟全域鍵盤鉤子 --*/
-            mKeyboardHook.KeyDownEvent += mKeyboardHook_KeyDownEvent;
-            mKeyboardHook.KeyUpEvent += mKeyboardHook_KeyUpEvent;
-            mKeyboardHook.Start();
 
             mHandle = this.Handle;
+            /*-- 系統底層實例取得 --*/
+            rVehiclePlanner = vehiclePlanner ?? FactoryMode.Factory.CtVehiclePlanner();
+            if (rVehiclePlanner != null) {
+                /*-- 初始化 --*/
+                rVehiclePlanner.Initial();
+                /*-- 事件委派 --*/
+                rVehiclePlanner.PropertyChanged += rVehiclePlanner_PropertyChanged;
+                rVehiclePlanner.ConsoleMessage += rVehiclePlanner_ConsoleMessage;
+                rVehiclePlanner.VehiclePlannerEvent += rVehiclePlanner_VehiclePlannerEvent;
+                rVehiclePlanner.ErrorMessage += rVehiclePlanner_ErrorMessage;
+                rVehiclePlanner.BalloonTip += rVehiclePlanner_BalloonTip; ;
+                /*-- 方法委派 --*/
+                rVehiclePlanner.SelectFile = SelectFile;
+                rVehiclePlanner.InputBox = InputBox;
 
-            /*-- 委派廣播接收事件 --*/
-            mBroadcast.ReceivedData += mBroadcast_ReceivedData;
+                /*-- 載入ICtDockContent物件 --*/
+                LoadICtDockContent();
+
+                LoadCtNotifyIcon();
+
+                /*-- 依照使用者權限進行配置 --*/
+                UserChanged(rVehiclePlanner.UserData);
+
+                /*-- 檢查Bypass狀態 --*/
+                CtInvoke.ToolStripItemChecked(miBypassSocket, rVehiclePlanner.IsBypassSocket);
+                CtInvoke.ToolStripItemChecked(miLoadFile, rVehiclePlanner.IsBypassLoadFile);
+
+                /*-- 檢查遠端設備IP --*/
+                tslbHostIP.Text = rVehiclePlanner.HostIP;
+                mTesting.SetHostIP(rVehiclePlanner.HostIP);
+
+            } else {
+                this.Close();
+            }
         }
-        
+
         #endregion Function - Constructors
 
         #region Function - Events
 
-        #region KeyboardHook
+        #region CtVehiclePlanner
 
         /// <summary>
-        /// 全域鍵盤按下事件
+        /// 氣球提示事件處理
         /// </summary>
-        /// <param name="sneder"></param>
-        /// <param name="e"></param>
-        private void mKeyboardHook_KeyDownEvent(object sneder,KeyEventArgs e) {
-            
+        /// <param name="title"></param>
+        /// <param name="context"></param>
+        private void rVehiclePlanner_BalloonTip(string title, string context) {
+            SetBalloonTip(title, context);
         }
 
         /// <summary>
-        /// 全域鍵盤放開事件
+        /// 錯誤訊息事件處理
+        /// </summary>
+        /// <param name="err">錯誤訊息</param>
+        private void rVehiclePlanner_ErrorMessage(string err) {
+            CtMsgBox.Show(mHandle, "Error", err, MsgBoxBtn.OK, MsgBoxStyle.Error);
+        }
+
+        /// <summary>
+        /// VehiclePlanner事件處理
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void mKeyboardHook_KeyUpEvent(object sender, KeyEventArgs e) {
-            switch (e.KeyCode) {
-                case Keys.Delete://MapGL刪除Goal點快捷鍵
-                    /*-- 有可能標示物被刪除，通知GoalSetting界面更新 --*/
-                    IGoalSetting.ReloadSingle();
+        private void rVehiclePlanner_VehiclePlannerEvent(object sender, VehiclePlannerEventArgs e) {
+            switch (e.Events) {
+                case VehiclePlannerEvents.MarkerChanged:
+                    mGoalSetting.ReloadSingle();
+                    break;
+                case VehiclePlannerEvents.Dispose:
+                    this.Dispose();
                     break;
             }
         }
 
-        #endregion KeyboardHook
+        /// <summary>
+        /// Consle訊息處理
+        /// </summary>
+        /// <param name="msg">Console訊息</param>
+        private void rVehiclePlanner_ConsoleMessage(string msg) {
+            OnConsoleMessage(msg);
+        }
 
+        /// <summary>
+        /// VehiclePlanner屬性變更事件處理
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void rVehiclePlanner_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+            switch (e.PropertyName) {
+                case nameof(ICtVehiclePlanner.iTSs):
+                    var ipList = rVehiclePlanner.iTSs;
+                    mTesting.SetIPList(ipList);
+                    break;
+                case nameof(ICtVehiclePlanner.MainVisible):
+                    if (rVehiclePlanner.MainVisible) {
+                        this.Show();
+                        this.TopMost = true;
+                        #region 把DocDocument切回來
+                        /// 由於主介面關閉的時候會觸發到DockDocument的FormCloseing事件
+                        /// 導致子介面被隱藏
+                        /// 這邊在手動把他切回來一次
+                        #endregion
+                        MapGL.Show();
+                        this.TopMost = false;
+                    } else {
+                        this.Hide();
+                    }
+                    break;
+                case nameof(ICtVehiclePlanner.IsMotorServoOn):
+                    mTesting.ChangedMotorStt(rVehiclePlanner.IsMotorServoOn);
+                    break;
+                case nameof(ICtVehiclePlanner.IsConnected):
+                    mTesting.SetServerStt(rVehiclePlanner.IsConnected);
+                    break;
+                case nameof(ICtVehiclePlanner.IsScanning):
+                    mTesting.ChangedScanStt(rVehiclePlanner.IsScanning);
+                    break;
+                case nameof(ICtVehiclePlanner.Status):
+                    var status = rVehiclePlanner.Status;
+                    this.InvokeIfNecessary(() => {
+                        if (status.Battery >= 0 && status.Battery <= 100) {
+                            tsprgBattery.Value = (int)status.Battery;
+                            tslbBattery.Text = $"{status.Battery:0.0}%";
+                        }
+                        tslbStatus.Text = status.Description.ToString();
+                    });
+                    break;
+                case nameof(ICtVehiclePlanner.IsAutoReport):
+                    mTesting.SetLaserStt(rVehiclePlanner.IsAutoReport);
+                    break;
+                case nameof(ICtVehiclePlanner.MapCenter):
+                    IMapCtrl.Focus(rVehiclePlanner.MapCenter);
+                    break;
+                case nameof(ICtVehiclePlanner.IsBypassSocket):
+                    CtInvoke.ToolStripItemChecked(miBypassSocket, rVehiclePlanner.IsBypassSocket);
+                    break;
+                case nameof(ICtVehiclePlanner.IsBypassLoadFile):
+                    CtInvoke.ToolStripItemChecked(miLoadFile, rVehiclePlanner.IsBypassLoadFile);
+                    break;
+                case nameof(ICtVehiclePlanner.HostIP):
+                    this.InvokeIfNecessary(() => {
+                        tslbHostIP.Text = rVehiclePlanner.HostIP;
+                    });
+                    break;
+                case nameof(ICtVehiclePlanner.UserData):
+                    UserChanged(rVehiclePlanner.UserData);
+                    break;
+            }
+        }
+
+        #endregion CtVehiclePlanner
+        
         #region Form
 
         /// <summary>
@@ -519,35 +405,7 @@ namespace VehiclePlanner
         /// <param name="e"></param>
         private void ClientUI_Load(object sender, EventArgs e)
         {
-            /*-- 載入ICtDockContent物件 --*/
-            LoadICtDockContent();
-
-            /*-- 載入CtNotifyIcon物件 --*/
-            LoadCtNotifyIcon();
             
-            /*-- 依照使用者權限進行配置 --*/
-            UserChanged(UserData);
-
-            /*-- 檢查Bypass狀態 --*/
-            CtInvoke.ToolStripItemChecked(miBypassSocket, IsBypassSocket);
-            CtInvoke.ToolStripItemChecked(miLoadFile, IsBypassLoadFile);
-
-            /*-- 檢查遠端設備IP --*/
-            tslbHostIP.Text = mHostIP;
-            ITest.SetHostIP(mHostIP);
-            
-            mConnectFlow = new ConnectFlow(this.Handle, GetIsConnect, CheckServer, ExecutingInfo);
-            mSimilarityFlow = new SimilarityFlow(this.Handle, GetSimilarity, CheckSimilarity, ExecutingInfo);
-            mServoOnFlow = new ServoOnFlow(this.Handle, GetIsServoOn, CheckServoOn, ExecutingInfo);
-        }
-
-        private  bool CheckServoOn() {
-            ITest_MotorServoOn(true);
-            return IsMotorServoOn;
-        }
-
-        private bool GetIsServoOn() {
-            return mIsMotorServoOn;
         }
         
         /// <summary>
@@ -565,16 +423,6 @@ namespace VehiclePlanner
             #endregion 
             e.Cancel = true;
             HideWindow();
-        }
-
-        /// <summary>
-        /// 將主介面縮小至系統列
-        /// </summary>
-        private void HideWindow()
-        {
-            this.Hide();
-            mNotifyIcon.ShowIcon();
-
         }
 
         #endregion Form
@@ -641,18 +489,17 @@ namespace VehiclePlanner
         private void miLogin_Click(object sender, EventArgs e)
         {
             Stat stt = Stat.SUCCESS;
-            if (mUser.Level == AccessLevel.None)
-            {
+            var usrData = new UserData("N/A", "", AccessLevel.None);
+            if (rVehiclePlanner.UserData.Level == AccessLevel.None)
+            {   
                 using (CtLogin frmLogin = new CtLogin())
                 {
-                    stt = frmLogin.Start(out mUser);
+                    stt = frmLogin.Start(out usrData);
                 }
             }
-            else
-            {
-                mUser = new UserData("N/A", "", AccessLevel.None);
+            if (stt == Stat.SUCCESS) {
+                rVehiclePlanner.UserData = usrData;
             }
-            UserChanged(mUser);
         }
 
         /// <summary>
@@ -674,8 +521,7 @@ namespace VehiclePlanner
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void miBypassSocket_Click(object sender, EventArgs e) {
-            IsBypassSocket = !IsBypassSocket;
-            CtInvoke.ToolStripItemChecked(miBypassSocket, IsBypassSocket);
+            rVehiclePlanner.IsBypassSocket = !rVehiclePlanner.IsBypassSocket;
         }
 
         /// <summary>
@@ -684,8 +530,7 @@ namespace VehiclePlanner
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void miLoadFile_Click(object sender, EventArgs e) {
-            IsBypassLoadFile = !IsBypassLoadFile;
-            CtInvoke.ToolStripItemChecked(miLoadFile, IsBypassLoadFile);
+            rVehiclePlanner.IsBypassLoadFile = !rVehiclePlanner.IsBypassLoadFile;
         }
 
         /// <summary>
@@ -719,7 +564,7 @@ namespace VehiclePlanner
         }
 
         #endregion DockContent
-        
+
         #region NotityIcon
 
         /// <summary>
@@ -727,8 +572,7 @@ namespace VehiclePlanner
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void mNotifyIcon_OnMouseDoubleClick(object sender, MouseEventArgs e)
-        {
+        private void mNotifyIcon_OnMouseDoubleClick(object sender, MouseEventArgs e) {
             ShowWindow();
         }
 
@@ -737,155 +581,34 @@ namespace VehiclePlanner
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ShowWindow_OnClick(object sender, EventArgs e)
-        {
+        private void ShowWindow_OnClick(object sender, EventArgs e) {
             ShowWindow();
         }
-
-        /// <summary>
-        /// 顯示氣球提示
-        /// </summary>
-        /// <param name="title">提示標題</param>
-        /// <param name="context">提示內容</param>
-        /// <param name="icon">提示Icon</param>
-        /// <param name="tmo">顯示時間</param>
-        public void SetBalloonTip(string title, string context, ToolTipIcon icon = ToolTipIcon.Info, int tmo=5)
-        {
-            mNotifyIcon.ShowBalloonTip(title, context, tmo, icon);
-        }
-
+        
         #endregion NotifyIcon
 
         #region ITest
 
-
-        /// <summary>
-        /// 通知VehicleConsole開始/停止掃描
-        /// </summary>
-        /// <param name="scan">True(開始)/False(停止)</param>
-        protected virtual void ITest_StartScan(bool scan) {
-            try {
-                bool? isScanning = null;
-                if (mIsScanning != scan) {
-                    if (scan) {//開始掃描
-                        if (mStatus?.Description == EDescription.Idle) {
-                            string oriName = string.Empty;
-                            if (Stat.SUCCESS == CtInput.Text(out oriName, "MAP Name", "Set Map File Name")) {
-                                isScanning = SetScanningOriFileName(oriName);
-                            }
-                            if (isScanning == true) {
-                                IConsole.AddMsg($"iTS - The new ori name is {oriName}.ori");
-                            }
-                        } else {
-                            IConsole.AddMsg($"The iTS is now in {mStatus?.Description}, can't start scanning");
-                        }
-                    } else {//停止掃描
-                        if (true || mStatus?.Description == EDescription.Map) {
-                            isScanning = StopScanning();
-                        } else {
-                            IConsole.AddMsg($"The iTS is now in {mStatus?.Description}, can't stop scanning");
-                        }
-                    }
-                    if (isScanning != null) {
-                        mIsScanning = (bool)isScanning;
-                        ITest.ChangedScanStt((bool)isScanning);
-                        IConsole.AddMsg($"iTS - Is {(isScanning == true ? "start" : "stop")} scanning");
-                    }
-                }
-            } catch (Exception ex) {
-                IConsole.AddMsg("Error:" + ex.Message);
-            }
-        }
-
-        /// <summary>
-        /// 通知VehicleConsole進行位置矯正
-        /// </summary>
-        protected virtual void ITest_CarPosConfirm() {
-            try {
-                var similarity = DoPositionComfirm();
-                if (similarity != null) {
-                    if (similarity >=0 && similarity <= 1) {
-                        mSimilarity = (double)similarity;
-                        IConsole.AddMsg($"iTS - The map similarity is {mSimilarity:0.0%}");
-                    } else if (mSimilarity == -1){
-                        mSimilarity = (double)similarity;
-                        IConsole.AddMsg($"iTS - The map is now matched");
-                    } else {
-                        IConsole.AddMsg($"iTS - The map similarity is 0%");
-                    }
-                }
-            } catch (Exception ex) {
-                IConsole.AddMsg(ex.Message);
-            }
-        }
-        
         /// <summary>
         /// 切換SetCar旗標
         /// </summary>
         private void ITest_SettingCarPos() {
             mIsSetting = true;
         }
-
-        /// <summary>
-        /// 清除地圖
-        /// </summary>
-        private void ITest_ClearMap() {
-            try {
-                Database.ClearAllButAGV();
-                Database.AGVGM[mAGVID].LaserAPoints.DataList.Clear();
-                Database.AGVGM[mAGVID].Path.DataList.Clear();
-                IGoalSetting.ReloadSingle();
-            } catch (Exception ex) {
-                IConsole.AddMsg(ex.Message);
-            }
-        }
-
-        /// <summary>
-        /// 設定伺服馬達激磁
-        /// </summary>
-        /// <param name="servoOn">是否激磁</param>
-        protected virtual void ITest_MotorServoOn(bool servoOn) {
-            try {
-                var servoOnStt = SetServoMode(servoOn);
-                IConsole.AddMsg("Sent");
-                if (servoOnStt != null) {
-                    IConsole.AddMsg($"iTS - Is Servo{(servoOn ? "On" : "Off")}");
-                    IsMotorServoOn = (bool)servoOnStt;
-                }
-            } catch (Exception ex) {
-                IConsole.AddMsg(ex.Message);
-            }
-        }
-
-        /// <summary>
-        /// 設定移動速度
-        /// </summary>
-        /// <param name="velocity">移動速度</param>
-        protected virtual void ITest_SetVelocity(int velocity) {
-            try {
-                var success = SetWorkVelocity(velocity);
-                if (success == true) {
-                    mVelocity = velocity;
-                    IConsole.AddMsg($"iTS - WorkVelocity = {velocity}");
-                }
-            }catch(Exception ex) {
-                IConsole.AddMsg(ex.Message);
-            }
-        }
-
+        
         /// <summary>
         /// 傳送Map檔
         /// </summary>
-        protected virtual void ITest_SendMap() {
-            try {
-                OpenFileDialog openMap = new OpenFileDialog();
-                openMap.InitialDirectory = mDefMapDir;
-                openMap.Filter = "MAP|*.map";
-                if (openMap.ShowDialog() == DialogResult.OK) {
-                    Task.Run(() => SendAndSetMap(openMap.FileName));
+        private void ITest_SendMap() {
+            OpenFileDialog openMap = new OpenFileDialog();
+            openMap.InitialDirectory = rVehiclePlanner.DefMapDir;
+            openMap.Filter = "MAP|*.map";
+            if (openMap.ShowDialog() == DialogResult.OK) {
+                try {
+                    Task.Run(() => rVehiclePlanner.SendAndSetMap(openMap.FileName));
+                } catch (Exception ex) {
+                    OnConsoleMessage(ex.Message);
                 }
-            } catch (Exception ex) {
-                IConsole.AddMsg(ex.Message);
             }
         }
         
@@ -893,113 +616,9 @@ namespace VehiclePlanner
         /// 要求VehicleConsole自動回傳資料
         /// </summary>
         protected virtual void ITest_GetCar() {
-            try {
-                bool isAutoReport = !mIsAutoReport;
-                var laser =  AutoReportLaser(isAutoReport);
-                var status = AutoReportStatus(isAutoReport);
-                var path = AutoReportPath(isAutoReport);
-                mIsAutoReport = (laser?.Count ?? 0) > 0;
-                ITest.SetLaserStt(mIsAutoReport);
-            } catch (Exception ex) {
-                IConsole.AddMsg(ex.Message);
-            }
+            rVehiclePlanner.AutoReport(!rVehiclePlanner.IsAutoReport);
         }
-
-        /// <summary>
-        /// 要求雷射資料
-        /// </summary>
-        protected virtual void ITest_GetLaser() {
-            try {
-                var laser = RequestLaser();
-                if (laser != null) {
-                    if (laser.Count > 0) {
-                        IConsole.AddMsg($"iTS - Received {laser.Count} laser data");
-                        DrawLaser(laser);
-                    } else {
-                        IConsole.AddMsg($"iTS - Laser data request failed");
-                    }
-                }
-            } catch (Exception ex) {
-                IConsole.AddMsg(ex.Message);
-            }
-        }
-
-        /// <summary>
-        /// 要求VehicleConsole端Map檔清單
-        /// </summary>
-        protected virtual void ITest_GetMap() {
-            if (mMapList == null) {
-                bool? success = null;
-                string mapName = null;
-                try {
-                    string mapList = RequestMapList();
-                    if (!string.IsNullOrEmpty(mapList)) {
-                        mapName = SelectFile(mapList);
-                        if (!string.IsNullOrEmpty(mapName)) {
-                            var map = RequestMapFile(mapName);
-                            if (map != null) {
-                                if (map.SaveAs(@"D:\Mapinfo\Client")) {
-                                    success = true;
-                                    IConsole.AddMsg($"Planner - {map.Name} download completed");
-                                } else {
-                                    success = false;
-                                    IConsole.AddMsg($"Planner - {map.Name} failed to save ");
-                                }
-                            }
-                        }
-                    }
-                } catch (Exception ex) {
-                    IConsole.AddMsg(ex.Message);
-                } finally {
-                    if (success != null) {
-                        SetBalloonTip("Donwload", $"{mapName}.ori is downloaded {(success == true ? "successfully" : "failed")} ");
-                    }
-                    if (mMapList != null) {
-                        mMapList.Dispose();
-                        mMapList = null;
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// 要求VehicleConsole端Ori檔清單
-        /// </summary>
-        protected virtual void ITest_GetORi() {
-            if (mMapList == null) {
-                bool? success = null;
-                string oriName = null;
-                try {
-                    string oriList = RequestOriList();
-                    if (!string.IsNullOrEmpty(oriList)) {
-                        oriName = SelectFile(oriList);
-                        if (!string.IsNullOrEmpty(oriName)) {
-                            var ori = RequestOriFile(oriName);
-                            if (ori != null) {
-                                if (ori.SaveAs(@"D:\MapInfo\Client")) {
-                                    success = true;
-                                    IConsole.AddMsg($"Planner - {ori.Name} download completed");
-                                } else {
-                                    success = false;
-                                    IConsole.AddMsg($"Planner - {ori.Name} failed to save");
-                                }
-                            }
-                        }
-                    }
-                } catch (Exception ex) {
-                    IConsole.AddMsg(ex.Message);
-                }finally {
-                    if (success != null) {
-                        SetBalloonTip("Donwload", $"{oriName}.ori is downloaded {(success == true ? "successfully" : "failed")} ");
-                    }
-                    if (mMapList != null) {
-                        mMapList.Dispose();
-                        mMapList = null;
-                    }
-                }
-            }
-        }
-
+        
         /// <summary>
         /// 載入Map檔
         /// </summary>
@@ -1008,7 +627,7 @@ namespace VehiclePlanner
             try {
                 LoadFile(FileType.Map);
             } catch (Exception ex) {
-                IConsole.AddMsg(ex.Message);
+                OnConsoleMessage(ex.Message);
             }
         }
 
@@ -1020,7 +639,7 @@ namespace VehiclePlanner
             try {
                 LoadFile(FileType.Ori);
             } catch (Exception ex) {
-                IConsole.AddMsg(ex.Message);
+                OnConsoleMessage(ex.Message);
             }
         }
 
@@ -1028,354 +647,121 @@ namespace VehiclePlanner
         /// 停止手動控制
         /// </summary>
         private void ITest_Motion_Up() {
-            try {
-                mConnectFlow.CheckFlag("Motion Controller", () => {
-                    MotionContorl(MotionDirection.Stop);
-                }, false);
-            } catch (Exception ex) {
-                IConsole.AddMsg(ex.Message);
-            }
+            rVehiclePlanner.MotionContorl(MotionDirection.Stop);
         }
-
-        /// <summary>
-        /// 開始手動控制
-        /// </summary>
-        /// <param name="direction">移動方向</param>
-        private void ITest_Motion_Down(MotionDirection direction) {
-            try {
-                mServoOnFlow.CheckFlag($"{direction}", () => {
-                    IConsole.AddMsg($"[{direction}]");
-                    MotionContorl(direction);
-                }, false);
-            } catch (Exception ex) {
-                IConsole.AddMsg(ex.Message);
-            }
-        }
-
-        private void ITest_SimplifyOri() {
-            try {
-                if (mBypassLoadFile) {
-                    /*-- 空跑模擬SimplifyOri --*/
-                    SpinWait.SpinUntil(() => false, 1000);
-                    return;
-                }
-                string[] tmpPath = CurOriPath.Split('.');
-                CurMapPath = tmpPath[0] + ".map";
-                Database.Save(CurMapPath);
-
-                NewMap();
-            }catch(Exception ex) {
-                IConsole.AddMsg(ex.Message);
-            }
-        }
-
-        private void ITest_Find() {
-            if (!mBroadcast.IsReceiving) {
-                Task.Run(() => {
-                    /*-- 開啟廣播接收 --*/
-                    mBroadcast.StartReceive(true);
-                    Console.AddMsg("[Planner]: Start searching iTS.");
-                    /*-- 清除iTS清單 --*/
-                    mAgvList.Clear();
-                    /*-- 廣播要求iTS回應 --*/
-                    for(int i = 0;i< 3; i++) {
-                        mBroadcast.Send("Count off");
-                        Thread.Sleep(30);
-                    }
-                    /*-- 等待iTS回應完畢後停止接收回應 --*/
-                    Thread.Sleep(2000);
-                    mBroadcast.StartReceive(false);
-                    /*-- 取得iTS IP清單 --*/
-                    var ipList = mAgvList.Keys.ToList().ConvertAll(v => v.ToString());
-                    /*-- 反饋至UI --*/
-                    string msg = $"Find {ipList.Count} iTS";
-                    Console.AddMsg($"[Planner]:{msg}");
-                    SetBalloonTip("Search iTS", msg);
-                    ITest.SetIPList(ipList);
-                });
-            }
-        }
-
+        
         #endregion
 
         #region IMapGL事件連結
 
         private void IMapCtrl_GLClickEvent(object sender, GLMouseEventArgs e) {
             if (mIsSetting) {
-                if (Database.AGVGM.ContainsID(mAGVID)) {
                     if (mNewPos == null) {
                         mNewPos = e.Position;
                     } else {
-                        IConsole.AddMsg($"NewPos{mNewPos.ToString()}");
+                        OnConsoleMessage($"NewPos{mNewPos.ToString()}");
                         Task.Run(() => {
-                            SetPosition(e.Position, mNewPos);
-
+                            rVehiclePlanner.SetPosition(e.Position, mNewPos);
                             mNewPos = null;
                             mIsSetting = false;
                         });
                     }
-                }
-            } else {//顯示滑鼠點擊的座標
-                IGoalSetting.UpdateNowPosition(e.Position);
-            }
+            } 
+            //顯示滑鼠點擊的座標
+            mGoalSetting.UpdateNowPosition(e.Position);
         }
 
         private void IMapCtrl_DragTowerPairEvent(object sender, TowerPairEventArgs e) {
-            IGoalSetting.ReloadSingle();
+            mGoalSetting.ReloadSingle();
+        }
+
+        /// <summary>
+        /// MapGL滑鼠放開事件處理
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void IMapCtrl_GLMoveUp(object sender, GLMouseEventArgs e) {
+            switch (mCursorMode) {
+                case CursorMode.Goal:
+                case CursorMode.Power:
+                    mGoalSetting.ReloadSingle();
+                    mCursorMode = CursorMode.Select;
+                    break;
+            }
         }
 
         #endregion IMapGL 事件連結
 
         #region IGoalSetting 事件連結   
 
-        private void IGoalSetting_Charging(uint powerID) {
-            try {
-                int index = Database.PowerGM.IndexOf(powerID);
-                if (index >= 0) {
-                    var power = Database.PowerGM[powerID];
-                    var success = DoCharging(index);
-                    if (success == true) {
-                        IConsole.AddMsg($"iTS - Begin charging at {power.Name}");
-                    } else if (success == false) {
-                        IConsole.AddMsg("iTS - Charging failed");
-                    }
-                }
-            } catch(Exception ex) {
-                IConsole.AddMsg(ex.Message);
-            }
-        }
-
-        private void IGoalSetting_SaveGoalEvent() {
-            if (string.IsNullOrEmpty(CurMapPath)) {
-                if (MsgBoxBtn.Yes == CtMsgBox.Show("Map not loaded yet", "Whether to load the map?", MsgBoxBtn.YesNo, MsgBoxStyle.Question)) {
-                    ITest_LoadMap();
-                }
-                return;
-            }
-            IConsole.AddMsg("[Save {0} Goals]", IGoalSetting.GoalCount);
-            Database.Save(CurMapPath);
-        }
-
         private void IGoalSetting_RunLoopEvent(IEnumerable<IGoal> goal) {
-            int goalCount = goal?.Count() ?? -1;
-            if (goalCount > 0) {
-                mSimilarityFlow.CheckFlag("Run all", () => {
-                    IConsole.AddMsg("[AGV Start Moving...]");
-                    foreach (var item in goal) {
-                        IConsole.AddMsg("[AGV Move To] - {0}", item.ToString());
-                        IConsole.AddMsg("[AGV Arrived] - {0}", item.ToString());
-                    }
-                    IConsole.AddMsg("[AGV Move Finished]");
-                });
-            }else {
-                CtMsgBox.Show(mHandle,"No target","尚未選取Goal點，無法進行Run all",MsgBoxBtn.OK,MsgBoxStyle.Information);
-            }
-        }
-
-        private void IGoalSetting_RunGoalEvent(uint goalID) {
-            try {
-                int index = Database.GoalGM.IndexOf(goalID);
-                if (index >= 0) {
-                    var goal = Database.GoalGM[goalID];
-                    var success = DoRunningByGoalIndex(index);
-                    if (success == true) {
-                        IConsole.AddMsg($"iTS - Start moving to {goal.Name}");
-                    } else if (success == false) {
-                        IConsole.AddMsg($"Move to goal failure");
-                    }
-                }       
-            } catch(Exception ex) {
-                IConsole.AddMsg(ex.Message);
-            }
-        }
-        
-        private void IGoalSetting_FindPathEvent(uint id) {
-            try {
-                int index = Database.GoalGM.IndexOf(id);
-                if (index >= 0) {
-                    var path = RequestPath(index);
-                    if (path != null) {
-                        var goal = Database.GoalGM[id];
-                        if (path.Count > 0) {
-                            IConsole.AddMsg($"iTS - The path to {goal.Name} is completion. The number of path points is {path.Count}");
-                        } else {
-                            IConsole.AddMsg($"iTS - Can not plan the path to  {goal.Name}");
-                        }
-                    }
-                }
-            } catch (Exception ex) {
-                IConsole.AddMsg(ex.Message);
-            }
-        }
-
-        private void IGoalSetting_DeleteGoalsEvent(IEnumerable<uint> singles) {
-            foreach(var id in singles) {
-                if (Database.GoalGM.ContainsID(id)) {
-                    Database.GoalGM.Remove(id);
-                }else if (Database.PowerGM.ContainsID(id)) {
-                    Database.PowerGM.Remove(id);
-                }
-            }
-            IGoalSetting.ReloadSingle();
-            
-        }
-
-        private void IGoalSetting_ClearGoalsEvent() {
-            IConsole.AddMsg("[Clear Goal]");
-            Database.GoalGM.Clear();
-
-            IConsole.AddMsg("[Clear Power]");
-            Database.PowerGM.Clear();
-
-            IGoalSetting.ReloadSingle();
-        }
-
-        /// <summary>
-        /// 將當前位置設為Goal點
-        /// </summary>
-        private void AddCurrentGoalEvent() {
-            /*-- 取得當前位置 --*/
-            var currentPosition = Database.AGVGM[mAGVID].Data;
-            /*-- 建構Goal點 --*/
-            var goal = FactoryMode.Factory.Goal(currentPosition, $"Goal{Database.GoalGM.Count}");
-            /*-- 分配ID --*/
-            var goalID = Database.ID.GenerateID();
-            /*-- 將Goal點資料加入Goal點管理集合 --*/
-            Database.GoalGM.Add(goalID, goal);
-            /*-- 重新載入Goal點資訊 --*/
-            IGoalSetting.ReloadSingle();
-        }
-
-        /// <summary>
-        /// 取得所有Goal點名稱
-        /// </summary>
-        private void GoalNames() {
-            try {
-                var goalList = RequestGoalList();
-                if (!string.IsNullOrEmpty(goalList)) {
-                    IConsole.AddMsg($"iTS - GoalNames:{goalList}");
-                }
-            } catch(Exception ex) {
-                IConsole.AddMsg(ex.Message);
-            }
+            //int goalCount = goal?.Count() ?? -1;
+            //if (goalCount > 0) {
+            //    mSimilarityFlow.CheckFlag("Run all", () => {
+            //        OnConsoleMessage("[AGV Start Moving...]");
+            //        foreach (var item in goal) {
+            //            OnConsoleMessage("[AGV Move To] - {0}", item.ToString());
+            //            OnConsoleMessage("[AGV Arrived] - {0}", item.ToString());
+            //        }
+            //        OnConsoleMessage("[AGV Move Finished]");
+            //    });
+            //}else {
+            //    CtMsgBox.Show(mHandle,"No target","尚未選取Goal點，無法進行Run all",MsgBoxBtn.OK,MsgBoxStyle.Information);
+            //}
         }
 
         #endregion
 
-        #region ISerialClient
+        #region ToolBox
 
-
-        #endregion ISerialClient
-
-        #region BroadcastReceiver
-        
         /// <summary>
-        /// 廣播接收事件
+        /// 工具箱切換工具事件
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void mBroadcast_ReceivedData(object sender, BroadcastEventArgs e) {
-            if (!mAgvList.ContainsKey(e.Remote.Address)) {
-                mAgvList.Add(e.Remote.Address, e.Message);
+        /// <param name="mode"></param>
+        private void ToolBox_SwitchCursor(CursorMode mode) {
+            mCursorMode = mode;
+            switch (mode) {
+                case CursorMode.Drag:
+                    IMapCtrl.SetDragMode();
+                    break;
+                case CursorMode.Goal:
+                    IMapCtrl.SetAddMode(FactoryMode.Factory.Goal($"Goal{Database.GoalGM.Count}"));
+                    break;
+                case CursorMode.Power:
+                    IMapCtrl.SetAddMode(FactoryMode.Factory.Power($"Power{Database.PowerGM.Count}"));
+                    break;
+                case CursorMode.Select:
+                    IMapCtrl.SetSelectMode();
+                    break;
+                case CursorMode.Pen:
+                    IMapCtrl.SetPenMode();
+                    break;
+                case CursorMode.Eraser:
+                    IMapCtrl.SetEraserMode(500);
+                    break;
+                case CursorMode.Insert:
+                    OpenFileDialog old = new OpenFileDialog();
+                    old.Filter = ".Map|*.map";
+                    if (old.ShowDialog() == DialogResult.OK) {
+                        IMapCtrl.SetInsertMapMode(old.FileName, mMapInsert as IMouseInsertPanel);
+                    }
+                    break;
+                case CursorMode.ForbiddenArea:
+                    IMapCtrl.SetAddMode(FactoryMode.Factory.ForbiddenArea("ForbiddenArea"));
+                    break;
+                default:
+                    throw new ArgumentException($"未定義{mode}模式");
+
             }
         }
 
-        #endregion BroadcastReceiver
+        #endregion ToolBox
 
         #endregion Function - Events
 
         #region Function - Private Methods
 
-        #region Communication
-
-        /// <summary>
-        /// 要求AGV設定新位置
-        /// </summary>
-        /// <param name="oldPosition">舊座標</param>
-        /// <param name="newPosition">新座標</param>
-        protected virtual void SetPosition(IPair oldPosition,IPair newPosition) {
-            var position = FactoryMode.Factory.TowardPair(newPosition, oldPosition.Angle(newPosition));
-            var success = SetPosition(position);
-            if (success == true) {
-                Database.AGVGM[mAGVID].SetLocation(position);
-                IConsole.AddMsg($"iTS - The position are now at {position}");
-            }
-        }
-        
-        /// <summary>
-        /// 移動控制
-        /// </summary>
-        /// <param name="direction">移動方向</param>
-        /// <param name="velocity">移動速度</param>
-        protected virtual void MotionContorl(MotionDirection direction) {
-            bool? isManualMoving = null;
-            if (direction == MotionDirection.Stop) {
-                isManualMoving = StartManualControl(false);
-            } else {
-                if (SetManualVelocity(direction) == true) {
-                    IConsole.AddMsg($"iTS - is {direction},Velocity is {mVelocity}");
-                    isManualMoving = StartManualControl(true);
-                }
-            }
-            if (isManualMoving!= null && isManualMoving != mIsManualMoving) {
-                mIsManualMoving = (bool)isManualMoving;
-                IConsole.AddMsg($"iTS - {(mIsManualMoving ? "Start" : "Stop")} moving");
-            }
-        }
-        
-        private bool? SetManualVelocity(MotionDirection direction) {
-            int r = 0, l = 0, v = mVelocity;
-            switch (direction) {
-                case MotionDirection.Forward:
-                    r = v;
-                    l = v;
-                    break;
-                case MotionDirection.Backward:
-                    r = -v;
-                    l = -v;
-                    break;
-                case MotionDirection.LeftTrun:
-                    r = v;
-                    l = -v;
-                    break;
-                case MotionDirection.RightTurn:
-                    r = -v;
-                    l = v;
-                    break;
-                default:
-                    return null;
-            }
-            return SetManualVelocity(FactoryMode.Factory.Pair(l, r));
-        }
-
-        #endregion Communication 
-
         #region UI
-        
-        /// <summary>
-        /// 顯示主介面
-        /// </summary>
-        private void ShowWindow() {
-            mNotifyIcon.HideIcon();
-            this.Show();
-            this.TopMost = true;
-            #region 把DocDocument切回來
-            ///由於主介面關閉的時候會觸發到DockDocument的FormCloseing事件
-            ///導致子介面被隱藏
-            ///這邊在手動把他切回來一次
-            #endregion 
-            MapGL.Show();
-            this.TopMost = false;
-
-        }
-
-        /// <summary>
-        /// 離開程式
-        /// </summary>
-        private void Exit() {
-            mNotifyIcon.HideIcon();
-            this.Dispose();
-        }
 
         /// <summary>
         /// 依照使用者權限切換介面配置
@@ -1443,14 +829,17 @@ namespace VehiclePlanner
             }
         }
 
+        /// <summary>
+        /// 顯示iTS手動移動控制面板
+        /// </summary>
         private void ShowMotionController() {
             if (mMotionController == null) {
                 mMotionController = new CtMotionController();
-                mMotionController.MotionDown += ITest_Motion_Down;
+                mMotionController.MotionDown += rVehiclePlanner.MotionContorl;
                 mMotionController.MotionUp += ITest_Motion_Up;
                 miMotionController.Checked = true;
                 mMotionController.FormClosing += (fSender, fE) => {
-                    mMotionController.MotionDown -= ITest_Motion_Down;
+                    mMotionController.MotionDown -= rVehiclePlanner.MotionContorl;
                     mMotionController.MotionUp -= ITest_Motion_Up;
                     mMotionController = null;
                     miMotionController.Checked = false;
@@ -1458,7 +847,43 @@ namespace VehiclePlanner
                 mMotionController.Show();
             }
         }
-        
+
+        /// <summary>
+        /// 顯示氣球提示
+        /// </summary>
+        /// <param name="title">提示標題</param>
+        /// <param name="context">提示內容</param>
+        /// <param name="icon">提示Icon</param>
+        /// <param name="tmo">顯示時間</param>
+        private void SetBalloonTip(string title, string context, ToolTipIcon icon = ToolTipIcon.Info, int tmo = 5) {
+            mNotifyIcon.ShowBalloonTip(title, context, tmo, icon);
+        }
+
+        /// <summary>
+        /// 顯示主介面
+        /// </summary>
+        public void ShowWindow() {
+            mNotifyIcon.HideIcon();
+            this.Show();
+        }
+
+        /// <summary>
+        /// 將主介面縮小至系統列
+        /// </summary>
+        public void HideWindow() {
+            this.Hide();
+            mNotifyIcon.ShowIcon();
+        }
+
+        /// <summary>
+        /// 離開程式
+        /// </summary>
+        public void Exit() {
+            mNotifyIcon.HideIcon();
+            rVehiclePlanner.Dispose();
+            this.Dispose();
+        }
+
         #endregion UI
 
         #region DockContent
@@ -1536,9 +961,9 @@ namespace VehiclePlanner
             CtInvoke.ToolStripItemEnable(miGoalSetting, goalSetting);
 
             DockContentVisible(MapGL, mapGL);
-            DockContentVisible(Console, console);
-            DockContentVisible(GoalSetting, goalSetting);
-            DockContentVisible(Testing, testing);
+            DockContentVisible(mConsole, console);
+            DockContentVisible(mGoalSetting, goalSetting);
+            DockContentVisible(mTesting, testing);
         }
 
         /// <summary>
@@ -1558,131 +983,20 @@ namespace VehiclePlanner
         #region Draw
 
         /// <summary>
-        /// 載入地圖
-        /// </summary>
-        /// <param name="mapPath">Map檔路徑</param>
-        private bool LoadMap(string mapPath) {
-            mCurMapPath = mapPath;
-            string path = CtFile.GetFileName(mapPath);
-            Stopwatch sw = new Stopwatch();
-            if (mBypassLoadFile) {
-                /*-- 空跑1秒模擬載入Map檔 --*/
-                SpinWait.SpinUntil(() => false, 1000);
-            } else {
-                //#region - Retrive information from .map file -
-                sw.Start();
-                /*-- 地圖清空 --*/
-                NewMap();
-
-                /*-- 載入Map並取得Map中心點 --*/
-                IPair center = Database.LoadMapToDatabase(mCurMapPath)?.Center();
-
-                if (center == null) {
-                    return false;
-                }
-                /*-- 移動畫面至Map中心點 --*/
-                IMapCtrl.Focus(center);
-                
-                IGoalSetting.ReloadSingle();
-
-                if (IsConnected) {
-                    SendAndSetMap(mapPath);
-                }
-            }
-            return true;
-        }
-
-        private bool LoadOri(string oriPath) {
-            CurOriPath = oriPath;
-            NewMap();
-            if (!mBypassLoadFile) {//無BypassLoadFile
-                
-                /*-- 載入Map並取得Map中心點 --*/
-                IPair center = Database.LoadOriToDatabase(CurOriPath, mAGVID)?.Center();
-
-                if (center == null) {
-                    return false;
-                }
-
-                /*-- 移動畫面至Map中心點 --*/
-                IMapCtrl.Focus(center);
-            } else {//Bypass LoadFile功能
-                    /*-- 空跑一秒，模擬檔案載入 --*/
-                SpinWait.SpinUntil(() => false, 1000);
-            }
-            return true;
-        }
-
-        /// <summary>
         /// 載入檔案
         /// </summary>
         /// <param name="type">載入檔案類型</param>
         public void LoadFile(FileType type) {
             OpenFileDialog openMap = new OpenFileDialog();
-            openMap.InitialDirectory = mDefMapDir;
+            openMap.InitialDirectory = rVehiclePlanner.DefMapDir;
             openMap.Filter = $"MAP|*.{type.ToString().ToLower()}";
             if (openMap.ShowDialog() == DialogResult.OK) {
                 Task.Run(() => {
-                    try {
-                        bool isLoaded = false;
-                        switch (type) {
-                            case FileType.Ori:
-                                isLoaded = LoadOri(openMap.FileName);
-                                if (isLoaded) {
-                                    Database.AGVGM[mAGVID]?.LaserAPoints.DataList.Clear();
-                                    ITest.UnLockOriOperator(true);
-                                }
-                                break;
-                            case FileType.Map:
-                                isLoaded = LoadMap(openMap.FileName);
-                                break;
-                            default:
-                                throw new ArgumentException($"無法載入未定義的檔案類型{type}");
-                        }
-                        if (isLoaded) {
-                            SetBalloonTip($"Load { type}", $"\'{openMap.FileName}\' is loaded");
-                        } else {
-                            CtMsgBox.Show(mHandle, "Error", "File data is wrong, can not read", MsgBoxBtn.OK, MsgBoxStyle.Error);
-                        }
-                    } catch (Exception ex) {
-                        CtMsgBox.Show(mHandle, "Error", ex.Message);
-                    }
+                    rVehiclePlanner.LoadFile(type,openMap.FileName);
                 });
             }
         }
         
-        /// <summary>
-        /// 清空Map
-        /// </summary>
-        private void NewMap() {
-            /*-- 保留AGV資料 --*/
-            var agv = Database.AGVGM[mAGVID];
-            /*-- 清除資料 --*/
-            IMapCtrl.NewMap();
-            /*-- 將AGV寫回DataBase --*/
-            Database.AGVGM.Add(mAGVID, agv);
-            /*-- 清除雷射 --*/
-            Database.AGVGM[mAGVID].LaserAPoints.DataList.Clear();
-            /*-- 清除路徑 --*/
-            Database.AGVGM[mAGVID].Path.DataList.Clear();
-        }
-
-        /// <summary>
-        /// 繪製雷射
-        /// </summary>
-        /// <param name="laser"></param>
-        protected void DrawLaser(IEnumerable<IPair> laser) {
-            Database.AGVGM[mAGVID]?.LaserAPoints.DataList.Replace(laser);
-        }
-
-        /// <summary>
-        /// 繪製路徑
-        /// </summary>
-        /// <param name="path"></param>
-        protected void DrawPath(IEnumerable<IPair> path) {
-            Database.AGVGM[mAGVID].Path.DataList.Replace(path);
-        }
-
         #endregion Draw
 
         #region Load
@@ -1694,19 +1008,19 @@ namespace VehiclePlanner
             
             #region IGoalSetting 事件連結
                  
-            IGoalSetting.AddCurrentGoalEvent += AddCurrentGoalEvent;
-            IGoalSetting.ClearGoalsEvent += IGoalSetting_ClearGoalsEvent;
-            IGoalSetting.DeleteSingleEvent += IGoalSetting_DeleteGoalsEvent;
-            IGoalSetting.FindPathEvent += IGoalSetting_FindPathEvent;
-            IGoalSetting.LoadMapEvent += ITest_LoadMap;
-            IGoalSetting.LoadMapFromAGVEvent += ITest_GetMap;
-            IGoalSetting.RunGoalEvent += IGoalSetting_RunGoalEvent;
-            IGoalSetting.RunLoopEvent += IGoalSetting_RunLoopEvent;
-            IGoalSetting.SaveGoalEvent += IGoalSetting_SaveGoalEvent;
-            IGoalSetting.SendMapToAGVEvent += ITest_SendMap;
-            IGoalSetting.GetGoalNames += GoalNames;
-            IGoalSetting.Charging += IGoalSetting_Charging;
-            IGoalSetting.ClearMap += ITest_ClearMap;
+            mGoalSetting.AddCurrentGoalEvent += rVehiclePlanner.AddCurrentAsGoal;
+            mGoalSetting.ClearGoalsEvent += rVehiclePlanner.ClearMarker;
+            mGoalSetting.DeleteSingleEvent += rVehiclePlanner.DeleteMarker;
+            mGoalSetting.FindPathEvent += rVehiclePlanner.FindPath;
+            mGoalSetting.LoadMapEvent += ITest_LoadMap;
+            mGoalSetting.LoadMapFromAGVEvent += rVehiclePlanner.GetMap;
+            mGoalSetting.RunGoalEvent += rVehiclePlanner.DoRunningByGoalName;
+            mGoalSetting.RunLoopEvent += IGoalSetting_RunLoopEvent;
+            mGoalSetting.SaveGoalEvent += rVehiclePlanner.SaveMap;
+            mGoalSetting.SendMapToAGVEvent += ITest_SendMap;
+            mGoalSetting.GetGoalNames += rVehiclePlanner.GetGoalNames;
+            mGoalSetting.Charging += rVehiclePlanner.DoCharging;
+            mGoalSetting.ClearMap += rVehiclePlanner.ClearMap;
 
             #endregion
 
@@ -1720,74 +1034,27 @@ namespace VehiclePlanner
 
             #region ITesting 事件連結
 
-            ITest.LoadMap += ITest_LoadMap;
-            ITest.LoadOri += ITest_LoadOri;
-            ITest.GetOri += ITest_GetORi;
-            ITest.GetMap += ITest_GetMap;
-            ITest.GetLaser += ITest_GetLaser;
-            ITest.GetCar += ITest_GetCar;
-            ITest.SendMap += ITest_SendMap;
-            ITest.SetVelocity += ITest_SetVelocity;
-            ITest.Connect += ConnectToITS;
-            ITest.MotorServoOn += ITest_MotorServoOn;
-            ITest.SimplifyOri += ITest_SimplifyOri;
-            ITest.ClearMap += ITest_ClearMap;
-            ITest.SettingCarPos += ITest_SettingCarPos;
-            ITest.CarPosConfirm += ITest_CarPosConfirm;
-            ITest.StartScan += ITest_StartScan;
-            ITest.ShowMotionController += ShowMotionController;
-            ITest.Find += ITest_Find;
+            mTesting.LoadMap += ITest_LoadMap;
+            mTesting.LoadOri += ITest_LoadOri;
+            mTesting.GetOri += rVehiclePlanner.GetOri;
+            mTesting.GetMap += rVehiclePlanner.GetMap;
+            mTesting.GetLaser += rVehiclePlanner.RequestLaser;
+            mTesting.GetCar += ITest_GetCar;
+            mTesting.SendMap += ITest_SendMap;
+            mTesting.SetVelocity += rVehiclePlanner.SetWorkVelocity;
+            mTesting.Connect += rVehiclePlanner.ConnectToITS;
+            mTesting.MotorServoOn += rVehiclePlanner.SetServoMode;
+            mTesting.SimplifyOri += rVehiclePlanner.SimplifyOri;
+            mTesting.ClearMap += rVehiclePlanner.ClearMap;
+            mTesting.SettingCarPos += ITest_SettingCarPos;
+            mTesting.CarPosConfirm += rVehiclePlanner.DoPositionComfirm;
+            mTesting.StartScan += rVehiclePlanner.StartScan;
+            mTesting.ShowMotionController += ShowMotionController;
+            mTesting.Find += rVehiclePlanner.FindCar;
             #endregion 
 
-            (mDockContent[miToolBox] as CtToolBox).SwitchCursor += IGoalSetting_SwitchCursor;
+            (mDockContent[miToolBox] as CtToolBox).SwitchCursor += ToolBox_SwitchCursor;
 
-        }
-        
-        private void IMapCtrl_GLMoveUp(object sender, GLMouseEventArgs e) {
-            switch (mCursorMode) {
-                case CursorMode.Goal:
-                case CursorMode.Power:
-                    IGoalSetting.ReloadSingle();
-                    mCursorMode = CursorMode.Select;
-                    break;
-            }
-        }
-
-        private void IGoalSetting_SwitchCursor(CursorMode mode) {
-            mCursorMode = mode;
-            switch (mode) {
-                case CursorMode.Drag:
-                    IMapCtrl.SetDragMode();
-                    break;
-                case CursorMode.Goal:
-                    IMapCtrl.SetAddMode(FactoryMode.Factory.Goal($"Goal{Database.GoalGM.Count}"));
-                    break;
-                case CursorMode.Power:
-                    IMapCtrl.SetAddMode(FactoryMode.Factory.Power($"Power{Database.PowerGM.Count}"));
-                    break;
-                case CursorMode.Select:
-                    IMapCtrl.SetSelectMode();
-                    break;
-                case CursorMode.Pen:
-                    IMapCtrl.SetPenMode();
-                    break;
-                case CursorMode.Eraser:
-                    IMapCtrl.SetEraserMode(500);
-                    break;
-                case CursorMode.Insert:
-                    OpenFileDialog old = new OpenFileDialog();
-                    old.Filter = ".Map|*.map";
-                    if (old.ShowDialog() == DialogResult.OK) {
-                        IMapCtrl.SetInsertMapMode(old.FileName,mMapInsert as IMouseInsertPanel);
-                    }
-                    break;
-                case CursorMode.ForbiddenArea:
-                    IMapCtrl.SetAddMode(FactoryMode.Factory.ForbiddenArea("ForbiddenArea"));
-                    break;
-                default:
-                    throw new ArgumentException($"未定義{mode}模式");
-                                    
-            }
         }
 
         /// <summary>
@@ -1838,7 +1105,8 @@ namespace VehiclePlanner
 
             }
             mMapInsert.AssignmentDockPanel(dockPanel);
-
+            /*-- 資料綁定 --*/
+            Bindings(rVehiclePlanner);
         }
 
         /// <summary>
@@ -1846,7 +1114,8 @@ namespace VehiclePlanner
         /// </summary>
         private void LoadCtNotifyIcon() {
             if (mNotifyIcon == null) {
-                mNotifyIcon = new CtNotifyIcon(this, mNotifyCaption);
+                Icon icon = Properties.Resources.CASTEC;
+                mNotifyIcon = new CtNotifyIcon(null, mNotifyCaption, icon);
                 mNotifyIcon.OnMouseDoubleClick += mNotifyIcon_OnMouseDoubleClick;
                 mNotifyIcon.Visible = true;
                 mMenuItems = new MenuItems();
@@ -1863,65 +1132,8 @@ namespace VehiclePlanner
                 mNotifyIcon.MenuItems = mMenuItems;
             }
         }
-        
+
         #endregion Load
-
-        #region Flow
-
-        private void ExecutingInfo() {
-            SetBalloonTip("Warning", "請先完成當前操作", ToolTipIcon.Warning);
-        }
-
-        private bool CheckServer() {
-            return IsConnected;
-        }
-
-        private bool GetIsConnect() {
-            return IsConnected;
-        }
-
-        private bool CheckSimilarity() {
-            return mSimilarity==-1;
-        }
-
-        private bool GetSimilarity() {
-            return mSimilarity ==-1;
-        }
-
-        #endregion Flow
-
-        #region Serial 
-
-        /// <summary>
-        /// 傳送並要求載入Map
-        /// </summary>
-        /// <param name="mapPath">目標Map檔路徑</param>
-        private void SendAndSetMap(string mapPath) {
-            var success = UploadMapToAGV(mapPath);
-            string mapName = Path.GetFileName(mapPath);
-            if (success == true) {
-                SetBalloonTip("Donwload", $"{mapName}.ori is downloaded {(success == true ? "successfully" : "failed")} ");
-                IConsole.AddMsg($"iTS - The {mapName} uploaded");
-                success = ChangeMap(mapName);
-                if (success == true) {
-                    IConsole.AddMsg($"iTS - The {mapName} is now running");
-                }else if(success == false) {
-                    IConsole.AddMsg($"iTS - The {mapName} failed to run");
-                }
-            } else if (success == false) {
-                IConsole.AddMsg($"iTS - The {mapName} upload failed");
-            }
-        }
-
-        #endregion Serial 
-
-        ///<summary>IP驗證</summary>
-        ///<param name="ip">要驗證的字串</param>
-        ///<returns>True:合法IP/False:非法IP</returns>
-        private bool VerifyIP(string ip)
-        {
-            return Regex.IsMatch(ip, @"^((2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(2[0-4]\d|25[0-5]|[01]?\d\d?)$");
-        }
 
         /// <summary>
         /// 從檔案清單選擇一個檔案
@@ -1939,513 +1151,42 @@ namespace VehiclePlanner
             return fileName;
         }
 
+        /// <summary>
+        /// 文字輸入方法
+        /// </summary>
+        /// <param name="oriName"></param>
+        /// <param name="title"></param>
+        /// <param name="describe"></param>
+        /// <returns></returns>
+        private bool InputBox(out string oriName, string title, string describe) {
+            return Stat.SUCCESS == CtInput.Text(out oriName, title, describe);
+        }
+
+        /// <summary>
+        /// 顯示Console訊息
+        /// </summary>
+        /// <param name="msg"></param>
+        private void OnConsoleMessage(string msg) {
+            mConsole.AddMsg(msg);
+        }
+
         #endregion Function - Private Methods
 
+        #region Implement - IDataDisplay<ICtVehiclePlanner>
+
+        /// <summary>
+        /// 資料綁定
+        /// </summary>
+        /// <param name="source">資料來源</param>
+        public void Bindings(ICtVehiclePlanner source) {
+            if (source.DelInvoke == null) source.DelInvoke = invk => this.InvokeIfNecessary(invk);
+            var subDisplay = mDockContent.Where(kvp => kvp.Value is IDataDisplay<ICtVehiclePlanner>).Select(kvp => kvp.Value);
+            foreach(IDataDisplay<ICtVehiclePlanner> display in subDisplay) {
+                display.Bindings(source);
+            }
+        }
+
+        #endregion Implement - IDataDisplay<ICtVehiclePlanner>
     }
-
-    #region Suppor - Class
-
-    /// <summary>
-    /// 系統列圖示類
-    /// </summary>
-    public class CtNotifyIcon : IDisposable
-    {
-
-        #region Declaration - Field
-
-        /// <summary>
-        /// 系統列圖示右鍵選單物件
-        /// </summary>
-        private ContextMenu mContextMenu = new ContextMenu();
-
-        /// <summary>
-        /// 右鍵圖示物件
-        /// </summary>
-        private NotifyIcon mNotifyIcon = new NotifyIcon();
-
-        /// <summary>
-        /// 要隱藏的表單參考
-        /// </summary>
-        private Form rForm = null;
-
-        /// <summary>
-        /// 右鍵選項集合
-        /// </summary>
-        private MenuItems mMenuItems = null;
-
-        #endregion Declaration - Field
-
-        #region Declaration - Properties
-
-        /// <summary>
-        /// 系統列圖示是否可視
-        /// </summary>
-        public bool Visible { get { return mNotifyIcon.Visible; } set { mNotifyIcon.Visible = value; } }
-
-        /// <summary>
-        /// 右鍵選項集合
-        /// </summary>
-        public MenuItems MenuItems {
-            get {
-                return mMenuItems;
-            }
-            set {
-                mMenuItems = value;
-                mContextMenu.MenuItems.AddRange(mMenuItems.Items.ToArray());
-            }
-        }
-
-        #endregion Declaration - Properties
-
-        #region Declaration - Events
-
-        /// <summary>
-        /// 滑鼠雙擊系統列視窗事件
-        /// </summary>
-        public event MouseEventHandler OnMouseDoubleClick {
-            add {
-                mNotifyIcon.MouseDoubleClick += value;
-            }
-            remove {
-                mNotifyIcon.MouseDoubleClick -= value;
-            }
-        }
-
-        /// <summary>
-        /// 滑鼠放開事件
-        /// </summary>
-        public event MouseEventHandler OnMouseUp {
-            add {
-                mNotifyIcon.MouseUp += value;
-            }
-            remove {
-                mNotifyIcon.MouseUp -= value;
-            }
-
-        }
-
-        #endregion Declaration - Events
-
-        #region Function - Consturctors
-
-        /// <summary>
-        /// 一般建構方法
-        /// </summary>
-        /// <param name="form">要隱藏的表單參考</param>
-        /// <param name="caption">系統列圖示標題</param>
-        /// <param name="icon">系統列圖示Icon</param>
-        public CtNotifyIcon(Form form, string caption = "NotifyIcon", Icon icon = null)
-        {
-            rForm = form;
-            mNotifyIcon.Icon = icon ?? rForm.Icon;
-            mNotifyIcon.Text = caption;
-            mNotifyIcon.ContextMenu = mContextMenu;
-        }
-
-        #endregion Function - Consturctors
-
-        #region Function - Public Methods
-
-        /// <summary>
-        /// 增加右鍵選項
-        /// </summary>
-        /// <param name="item"></param>
-        public void MenuItemAdd(MenuItem item)
-        {
-            if (!mContextMenu.MenuItems.Contains(item)) mContextMenu.MenuItems.Add(item);
-        }
-
-        /// <summary>
-        /// 移除右鍵選項
-        /// </summary>
-        /// <param name="item"></param>
-        public void MenuItemRemove(MenuItem item)
-        {
-            if (mContextMenu.MenuItems.Contains(item)) mContextMenu.MenuItems.Remove(item);
-        }
-
-        /// <summary>
-        /// 顯示系統列圖示
-        /// </summary>
-        public void ShowIcon()
-        {
-            mNotifyIcon.Visible = true;
-        }
-
-        /// <summary>
-        /// 隱藏系統列圖示
-        /// </summary>
-        public void HideIcon()
-        {
-            mNotifyIcon.Visible = false;
-        }
-
-        /// <summary>
-        /// 顯示系統列提示
-        /// </summary>
-        /// <param name="title"></param>
-        /// <param name="context"></param>
-        /// <param name="tmo">多久以後關閉</param>
-        /// <param name="icon">Icon類型</param>
-        public void ShowBalloonTip(string title, string context, int tmo = 15, ToolTipIcon icon = ToolTipIcon.Info)
-        {
-            mNotifyIcon.ShowBalloonTip(tmo, title, context, icon);
-        }
-
-        /// <summary>
-        /// 顯示右鍵選單
-        /// </summary>
-        public void ShowMenuItem()
-        {
-            /*-- 以反射方式執行ShowContextMenu方法顯示右鍵選單 --*/
-            Type t = typeof(NotifyIcon);
-            MethodInfo mi = t.GetMethod("ShowContextMenu", BindingFlags.NonPublic | BindingFlags.Instance);
-            mi.Invoke(this.mNotifyIcon, null);
-        }
-
-        #endregion Function - Public Methods
-
-        #region IDisposable Support
-        private bool disposedValue = false; // 偵測多餘的呼叫
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposedValue)
-            {
-                if (disposing)
-                {
-                    // TODO: 處置 Managed 狀態 (Managed 物件)。
-
-                }
-
-                // TODO: 釋放 Unmanaged 資源 (Unmanaged 物件) 並覆寫下方的完成項。
-                // TODO: 將大型欄位設為 null。
-
-                HideIcon();
-
-                (mMenuItems as MenuItems)?.Dispose();
-                mMenuItems = null;
-
-                mNotifyIcon?.Dispose();
-                mNotifyIcon = null;
-
-                mContextMenu?.Dispose();
-                mContextMenu = null;
-
-                disposedValue = true;
-            }
-        }
-
-        // TODO: 僅當上方的 Dispose(bool disposing) 具有會釋放 Unmanaged 資源的程式碼時，才覆寫完成項。
-        // ~CtNotifyIcon() {
-        //   // 請勿變更這個程式碼。請將清除程式碼放入上方的 Dispose(bool disposing) 中。
-        //   Dispose(false);
-        // }
-
-        // 加入這個程式碼的目的在正確實作可處置的模式。
-        public void Dispose()
-        {
-            // 請勿變更這個程式碼。請將清除程式碼放入上方的 Dispose(bool disposing) 中。
-            Dispose(true);
-            // TODO: 如果上方的完成項已被覆寫，即取消下行的註解狀態。
-            // GC.SuppressFinalize(this);
-        }
-        #endregion
-
-
-    }
-
-    /// <summary>
-    /// 右鍵選單管理類
-    /// </summary>
-    /// <remarks>
-    /// 用於建立
-    /// </remarks>
-    public class MenuItems : IDisposable
-    {
-
-        #region Declaration - Fields
-
-        /// <summary>
-        /// 右鍵選單集合
-        /// </summary>
-        private List<MenuItem> mMenuItems = new List<MenuItem>();
-
-        /// <summary>
-        /// 右鍵選單事件集合
-        /// </summary>
-        private List<EventHandler> mClickEvents = new List<EventHandler>();
-
-        #endregion Declaration -Fields
-
-        #region Declaration Properties
-
-        /// <summary>
-        /// 右鍵選單集合
-        /// </summary>
-        public List<MenuItem> Items {
-            get {
-                return mMenuItems;
-            }
-        }
-
-        #endregion Declaration - Properties
-
-        #region Function - Public Methods
-
-        /// <summary>
-        /// 傳入選單標題、方法、是否可視，建立新的右鍵選單後加入集合
-        /// </summary>
-        /// <param name="caption">選單標題</param>
-        /// <param name="even">選單觸發時的處理方法</param>
-        /// <param name="enable">是否可視</param>
-        /// <returns>建構出的<see cref="MenuItem"/></returns>
-        public MenuItem AddMenuItem(string caption, Action<object, EventArgs> even = null, bool enable = true)
-        {
-            MenuItem item = new MenuItem();
-            item.Text = caption;
-            item.Index = mMenuItems.Count;
-            item.Enabled = enable;
-            EventHandler handler = even == null ? null : new EventHandler(even);
-            mClickEvents.Add(handler);
-
-            if (even != null) item.Click += handler;
-
-            mMenuItems.Add(item);
-            return item;
-        }
-
-        /// <summary>
-        /// 從右鍵選單集合中移除指定物件
-        /// </summary>
-        /// <param name="item">目標物件</param>
-        public void RemoveMenuItem(MenuItem item)
-        {
-            if (!mMenuItems.Contains(item)) return;
-
-            int index = mMenuItems.IndexOf(item);
-
-            if (mClickEvents[index] != null) item.Click -= mClickEvents[index];
-        }
-
-        /// <summary>
-        /// 清空右鍵選單集合
-        /// </summary>
-        public void Clear()
-        {
-            for (int i = 0; i < mMenuItems.Count; i++)
-            {
-                if (mClickEvents[i] != null) mMenuItems[i].Click -= mClickEvents[i];
-                mMenuItems[i].Dispose();
-                mMenuItems[i] = null;
-            }
-            mMenuItems.Clear();
-            mMenuItems = null;
-
-            mClickEvents.Clear();
-            mClickEvents = null;
-        }
-
-        #endregion Funciton - Public Methods
-
-        #region IDisposable Support
-        private bool disposedValue = false; // 偵測多餘的呼叫
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposedValue)
-            {
-                if (disposing)
-                {
-                    // TODO: 處置 Managed 狀態 (Managed 物件)。
-                    Clear();
-                }
-
-                // TODO: 釋放 Unmanaged 資源 (Unmanaged 物件) 並覆寫下方的完成項。
-                // TODO: 將大型欄位設為 null。
-
-                disposedValue = true;
-            }
-        }
-
-        // TODO: 僅當上方的 Dispose(bool disposing) 具有會釋放 Unmanaged 資源的程式碼時，才覆寫完成項。
-        // ~MenuItems() {
-        //   // 請勿變更這個程式碼。請將清除程式碼放入上方的 Dispose(bool disposing) 中。
-        //   Dispose(false);
-        // }
-
-        // 加入這個程式碼的目的在正確實作可處置的模式。
-        public void Dispose()
-        {
-            // 請勿變更這個程式碼。請將清除程式碼放入上方的 Dispose(bool disposing) 中。
-            Dispose(true);
-            // TODO: 如果上方的完成項已被覆寫，即取消下行的註解狀態。
-            // GC.SuppressFinalize(this);
-        }
-        #endregion
-
-    }
-
-    /// <summary>
-    /// 提供框線顏色設定功能之GroupBox
-    /// </summary>
-    public class CtGroupBox : GroupBox
-    {
-        private System.Drawing.Color _BorderColor = System.Drawing.Color.Red;
-        [Description("設定或取得外框顏色")]
-        public System.Drawing.Color BorderColor {
-            get { return _BorderColor; }
-            set { _BorderColor = value; }
-        }
-
-        protected override void OnPaint(PaintEventArgs e)
-        {
-            //取得text字型大小
-            Size FontSize = TextRenderer.MeasureText(this.Text,
-                                                     this.Font);
-
-            //畫框線
-            #region 原始範例
-            //Rectangle rec = new Rectangle(e.ClipRectangle.Y,
-            //                              this.Font.Height / 2,
-            //                              e.ClipRectangle.Width - 1,
-            //                              e.ClipRectangle.Height - 1 -
-            //                              this.Font.Height / 2);
-            //e.ClipRectangle這個值在自動隱藏停靠視窗下似乎是變動
-            //因此改用固定的GroupBox.Size
-            #endregion 原始範例
-
-            Rectangle rec = new Rectangle(0,
-                                          this.Font.Height / 2,
-                                          this.Width - 1,
-                                          this.Height - 1 -
-                                          this.Font.Height / 2);
-
-
-            e.Graphics.DrawRectangle(new Pen(BorderColor), rec);
-
-            //填滿text的背景
-            e.Graphics.FillRectangle(new SolidBrush(this.BackColor),
-                new Rectangle(6, 0, FontSize.Width, FontSize.Height));
-
-            //text
-            e.Graphics.DrawString(this.Text, this.Font,
-                new Pen(this.ForeColor).Brush, 6, 0);
-        }
-    }
-    
-    public abstract class BaseFlowTemplate {
-
-        protected abstract string Name { get; set; } 
-
-        protected object mKey = new object();
-
-        protected bool mIsExecuting = false;
-
-        protected IntPtr mMainHandle = IntPtr.Zero;
-
-        protected Events.FlowTemplate.DelIsAllow IsAllow = null;
-
-        protected Events.FlowTemplate.DelSwitchFlag SwitchFlag = null;
-
-        protected Events.FlowTemplate.DelExecutingInfo ExecutingInfo = null;
-
-        public BaseFlowTemplate(
-            IntPtr hWnd,
-            Events.FlowTemplate.DelIsAllow isAllow,
-            Events.FlowTemplate.DelSwitchFlag switchFlag,
-            Events.FlowTemplate.DelExecutingInfo executingInfo) {
-            mMainHandle = hWnd;
-            IsAllow = isAllow;
-            SwitchFlag = switchFlag;
-            ExecutingInfo = executingInfo;
-        }
-
-        public void CheckFlag(string description, Action act, bool cont = true) {
-            Console.WriteLine($"{Name} start check. Is executing:{mIsExecuting}");
-            if (!mIsExecuting) {
-                lock (mKey) {
-                    try {
-                        mIsExecuting = IsAllow();
-                        if (!mIsExecuting) {//當前Flag下不可執行
-                            mIsExecuting = UserSwitch(description) && SwitchFlag();
-                            if (mIsExecuting) {//Flag切換成功
-                                mIsExecuting = cont && UserContinue(description);
-                            } else {//Flag切換失敗 
-                                FailureMessage();
-                            }
-                        }
-                        if (mIsExecuting) {
-                            Console.WriteLine($"{Name} Excuting");
-                            act?.Invoke();
-                        }
-                    } catch (Exception ex) {
-                        Console.WriteLine("error", ex.Message);
-                    } finally {
-                        mIsExecuting = false;
-                    }
-                }
-            }else {
-                ExecutingInfo();
-            }
-            Console.WriteLine($"{Name} checked.Is executing:{mIsExecuting}");
-        }
-
-        protected virtual bool UserContinue(string description) {
-            return MsgBoxBtn.Yes == CtMsgBox.Show(mMainHandle,"Continue", $"是否繼續{description}?", MsgBoxBtn.YesNo, MsgBoxStyle.Question);
-        }
-        protected abstract void FailureMessage();
-        protected abstract bool UserSwitch(string description);
-    }
-
-    public class ConnectFlow : BaseFlowTemplate {
-        protected override string Name { get; set; } = "ConnectFlow";
-
-        public ConnectFlow(IntPtr hWnd, Events.FlowTemplate.DelIsAllow isAllow, Events.FlowTemplate.DelSwitchFlag switchFlag, Events.FlowTemplate.DelExecutingInfo executingInfo) : base(hWnd, isAllow, switchFlag, executingInfo) {
-        }
-
-        protected override void FailureMessage() {
-            CtMsgBox.Show(mMainHandle,"Failure", "無法與AGV連線", MsgBoxBtn.OK, MsgBoxStyle.Information);
-        }
-        
-        protected override bool UserSwitch(string description) {
-            return MsgBoxBtn.Yes == CtMsgBox.Show(mMainHandle,"Not connected yet", $"尚未與AGV連線無法{description}\r\n是否要連線至AGV?", MsgBoxBtn.YesNo, MsgBoxStyle.Information);
-        }
-
-    }
-
-    public class ServoOnFlow : BaseFlowTemplate {
-        protected override string Name { get; set; } = "ServoOnFlow";
-
-        public ServoOnFlow(IntPtr hWnd, Events.FlowTemplate.DelIsAllow isAllow, Events.FlowTemplate.DelSwitchFlag switchFlag, Events.FlowTemplate.DelExecutingInfo executingInfo) : base(hWnd, isAllow, switchFlag, executingInfo) {
-        }
-
-        protected override void FailureMessage() {
-            CtMsgBox.Show(mMainHandle, "Failure", "ServoOn失敗", MsgBoxBtn.OK, MsgBoxStyle.Information);
-        }
-
-        protected override bool UserSwitch(string description=null) {
-            var ret = CtMsgBox.Show(mMainHandle, "Not ServoOn yet", $"尚未Servo On無法{description}\r\n是否要Server On?", MsgBoxBtn.YesNo, MsgBoxStyle.Question);
-            return MsgBoxBtn.Yes == ret;
-        }
-    }
-
-    public class SimilarityFlow : BaseFlowTemplate {
-
-        protected override string Name { get; set; } = "SimilarityFlow";
-
-        public SimilarityFlow(IntPtr hWnd, Events.FlowTemplate.DelIsAllow isAllow, Events.FlowTemplate.DelSwitchFlag switchFlag, Events.FlowTemplate.DelExecutingInfo executingInfo) : base(hWnd, isAllow, switchFlag, executingInfo) {
-        }
-
-        protected override void FailureMessage() {
-            CtMsgBox.Show(mMainHandle, "Failure", "地圖相似度過低", MsgBoxBtn.OK, MsgBoxStyle.Information);
-        }
-
-        protected override bool UserSwitch(string description) {
-            return MsgBoxBtn.Yes == CtMsgBox.Show("Similarity is too low", $"地圖匹配度過低無法{description}，是否再Confirm一次?", MsgBoxBtn.YesNo, MsgBoxStyle.Question);
-        }
-    }
-
-    #endregion Support - Class
 
 }

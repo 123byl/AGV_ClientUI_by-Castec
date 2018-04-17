@@ -59,29 +59,41 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="UIControl, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Dynamic Link Libraries\UIControl.dll</HintPath>
+    </Reference>
     <Reference Include="UtilityLibrary">
       <HintPath>..\..\..\..\Downloads\UtilityLibrary\UtilityLibrary.dll</HintPath>
     </Reference>
-    <Reference Include="WeifenLuo.WinFormsUI.Docking">
-      <HintPath>C:\Users\Jay\Downloads\DockPanel_2.4_Bin\WeifenLuo.WinFormsUI.Docking.dll</HintPath>
+    <Reference Include="WeifenLuo.WinFormsUI.Docking, Version=2.4.0.16114, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Dynamic Link Libraries\WeifenLuo.WinFormsUI.Docking.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Component\CtMapInsert.cs">
+    <Compile Include="Forms\CtMapInsert.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Component\CtMapInsert.Designer.cs">
+    <Compile Include="Forms\CtMapInsert.Designer.cs">
       <DependentUpon>CtMapInsert.cs</DependentUpon>
     </Compile>
-    <Compile Include="Component\AgvClient.cs" />
-    <Compile Include="Component\AGVMapUI.cs">
+    <Compile Include="Module\Implement\AGVMapUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Component\AGVMapUI.Designer.cs">
+    <Compile Include="Module\Implement\AGVMapUI.Designer.cs">
       <DependentUpon>AGVMapUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="CtProtocol.cs">
+    <Compile Include="Module\Interface\ModuleInterface.cs" />
+    <Compile Include="Partial\VehiclePlannerUI_Define.cs" />
+    <Compile Include="Partial\VehiclePlannerUI_Extension.cs" />
+    <Compile Include="Partial\VehiclePlannerUI_MethodLibrary.cs" />
+    <Compile Include="Partial\VehiclePlanner_SupportClass.cs" />
+    <Compile Include="Test.cs">
       <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Test.Designer.cs">
+      <DependentUpon>Test.cs</DependentUpon>
     </Compile>
     <Compile Include="VehiclePlannerUI.cs">
       <SubType>Form</SubType>
@@ -89,79 +101,80 @@
     <Compile Include="VehiclePlannerUI.Designer.cs">
       <DependentUpon>VehiclePlannerUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="Component\CtConsole.cs">
+    <Compile Include="Module\Implement\CtConsole.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Component\CtConsole.Designer.cs">
+    <Compile Include="Module\Implement\CtConsole.Designer.cs">
       <DependentUpon>CtConsole.cs</DependentUpon>
     </Compile>
-    <Compile Include="Component\CtDockContent.cs">
+    <Compile Include="Module\Implement\CtDockContent.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Component\CtGoalSetting.cs">
+    <Compile Include="Module\Implement\CtGoalSetting.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Component\CtGoalSetting.Designer.cs">
+    <Compile Include="Module\Implement\CtGoalSetting.Designer.cs">
       <DependentUpon>CtGoalSetting.cs</DependentUpon>
     </Compile>
-    <Compile Include="Component\CtMotionController.cs">
+    <Compile Include="Forms\CtMotionController.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Component\CtMotionController.Designer.cs">
+    <Compile Include="Forms\CtMotionController.Designer.cs">
       <DependentUpon>CtMotionController.cs</DependentUpon>
     </Compile>
-    <Compile Include="Component\CtTesting.cs">
+    <Compile Include="Module\Implement\CtTesting.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Component\CtTesting.Designer.cs">
+    <Compile Include="Module\Implement\CtTesting.Designer.cs">
       <DependentUpon>CtTesting.cs</DependentUpon>
     </Compile>
-    <Compile Include="Component\CtToolBox.cs">
+    <Compile Include="Module\Implement\CtToolBox.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Component\CtToolBox.Designer.cs">
+    <Compile Include="Module\Implement\CtToolBox.Designer.cs">
       <DependentUpon>CtToolBox.cs</DependentUpon>
     </Compile>
-    <Compile Include="Component\Events.cs" />
-    <Compile Include="Component\KeyboardHook.cs" />
-    <Compile Include="Component\MapList.cs">
+    <Compile Include="Forms\MapList.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Component\MapList.Designer.cs">
+    <Compile Include="Forms\MapList.Designer.cs">
       <DependentUpon>MapList.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Component\CtMapInsert.resx">
+    <EmbeddedResource Include="Forms\CtMapInsert.resx">
       <DependentUpon>CtMapInsert.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Component\AGVMapUI.resx">
+    <EmbeddedResource Include="Module\Implement\AGVMapUI.resx">
       <DependentUpon>AGVMapUI.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Test.resx">
+      <DependentUpon>Test.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="VehiclePlannerUI.resx">
       <DependentUpon>VehiclePlannerUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Component\CtConsole.resx">
+    <EmbeddedResource Include="Module\Implement\CtConsole.resx">
       <DependentUpon>CtConsole.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Component\CtDockContent.resx">
+    <EmbeddedResource Include="Module\Implement\CtDockContent.resx">
       <DependentUpon>CtDockContent.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Component\CtGoalSetting.resx">
+    <EmbeddedResource Include="Module\Implement\CtGoalSetting.resx">
       <DependentUpon>CtGoalSetting.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Component\CtMotionController.resx">
+    <EmbeddedResource Include="Forms\CtMotionController.resx">
       <DependentUpon>CtMotionController.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Component\CtTesting.resx">
+    <EmbeddedResource Include="Module\Implement\CtTesting.resx">
       <DependentUpon>CtTesting.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Component\CtToolBox.resx">
+    <EmbeddedResource Include="Module\Implement\CtToolBox.resx">
       <DependentUpon>CtToolBox.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Component\MapList.resx">
+    <EmbeddedResource Include="Forms\MapList.resx">
       <DependentUpon>MapList.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -174,7 +187,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <None Include="D1703.opc" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -507,10 +519,6 @@
       <Project>{2e90a64e-9a09-4950-8b65-aedd47f8f6d4}</Project>
       <Name>SerialCommunication</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\VehicleManager\UIControl\UIControl.csproj">
-      <Project>{b7d0f648-6962-4596-b164-c777766bba97}</Project>
-      <Name>UIControl</Name>
-    </ProjectReference>
     <ProjectReference Include="..\BroadCast\Broadcast.csproj">
       <Project>{10d930fd-ce9c-46fa-aa1e-fb8394ba287f}</Project>
       <Name>Broadcast</Name>
@@ -523,11 +531,15 @@
       <Project>{1bea4f2d-0a48-4a1c-aff2-0b44efa08442}</Project>
       <Name>CtOutLookBar</Name>
     </ProjectReference>
+    <ProjectReference Include="..\VehiclePlanner.Core\VehiclePlanner.Core.csproj">
+      <Project>{03034d39-18c7-449a-95d3-b941dc4df743}</Project>
+      <Name>VehiclePlanner.Core</Name>
+    </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="Dynamic Link Libraries\" />
-  </ItemGroup>
-  <ItemGroup>
+    <Content Include="Dynamic Link Libraries\UIControl.dll" />
+    <Content Include="Dynamic Link Libraries\WeifenLuo.WinFormsUI.Docking.dll" />
     <Content Include="Icon\Drag.png" />
     <Content Include="Icon\Eraser.png" />
     <Content Include="Icon\find.png" />
@@ -541,6 +553,7 @@
     <Content Include="OpenGLDLL\SharpGL.dll" />
     <Content Include="OpenGLDLL\SharpGL.SceneGraph.dll" />
     <Content Include="OpenGLDLL\SharpGL.WinForms.dll" />
+    <Content Include="Resources\CASTEC.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
