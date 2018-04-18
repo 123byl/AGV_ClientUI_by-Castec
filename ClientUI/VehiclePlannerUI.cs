@@ -237,6 +237,27 @@ namespace VehiclePlanner
         
         private IScene IMapCtrl { get { return MapGL?.Ctrl; } }
         
+        /// <summary>
+        /// 是否可視
+        /// </summary>
+        public new bool Visible { get => base.Visible; set {
+            if (base.Visible != value) {
+                if (value) {
+                    this.Show();
+                    this.TopMost = true;
+                    #region 把DocDocument切回來
+                    /// 由於主介面關閉的時候會觸發到DockDocument的FormCloseing事件
+                    /// 導致子介面被隱藏
+                    /// 這邊在手動把他切回來一次
+                    #endregion
+                    MapGL.Show();
+                    this.TopMost = false;
+                } else {
+                    this.Hide();
+                }
+            }
+        }}
+
         #endregion Declaration - Properties
 
         #region Functin - Constructors
@@ -340,19 +361,19 @@ namespace VehiclePlanner
                     mTesting.SetIPList(ipList);
                     break;
                 case nameof(ICtVehiclePlanner.MainVisible):
-                    if (rVehiclePlanner.MainVisible) {
-                        this.Show();
-                        this.TopMost = true;
-                        #region 把DocDocument切回來
-                        /// 由於主介面關閉的時候會觸發到DockDocument的FormCloseing事件
-                        /// 導致子介面被隱藏
-                        /// 這邊在手動把他切回來一次
-                        #endregion
-                        MapGL.Show();
-                        this.TopMost = false;
-                    } else {
-                        this.Hide();
-                    }
+                    //if (rVehiclePlanner.MainVisible) {
+                    //    this.Show();
+                    //    this.TopMost = true;
+                    //    #region 把DocDocument切回來
+                    //    /// 由於主介面關閉的時候會觸發到DockDocument的FormCloseing事件
+                    //    /// 導致子介面被隱藏
+                    //    /// 這邊在手動把他切回來一次
+                    //    #endregion
+                    //    MapGL.Show();
+                    //    this.TopMost = false;
+                    //} else {
+                    //    this.Hide();
+                    //}
                     break;
                 case nameof(ICtVehiclePlanner.IsMotorServoOn):
                     //mTesting.ChangedMotorStt(rVehiclePlanner.IsMotorServoOn);
@@ -1148,6 +1169,8 @@ namespace VehiclePlanner
             miToolBox.DataBindings.ExAdd(nameof(miToolBox.Enabled), source, dataMember, (sender, e) => {
                 e.Value = (e.Value as UserData).Authority<CtToolBox>();
             },source.UserData.Authority<CtToolBox>());
+            /*-- 是否可視 --*/
+            this.DataBindings.Add(nameof(Visible), source, nameof(source.MainVisible));
         }
         
         #endregion Implement - IDataDisplay<ICtVehiclePlanner>
