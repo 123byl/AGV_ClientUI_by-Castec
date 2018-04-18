@@ -357,53 +357,9 @@ namespace VehiclePlanner
         private void rVehiclePlanner_PropertyChanged(object sender, PropertyChangedEventArgs e) {
             switch (e.PropertyName) {
                 case nameof(ICtVehiclePlanner.iTSs):
-                    var ipList = rVehiclePlanner.iTSs;
-                    mTesting.SetIPList(ipList);
-                    break;
-                case nameof(ICtVehiclePlanner.MainVisible):
-                    //if (rVehiclePlanner.MainVisible) {
-                    //    this.Show();
-                    //    this.TopMost = true;
-                    //    #region 把DocDocument切回來
-                    //    /// 由於主介面關閉的時候會觸發到DockDocument的FormCloseing事件
-                    //    /// 導致子介面被隱藏
-                    //    /// 這邊在手動把他切回來一次
-                    //    #endregion
-                    //    MapGL.Show();
-                    //    this.TopMost = false;
-                    //} else {
-                    //    this.Hide();
-                    //}
-                    break;
-                case nameof(ICtVehiclePlanner.IsMotorServoOn):
-                    //mTesting.ChangedMotorStt(rVehiclePlanner.IsMotorServoOn);
-                    break;
-                case nameof(ICtVehiclePlanner.IsConnected):
-                    //mTesting.SetServerStt(rVehiclePlanner.IsConnected);
-                    break;
-                case nameof(ICtVehiclePlanner.IsScanning):
-                    //mTesting.ChangedScanStt(rVehiclePlanner.IsScanning);
-                    break;
-                case nameof(ICtVehiclePlanner.Status):
-                    
-                    break;
-                case nameof(ICtVehiclePlanner.IsAutoReport):
-                    //mTesting.SetLaserStt(rVehiclePlanner.IsAutoReport);
-                    break;
-                case nameof(ICtVehiclePlanner.MapCenter):
-                    //IMapCtrl.Focus(rVehiclePlanner.MapCenter);
-                    break;
-                case nameof(ICtVehiclePlanner.IsBypassSocket):
-                    //CtInvoke.ToolStripItemChecked(miBypassSocket, rVehiclePlanner.IsBypassSocket);
-                    break;
-                case nameof(ICtVehiclePlanner.IsBypassLoadFile):
-                    //CtInvoke.ToolStripItemChecked(miLoadFile, rVehiclePlanner.IsBypassLoadFile);
-                    break;
-                case nameof(ICtVehiclePlanner.HostIP):
-                    //this.InvokeIfNecessary(() => {
-                    //    tslbHostIP.Text = rVehiclePlanner.HostIP;
-                    //});
-                    break;
+                    //var ipList = rVehiclePlanner.iTSs;
+                    //mTesting.SetIPList(ipList);
+                    break;         
                 case nameof(ICtVehiclePlanner.UserData):
                     UserChanged(rVehiclePlanner.UserData);
                     break;

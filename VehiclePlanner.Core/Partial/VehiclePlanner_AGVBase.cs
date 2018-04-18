@@ -940,7 +940,7 @@ namespace VehiclePlanner.Core {
         /// <param name="e"></param>
         private void mSerialClient_OnConnectChange(object sender, ConnectStatusChangeEventArgs e) {
             IsConnected = e.IsConnected;
-
+            
             OnConsoleMessage($"Client - Is {(e.IsConnected ? "Connected" : "Disconnected")} to {e.IP}:{e.Port}");
             if (e.IsConnected) {
                 HostIP = e.IP;

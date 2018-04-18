@@ -6,6 +6,7 @@ using SerialCommunicationData;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -292,7 +293,7 @@ namespace VehiclePlanner.Core {
         /// <summary>
         /// 可用iTS IP清單
         /// </summary>
-        List<string> iTSs { get; }
+        DataTable iTSs { get; }
         /// <summary>
         /// 主畫面是否可視
         /// </summary>
@@ -405,7 +406,7 @@ namespace VehiclePlanner.Core {
         /// <summary>
         /// iTS位置名稱對照表
         /// </summary>
-        private Dictionary<IPAddress, string> mAgvList = new Dictionary<IPAddress, string>();
+        private DataTable mAgvList = new DataTable("iTS");
 
         /// <summary>
         /// 主畫面是否可視
@@ -459,10 +460,10 @@ namespace VehiclePlanner.Core {
         /// <summary>
         /// iTS IP清單
         /// </summary>
-        public List<string> iTSs {
+        public DataTable iTSs {
             get {
                 /*-- 取得iTS IP清單 --*/
-                return mAgvList.Keys.ToList().ConvertAll(v => v.ToString());
+                return mAgvList;
             }
         }
 

@@ -19,6 +19,7 @@ using System.Windows.Forms;
 
 using Geometry;
 using System.Runtime.CompilerServices;
+using System.Data;
 
 namespace VehiclePlanner.Core {
 
@@ -105,8 +106,9 @@ namespace VehiclePlanner.Core {
         /// <param name="e"></param>
         private void mBroadcast_ReceivedData(object sender, BroadcastEventArgs e) {
             /*-- 紀錄有回應的iTS IP位址 --*/
-            if (!mAgvList.ContainsKey(e.Remote.Address)) {
-                mAgvList.Add(e.Remote.Address, e.Message);
+            string ip = e.Remote.Address.ToString();            
+            if (!mAgvList.AsEnumerable().Any(v => (v["IP"].ToString() == ip))) {
+                DelInvoke(()=> mAgvList.Rows.Add(ip, e.Message));
             }
         }
 
@@ -145,6 +147,8 @@ namespace VehiclePlanner.Core {
 
         public CtVehiclePlanner() {
             mITS.PropertyChanged += (sender, e) => OnPropertyChanged(e.PropertyName);
+            mAgvList.Columns.Add("IP");
+            mAgvList.Columns.Add("Description");
         }
 
         #endregion Function - Constructors
@@ -179,7 +183,7 @@ namespace VehiclePlanner.Core {
                     mBroadcast.StartReceive(true);
                     OnConsoleMessage("[Planner]: Start searching iTS.");
                     /*-- 清除iTS清單 --*/
-                    mAgvList.Clear();
+                    DelInvoke(() => mAgvList.Clear());
                     /*-- 廣播要求iTS回應 --*/
                     for (int i = 0; i < 3; i++) {
                         mBroadcast.Send("Count off");
@@ -189,7 +193,7 @@ namespace VehiclePlanner.Core {
                     Thread.Sleep(2000);
                     mBroadcast.StartReceive(false);
                     /*-- 反饋至UI --*/
-                    string msg = $"Find {iTSs.Count} iTS";
+                    string msg = $"Find {iTSs.Rows.Count} iTS";
                     OnConsoleMessage($"[Planner]:{msg}");
                     SetBalloonTip("Search iTS", msg);
                     OnPropertyChanged(nameof(iTSs));

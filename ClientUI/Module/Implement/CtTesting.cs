@@ -309,7 +309,10 @@ namespace VehiclePlanner.Module.Implement {
             btnServoOnOff.DataBindings.Add(nameof(btnServoOnOff.BackColor), source, dataMember).Format += (sender, e) => {
                 e.Value = (bool)e.Value ? Color.Green : Color.Red;
             };
-            
+            btnServoOnOff.DataBindings.Add(nameof(btnServoOnOff.Tag), source, dataMember);
+            /*-- iTS清單 --*/
+            cboHostIP.DataSource = source.iTSs;
+            cboHostIP.DisplayMember = source.iTSs.Columns[0].Caption;
         }
 
         #endregion Implement - IDataDisplay<ICtVehiclPlanner>
