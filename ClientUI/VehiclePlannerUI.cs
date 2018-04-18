@@ -377,9 +377,9 @@ namespace VehiclePlanner
                     //CtInvoke.ToolStripItemChecked(miLoadFile, rVehiclePlanner.IsBypassLoadFile);
                     break;
                 case nameof(ICtVehiclePlanner.HostIP):
-                    this.InvokeIfNecessary(() => {
-                        tslbHostIP.Text = rVehiclePlanner.HostIP;
-                    });
+                    //this.InvokeIfNecessary(() => {
+                    //    tslbHostIP.Text = rVehiclePlanner.HostIP;
+                    //});
                     break;
                 case nameof(ICtVehiclePlanner.UserData):
                     UserChanged(rVehiclePlanner.UserData);
@@ -794,18 +794,18 @@ namespace VehiclePlanner
                     break;
             }
 
-            /*-- 顯示帳號相關資訊 --*/
-            if (usrLv == AccessLevel.None) {
-                title = "Login";
-                usrName = "No account";
-            } else {
-                title = "Logout";
-                usrName = usrData.Account;
-            }
-            CtInvoke.ToolStripItemText(miLogin, title);
-            CtInvoke.ToolStripItemVisible(miUserManager, allowUsrMan);
-            tslbAccessLv.Text = usrLv.ToString();
-            tslbUserName.Text = usrName;
+            ///*-- 顯示帳號相關資訊 --*/
+            //if (usrLv == AccessLevel.None) {
+            //    title = "Login";
+            //    usrName = "No account";
+            //} else {
+            //    title = "Logout";
+            //    usrName = usrData.Account;
+            //}
+            //CtInvoke.ToolStripItemText(miLogin, title);
+            //CtInvoke.ToolStripItemVisible(miUserManager, allowUsrMan);
+            //tslbAccessLv.Text = usrLv.ToString();
+            //tslbUserName.Text = usrName;
         }
         
         /// <summary>
@@ -1196,10 +1196,22 @@ namespace VehiclePlanner
             miBypassSocket.DataBindings.Add(nameof(miBypassSocket.Checked), source, nameof(source.IsBypassSocket));
             /*-- 是否忽略地圖檔讀寫 --*/
             miLoadFile.DataBindings.Add(nameof(miLoadFile.Checked), source, nameof(source.IsBypassLoadFile));
-
-
+            /*-- iTS IP --*/
+            tslbHostIP.DataBindings.Add(nameof(tslbHostIP.Text), source, nameof(source.HostIP));
+            /*-- 使用者資訊 --*/
+            dataMember = nameof(source.UserData);
+            miLogin.DataBindings.ExAdd(nameof(miLogin.Text), source, dataMember, (sender, e) => {
+                e.Value = (e.Value as UserData).Level == AccessLevel.None ? "Login" : "Logout";
+            });
+            tslbAccessLv.DataBindings.ExAdd(nameof(tslbAccessLv.Text), source, dataMember, (sender, e) => {
+                e.Value = (e.Value as UserData).Level.ToString();
+            });
+            miUserManager.DataBindings.ExAdd(nameof(miUserManager.Visible), source, dataMember,(sender, e) => {
+                e.Value = (e.Value as UserData).Level > AccessLevel.Operator;
+            }, source.UserData.Level > AccessLevel.Operator);
+            //});
         }
-
+        
         #endregion Implement - IDataDisplay<ICtVehiclePlanner>
     }
 
