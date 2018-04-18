@@ -1,4 +1,5 @@
 ﻿using CtLib.Library;
+using Geometry;
 using GLUI;
 using System;
 using System.Collections.Generic;
@@ -16,7 +17,44 @@ using WeifenLuo.WinFormsUI.Docking;
 namespace VehiclePlanner.Module.Implement {
     public partial class AGVMapUI : CtDockContent,IMapGL
     {
-        
+
+        #region Declaration  - Fields
+
+        /// <summary>
+        /// 地圖中心點
+        /// </summary>
+        private IPair mMapCenter = FactoryMode.Factory.Pair();
+
+        #endregion Declaration - Fields
+
+        #region Declaration - Properties
+
+        public override DockState DockState {
+            get {
+                return pnlHide.Visible ? DockState.Hidden : DockState.Document;
+            }
+
+            set {
+                pnlHide.Visible = value != DockState.Document;
+                DockStateChanged?.Invoke(this, new EventArgs());
+            }
+        }
+
+        /// <summary>
+        /// 地圖焦點
+        /// </summary>
+        public IPair MapCenter {
+            get => mMapCenter;
+            set {
+                if (mMapCenter != value) {
+                    mMapCenter = value;
+                    Ctrl.Focus(mMapCenter.X, mMapCenter.Y);
+                }
+            }
+        }
+
+        #endregion Declaration - Properties
+
         #region Function - Constructors
 
         /// <summary>
@@ -33,17 +71,7 @@ namespace VehiclePlanner.Module.Implement {
 
         #region Funciton - Public Methods
 
-        public override DockState DockState {
-            get {
-                return pnlHide.Visible ? DockState.Hidden : DockState.Document;                
-            }
-
-            set {
-                pnlHide.Visible = value != DockState.Document;
-                DockStateChanged?.Invoke(this, new EventArgs());
-            }
-        }
-
+        
         public override event EventHandler DockStateChanged;
 
         protected override void ShowWindow() {
@@ -82,6 +110,9 @@ namespace VehiclePlanner.Module.Implement {
         /// <param name="source">資料來源</param>
         public void Bindings(ICtVehiclePlanner source) {
             if (source.DelInvoke == null) source.DelInvoke = invk => this.InvokeIfNecessary(invk);
+
+            /*-- 地圖中心點 --*/
+            this.DataBindings.Add(nameof(MapCenter), source, nameof(source.MapCenter),true, DataSourceUpdateMode.OnPropertyChanged,MapCenter);
         }
 
         #endregion Implement - IDataDisplay<ICtVehiclePlanner>

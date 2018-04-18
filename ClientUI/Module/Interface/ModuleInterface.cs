@@ -250,6 +250,10 @@ namespace VehiclePlanner.Module.Interface {
     /// MapGL視窗公開操作方法
     /// </summary>
     public interface IMapGL : ICtDockContent,IDataDisplay<ICtVehiclePlanner> {
+        /// <summary>
+        /// 地圖中心點
+        /// </summary>
+        IPair MapCenter { get; set; }
         IScene Ctrl { get; }
         void Show();
     }

@@ -391,7 +391,7 @@ namespace VehiclePlanner
                     //mTesting.SetLaserStt(rVehiclePlanner.IsAutoReport);
                     break;
                 case nameof(ICtVehiclePlanner.MapCenter):
-                    IMapCtrl.Focus(rVehiclePlanner.MapCenter);
+                    //IMapCtrl.Focus(rVehiclePlanner.MapCenter);
                     break;
                 case nameof(ICtVehiclePlanner.IsBypassSocket):
                     //CtInvoke.ToolStripItemChecked(miBypassSocket, rVehiclePlanner.IsBypassSocket);
