@@ -69,10 +69,6 @@
       <Project>{4304d4b0-4172-4148-becf-65210ed3c6c5}</Project>
       <Name>CtParamEditor.Comm</Name>
     </ProjectReference>
-    <ProjectReference Include="..\CtTesting\Demo.csproj">
-      <Project>{3D5B539E-E99C-4920-B703-D2ADC8764E27}</Project>
-      <Name>Demo</Name>
-    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

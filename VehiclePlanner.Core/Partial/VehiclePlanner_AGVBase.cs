@@ -192,7 +192,7 @@ namespace VehiclePlanner.Core {
         /// <summary>
         /// iTS狀態
         /// </summary>
-        private IStatus mStatus;
+        private IStatus mStatus = FactoryMode.Factory.Status();
 
         /// <summary>
         /// 資料是否自動回傳
@@ -336,6 +336,16 @@ namespace VehiclePlanner.Core {
                 }
             }
         }
+
+        /// <summary>
+        /// 電池最大電量
+        /// </summary>
+        public double BatteryMaximum { get; } = 100;
+
+        /// <summary>
+        /// 電池最小電量
+        /// </summary>
+        public double BatteryMinimum { get; } = 0;
 
         #endregion Declaration - Properties
 

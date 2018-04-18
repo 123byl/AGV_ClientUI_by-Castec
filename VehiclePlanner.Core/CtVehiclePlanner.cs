@@ -141,6 +141,14 @@ namespace VehiclePlanner.Core {
 
         #endregion Funciton - Events
 
+        #region Funciont - Constructors
+
+        public CtVehiclePlanner() {
+            mITS.PropertyChanged += (sender, e) => OnPropertyChanged(e.PropertyName);
+        }
+
+        #endregion Function - Constructors
+
         #region Funciton - Public Methods
 
         /// <summary>
@@ -148,11 +156,7 @@ namespace VehiclePlanner.Core {
         /// </summary>
         public void Initial() {
             /*-- 建構物件 --*/
-            mITS = new iTSControllerSerial();
-            mMapGL = MapGLController.GetInstance();
-            mKeyboardHook = new KeyboardHook();
-            mBroadcast = new Broadcaster();
-
+            
             mMapGL.Initial();
 
             /*-- 開啟全域鍵盤鉤子 --*/
@@ -321,7 +325,7 @@ namespace VehiclePlanner.Core {
         /// </summary>
         /// <param name="propertyName"></param>
         protected virtual void OnPropertyChanged([CallerMemberName]string propertyName="") {
-            DelInvoke(() => mPropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)));
+            DelInvoke(() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)));
         }
         
 

@@ -13,11 +13,11 @@ namespace VehiclePlanner.Core {
     /// IiTSController介面實作
     /// </summary>
     internal partial class CtVehiclePlanner : IiTSController {
-        
+
         /// <summary>
         /// iTS相關操作
         /// </summary>
-        private IiTSController mITS = null;
+        private IiTSController mITS = new iTSControllerSerial();
 
         public string HostIP {
             get {
@@ -98,6 +98,16 @@ namespace VehiclePlanner.Core {
                 mITS.Velocity = value;
             }
         }
+
+        /// <summary>
+        /// 電池電量最大值
+        /// </summary>
+        public double BatteryMaximum { get => mITS.BatteryMaximum; }
+
+        /// <summary>
+        /// 電池電量最小值
+        /// </summary>
+        public double BatteryMinimum { get => mITS.BatteryMinimum; }
 
         public void AutoReport(bool auto) {
             mITS.AutoReport(auto);

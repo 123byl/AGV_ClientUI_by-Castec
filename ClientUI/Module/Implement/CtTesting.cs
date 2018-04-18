@@ -69,18 +69,16 @@ namespace VehiclePlanner.Module.Implement {
         /// </summary>
         /// <param name="isConnect"></param>
         public void SetServerStt(bool isConnect) {
-            string btnTxt = "Connect AGV";
-            Bitmap btnImg = Properties.Resources.Disconnect;
-            if (isConnect) {
-                btnImg = Properties.Resources.Connect;
-                btnTxt = "AGV Connected";
-            }
-            CtInvoke.ControlTag(btnConnect, isConnect);
-            CtInvoke.ControlText(btnConnect, btnTxt);
-            CtInvoke.ButtonImage(btnConnect, btnImg);
+            //string btnTxt = "Connect AGV";
+            //Bitmap btnImg = Properties.Resources.Disconnect;
+            //if (isConnect) {
+            //    btnImg = Properties.Resources.Connect;
+            //    btnTxt = "AGV Connected";
+            //}
+            //CtInvoke.ControlTag(btnConnect, isConnect);
+            //CtInvoke.ControlText(btnConnect, btnTxt);
+            //CtInvoke.ButtonImage(btnConnect, btnImg);
 
-            mAGV.IsConnected = isConnect;
-            mAGV.Status = btnTxt;
             //CtInvoke.ControlEnabled(btnGetLaser, isConnect);
             //CtInvoke.ControlEnabled(btnGetOri, isConnect);
             //CtInvoke.ControlEnabled(btnIdleMode, isConnect);
@@ -112,7 +110,7 @@ namespace VehiclePlanner.Module.Implement {
         /// </summary>
         /// <param name="isGettingLaser"></param>
         public void SetLaserStt(bool isGettingLaser) {
-            CtInvoke.ControlBackColor(btnGetCarStatus, isGettingLaser ? Color.Green : Color.Transparent);
+            //CtInvoke.ControlBackColor(btnGetCarStatus, isGettingLaser ? Color.Green : Color.Transparent);
         }
 
         /// <summary>
@@ -128,18 +126,18 @@ namespace VehiclePlanner.Module.Implement {
         /// </summary>
         /// <param name="isOn"></param>
         public void ChangedMotorStt(bool isOn) {
-            Color color = Color.Empty;
-            string content = string.Empty;
-            if (isOn) {
-                color = Color.Green;
-                content = "ON";
-            } else {
-                color = Color.Red;
-                content = "OFF";
-            }
-            CtInvoke.ControlTag(btnServoOnOff, isOn);
-            CtInvoke.ControlBackColor(btnServoOnOff, color);
-            CtInvoke.ControlText(btnServoOnOff, content);
+            //Color color = Color.Empty;
+            //string content = string.Empty;
+            //if (isOn) {
+            //    color = Color.Green;
+            //    content = "ON";
+            //} else {
+            //    color = Color.Red;
+            //    content = "OFF";
+            //}
+            //CtInvoke.ControlTag(btnServoOnOff, isOn);
+            //CtInvoke.ControlBackColor(btnServoOnOff, color);
+            //CtInvoke.ControlText(btnServoOnOff, content);
         }
 
         /// <summary>
@@ -147,9 +145,9 @@ namespace VehiclePlanner.Module.Implement {
         /// </summary>
         /// <param name="host">設定IP</param>
         public void SetHostIP(string host) {
-            if (host != cboHostIP.Text) {
-                CtInvoke.ControlText(cboHostIP, host);
-            }
+            //if (host != cboHostIP.Text) {
+            //    CtInvoke.ControlText(cboHostIP, host);
+            //}
         }
 
         /// <summary>
@@ -281,19 +279,36 @@ namespace VehiclePlanner.Module.Implement {
         /// </summary>
         /// <param name="source">資料來源</param>
         public void Bindings(ICtVehiclePlanner source) {
+            /*-- Invoke方法委派 --*/
             if (source.DelInvoke == null) source.DelInvoke = invk => this.InvokeIfNecessary(invk);
-            //btnTest.DataBindings.Add("Text", source, "IsConnected").Format += (sender, e) => e.Value = (bool)e.Value ? "Connected" : "Disconnected";
-            //btnTest.DataBindings.Add("BackColor", source, "IsConnected").Format += (sneder, e) => e.Value = (bool)e.Value ? Color.Green : Color.Red;
-
-            //btnTest.DataBindings.Add("BackColor", mAGV, "IsConnected").Format += (sender, e) => {
-            //    e.Value = (bool)e.Value ? Color.Green : Color.Red;
-            //};
-            //btnConnect.DataBindings.Add("Tag", source, "IsConnected");
-            //btnConnect.DataBindings.Add("Image", source, "IsConnected").Format += (sneder, e) => {
-            //    Image img = (bool)e.Value ? Properties.Resources.Connect : Properties.Resources.Disconnect;
-            //    e.Value = img;
-            //};
-
+            /*-- 地圖掃描狀態 --*/
+            string dataMember = nameof(source.IsScanning);
+            btnScan.DataBindings.Add(nameof(btnScan.Text), source, dataMember).Format += (sender, e) => {
+                e.Value = (bool)e.Value ? "Stop scan" : "Scan";
+            };
+            btnScan.DataBindings.Add(nameof(btnScan.Tag), source, dataMember);
+            /*-- 連線狀態 --*/
+            dataMember = nameof(source.IsConnected);
+            btnConnect.DataBindings.Add(nameof(btnConnect.Text), source, dataMember).Format += (sender, e) => {
+                e.Value = (bool)e.Value ? "iTS Connected" : "Connect iTS";
+            };
+            btnConnect.DataBindings.Add(nameof(btnConnect.Image), source, dataMember).Format += (sender, e) => {
+                e.Value = (bool)e.Value ? Properties.Resources.Connect : Properties.Resources.Disconnect;
+            };
+            btnConnect.DataBindings.Add(nameof(btnConnect.Tag), source, dataMember);
+            /*-- 雷射AutoReport --*/
+            btnGetCarStatus.DataBindings.Add(nameof(btnGetCarStatus.BackColor), source, nameof(source.IsAutoReport)).Format += (sender, e) => {
+                e.Value = (bool)e.Value ? Color.Green : Color.Transparent;
+            };
+            /*-- 馬達狀態 --*/
+            dataMember = nameof(source.IsMotorServoOn);
+            btnServoOnOff.DataBindings.Add(nameof(btnServoOnOff.Text), source, dataMember).Format += (sender, e) => {
+                e.Value = (bool)e.Value ? "ON" : "OFF";
+            };
+            btnServoOnOff.DataBindings.Add(nameof(btnServoOnOff.BackColor), source, dataMember).Format += (sender, e) => {
+                e.Value = (bool)e.Value ? Color.Green : Color.Red;
+            };
+            
         }
 
         #endregion Implement - IDataDisplay<ICtVehiclPlanner>

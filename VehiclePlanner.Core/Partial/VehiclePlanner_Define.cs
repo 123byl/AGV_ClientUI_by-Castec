@@ -164,6 +164,14 @@ namespace VehiclePlanner.Core {
         /// 文字輸入方法委派
         /// </summary>
         DelInputBox InputBox { get; set; }
+        /// <summary>
+        /// 電池電量最大值
+        /// </summary>
+        double BatteryMaximum { get; }
+        /// <summary>
+        /// 電池電量最小值
+        /// </summary>
+        double BatteryMinimum { get; }
 
         /// <summary>
         /// Console訊息事件
@@ -417,15 +425,15 @@ namespace VehiclePlanner.Core {
         /// <summary>
         /// 廣播發送物件
         /// </summary>
-        private Broadcaster mBroadcast = null;
+        private Broadcaster mBroadcast = new Broadcaster();
 
         ///<summary>全域鍵盤鉤子</summary>
-        private KeyboardHook mKeyboardHook = null;
+        private KeyboardHook mKeyboardHook = new KeyboardHook();
 
         /// <summary>
         /// MapGL相關操作
         /// </summary>
-        private MapGLController mMapGL = null;
+        private MapGLController mMapGL = MapGLController.GetInstance();
         
         #endregion Declaration - Fields
 
@@ -530,24 +538,7 @@ namespace VehiclePlanner.Core {
         /// <summary>
         /// 屬性變更通知事件
         /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged {
-            add {
-                if (value != null) {
-                    mPropertyChanged += value;
-                    mITS.PropertyChanged += value;
-                }
-            }
-            remove {
-                if (value != null) {
-                    mPropertyChanged -= value;
-                    mITS.PropertyChanged -= value;
-                }
-            }
-        }
-        /// <summary>
-        /// 屬性變更通知事件
-        /// </summary>
-        private event PropertyChangedEventHandler mPropertyChanged = null;
+        public event PropertyChangedEventHandler PropertyChanged;
         
         /// <summary>
         /// 錯誤訊息事件

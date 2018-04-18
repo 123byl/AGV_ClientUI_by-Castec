@@ -353,35 +353,28 @@ namespace VehiclePlanner
                     }
                     break;
                 case nameof(ICtVehiclePlanner.IsMotorServoOn):
-                    mTesting.ChangedMotorStt(rVehiclePlanner.IsMotorServoOn);
+                    //mTesting.ChangedMotorStt(rVehiclePlanner.IsMotorServoOn);
                     break;
                 case nameof(ICtVehiclePlanner.IsConnected):
-                    mTesting.SetServerStt(rVehiclePlanner.IsConnected);
+                    //mTesting.SetServerStt(rVehiclePlanner.IsConnected);
                     break;
                 case nameof(ICtVehiclePlanner.IsScanning):
-                    mTesting.ChangedScanStt(rVehiclePlanner.IsScanning);
+                    //mTesting.ChangedScanStt(rVehiclePlanner.IsScanning);
                     break;
                 case nameof(ICtVehiclePlanner.Status):
-                    var status = rVehiclePlanner.Status;
-                    this.InvokeIfNecessary(() => {
-                        if (status.Battery >= 0 && status.Battery <= 100) {
-                            tsprgBattery.Value = (int)status.Battery;
-                            tslbBattery.Text = $"{status.Battery:0.0}%";
-                        }
-                        tslbStatus.Text = status.Description.ToString();
-                    });
+                    
                     break;
                 case nameof(ICtVehiclePlanner.IsAutoReport):
-                    mTesting.SetLaserStt(rVehiclePlanner.IsAutoReport);
+                    //mTesting.SetLaserStt(rVehiclePlanner.IsAutoReport);
                     break;
                 case nameof(ICtVehiclePlanner.MapCenter):
                     IMapCtrl.Focus(rVehiclePlanner.MapCenter);
                     break;
                 case nameof(ICtVehiclePlanner.IsBypassSocket):
-                    CtInvoke.ToolStripItemChecked(miBypassSocket, rVehiclePlanner.IsBypassSocket);
+                    //CtInvoke.ToolStripItemChecked(miBypassSocket, rVehiclePlanner.IsBypassSocket);
                     break;
                 case nameof(ICtVehiclePlanner.IsBypassLoadFile):
-                    CtInvoke.ToolStripItemChecked(miLoadFile, rVehiclePlanner.IsBypassLoadFile);
+                    //CtInvoke.ToolStripItemChecked(miLoadFile, rVehiclePlanner.IsBypassLoadFile);
                     break;
                 case nameof(ICtVehiclePlanner.HostIP):
                     this.InvokeIfNecessary(() => {
@@ -1184,6 +1177,27 @@ namespace VehiclePlanner
             foreach(IDataDisplay<ICtVehiclePlanner> display in subDisplay) {
                 display.Bindings(source);
             }
+            /*-- 電池最大電量 --*/
+            tsprgBattery.ProgressBar.DataBindings.Add(nameof(ProgressBar.Maximum), source, nameof(source.BatteryMaximum));
+            /*-- 電池最小電量 --*/
+            tsprgBattery.ProgressBar.DataBindings.Add(nameof(ProgressBar.Minimum), source, nameof(source.BatteryMinimum));
+            /*-- iTS資訊 --*/
+            string dataMember = nameof(source.Status);
+            tsprgBattery.ProgressBar.DataBindings.Add(nameof(ProgressBar.Value), source, dataMember).Format += (sender, e) => {
+                e.Value = (e.Value as IStatus).Battery;
+            };
+            tslbBattery.DataBindings.ExAdd(nameof(tslbBattery.Text), source, dataMember,(sender, e) => {
+                e.Value = $"{(e.Value as IStatus).Battery}%";
+            });
+            tslbStatus.DataBindings.ExAdd(nameof(tslbStatus.Text), source, dataMember, (sender, e) => {
+                e.Value = (e.Value as IStatus).Description.ToString();
+            });
+            /*-- 是否忽略Socket*/
+            miBypassSocket.DataBindings.Add(nameof(miBypassSocket.Checked), source, nameof(source.IsBypassSocket));
+            /*-- 是否忽略地圖檔讀寫 --*/
+            miLoadFile.DataBindings.Add(nameof(miLoadFile.Checked), source, nameof(source.IsBypassLoadFile));
+
+
         }
 
         #endregion Implement - IDataDisplay<ICtVehiclePlanner>

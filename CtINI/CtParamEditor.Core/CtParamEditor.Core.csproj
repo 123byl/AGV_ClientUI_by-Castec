@@ -67,7 +67,7 @@
       <Name>CtGenericParser</Name>
     </ProjectReference>
     <ProjectReference Include="..\CtINI\CtINI.csproj">
-      <Project>{023378C0-67E4-4424-AD75-13572F89E9A5}</Project>
+      <Project>{023378c0-67e4-4424-ad75-13572f89e9a5}</Project>
       <Name>CtINI</Name>
     </ProjectReference>
     <ProjectReference Include="..\CtParamEditor.Comm\CtParamEditor.Comm.csproj">
