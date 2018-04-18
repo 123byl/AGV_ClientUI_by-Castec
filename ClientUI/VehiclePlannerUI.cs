@@ -436,11 +436,11 @@ namespace VehiclePlanner
 
                 if (item.Checked)
                 {
-                    (mDockContent[item] as CtDockContent).HideWindow();
+                    (mDockContent[item] as CtDockContent).Visible = false;
                 }
                 else
                 {
-                    mDockContent[item].ShowWindow();
+                    mDockContent[item].Visible= true;
                 }
                 //if (item.Checked != item.Checked) {
                 //    item.Checked = !item.Checked;
@@ -929,9 +929,9 @@ namespace VehiclePlanner
         private void DockContentVisible(ICtDockContent dockContent, bool vis) {
             try {
                     if (vis) {
-                        dockContent.ShowWindow();
+                        dockContent.Visible = true;
                     } else {
-                        dockContent.HideWindow();
+                        dockContent.Visible = false;
                     }
                 
             } catch (Exception ex) {
@@ -1081,7 +1081,7 @@ namespace VehiclePlanner
                 /*-- 顯示視窗 --*/
                 if (dokContent.DefaultDockState != DockState.Hidden &&
                     dokContent.DefaultDockState != DockState.Unknown) {
-                    dokContent.ShowWindow();
+                    dokContent.Visible = true;
                 }
 
                 /*-- 訂閱DockDockStateCHanged事件 --*/

@@ -46,12 +46,12 @@ namespace VehiclePlanner.Module.Implement {
 
         public override event EventHandler DockStateChanged;
 
-        public override void ShowWindow() {
+        protected override void ShowWindow() {
             base.ShowWindow();
             DockState = DockState.Document;
         }
 
-        public override void HideWindow() {
+        protected override void HideWindow() {
             DockState = DockState.Hidden;
         }
 

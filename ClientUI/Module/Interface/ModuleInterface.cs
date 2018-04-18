@@ -33,6 +33,11 @@ namespace VehiclePlanner.Module.Interface {
         /// </summary>
         Size FixedSize { get; set; }
 
+        /// <summary>
+        /// 是否可視
+        /// </summary>
+        bool Visible { get; set; }
+
         #endregion Properties
 
         #region Methods
@@ -43,15 +48,15 @@ namespace VehiclePlanner.Module.Interface {
         /// <param name="dockPanel"></param>
         void AssignmentDockPanel(DockPanel dockPanel);
 
-        /// <summary>
-        /// 隱藏視窗
-        /// </summary>
-        void HideWindow();
+        ///// <summary>
+        ///// 隱藏視窗
+        ///// </summary>
+        //void HideWindow();
 
-        /// <summary>
-        /// 依照預設停靠狀態顯示
-        /// </summary>
-        void ShowWindow();
+        ///// <summary>
+        ///// 依照預設停靠狀態顯示
+        ///// </summary>
+        //void ShowWindow();
 
         #endregion Methods
 

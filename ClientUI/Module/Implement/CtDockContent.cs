@@ -73,6 +73,15 @@ namespace VehiclePlanner.Module.Implement {
 
         public new virtual DockState DockState { get { return base.DockState; } set { base.DockState = value; } }
 
+        public  new bool Visible { get => this.Visible;set {
+                if (value) {
+                    ShowWindow();
+                } else {
+                    HideWindow();
+                }
+            }
+        }
+
         #endregion Declaration - Properties
 
         #region Function - Constructors
@@ -123,34 +132,6 @@ namespace VehiclePlanner.Module.Implement {
         public void AssignmentDockPanel(DockPanel dockPanel) {
             rDockPanel = dockPanel;
         }
-
-        /// <summary>
-        /// 依照預設來顯示視窗
-        /// </summary>
-        public virtual void ShowWindow() {
-            if (rDockPanel != null) {
-                if (DefaultDockState == DockState.Float || DefaultDockState == DockState.Hidden) {
-                    rDockPanel.DefaultFloatWindowSize = this.mFixedSize;
-                    
-                    BeginInvoke(() => {
-                        this.Show(rDockPanel, new Rectangle(this.Location, this.mFixedSize));
-                    });
-                } else if (DefaultDockState < DockState.Float || DefaultDockState >= DockState.Hidden) {
-                    return;
-                }else {
-                    BeginInvoke(() => this.Show(rDockPanel, DefaultDockState));
-                }
-            } else {
-                throw new Exception("找不到DockPanel物件參考");
-            }
-        }
-
-        /// <summary>
-        /// 隱藏視窗
-        /// </summary>
-        public virtual void HideWindow() {
-            BeginInvoke(() => this.Hide());
-        }
         
         #endregion Function - Public Methods
 
@@ -189,6 +170,34 @@ namespace VehiclePlanner.Module.Implement {
                 this.FormClosing -= CtDockContent_FormClosing;
             }
             base.Dispose(disposing);
+        }
+
+        /// <summary>
+        /// 依照預設來顯示視窗
+        /// </summary>
+        protected virtual void ShowWindow() {
+            if (rDockPanel != null) {
+                if (DefaultDockState == DockState.Float || DefaultDockState == DockState.Hidden) {
+                    rDockPanel.DefaultFloatWindowSize = this.mFixedSize;
+
+                    BeginInvoke(() => {
+                        this.Show(rDockPanel, new Rectangle(this.Location, this.mFixedSize));
+                    });
+                } else if (DefaultDockState < DockState.Float || DefaultDockState >= DockState.Hidden) {
+                    return;
+                } else {
+                    BeginInvoke(() => this.Show(rDockPanel, DefaultDockState));
+                }
+            } else {
+                throw new Exception("找不到DockPanel物件參考");
+            }
+        }
+
+        /// <summary>
+        /// 隱藏視窗
+        /// </summary>
+        protected virtual void HideWindow() {
+            BeginInvoke(() => this.Hide());
         }
 
         #endregion Funciton - Protected Methods
