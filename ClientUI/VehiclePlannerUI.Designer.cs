@@ -1,4 +1,5 @@
 ﻿using VehiclePlanner.Core;
+using VehiclePlanner.Partial.VehiclePlannerUI;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace VehiclePlanner {

@@ -12,12 +12,12 @@ namespace VehiclePlanner.Core {
     /// <summary>
     /// IiTSController介面實作
     /// </summary>
-    internal partial class CtVehiclePlanner : IiTSController {
+    internal partial class CtVehiclePlanner : IiTSControllerSerial {
 
         /// <summary>
         /// iTS相關操作
         /// </summary>
-        private IiTSController mITS = new iTSControllerSerial();
+        private IiTSControllerSerial mITS = new iTSControllerSerial();
 
         public string HostIP {
             get {

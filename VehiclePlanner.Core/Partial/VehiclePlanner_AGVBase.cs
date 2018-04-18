@@ -175,11 +175,6 @@ namespace VehiclePlanner.Core {
         protected MapGLController mMapGL = MapGLController.GetInstance();
         
         /// <summary>
-        /// 是否Bypass Socket通訊
-        /// </summary>
-        protected bool mBypassSocket = false;
-
-        /// <summary>
         /// 回應等待逾時時間
         /// </summary>
         protected int mTimeOut = 1000;
@@ -239,7 +234,7 @@ namespace VehiclePlanner.Core {
                 if (Properties.Settings.Default.HostIP != value && !string.IsNullOrEmpty(value)) {
                     Properties.Settings.Default.HostIP = value;
                     Properties.Settings.Default.Save();
-                    OnPropertyChangedCaller();
+                    OnPropertyChanged();
                 }
             }
         }
@@ -255,7 +250,7 @@ namespace VehiclePlanner.Core {
                 if (value != null && mStatus != value) {
                     mStatus = value;
                     mMapGL.SetLocation(mStatus.Data);
-                    OnPropertyChangedCaller();
+                    OnPropertyChanged();
                 }
             }
         }
@@ -270,7 +265,7 @@ namespace VehiclePlanner.Core {
             protected set {
                 if (mIsAutoReport != value) {
                     mIsAutoReport = value;
-                    OnPropertyChangedCaller();
+                    OnPropertyChanged();
                 }
             }
         }
@@ -285,7 +280,7 @@ namespace VehiclePlanner.Core {
             set {
                 if (mIsMotorServoOn != value) {
                     mIsMotorServoOn = value;
-                    OnPropertyChangedCaller();
+                    OnPropertyChanged();
                 }
             }
         }
@@ -301,7 +296,7 @@ namespace VehiclePlanner.Core {
                 if (mVelocity != value) {
                     mVelocity = value;
                     OnConsoleMessage($"iTS - WorkVelocity = {mVelocity}");
-                    OnPropertyChangedCaller();
+                    OnPropertyChanged();
                 }
             }
         }
@@ -316,26 +311,12 @@ namespace VehiclePlanner.Core {
             private set {
                 if (mIsScanning != value) {
                     mIsScanning = value;
-                    OnPropertyChangedCaller();
+                    OnPropertyChanged();
                     OnConsoleMessage($"iTS - Is {(mIsScanning ? "start" : "stop")} scanning");
                 }
             }
         }
 
-        /// <summary>
-        /// 是否Bypass Socket功能
-        /// </summary>
-        public bool IsBypassSocket {
-            get {
-                return mBypassSocket;
-            }
-            set {
-                if (mBypassSocket != value) {
-                    mBypassSocket = value;
-                    OnPropertyChangedCaller();
-                }
-            }
-        }
 
         /// <summary>
         /// 電池最大電量
@@ -383,14 +364,6 @@ namespace VehiclePlanner.Core {
         #endregion Declaration - Delegates
         
         #region Funciotn - Public Methods
-
-        /// <summary>
-        /// 與指定IP iTS連線/斷線
-        /// </summary>
-        /// <param name="cnn">連線/斷線</param>
-        /// <param name="hostIP">AGV IP</param>
-        /// <exception cref=""
-        public abstract void ConnectToITS(bool cnn, string hostIP = "");
         
         /// <summary>
         /// 取得Map檔
@@ -655,19 +628,13 @@ namespace VehiclePlanner.Core {
         /// 屬性變更事件發報
         /// </summary>
         /// <param name="prop"></param>
-        protected virtual void OnPropertyChanged(string prop) {
-            DelInvoke(() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop)));            
-        }
-
-        protected virtual void OnPropertyChangedCaller([CallerMemberName]string propertyName = "") {
+        protected virtual void OnPropertyChanged([CallerMemberName]string propertyName = "") {
             DelInvoke(() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)));
         }
 
         protected virtual void OnBalloonTip(string title, string context) {
             BalloonTip?.Invoke(title, context);
         }
-
-      
         
         ///<summary>IP驗證</summary>
         ///<param name="ip">要驗證的字串</param>
@@ -848,7 +815,7 @@ namespace VehiclePlanner.Core {
     /// <summary>
     /// 序列傳輸實作iTS控制
     /// </summary>
-    internal class iTSControllerSerial : BaseiTSController {
+    internal class iTSControllerSerial : BaseiTSController,IiTSControllerSerial {
 
         #region Declaration - Fields
 
@@ -861,6 +828,11 @@ namespace VehiclePlanner.Core {
         /// 回應等待清單
         /// </summary>
         private List<CtTaskCompletionSource<IProductPacket>> mCmdTsk = new List<CtTaskCompletionSource<IProductPacket>>();
+
+        /// <summary>
+        /// 是否Bypass Socket通訊
+        /// </summary>
+        protected bool mBypassSocket = false;
 
         #endregion Declaration - Fields
 
@@ -877,7 +849,22 @@ namespace VehiclePlanner.Core {
             protected set {
                 if (mIsConnected != value) {
                     mIsConnected = value;
-                    OnPropertyChangedCaller();
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        /// <summary>
+        /// 是否Bypass Socket功能
+        /// </summary>
+        public bool IsBypassSocket {
+            get {
+                return mBypassSocket;
+            }
+            set {
+                if (mBypassSocket != value) {
+                    mBypassSocket = value;
+                    OnPropertyChanged();
                 }
             }
         }
@@ -886,12 +873,10 @@ namespace VehiclePlanner.Core {
 
         #region Funciotn - Constructors
 
-        public iTSControllerSerial() {
-            mSerialClient = FactoryMode.Factory.SerialClient(mSerialClient_ReceiveData, mBypassSocket);
-            mSerialClient.ConnectChange += mSerialClient_OnConnectChange;
-        }
+        public iTSControllerSerial() {}
 
         #endregion Funciotn - Constructors
+
         #region Funciton - Events
 
         /// <summary>
@@ -963,15 +948,17 @@ namespace VehiclePlanner.Core {
         /// </summary>
         /// <param name="cnn">連線/斷線</param>
         /// <param name="hostIP">AGV IP</param>
-        public override void ConnectToITS(bool cnn, string hostIP = "") {
+        public void ConnectToITS(bool cnn, string hostIP = "") {
             try {
                 if (IsConnected != cnn) {
                     if (cnn) {//連線至VC
                         /*-- 實例化物件 --*/
-                        if (mSerialClient == null) {
-                            mSerialClient = FactoryMode.Factory.SerialClient(mSerialClient_ReceiveData, mBypassSocket);
-                            mSerialClient.ConnectChange += mSerialClient_OnConnectChange;
+                        if (mSerialClient != null) {
+                            mSerialClient.ConnectChange -= mSerialClient_OnConnectChange;
+                            mSerialClient.Dispose();
                         }
+                        mSerialClient = FactoryMode.Factory.SerialClient(mSerialClient_ReceiveData, mBypassSocket);
+                        mSerialClient.ConnectChange += mSerialClient_OnConnectChange;
                         /*-- IP格式驗證 --*/
                         if (!VerifyIP(hostIP)) {
                             throw new FormatException($"{hostIP}是錯誤IP格式");
@@ -999,8 +986,7 @@ namespace VehiclePlanner.Core {
                 }
             }
         }
-
-
+        
         /// <summary>
         /// 要求雷射資料
         /// </summary>

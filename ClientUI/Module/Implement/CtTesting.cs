@@ -27,8 +27,7 @@ namespace VehiclePlanner.Module.Implement {
         /// 紀錄鍵盤按下的方向
         /// </summary>
         private List<MotionDirection> mDirs = new List<MotionDirection>();
-
-        private AGV mAGV = new AGV();
+        
         #endregion Declaration - Fields
 
         #region Function - Construcotrs

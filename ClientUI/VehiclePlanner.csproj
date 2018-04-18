@@ -89,12 +89,6 @@
     <Compile Include="Partial\VehiclePlannerUI_Extension.cs" />
     <Compile Include="Partial\VehiclePlannerUI_MethodLibrary.cs" />
     <Compile Include="Partial\VehiclePlanner_SupportClass.cs" />
-    <Compile Include="Test.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Test.Designer.cs">
-      <DependentUpon>Test.cs</DependentUpon>
-    </Compile>
     <Compile Include="VehiclePlannerUI.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -148,9 +142,6 @@
     <EmbeddedResource Include="Module\Implement\AGVMapUI.resx">
       <DependentUpon>AGVMapUI.cs</DependentUpon>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Test.resx">
-      <DependentUpon>Test.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="VehiclePlannerUI.resx">
       <DependentUpon>VehiclePlannerUI.cs</DependentUpon>

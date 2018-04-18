@@ -126,17 +126,9 @@ namespace VehiclePlanner.Core {
     /// </summary>
     public interface IiTSController:IDataSource {
         /// <summary>
-        /// Vehicle Console端IP
-        /// </summary>
-        string HostIP { get; }
-        /// <summary>
         /// 資料是否自動回傳中
         /// </summary>
         bool IsAutoReport { get; }
-        /// <summary>
-        /// 是否Bypass Socket功能
-        /// </summary>
-        bool IsBypassSocket { get; set; }
         /// <summary>
         /// 是否已建立連線
         /// </summary>
@@ -187,12 +179,6 @@ namespace VehiclePlanner.Core {
         /// 切換資料自動回傳
         /// </summary>
         void AutoReport(bool auto);
-        /// <summary>
-        /// 與指定IP iTS連線/斷線
-        /// </summary>
-        /// <param name="cnn">連線/斷線</param>
-        /// <param name="hostIP">AGV IP</param>
-        void ConnectToITS(bool cnn, string hostIP = "");
         /// <summary>
         /// 到指定充電站進行充電
         /// </summary>
@@ -275,9 +261,29 @@ namespace VehiclePlanner.Core {
     }
 
     /// <summary>
+    /// 串列通訊之iTS控制器
+    /// </summary>
+    public interface IiTSControllerSerial : IiTSController {
+        /// <summary>
+        /// Vehicle Console端IP
+        /// </summary>
+        string HostIP { get; }
+        /// <summary>
+        /// 是否Bypass Socket功能
+        /// </summary>
+        bool IsBypassSocket { get; set; }
+        /// <summary>
+        /// 與指定IP iTS連線/斷線
+        /// </summary>
+        /// <param name="cnn">連線/斷線</param>
+        /// <param name="hostIP">AGV IP</param>
+        void ConnectToITS(bool cnn, string hostIP = "");
+    }
+
+    /// <summary>
     /// 車輛規劃器
     /// </summary>
-    public interface ICtVehiclePlanner : IiTSController,ICtVersion ,IDisposable{
+    public interface ICtVehiclePlanner : IiTSControllerSerial,ICtVersion ,IDisposable{
         /// <summary>
         /// 當前Map檔路徑
         /// </summary>

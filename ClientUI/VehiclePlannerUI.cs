@@ -285,18 +285,7 @@ namespace VehiclePlanner
                 LoadICtDockContent();
 
                 LoadCtNotifyIcon();
-
-                /*-- 依照使用者權限進行配置 --*/
-                //UserChanged(rVehiclePlanner.UserData);
-
-                ///*-- 檢查Bypass狀態 --*/
-                //CtInvoke.ToolStripItemChecked(miBypassSocket, rVehiclePlanner.IsBypassSocket);
-                //CtInvoke.ToolStripItemChecked(miLoadFile, rVehiclePlanner.IsBypassLoadFile);
-
-                ///*-- 檢查遠端設備IP --*/
-                //tslbHostIP.Text = rVehiclePlanner.HostIP;
-                //mTesting.SetHostIP(rVehiclePlanner.HostIP);
-
+                
             } else {
                 this.Close();
             }
@@ -1067,7 +1056,7 @@ namespace VehiclePlanner
         public void Bindings(ICtVehiclePlanner source) {
             if (source.DelInvoke == null) source.DelInvoke = invk => this.InvokeIfNecessary(invk);
             var subDisplay = mDockContent.Where(kvp => kvp.Value is IDataDisplay<ICtVehiclePlanner>).Select(kvp => kvp.Value);
-            foreach(IDataDisplay<ICtVehiclePlanner> display in subDisplay) {
+            foreach (IDataDisplay<ICtVehiclePlanner> display in subDisplay) {
                 display.Bindings(source);
             }
             /*-- 電池最大電量 --*/
@@ -1079,7 +1068,7 @@ namespace VehiclePlanner
             tsprgBattery.ProgressBar.DataBindings.Add(nameof(ProgressBar.Value), source, dataMember).Format += (sender, e) => {
                 e.Value = (e.Value as IStatus).Battery;
             };
-            tslbBattery.DataBindings.ExAdd(nameof(tslbBattery.Text), source, dataMember,(sender, e) => {
+            tslbBattery.DataBindings.ExAdd(nameof(tslbBattery.Text), source, dataMember, (sender, e) => {
                 e.Value = $"{(e.Value as IStatus).Battery}%";
             });
             tslbStatus.DataBindings.ExAdd(nameof(tslbStatus.Text), source, dataMember, (sender, e) => {
@@ -1102,29 +1091,33 @@ namespace VehiclePlanner
             tslbUserName.DataBindings.ExAdd(nameof(tslbUserName.Text), source, dataMember, (sneder, e) => {
                 e.Value = (e.Value as UserData).Account;
             });
-            miUserManager.DataBindings.ExAdd(nameof(miUserManager.Visible), source, dataMember,(sender, e) => {
+            miUserManager.DataBindings.ExAdd(nameof(miUserManager.Visible), source, dataMember, (sender, e) => {
                 e.Value = (e.Value as UserData).Level > AccessLevel.Operator;
             }, source.UserData.Level > AccessLevel.Operator);
             miTesting.DataBindings.ExAdd(nameof(miTesting.Enabled), source, dataMember, (sender, e) => {
                 e.Value = (e.Value as UserData).Authority<CtTesting>();
-            },source.UserData.Authority<CtTesting>());
+            }, source.UserData.Authority<CtTesting>());
             miGoalSetting.DataBindings.ExAdd(nameof(miGoalSetting.Enabled), source, dataMember, (sender, e) => {
                 e.Value = (e.Value as UserData).Authority<CtGoalSetting>();
-            },source.UserData.Authority<CtGoalSetting>());
+            }, source.UserData.Authority<CtGoalSetting>());
             miMapGL.DataBindings.ExAdd(nameof(miMapGL.Enabled), source, dataMember, (sender, e) => {
                 e.Value = (e.Value as UserData).Authority<AGVMapUI>();
-            },source.UserData.Authority<AGVMapUI>());
-            miConsole.DataBindings.ExAdd(nameof(miConsole.Enabled), source, dataMember,(sender,e)=> {
+            }, source.UserData.Authority<AGVMapUI>());
+            miConsole.DataBindings.ExAdd(nameof(miConsole.Enabled), source, dataMember, (sender, e) => {
                 e.Value = (e.Value as UserData).Authority<CtConsole>();
-            },source.UserData.Authority<CtConsole>());
+            }, source.UserData.Authority<CtConsole>());
             miToolBox.DataBindings.ExAdd(nameof(miToolBox.Enabled), source, dataMember, (sender, e) => {
                 e.Value = (e.Value as UserData).Authority<CtToolBox>();
-            },source.UserData.Authority<CtToolBox>());
+            }, source.UserData.Authority<CtToolBox>());
             miBypass.DataBindings.ExAdd(nameof(miBypass.Visible), source, dataMember, (sender, e) => {
                 e.Value = (e.Value as UserData).Level == AccessLevel.Administrator;
             }, source.UserData.Level == AccessLevel.Administrator);
             /*-- 是否可視 --*/
             this.DataBindings.Add(nameof(Visible), source, nameof(source.MainVisible));
+            /*-- 連線狀態 --*/
+            miBypassSocket.DataBindings.ExAdd(nameof(miBypassSocket.Enabled), source, nameof(source.IsConnected), (sender, e) => {
+                e.Value = !(bool)e.Value;
+            });
         }
         
         #endregion Implement - IDataDisplay<ICtVehiclePlanner>

@@ -376,4 +376,107 @@ namespace VehiclePlanner.Partial.VehiclePlannerUI {
         }
     }
 
+    /// <summary>
+    /// 可綁定的StripLabel控制項
+    /// </summary>
+    public class BindableToolStripStatusLabel : ToolStripStatusLabel, IBindableComponent {
+
+        #region IBindableComponent Members
+
+        private BindingContext bindingContext;
+        private ControlBindingsCollection dataBindings;
+        public BindingContext BindingContext {
+            get {
+                if (bindingContext == null) {
+                    bindingContext = new BindingContext();
+                }
+                return bindingContext;
+            }
+            set {
+                bindingContext = value;
+            }
+        }
+
+        public ControlBindingsCollection DataBindings {
+            get {
+                if (dataBindings == null) {
+                    dataBindings = new ControlBindingsCollection(this);
+                }
+                return dataBindings;
+            }
+        }
+
+
+        #endregion
+
+    }
+
+    /// <summary>
+    /// 可綁定的StripPropgressBar控制項
+    /// </summary>
+    public class BindableToolStripProgressBar : ToolStripProgressBar, IBindableComponent {
+
+        #region IBindableComponent Members
+
+        private BindingContext bindingContext;
+        private ControlBindingsCollection dataBindings;
+
+        public BindingContext BindingContext {
+            get {
+                if (bindingContext == null) {
+                    bindingContext = new BindingContext();
+                }
+                return bindingContext;
+            }
+            set {
+                bindingContext = value;
+            }
+        }
+        public ControlBindingsCollection DataBindings {
+            get {
+                if (dataBindings == null) {
+                    dataBindings = new ControlBindingsCollection(this);
+                }
+                return dataBindings;
+            }
+        }
+
+        #endregion
+
+    }
+
+    /// <summary>
+    /// 可綁定的ToolStripMenuItem控制項
+    /// </summary>
+    public class BindableToolStripMenuItem : ToolStripMenuItem, IBindableComponent {
+
+        #region IBindableComponent Members
+
+        private BindingContext bindingContext;
+        private ControlBindingsCollection dataBindings;
+
+        public BindingContext BindingContext {
+            get {
+                if (bindingContext == null) {
+                    bindingContext = new BindingContext();
+                }
+                return bindingContext;
+            }
+            set {
+                bindingContext = value;
+            }
+        }
+        public ControlBindingsCollection DataBindings {
+            get {
+                if (dataBindings == null) {
+                    dataBindings = new ControlBindingsCollection(this);
+                }
+                return dataBindings;
+            }
+        }
+
+        #endregion
+
+    }
+
 }
