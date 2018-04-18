@@ -103,8 +103,10 @@ namespace VehiclePlanner
         ///         \ 將所有按鈕解鎖，當無法處於執行按鈕功能狀態，以對話視窗引導使用者進行狀態修正
         ///         \ 重寫模組權限(加入CtToolBox控制)
         ///         \ 重寫AGVMapUI的ShowWindow與HideWindow方法
+        ///     1.0.0   Jay [2018/04/18]
+        ///         \ 權限綁定
         /// </remarks>
-        public CtVersion Version { get { return new CtVersion(0, 0, 13, "2017/12/14", "Jay Chang"); } }
+        public CtVersion Version { get { return new CtVersion(1, 0, 0, "2017/04/18", "Jay Chang"); } }
 
         #endregion Version - Information
         
@@ -761,51 +763,10 @@ namespace VehiclePlanner
         /// </summary>
         /// <param name="usrLv"></param>
         private void UserChanged(UserData usrData) {
-            AccessLevel usrLv = usrData.Level;
-            string title = string.Empty;//工具列選項標題
-            string usrName = string.Empty;//狀態列帳號名稱
-            bool allowUsrMan = usrLv > AccessLevel.Operator;
-
-            /*-- 依照權限切換模組可視層級 --*/
-            switch (usrLv) {
-                case AccessLevel.None:
-                    DockContentVisible(miToolBox, false);
-                    DockContentVisible(miMapGL, false);
-                    DockContentVisible(miConsole, true);
-                    DockContentVisible(miTesting, false);
-                    DockContentVisible(miGoalSetting, false);
-                    miBypass.Visible = false;
-                    break;
-                case AccessLevel.Operator:
-                    DockContentVisible(miToolBox, false);
-                    DockContentVisible(miMapGL, true);
-                    DockContentVisible(miConsole, true);
-                    DockContentVisible(miGoalSetting, true);
-                    break;
-                case AccessLevel.Engineer:
-                case AccessLevel.Administrator:
-                    DockContentVisible(miToolBox, true);
-                    DockContentVisible(miMapGL, true);
-                    DockContentVisible(miConsole, true);
-                    DockContentVisible(miGoalSetting, true);
-                    DockContentVisible(miTesting, true);
-                    miBypass.Visible = true;
-
-                    break;
+            foreach(var kvp in mDockContent) {
+                DockContentVisible(kvp.Key, kvp.Value.Authority(usrData));
             }
-
-            ///*-- 顯示帳號相關資訊 --*/
-            //if (usrLv == AccessLevel.None) {
-            //    title = "Login";
-            //    usrName = "No account";
-            //} else {
-            //    title = "Logout";
-            //    usrName = usrData.Account;
-            //}
-            //CtInvoke.ToolStripItemText(miLogin, title);
-            //CtInvoke.ToolStripItemVisible(miUserManager, allowUsrMan);
-            //tslbAccessLv.Text = usrLv.ToString();
-            //tslbUserName.Text = usrName;
+            miBypass.Visible = usrData.Level > AccessLevel.Operator;
         }
         
         /// <summary>
@@ -919,46 +880,7 @@ namespace VehiclePlanner
                 }
             }
         }
-
-        /// <summary>
-        /// 切換CtDockContemt可視狀態
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="dockContent">CtDockContent物件</param>
-        /// <param name="vis">可視狀態</param>
-        private void DockContentVisible(ICtDockContent dockContent, bool vis) {
-            try {
-                    if (vis) {
-                        dockContent.Visible = true;
-                    } else {
-                        dockContent.Visible = false;
-                    }
-                
-            } catch (Exception ex) {
-                string msg = ex.Message;
-            }
-
-        }
-
-        /// <summary>
-        /// 控制DockContent物件致能
-        /// </summary>
-        /// <param name="mapGL"></param>
-        /// <param name="console"></param>
-        /// <param name="testing"></param>
-        /// <param name="goalSetting"></param>
-        private void DockContentEnable(bool mapGL, bool console, bool testing, bool goalSetting) {
-            CtInvoke.ToolStripItemEnable(miMapGL, mapGL);
-            CtInvoke.ToolStripItemEnable(miConsole, console);
-            CtInvoke.ToolStripItemEnable(miTesting, testing);
-            CtInvoke.ToolStripItemEnable(miGoalSetting, goalSetting);
-
-            DockContentVisible(MapGL, mapGL);
-            DockContentVisible(mConsole, console);
-            DockContentVisible(mGoalSetting, goalSetting);
-            DockContentVisible(mTesting, testing);
-        }
-
+        
         /// <summary>
         /// 設定DockContent以及與之相關ToolStripMenuItem控制項之Visible屬性
         /// </summary>
@@ -966,8 +888,7 @@ namespace VehiclePlanner
         /// <param name="visible">是否可視</param>
         private void DockContentVisible(ToolStripMenuItem item, bool visible) {
             if (mDockContent.ContainsKey(item)) {
-                DockContentVisible(mDockContent[item], visible);
-                CtInvoke.ToolStripItemEnable(item, visible);
+                mDockContent[item].Visible = visible;
             }
         }
 
@@ -1206,10 +1127,27 @@ namespace VehiclePlanner
             tslbAccessLv.DataBindings.ExAdd(nameof(tslbAccessLv.Text), source, dataMember, (sender, e) => {
                 e.Value = (e.Value as UserData).Level.ToString();
             });
+            tslbUserName.DataBindings.ExAdd(nameof(tslbUserName.Text), source, dataMember, (sneder, e) => {
+                e.Value = (e.Value as UserData).Account;
+            });
             miUserManager.DataBindings.ExAdd(nameof(miUserManager.Visible), source, dataMember,(sender, e) => {
                 e.Value = (e.Value as UserData).Level > AccessLevel.Operator;
             }, source.UserData.Level > AccessLevel.Operator);
-            //});
+            miTesting.DataBindings.ExAdd(nameof(miTesting.Enabled), source, dataMember, (sender, e) => {
+                e.Value = (e.Value as UserData).Authority<CtTesting>();
+            },source.UserData.Authority<CtTesting>());
+            miGoalSetting.DataBindings.ExAdd(nameof(miGoalSetting.Enabled), source, dataMember, (sender, e) => {
+                e.Value = (e.Value as UserData).Authority<CtGoalSetting>();
+            },source.UserData.Authority<CtGoalSetting>());
+            miMapGL.DataBindings.ExAdd(nameof(miMapGL.Enabled), source, dataMember, (sender, e) => {
+                e.Value = (e.Value as UserData).Authority<AGVMapUI>();
+            },source.UserData.Authority<AGVMapUI>());
+            miConsole.DataBindings.ExAdd(nameof(miConsole.Enabled), source, dataMember,(sender,e)=> {
+                e.Value = (e.Value as UserData).Authority<CtConsole>();
+            },source.UserData.Authority<CtConsole>());
+            miToolBox.DataBindings.ExAdd(nameof(miToolBox.Enabled), source, dataMember, (sender, e) => {
+                e.Value = (e.Value as UserData).Authority<CtToolBox>();
+            },source.UserData.Authority<CtToolBox>());
         }
         
         #endregion Implement - IDataDisplay<ICtVehiclePlanner>

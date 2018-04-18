@@ -1,4 +1,5 @@
-﻿using CtOutLookBar.Public;
+﻿using CtLib.Module.Utility;
+using CtOutLookBar.Public;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -6,6 +7,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using VehiclePlanner.Module.Implement;
+using VehiclePlanner.Module.Interface;
 
 namespace VehiclePlanner.Partial.VehiclePlannerUI {
     internal static class VehiclePlannerUI_Extension {
@@ -35,5 +38,56 @@ namespace VehiclePlanner.Partial.VehiclePlannerUI {
         }
 
         #endregion OutlookBar
+
+        /// <summary>
+        /// 回傳使用者權限
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="user">使用者資料</param>
+        /// <returns>是否有權限</returns>
+        public static bool Authority<T>(this UserData user) where T : ICtDockContent {
+            return Authority(typeof(T), user);
+        }
+
+        /// <summary>
+        /// 回傳使用者權限
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="component">要使用的元件</param>
+        /// <param name="user">使用者資料</param>
+        /// <returns>是否有權限</returns>
+        public static bool Authority<T>(this T component,UserData user)where T:ICtDockContent {
+            return Authority(component.GetType(),user);
+        }
+
+        /// <summary>
+        /// 回傳使用者權限
+        /// </summary>
+        /// <param name="type">要使用的元件類型</param>
+        /// <param name="user">使用者資料</param>
+        /// <returns>是否有權限</returns>
+        private static bool Authority(Type type ,UserData user) {
+            string typeName = type.Name;
+            var lv = user.Level;
+            switch (typeName) {
+                case nameof(CtTesting):
+                case nameof(ITesting):
+                    return lv > AccessLevel.Operator;
+                case nameof(CtConsole):
+                case nameof(IConsole):
+                    return true;
+                case nameof(CtGoalSetting):
+                case nameof(IGoalSetting):
+                    return lv > AccessLevel.None;
+                case nameof(CtToolBox):
+                    return lv > AccessLevel.Operator;
+                case nameof(AGVMapUI):
+                case nameof(IMapGL):
+                    return lv > AccessLevel.None;
+                default:
+                    throw new Exception($"未定義{typeName}權限");
+            }
+        }
     }
+    
 }

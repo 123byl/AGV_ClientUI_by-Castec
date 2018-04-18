@@ -32,6 +32,11 @@ namespace VehiclePlanner.Module.Implement {
         /// </summary>
         protected DockPanel rDockPanel = null;
 
+        /// <summary>
+        /// 是否可視
+        /// </summary>
+        protected bool mVisible = false;
+
         #endregion Declaration - Fields
 
         #region Declaration - Events
@@ -73,12 +78,16 @@ namespace VehiclePlanner.Module.Implement {
 
         public new virtual DockState DockState { get { return base.DockState; } set { base.DockState = value; } }
 
-        public  new bool Visible { get => this.Visible;set {
-                if (value) {
-                    ShowWindow();
-                } else {
-                    HideWindow();
+        public  new bool Visible { get => mVisible;set {
+                if (mVisible != value) {
+                    mVisible = value;
+                    if (value) {
+                        ShowWindow();
+                    } else {
+                        HideWindow();
+                    }
                 }
+
             }
         }
 

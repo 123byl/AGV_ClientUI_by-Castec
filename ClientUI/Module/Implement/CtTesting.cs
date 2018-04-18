@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using VehiclePlanner.Module.Interface;
 using VehiclePlanner.Partial.VehiclePlannerUI;
 using VehiclePlanner.Core;
+using CtLib.Module.Utility;
 
 namespace VehiclePlanner.Module.Implement {
     /// <summary>
@@ -314,10 +315,5 @@ namespace VehiclePlanner.Module.Implement {
         #endregion Implement - IDataDisplay<ICtVehiclPlanner>
 
     }
-
-    public class AGV {
-        public bool IsConnected { get; set; } = false;
-        public string Status { get; set; } = "Disconnected";
-    }
-
+    
 }
