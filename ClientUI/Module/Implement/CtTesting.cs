@@ -71,7 +71,7 @@ namespace VehiclePlanner.Module.Implement {
         private void btnConnect_Click(object sender, EventArgs e) {
             Task.Run(() => {
                 if (btnConnect.Tag == null || (btnConnect.Tag is bool && !(bool)btnConnect.Tag)) {
-                    Connect.Invoke(true, cboHostIP.InvokeIfNecessary(() =>cboHostIP.Text));
+                    Connect.Invoke(true);
                 } else {
                     Connect.Invoke(false);
                 }

@@ -258,6 +258,11 @@ namespace VehiclePlanner.Core {
         /// </summary>
         /// <param name="scan">開始/停止掃描地圖</param>
         void StartScan(bool scan);
+        /// <summary>
+        /// 連線至iTS
+        /// </summary>
+        /// <param name="cnn">連線/斷線</param>
+        void ConnectToITS(bool cnn);
     }
 
     /// <summary>
@@ -272,12 +277,6 @@ namespace VehiclePlanner.Core {
         /// 是否Bypass Socket功能
         /// </summary>
         bool IsBypassSocket { get; set; }
-        /// <summary>
-        /// 與指定IP iTS連線/斷線
-        /// </summary>
-        /// <param name="cnn">連線/斷線</param>
-        /// <param name="hostIP">AGV IP</param>
-        void ConnectToITS(bool cnn, string hostIP = "");
     }
 
     /// <summary>

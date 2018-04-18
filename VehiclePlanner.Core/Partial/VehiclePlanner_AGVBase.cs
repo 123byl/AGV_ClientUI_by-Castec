@@ -612,6 +612,12 @@ namespace VehiclePlanner.Core {
             }
         }
 
+        /// <summary>
+        /// 連線至iTS
+        /// </summary>
+        /// <param name="cnn"></param>
+        public abstract void ConnectToITS(bool cnn);
+
         #endregion Funciton - Public Methods
 
         #region Funciton - Private Methods
@@ -948,7 +954,7 @@ namespace VehiclePlanner.Core {
         /// </summary>
         /// <param name="cnn">連線/斷線</param>
         /// <param name="hostIP">AGV IP</param>
-        public void ConnectToITS(bool cnn, string hostIP = "") {
+        public override void ConnectToITS(bool cnn) {
             try {
                 if (IsConnected != cnn) {
                     if (cnn) {//連線至VC
@@ -960,16 +966,16 @@ namespace VehiclePlanner.Core {
                         mSerialClient = FactoryMode.Factory.SerialClient(mSerialClient_ReceiveData, mBypassSocket);
                         mSerialClient.ConnectChange += mSerialClient_OnConnectChange;
                         /*-- IP格式驗證 --*/
-                        if (!VerifyIP(hostIP)) {
-                            throw new FormatException($"{hostIP}是錯誤IP格式");
+                        if (!VerifyIP(HostIP)) {
+                            throw new FormatException($"{HostIP}是錯誤IP格式");
                         }
                         /*-- 測試IP是否存在 --*/
                         PingStatus pingStt = PingStatus.Unknown;
-                        if ((pingStt = CtNetwork.Ping(hostIP, 500).PingState) != PingStatus.Success) {
+                        if ((pingStt = CtNetwork.Ping(HostIP, 500).PingState) != PingStatus.Success) {
                             throw new PingException(pingStt.ToString());
                         }
                         /*-- 連線至VehicleConsole --*/
-                        mSerialClient.Connect(hostIP, (int)EPort.VehiclePlanner);
+                        mSerialClient.Connect(HostIP, (int)EPort.VehiclePlanner);
                     } else {//斷開與VehicleConsole的連線
                         mSerialClient.Stop();
                     }
@@ -1112,8 +1118,7 @@ namespace VehiclePlanner.Core {
             var mapFile = Send(FactoryMode.Factory.Order().RequestMapFile(mapName))?.ToIRequestMapFile()?.Product;
             return mapFile;
         }
-
-
+        
         #endregion Funciotn - Public Methods
 
         #region Funciton - Private Methods

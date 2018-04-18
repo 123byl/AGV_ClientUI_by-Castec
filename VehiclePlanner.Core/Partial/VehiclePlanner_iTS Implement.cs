@@ -113,8 +113,8 @@ namespace VehiclePlanner.Core {
             mITS.AutoReport(auto);
         }
 
-        public void ConnectToITS(bool cnn, string hostIP = "") {
-            mITS.ConnectToITS(cnn, hostIP);
+        public void ConnectToITS(bool cnn) {
+            mITS.ConnectToITS(cnn);
         }
 
         public void DoCharging(string powerName) {

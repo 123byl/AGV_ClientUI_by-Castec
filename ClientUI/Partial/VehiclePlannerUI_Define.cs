@@ -152,7 +152,7 @@ namespace VehiclePlanner.Partial.VehiclePlannerUI {
         /// Testing控制事件集合
         /// </summary>
         public static class TestingEvents {
-            public delegate void DelConnect(bool cnn, string hostIP = "");
+            public delegate void DelConnect(bool cnn);
 
             public delegate void DelGetCar();
 
