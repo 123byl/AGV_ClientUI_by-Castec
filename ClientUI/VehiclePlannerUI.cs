@@ -287,15 +287,15 @@ namespace VehiclePlanner
                 LoadCtNotifyIcon();
 
                 /*-- 依照使用者權限進行配置 --*/
-                UserChanged(rVehiclePlanner.UserData);
+                //UserChanged(rVehiclePlanner.UserData);
 
-                /*-- 檢查Bypass狀態 --*/
-                CtInvoke.ToolStripItemChecked(miBypassSocket, rVehiclePlanner.IsBypassSocket);
-                CtInvoke.ToolStripItemChecked(miLoadFile, rVehiclePlanner.IsBypassLoadFile);
+                ///*-- 檢查Bypass狀態 --*/
+                //CtInvoke.ToolStripItemChecked(miBypassSocket, rVehiclePlanner.IsBypassSocket);
+                //CtInvoke.ToolStripItemChecked(miLoadFile, rVehiclePlanner.IsBypassLoadFile);
 
-                /*-- 檢查遠端設備IP --*/
-                tslbHostIP.Text = rVehiclePlanner.HostIP;
-                mTesting.SetHostIP(rVehiclePlanner.HostIP);
+                ///*-- 檢查遠端設備IP --*/
+                //tslbHostIP.Text = rVehiclePlanner.HostIP;
+                //mTesting.SetHostIP(rVehiclePlanner.HostIP);
 
             } else {
                 this.Close();
@@ -356,10 +356,6 @@ namespace VehiclePlanner
         /// <param name="e"></param>
         private void rVehiclePlanner_PropertyChanged(object sender, PropertyChangedEventArgs e) {
             switch (e.PropertyName) {
-                case nameof(ICtVehiclePlanner.iTSs):
-                    //var ipList = rVehiclePlanner.iTSs;
-                    //mTesting.SetIPList(ipList);
-                    break;         
                 case nameof(ICtVehiclePlanner.UserData):
                     UserChanged(rVehiclePlanner.UserData);
                     break;
@@ -743,7 +739,6 @@ namespace VehiclePlanner
             foreach(var kvp in mDockContent) {
                 DockContentVisible(kvp.Key, kvp.Value.Authority(usrData));
             }
-            miBypass.Visible = usrData.Level > AccessLevel.Operator;
         }
         
         /// <summary>
@@ -1125,6 +1120,9 @@ namespace VehiclePlanner
             miToolBox.DataBindings.ExAdd(nameof(miToolBox.Enabled), source, dataMember, (sender, e) => {
                 e.Value = (e.Value as UserData).Authority<CtToolBox>();
             },source.UserData.Authority<CtToolBox>());
+            miBypass.DataBindings.ExAdd(nameof(miBypass.Visible), source, dataMember, (sender, e) => {
+                e.Value = (e.Value as UserData).Level == AccessLevel.Administrator;
+            }, source.UserData.Level == AccessLevel.Administrator);
             /*-- 是否可視 --*/
             this.DataBindings.Add(nameof(Visible), source, nameof(source.MainVisible));
         }

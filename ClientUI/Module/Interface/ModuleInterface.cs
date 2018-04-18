@@ -221,29 +221,7 @@ namespace VehiclePlanner.Module.Interface {
         event DelShowMotionController ShowMotionController;
 
         event DelFind Find;
-
-        void ChangedMotorStt(bool servoOn);
-
-        void SetLaserStt(bool isGettingLaser);
-
-        void SetServerStt(bool isConnect);
-
-        void SetIPList(IEnumerable<string> ipList);
-
-        void UnLockOriOperator(bool v);
-
-        /// <summary>
-        /// 設定目標agv IP
-        /// </summary>
-        /// <param name="host">設定IP</param>
-        void SetHostIP(string host);
-
-        /// <summary>
-        /// 依照掃圖狀態變更UI介面
-        /// </summary>
-        /// <param name="isScanning"></param>
-        void ChangedScanStt(bool isScanning);
-
+        
     }
 
     /// <summary>
