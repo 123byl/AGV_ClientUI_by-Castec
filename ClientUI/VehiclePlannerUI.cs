@@ -38,6 +38,7 @@ using VehiclePlanner.Partial.VehiclePlannerUI;
 using VehiclePlanner.Core;
 using CtBind;
 using CtDockSuit;
+using CtNotifyIcon;
 
 namespace VehiclePlanner
 {
@@ -170,7 +171,7 @@ namespace VehiclePlanner
         /// <summary>
         /// 系統列圖示物件
         /// </summary>
-        private CtNotifyIcon mNotifyIcon = null;
+        private CtNotifyICon  mNotifyIcon = null;
 
         /// <summary>
         /// 系統列圖示右鍵選單
@@ -998,7 +999,7 @@ namespace VehiclePlanner
         private void LoadCtNotifyIcon() {
             if (mNotifyIcon == null) {
                 Icon icon = Properties.Resources.CASTEC;
-                mNotifyIcon = new CtNotifyIcon(null, mNotifyCaption, icon);
+                mNotifyIcon = new CtNotifyICon(null, mNotifyCaption, icon);
                 mNotifyIcon.OnMouseDoubleClick += mNotifyIcon_OnMouseDoubleClick;
                 mNotifyIcon.Visible = true;
                 mMenuItems = new MenuItems();

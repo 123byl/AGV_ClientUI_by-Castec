@@ -84,7 +84,9 @@
     <Compile Include="Module\Interface\ModuleInterface.cs" />
     <Compile Include="Partial\VehiclePlannerUI_Define.cs" />
     <Compile Include="Partial\VehiclePlannerUI_Extension.cs" />
-    <Compile Include="Partial\VehiclePlanner_SupportClass.cs" />
+    <Compile Include="Partial\VehiclePlanner_SupportClass.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="VehiclePlannerUI.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -515,6 +517,10 @@
     <ProjectReference Include="..\CtLib\CtLib\CtLib.csproj">
       <Project>{a9bed8b3-2f9d-42a8-90bd-9fae0522eb09}</Project>
       <Name>CtLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CtNotifyIcon\CtNotifyIcon.csproj">
+      <Project>{f873718d-43b6-4ca9-ac56-aba6d22221aa}</Project>
+      <Name>CtNotifyIcon</Name>
     </ProjectReference>
     <ProjectReference Include="..\CtOutLookBar\CtOutLookBar.csproj">
       <Project>{1bea4f2d-0a48-4a1c-aff2-0b44efa08442}</Project>
