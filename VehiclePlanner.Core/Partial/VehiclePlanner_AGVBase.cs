@@ -198,6 +198,11 @@ namespace VehiclePlanner.Core {
         private bool mIsAutoReport = false;
 
         /// <summary>
+        /// 是否在搜索中
+        /// </summary>
+        private bool mIsSearching = false;
+
+        /// <summary>
         /// 車子馬達轉速
         /// </summary>
         private int mVelocity = 500;
@@ -221,12 +226,7 @@ namespace VehiclePlanner.Core {
         /// 是否Bypass Socket通訊
         /// </summary>
         protected bool mBypassSocket = false;
-
-        /// <summary>
-        /// 是否已連線
-        /// </summary>
-        private bool mIsConnected = false;
-
+        
         /// <summary>
         /// iTS位置名稱對照表
         /// </summary>
@@ -248,8 +248,8 @@ namespace VehiclePlanner.Core {
             get {
                 return Properties.Settings.Default.HostIP;
             }
-            protected set {
-                if (Properties.Settings.Default.HostIP != value && !string.IsNullOrEmpty(value)) {
+            set {
+                if (Properties.Settings.Default.HostIP != value ) {
                     Properties.Settings.Default.HostIP = value;
                     Properties.Settings.Default.Save();
                     OnPropertyChanged();
@@ -358,17 +358,7 @@ namespace VehiclePlanner.Core {
         /// <summary>
         /// 是否已建立連線
         /// </summary>
-        public bool IsConnected {
-            get {
-                return mIsConnected;
-            }
-            protected set {
-                if (mIsConnected != value) {
-                    mIsConnected = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
+        public abstract bool IsConnected { get; }
 
         /// <summary>
         /// 是否Bypass Socket功能
@@ -384,6 +374,26 @@ namespace VehiclePlanner.Core {
                 }
             }
         }
+
+        /// <summary>
+        /// 是否可搜索
+        /// </summary>
+        public bool IsSearchable {
+            get => !mIsSearching && !IsConnected;
+            protected set {
+                mIsSearching = !value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(IsConnectable));
+            }
+        }
+
+        /// <summary>
+        /// 是否可連線
+        /// </summary>
+        public bool IsConnectable {
+            get => !mIsSearching;
+        }
+
         #endregion Declaration - Properties
 
         #region Declaration - Events
@@ -428,6 +438,7 @@ namespace VehiclePlanner.Core {
             mAgvList.Columns.Add("IP");
             mAgvList.Columns.Add("Description");
 
+            HostIP = string.Empty;
         }
 
         #endregion Funciton - Constructors
@@ -443,7 +454,7 @@ namespace VehiclePlanner.Core {
             /*-- 紀錄有回應的iTS IP位址 --*/
             string ip = e.Remote.Address.ToString();
             if (!mAgvList.AsEnumerable().Any(v => (v["IP"].ToString() == ip))) {
-                DelInvoke(() => mAgvList.Rows.Add(ip, e.Message));
+                DelInvoke?.Invoke(() => mAgvList.Rows.Add(ip, e.Message));
             }
         }
 
@@ -708,10 +719,11 @@ namespace VehiclePlanner.Core {
             if (!mBroadcast.IsReceiving) {
                 Task.Run(() => {
                     /*-- 開啟廣播接收 --*/
+                    IsSearchable = false;
                     mBroadcast.StartReceive(true);
                     OnConsoleMessage("[Planner]: Start searching iTS.");
                     /*-- 清除iTS清單 --*/
-                    DelInvoke(() => mAgvList.Clear());
+                    DelInvoke?.Invoke(() => mAgvList.Clear());
                     /*-- 廣播要求iTS回應 --*/
                     for (int i = 0; i < 3; i++) {
                         mBroadcast.Send("Count off");
@@ -720,8 +732,13 @@ namespace VehiclePlanner.Core {
                     /*-- 等待iTS回應完畢後停止接收回應 --*/
                     Thread.Sleep(2000);
                     mBroadcast.StartReceive(false);
+                    IsSearchable = true;
+                    int count = iTSs.Rows.Count;
+                    if (count > 0) {
+                        HostIP = mAgvList.Rows[0][0].ToString();
+                    }
                     /*-- 反饋至UI --*/
-                    string msg = $"Find {iTSs.Rows.Count} iTS";
+                    string msg = $"Find {count} iTS";
                     OnConsoleMessage($"[Planner]:{msg}");
                     OnBalloonTip("Search iTS", msg);
                     OnPropertyChanged(nameof(iTSs));
@@ -746,7 +763,7 @@ namespace VehiclePlanner.Core {
         /// </summary>
         /// <param name="prop"></param>
         protected virtual void OnPropertyChanged([CallerMemberName]string propertyName = "") {
-            DelInvoke(() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)));
+            DelInvoke?.Invoke(() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)));
         }
 
         protected virtual void OnBalloonTip(string title, string context) {
@@ -946,11 +963,16 @@ namespace VehiclePlanner.Core {
         /// 回應等待清單
         /// </summary>
         private List<CtTaskCompletionSource<IProductPacket>> mCmdTsk = new List<CtTaskCompletionSource<IProductPacket>>();
-        
+
         #endregion Declaration - Fields
 
         #region Declaration - Properties
-        
+
+        /// <summary>
+        /// 是否已建立連線
+        /// </summary>
+        public override bool IsConnected { get => mSerialClient?.Connected ?? false;}
+
         #endregion Declaration - Properties
 
         #region Funciotn - Constructors
@@ -1008,11 +1030,10 @@ namespace VehiclePlanner.Core {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void mSerialClient_OnConnectChange(object sender, ConnectStatusChangeEventArgs e) {
-            IsConnected = e.IsConnected;
-            
+            OnPropertyChanged(nameof(IsConnected));
+            OnPropertyChanged(nameof(IsSearchable));
             OnConsoleMessage($"Client - Is {(e.IsConnected ? "Connected" : "Disconnected")} to {e.IP}:{e.Port}");
             if (e.IsConnected) {
-                HostIP = e.IP;
                 DoPositionComfirm();
                 Status = RequestStatus();
             } else {

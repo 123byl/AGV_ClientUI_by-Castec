@@ -1,4 +1,5 @@
-﻿using CtDockSuit;
+﻿using CtBind;
+using CtDockSuit;
 using CtLib.Library;
 using System;
 using System.Collections.Generic;
@@ -217,6 +218,15 @@ namespace VehiclePlanner.Module.Implement {
             /*-- iTS清單 --*/
             cboHostIP.DataSource = source.iTSs;
             cboHostIP.DisplayMember = source.iTSs.Columns[0].Caption;
+            /*-- HostIP --*/
+            cboHostIP.DataBindings.Add(nameof(cboHostIP.Text), source, nameof(source.HostIP));
+            cboHostIP.TextChanged += (sender, e) => { source.HostIP = cboHostIP.Text; };
+            /*-- 是否可搜索 --*/
+            dataMember = nameof(source.IsSearchable);
+            btnFind.DataBindings.Add(nameof(btnFind.Enabled), source, dataMember);
+            cboHostIP.DataBindings.Add(nameof(cboHostIP.Enabled), source, dataMember);
+            /*-- 是否可連線 --*/
+            btnConnect.DataBindings.Add(nameof(btnConnect.Enabled), source, nameof(source.IsConnectable));
         }
 
         #endregion Implement - IDataDisplay<ICtVehiclePlanner>

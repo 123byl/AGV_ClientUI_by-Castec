@@ -137,11 +137,19 @@ namespace VehiclePlanner.Core {
         /// <summary>
         /// 伺服馬達是否激磁
         /// </summary>
-        bool IsMotorServoOn { get; set; }
+        bool IsMotorServoOn { get; }
         /// <summary>
         /// 是否掃描中
         /// </summary>
         bool IsScanning { get; }
+        /// <summary>
+        /// 是否可搜索
+        /// </summary>
+        bool IsSearchable { get; }
+        /// <summary>
+        /// 是否可連線
+        /// </summary>
+        bool IsConnectable { get; }
         /// <summary>
         /// iTS狀態
         /// </summary>
@@ -169,7 +177,7 @@ namespace VehiclePlanner.Core {
         /// <summary>
         /// Vehicle Console端IP
         /// </summary>
-        string HostIP { get; }
+        string HostIP { get; set; }
         /// <summary>
         /// 是否Bypass Socket功能
         /// </summary>
