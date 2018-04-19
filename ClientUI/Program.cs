@@ -1,18 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Text.RegularExpressions;
 using VehiclePlanner.Core;
 
 namespace VehiclePlanner {
-    static class Program {
+
+    internal static class Program {
+
         /// <summary>
         /// 應用程式的主要進入點。
         /// </summary>
         [STAThread]
-        static void Main() {
+        private static void Main() {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
@@ -27,20 +25,19 @@ namespace VehiclePlanner {
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new VehiclePlannerUI(FactoryMode.Factory.CtVehiclePlanner()));
             //Application.Run(new Test());
-
         }
 
         /// <summary>非 UI 執行緒錯誤的處理方法</summary>
-        static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e) {
+        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e) {
             Exception ex = e.ExceptionObject as Exception;
             Console.WriteLine(ex.Message);
-            
+
             //if (ex != null) CtStatus.Report(Stat.ER_SYSTEM, ex, true);
             //else CtStatus.Report(Stat.ER_SYSTEM, "UnhandledNonThreadEx", e.ToString());
         }
 
         /// <summary>UI 錯誤的處理方法</summary>
-        static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e) {
+        private static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e) {
             if (e.Exception != null)
                 Console.WriteLine(e.Exception.Message);
             //    CtStatus.Report(Stat.ER_SYSTEM, e.Exception, true);

@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace CtDockSuit {
+
     /// <summary>
     /// 基礎的DockContent類
     /// </summary>
@@ -35,7 +32,7 @@ namespace CtDockSuit {
         /// </summary>
         protected bool mVisible = false;
 
-        #endregion Declaration - Fields
+        #endregion Declaration - Fiedls
 
         #region Declaration - Events
 
@@ -91,7 +88,6 @@ namespace CtDockSuit {
                         HideWindow();
                     }
                 }
-
             }
         }
 
@@ -110,10 +106,10 @@ namespace CtDockSuit {
             /*-- 表單關閉中事件訂閱 --*/
             this.FormClosing += CtDockContent_FormClosing;
             this.AutoScroll = true;
-
         }
 
-        private CtDockContainer() { }
+        private CtDockContainer() {
+        }
 
         #endregion Function - Constructors
 
@@ -125,11 +121,15 @@ namespace CtDockSuit {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         protected virtual void CtDockContent_FormClosing(object sender, System.Windows.Forms.FormClosingEventArgs e) {
+
             #region 以隱藏代替關閉
+
             /// 網路上的參考資料是說將表單的HideOnClose設為True，即可用隱藏代替關閉
             /// 但是實際測試上多次的開開關關還是會有例外跳出
             /// 因此還是以取消的方式來隱藏視窗
-            #endregion
+
+            #endregion 以隱藏代替關閉
+
             e.Cancel = true;
             this.Hide();
         }
@@ -213,26 +213,23 @@ namespace CtDockSuit {
             BeginInvoke(() => this.Hide());
         }
 
-        #endregion Funciton - Protected Methods
+        #endregion Function - Private Methods
 
         private void InitializeComponent() {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CtDockContainer));
             this.SuspendLayout();
-            // 
+            //
             // CtDockContent
-            // 
+            //
             this.ClientSize = new System.Drawing.Size(588, 433);
             this.Font = new System.Drawing.Font("新細明體", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "CtDockContent";
             this.Load += new System.EventHandler(this.CtDockContent_Load);
             this.ResumeLayout(false);
-
         }
 
         private void CtDockContent_Load(object sender, EventArgs e) {
-
         }
     }
-
 }

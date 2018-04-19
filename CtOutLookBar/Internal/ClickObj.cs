@@ -1,9 +1,5 @@
 ﻿using CtOutLookBar.Public;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace CtOutLookBar.Internal {
@@ -23,7 +19,7 @@ namespace CtOutLookBar.Internal {
 
         private IOutlookItem mPanelIcon = null;
 
-        #endregion Function - Fields
+        #endregion Declaration - Fields
 
         #region Funciotn - Constructors
 
@@ -32,7 +28,7 @@ namespace CtOutLookBar.Internal {
             mPanelIcon = icoPanel;
         }
 
-        #endregion Function - Constructors
+        #endregion Funciotn - Constructors
 
         #region Implement - IClickSender
 
@@ -49,7 +45,5 @@ namespace CtOutLookBar.Internal {
         }
 
         #endregion Implement - IClickSender
-
     }
-
 }

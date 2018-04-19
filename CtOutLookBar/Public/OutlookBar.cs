@@ -1,11 +1,8 @@
-using System;
-using System.Drawing;
-using System.IO;
-using System.Windows.Forms;
-using static System.Windows.Forms.Form;
-using CtOutLookBar.Public;
 using CtOutLookBar.Internal;
+using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Windows.Forms;
 
 namespace CtOutLookBar.Public {
 
@@ -18,17 +15,16 @@ namespace CtOutLookBar.Public {
 
         private int buttonHeight = 25;
         private int mSelectedCategory = 0;
-        private int selectedBandHeight=0;
+        private int selectedBandHeight = 0;
 
         private Control rParent = null;
 
         /// <summary>
         /// 分類物件集合
         /// </summary>
-        List<IOutlookCategory> mCategorys = new List<IOutlookCategory>();
+        private List<IOutlookCategory> mCategorys = new List<IOutlookCategory>();
 
-
-        #endregion Declaration - Fields
+        #endregion Dedclaration - Fields
 
         #region Declaration - Properties
 
@@ -79,7 +75,7 @@ namespace CtOutLookBar.Public {
             }
         }
 
-        #endregion Function - Constructors
+        #endregion Funciton - Constructors
 
         #region Function - Public Methods
 
@@ -105,7 +101,7 @@ namespace CtOutLookBar.Public {
             mSelectedCategory = index;
             RedrawBands();
         }
-        
+
         #endregion Function - Public Methods
 
         #region Functoin - Private Methods
@@ -117,7 +113,7 @@ namespace CtOutLookBar.Public {
                     RecalcLayout(bp, i);
                 }
             }
-            foreach(OutlookCategory item in mCategorys) {
+            foreach (OutlookCategory item in mCategorys) {
                 item.RefreshHorizontal();
             }
         }
@@ -143,7 +139,7 @@ namespace CtOutLookBar.Public {
             bandPanel.Controls[1].Size = new Size(ClientRectangle.Width - 2, height - 8);
         }
 
-        #endregion Function - Private Methods
+        #endregion Functoin - Private Methods
 
         #region Function - Events
 
@@ -153,8 +149,6 @@ namespace CtOutLookBar.Public {
             RedrawBands();
         }
 
-        #endregion Funciton - Events
-
+        #endregion Function - Events
     }
-    
 }

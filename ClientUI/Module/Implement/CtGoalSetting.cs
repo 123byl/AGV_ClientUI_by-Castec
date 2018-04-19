@@ -1,31 +1,30 @@
-﻿using System;
+﻿using CtDockSuit;
+using CtLib.Library;
+using Geometry;
+using GLCore;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Windows.Forms;
-using CtLib.Library;
-using GLCore;
-using Geometry;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+using VehiclePlanner.Core;
 using VehiclePlanner.Module.Interface;
 using VehiclePlanner.Partial.VehiclePlannerUI;
-using static VehiclePlanner.Partial.VehiclePlannerUI.Events.GoalSettingEvents;
-using VehiclePlanner.Core;
-using CtDockSuit;
 using WeifenLuo.WinFormsUI.Docking;
+using static VehiclePlanner.Partial.VehiclePlannerUI.Events.GoalSettingEvents;
 
 namespace VehiclePlanner.Module.Implement {
 
     /// <summary>
     /// Goal點設定介面
     /// </summary>
-    public partial class CtGoalSetting : CtDockContainer, IGoalSetting
-    {
+    public partial class CtGoalSetting : CtDockContainer, IGoalSetting {
 
         #region Declaration - Fields
 
         private readonly object mKey = new object();
-       
-        #endregion Declaration - Fiedls
+
+        #endregion Declaration - Fields
 
         #region Declaration - Const
 
@@ -37,7 +36,7 @@ namespace VehiclePlanner.Module.Implement {
         private const int YColumn = 4;
 
         #endregion Declaration - Const
-        
+
         #region Funciton - Construcotrs
 
         /// <summary>
@@ -47,14 +46,13 @@ namespace VehiclePlanner.Module.Implement {
         /// <param name="main">主介面參考</param>
         /// <param name="defState">預設停靠方式</param>
         public CtGoalSetting(DockState defState = DockState.Float)
-            : base(defState)
-        {
+            : base(defState) {
             InitializeComponent();
             FixedSize = new Size(776, 860);
         }
 
         #endregion Funciton - Construcotrs
-        
+
         #region Implement - IIGoalSetting
 
         /// <summary>
@@ -66,7 +64,7 @@ namespace VehiclePlanner.Module.Implement {
         /// 清除所有目標點
         /// </summary>
         public event DelClearGoals ClearGoalsEvent;
-        
+
         /// <summary>
         /// 刪除
         /// </summary>
@@ -96,7 +94,7 @@ namespace VehiclePlanner.Module.Implement {
         /// 按照順序移動全部
         /// </summary>
         public event DelRunLoop RunLoopEvent;
-        
+
         /// <summary>
         /// 儲存
         /// </summary>
@@ -111,14 +109,14 @@ namespace VehiclePlanner.Module.Implement {
         /// 取得所有Goal點名稱
         /// </summary>
         public event DelGetGoalNames GetGoalNames;
-        
+
         /// <summary>
         /// 充電
         /// </summary>
         public event DelCharging Charging;
-        
+
         public event Events.TestingEvents.DelClearMap ClearMap;
-      
+
         /// <summary>
         /// 目標點個數
         /// </summary>
@@ -133,10 +131,8 @@ namespace VehiclePlanner.Module.Implement {
         /// <summary>
         /// 移除所有 Goal 點
         /// </summary>
-        public void ClearGoal()
-        {
-            lock (mKey)
-            {
+        public void ClearGoal() {
+            lock (mKey) {
                 dgvGoalPoint.InvokeIfNecessary(() => dgvGoalPoint.Rows.Clear());
                 cmbGoalList.InvokeIfNecessary(() => {
                     cmbGoalList.Items.Clear();
@@ -148,10 +144,8 @@ namespace VehiclePlanner.Module.Implement {
         /// <summary>
         /// 根據 ID 移除 Goal 點
         /// </summary>
-        public void DeleteGoal(uint ID)
-        {
-            lock (mKey)
-            {
+        public void DeleteGoal(uint ID) {
+            lock (mKey) {
                 int row = FindIndexByID(ID);
                 if (row != -1) {
                     dgvGoalPoint.InvokeIfNecessary(() => dgvGoalPoint.Rows.RemoveAt(row));
@@ -168,17 +162,14 @@ namespace VehiclePlanner.Module.Implement {
         /// <summary>
         /// 根據 ID 移除 Goal 點
         /// </summary>
-        public void DeleteGoals(IEnumerable<uint> ID)
-        {
-            lock (mKey)
-            {
-                foreach (var id in ID)
-                {
+        public void DeleteGoals(IEnumerable<uint> ID) {
+            lock (mKey) {
+                foreach (var id in ID) {
                     DeleteGoal(id);
                 }
             }
         }
-        
+
         /// <summary>
         /// 更新現在位置
         /// </summary>
@@ -218,60 +209,52 @@ namespace VehiclePlanner.Module.Implement {
                 Database.PowerGM.SaftyForLoop(LoadSingle);
             }
         }
-        
-        #endregion IIGoalSetting
+
+        #endregion Implement - IIGoalSetting
 
         #region UI Event
 
         #region Button
 
-        private void btnGetGoalList_Click(object sender, EventArgs e)
-        {
+        private void btnGetGoalList_Click(object sender, EventArgs e) {
             Task.Run(() => {
                 GetGoalNames.Invoke();
             });
         }
-        
-        private void btnCurrPos_Click(object sender, EventArgs e)
-        {
+
+        private void btnCurrPos_Click(object sender, EventArgs e) {
             lock (mKey) {
                 AddCurrentGoalEvent?.Invoke();
             }
         }
 
-        private void btnGetMap_Click(object sender, EventArgs e)
-        {
+        private void btnGetMap_Click(object sender, EventArgs e) {
             lock (mKey) {
                 Task.Run(() => LoadMapFromAGVEvent?.Invoke());
             }
         }
 
-        private void btnLoadMap_Click(object sender, EventArgs e)
-        {
+        private void btnLoadMap_Click(object sender, EventArgs e) {
             lock (mKey) {
                 LoadMapEvent?.Invoke();
             }
         }
-        
-        private void btnPath_Click(object sender, EventArgs e)
-        {
+
+        private void btnPath_Click(object sender, EventArgs e) {
             Task.Run(() => {
-                    string goalName = cmbGoalList.InvokeIfNecessary(() => cmbGoalList.Text);
-                    FindPathEvent?.Invoke(goalName);
+                string goalName = cmbGoalList.InvokeIfNecessary(() => cmbGoalList.Text);
+                FindPathEvent?.Invoke(goalName);
             });
         }
 
-        private void btnSendMap_Click(object sender, EventArgs e)
-        {
+        private void btnSendMap_Click(object sender, EventArgs e) {
             lock (mKey) {
                 SendMapToAGVEvent?.Invoke();
             }
         }
 
-        private void btnGoGoal_Click(object sender, EventArgs e)
-        {
-            lock (mKey)
-            {
+        private void btnGoGoal_Click(object sender, EventArgs e) {
+            lock (mKey) {
                 Task.Run(() => {
                     string goalName = cmbGoalList.InvokeIfNecessary(() => cmbGoalList.Text);
                     RunGoalEvent?.Invoke(goalName);
@@ -279,31 +262,25 @@ namespace VehiclePlanner.Module.Implement {
             }
         }
 
-        private void btnRunAll_Click(object sender, EventArgs e)
-        {
-            lock (mKey)
-            {
-                RunLoopEvent?.BeginInvoke(GetGoals(),null,null);
-            } 
+        private void btnRunAll_Click(object sender, EventArgs e) {
+            lock (mKey) {
+                RunLoopEvent?.BeginInvoke(GetGoals(), null, null);
+            }
         }
 
-        private void btnDelete_Click(object sender, EventArgs e)
-        {
-            lock (mKey)
-            {
+        private void btnDelete_Click(object sender, EventArgs e) {
+            lock (mKey) {
                 DeleteSingleEvent?.Invoke(GetSelectedSingleID());
             }
         }
 
-        private void btnDeleteAll_Click(object sender, EventArgs e)
-        {
+        private void btnDeleteAll_Click(object sender, EventArgs e) {
             lock (mKey) {
                 ClearGoalsEvent?.Invoke();
             }
         }
 
-        private void btnSaveGoal_Click(object sender, EventArgs e)
-        {
+        private void btnSaveGoal_Click(object sender, EventArgs e) {
             lock (mKey) {
                 SaveGoalEvent?.Invoke();
             }
@@ -314,7 +291,6 @@ namespace VehiclePlanner.Module.Implement {
                 Task.Run(() => {
                     string powerName = cmbGoalList.InvokeIfNecessary(() => cmbGoalList.Text);
                     Charging?.Invoke(powerName);
-                    
                 });
             }
         }
@@ -329,9 +305,7 @@ namespace VehiclePlanner.Module.Implement {
 
         #endregion UI Event
 
-        #region Functin - Public Methods
 
-        #endregion Funtion - Public Methods
 
         #region Fucnction - Private Methods
 
@@ -434,7 +408,7 @@ namespace VehiclePlanner.Module.Implement {
             }
         }
 
-        #endregion Function - Private Methods
+        #endregion Fucnction - Private Methods
 
         #region Implement - IDataDisplay<ICtVehiclePlanner>
 
@@ -448,6 +422,4 @@ namespace VehiclePlanner.Module.Implement {
 
         #endregion Implement - IDataDisplay<ICtVehiclePlanner>
     }
-
-
 }

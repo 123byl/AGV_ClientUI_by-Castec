@@ -1,19 +1,14 @@
-﻿using CtLib.Library;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using VehiclePlanner.Core;
-using VehiclePlanner.Module.Implement;
 using VehiclePlanner.Partial.VehiclePlannerUI;
-using WeifenLuo.WinFormsUI.Docking;
 
 namespace VehiclePlanner.Forms {
+
     public partial class CtMotionController : Form {
 
         #region Declaration - Fields
@@ -25,12 +20,12 @@ namespace VehiclePlanner.Forms {
         /// </summary>
         private List<MotionDirection> mDirs = new List<MotionDirection>();
 
-        private Dictionary<MotionDirection,PictureBox> mDirCtrlMapping = null;
+        private Dictionary<MotionDirection, PictureBox> mDirCtrlMapping = null;
 
         #endregion Declaration - Fields
 
         #region Declaration - Events
-        
+
         public event Events.TestingEvents.DelMotion_Down MotionDown;
 
         public event Events.TestingEvents.DelMotion_Up MotionUp;
@@ -42,7 +37,7 @@ namespace VehiclePlanner.Forms {
         /// <summary>
         /// 共用建構方法
         /// </summary>
-        public CtMotionController(){
+        public CtMotionController() {
             InitializeComponent();
 
             RegisterEvent(this);
@@ -70,21 +65,21 @@ namespace VehiclePlanner.Forms {
                 if (!mDirs.Contains(dir)) {
                     ActivePic(mDirCtrlMapping[dir]);
                     mDirs.Add(dir);
-                    MotionDown?.BeginInvoke(dir,null,null);
+                    MotionDown?.BeginInvoke(dir, null, null);
                     mDirCtrlMapping[dir].BorderStyle = BorderStyle.FixedSingle;
                 }
             }
         }
 
-        private void CtCotionController_KeyUp(object sender,KeyEventArgs e) {
+        private void CtCotionController_KeyUp(object sender, KeyEventArgs e) {
             if (Enum.IsDefined(typeof(MotionDirection), (int)e.KeyCode)) {
                 MotionDirection dir = (MotionDirection)e.KeyCode;
                 ActivePic(mDirCtrlMapping[dir], false);
                 mDirs.Remove(dir);
-                if (mDirs.Any()) {                    
-                    MotionDown?.BeginInvoke(mDirs[0],null,null);
+                if (mDirs.Any()) {
+                    MotionDown?.BeginInvoke(mDirs[0], null, null);
                 } else {
-                    MotionUp?.BeginInvoke(null,null);
+                    MotionUp?.BeginInvoke(null, null);
                 }
             }
         }
@@ -137,11 +132,6 @@ namespace VehiclePlanner.Forms {
 
         #endregion Function - Events
 
-        #region Function - Public Methods
-
-
-        #endregion Function - Public Methods
-
         #region Function - Private Methods
 
         /// <summary>
@@ -154,7 +144,7 @@ namespace VehiclePlanner.Forms {
                 case Keys.Down:
                 case Keys.Left:
                 case Keys.Right:
-                    MotionDown?.BeginInvoke((MotionDirection)key,null,null);
+                    MotionDown?.BeginInvoke((MotionDirection)key, null, null);
                     break;
             }
         }
@@ -163,15 +153,15 @@ namespace VehiclePlanner.Forms {
         /// 停止移動
         /// </summary>
         private void MotionStop() {
-            MotionUp?.BeginInvoke(null,null);
+            MotionUp?.BeginInvoke(null, null);
         }
-        
+
         /// <summary>
         /// 以遞迴方式委派所有<see cref="PictureBox"/>控制項的Move與Leave事件
         /// </summary>
         /// <param name="ctrl"></param>
         /// <param name="reg">委派/取消</param>
-        private void RegisterEvent(Control ctrl,bool reg = true) {
+        private void RegisterEvent(Control ctrl, bool reg = true) {
             if (ctrl is PictureBox) {
                 if (reg) {
                     ctrl.MouseMove += OnMouseMove;
@@ -181,8 +171,8 @@ namespace VehiclePlanner.Forms {
                     ctrl.MouseLeave -= OnMouseLeave;
                 }
             } else if (ctrl.HasChildren) {
-                foreach(Control child in ctrl.Controls) {
-                    RegisterEvent(child,reg);
+                foreach (Control child in ctrl.Controls) {
+                    RegisterEvent(child, reg);
                 }
             }
         }
@@ -205,6 +195,5 @@ namespace VehiclePlanner.Forms {
         }
 
         #endregion Function - Private Methods
-
     }
 }

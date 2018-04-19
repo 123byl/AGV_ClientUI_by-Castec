@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace CtDockSuit {
@@ -25,25 +21,31 @@ namespace CtDockSuit {
                 case DockState.DockBottomAutoHide:
                     area = DockAreas.DockBottom;
                     break;
+
                 case DockState.DockLeft:
                 case DockState.DockLeftAutoHide:
                     area = DockAreas.DockLeft;
                     break;
+
                 case DockState.DockTop:
                 case DockState.DockTopAutoHide:
                     area = DockAreas.DockTop;
                     break;
+
                 case DockState.DockRight:
                 case DockState.DockRightAutoHide:
                     area = DockAreas.DockRight;
                     break;
+
                 case DockState.Document:
                 case DockState.Hidden:
                     area = DockAreas.Document;
                     break;
+
                 case DockState.Float:
                     area = DockAreas.Float;
                     break;
+
                 default:
                     throw new ArgumentException($"未定義{dockState}預設停靠行為");
             }
@@ -72,18 +74,19 @@ namespace CtDockSuit {
                         portion = (float)((dockSize.Height - 7.43) / 1.32);
                     }
                     break;
+
                 case DockAreas.DockLeft:
                 case DockAreas.DockRight:
                     if (ret = dockSize.Width > 6) {
                         portion = (float)((dockSize.Width - 6) / 1.36);
                     }
                     break;
+
                 default:
                     ret = false;
                     break;
             }
             return ret;
         }
-
     }
 }

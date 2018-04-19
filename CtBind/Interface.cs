@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace CtBind {
@@ -13,6 +9,7 @@ namespace CtBind {
     /// </summary>
     /// <typeparam name="TSource">資料來源</typeparam>
     public interface IDataDisplay<TSource> where TSource : IDataSource {
+
         /// <summary>
         /// 資料綁定
         /// </summary>
@@ -24,10 +21,10 @@ namespace CtBind {
     /// 資料來源
     /// </summary>
     public interface IDataSource : INotifyPropertyChanged {
+
         /// <summary>
         /// Invoke委派方法
         /// </summary>
         Action<MethodInvoker> DelInvoke { get; set; }
     }
-
 }

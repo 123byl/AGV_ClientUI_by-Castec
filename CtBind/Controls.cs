@@ -1,17 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 
-namespace CtBind
-{
+namespace CtBind {
+
     /// <summary>
     /// 實作IBindableComponent之控制項
     /// </summary>
     public class Bindable {
-        private Bindable() { }
+
+        private Bindable() {
+        }
 
         /// <summary>
         /// 可綁定的StripLabel控制項
@@ -22,6 +19,7 @@ namespace CtBind
 
             private BindingContext bindingContext;
             private ControlBindingsCollection dataBindings;
+
             public BindingContext BindingContext {
                 get {
                     if (bindingContext == null) {
@@ -43,9 +41,7 @@ namespace CtBind
                 }
             }
 
-
-            #endregion
-
+            #endregion IBindableComponent Members
         }
 
         /// <summary>
@@ -69,6 +65,7 @@ namespace CtBind
                     bindingContext = value;
                 }
             }
+
             public ControlBindingsCollection DataBindings {
                 get {
                     if (dataBindings == null) {
@@ -78,8 +75,7 @@ namespace CtBind
                 }
             }
 
-            #endregion
-
+            #endregion IBindableComponent Members
         }
 
         /// <summary>
@@ -103,6 +99,7 @@ namespace CtBind
                     bindingContext = value;
                 }
             }
+
             public ControlBindingsCollection DataBindings {
                 get {
                     if (dataBindings == null) {
@@ -112,10 +109,7 @@ namespace CtBind
                 }
             }
 
-            #endregion
-
+            #endregion IBindableComponent Members
         }
-
     }
-    
 }

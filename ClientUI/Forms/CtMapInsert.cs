@@ -1,31 +1,24 @@
 ﻿using CtDockSuit;
 using GLCore;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using UIControl;
-using VehiclePlanner.Module.Implement;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace VehiclePlanner.Forms {
-    public partial class CtMapInsert : CtDockContainer , IMouseInsertPanel {
+
+    public partial class CtMapInsert : CtDockContainer, IMouseInsertPanel {
 
         #region Declaration - Declaration - Fields
 
         /// <summary>
         /// 控制面板實例
         /// </summary>
-        IMouseInsertPanel mPanel = null;
+        private IMouseInsertPanel mPanel = null;
 
         //Size mFloatFormSize = new Size();
 
-        #endregion Declaration  -Fields
+        #endregion Declaration - Declaration - Fields
 
         #region Function - Constructors
 
@@ -33,8 +26,7 @@ namespace VehiclePlanner.Forms {
         /// 共用建構方法
         /// </summary>
         public CtMapInsert(DockState defState = DockState.Float)
-            : base(defState)
-        {
+            : base(defState) {
             InitializeComponent();
             /*-- 取得控制面板實例 --*/
             mPanel = StaticControl.MapInsert;
@@ -46,7 +38,7 @@ namespace VehiclePlanner.Forms {
             form.TopLevel = false;//取消最上層級別
             this.Controls.Add(form);//嵌入主面板
             this.Text = form.Text;
-            
+
             /*-- 依控制面板計算主面板尺寸 --*/
             this.FixedSize = new Size(form.Width + SystemInformation.VerticalScrollBarWidth, form.Height + SystemInformation.CaptionHeight + SystemInformation.MenuHeight);
         }
@@ -82,7 +74,6 @@ namespace VehiclePlanner.Forms {
             (mPanel as Form).Close();
         }
 
-        #endregion Function - Evnets
-
+        #endregion Funciton - Events
     }
 }

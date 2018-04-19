@@ -1,53 +1,34 @@
-﻿using System;
+﻿using CtBind;
+using CtDockSuit;
+using CtLib.Forms;
+using CtLib.Library;
+using CtLib.Module.Utility;
+using CtNotifyIcon;
+using Geometry;
+using GLCore;
+using GLUI;
+using SerialCommunicationData;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
-using System.Reflection;
-
+using VehiclePlanner.Core;
+using VehiclePlanner.Forms;
+using VehiclePlanner.Module.Implement;
+using VehiclePlanner.Module.Interface;
+using VehiclePlanner.Partial.VehiclePlannerUI;
 using WeifenLuo.WinFormsUI.Docking;
 
-using CtLib.Library;
-using static CtLib.Forms.CtLogin;
-using CtLib.Forms;
-using System.Threading;
-using System.Net;
-using System.Net.Sockets;
-using System.IO;
-using System.Diagnostics;
-using CtLib.Module.Utility;
-using System.Text.RegularExpressions;
-using Geometry;
-using GLCore;
-using GLUI;
-using UIControl;
-using AGVDefine;
-using SerialCommunication;
-using SerialCommunicationData;
-using System.Net.NetworkInformation;
-using BroadCast;
-using VehiclePlanner.Module.Interface;
-using VehiclePlanner.Module.Implement;
-using VehiclePlanner.Forms;
-using VehiclePlanner.Partial.VehiclePlannerUI;
-using VehiclePlanner.Core;
-using CtBind;
-using CtDockSuit;
-using CtNotifyIcon;
-
-namespace VehiclePlanner
-{
+namespace VehiclePlanner {
 
     /// <summary>
     /// 客戶端介面
     /// </summary>
-    public partial class VehiclePlannerUI : Form, ICtVersion,IDataDisplay<ICtVehiclePlanner>,IDataDisplay<IiTSController>
-    {
+    public partial class VehiclePlannerUI : Form, ICtVersion, IDataDisplay<ICtVehiclePlanner>, IDataDisplay<IiTSController> {
 
         #region Version - Information
 
@@ -100,8 +81,8 @@ namespace VehiclePlanner
         ///     0.0.11  Jay [2017/12/07]
         ///         \ 優化Database與GoalSetting之間的聯動性
         ///         \ 於底層路徑相關操作加入相似度門檻值鎖定
-        ///     0.0.12  Jay [2017/12/12] 
-        ///         + 加入AGV移動控制器        
+        ///     0.0.12  Jay [2017/12/12]
+        ///         + 加入AGV移動控制器
         ///     0.0.13  Jay [2017/12/14]
         ///         \ 將所有按鈕解鎖，當無法處於執行按鈕功能狀態，以對話視窗引導使用者進行狀態修正
         ///         \ 重寫模組權限(加入CtToolBox控制)
@@ -112,29 +93,29 @@ namespace VehiclePlanner
         public CtVersion Version { get { return new CtVersion(1, 0, 0, "2017/04/18", "Jay Chang"); } }
 
         #endregion Version - Information
-        
+
         #region Declaration - Fields
-        
+
         /// <summary>
         /// 是否正在設定Car Position
         /// </summary>
         private bool mIsSetting = false;
-        
+
         /// <summary>
         /// MapGL當前滑鼠模式
         /// </summary>
         private CursorMode mCursorMode = CursorMode.Select;
-        
+
         /// <summary>
         /// 系統底層物件參考
         /// </summary>
         private ICtVehiclePlanner rVehiclePlanner = null;
-        
+
         /// <summary>
         /// Car Position 設定位置
         /// </summary>
         private IPair mNewPos = null;
-        
+
         private IntPtr mHandle = IntPtr.Zero;
 
         /// <summary>
@@ -171,7 +152,7 @@ namespace VehiclePlanner
         /// <summary>
         /// 系統列圖示物件
         /// </summary>
-        private CtNotifyICon  mNotifyIcon = null;
+        private CtNotifyICon mNotifyIcon = null;
 
         /// <summary>
         /// 系統列圖示右鍵選單
@@ -190,7 +171,7 @@ namespace VehiclePlanner
         /// <summary>
         /// iTS控制器
         /// </summary>
-        private IiTSController Controller { get =>rVehiclePlanner.Controller as IiTSController; }
+        private IiTSController Controller { get => rVehiclePlanner.Controller as IiTSController; }
 
         #endregion Tool
 
@@ -200,13 +181,13 @@ namespace VehiclePlanner
         /// VehicleConsole模擬物件
         /// </summary>
         private FakeVehicleConsole mVC = new FakeVehicleConsole();
-        
+
         #endregion Socket
 
         #endregion Declaration - Members
 
         #region Declaration - Properties
-        
+
         /// <summary>
         /// MapGL子視窗
         /// </summary>
@@ -242,34 +223,40 @@ namespace VehiclePlanner
                 return mDockContent.ContainsKey(miGoalSetting) ? mDockContent[miGoalSetting] as IGoalSetting : null;
             }
         }
-        
+
         private IScene IMapCtrl { get { return MapGL?.Ctrl; } }
-        
+
         /// <summary>
         /// 是否可視
         /// </summary>
-        public new bool Visible { get => base.Visible; set {
-            if (base.Visible != value) {
-                if (value) {
-                    this.Show();
-                    this.TopMost = true;
-                    #region 把DocDocument切回來
-                    /// 由於主介面關閉的時候會觸發到DockDocument的FormCloseing事件
-                    /// 導致子介面被隱藏
-                    /// 這邊在手動把他切回來一次
-                    #endregion
-                    MapGL.Show();
-                    this.TopMost = false;
-                } else {
-                    this.Hide();
+        public new bool Visible {
+            get => base.Visible; set {
+                if (base.Visible != value) {
+                    if (value) {
+                        this.Show();
+                        this.TopMost = true;
+
+                        #region 把DocDocument切回來
+
+                        /// 由於主介面關閉的時候會觸發到DockDocument的FormCloseing事件
+                        /// 導致子介面被隱藏
+                        /// 這邊在手動把他切回來一次
+
+                        #endregion 把DocDocument切回來
+
+                        MapGL.Show();
+                        this.TopMost = false;
+                    } else {
+                        this.Hide();
+                    }
                 }
             }
-        }}
+        }
 
         #endregion Declaration - Properties
 
         #region Functin - Constructors
-        
+
         public VehiclePlannerUI(ICtVehiclePlanner vehiclePlanner = null) {
             InitializeComponent();
 
@@ -293,13 +280,12 @@ namespace VehiclePlanner
                 LoadICtDockContainer();
 
                 LoadCtNotifyIcon();
-                
             } else {
                 this.Close();
             }
         }
 
-        #endregion Function - Constructors
+        #endregion Functin - Constructors
 
         #region Function - Events
 
@@ -332,6 +318,7 @@ namespace VehiclePlanner
                 case VehiclePlannerEvents.MarkerChanged:
                     mGoalSetting.ReloadSingle();
                     break;
+
                 case VehiclePlannerEvents.Dispose:
                     this.Dispose();
                     break;
@@ -360,7 +347,7 @@ namespace VehiclePlanner
         }
 
         #endregion CtVehiclePlanner
-        
+
         #region Form
 
         /// <summary>
@@ -368,25 +355,26 @@ namespace VehiclePlanner
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ClientUI_Load(object sender, EventArgs e)
-        {
-            
+        private void ClientUI_Load(object sender, EventArgs e) {
         }
-        
+
         /// <summary>
         /// 表單關閉中事件
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ClientUI_FormClosing(object sender, FormClosingEventArgs e)
-        {
+        private void ClientUI_FormClosing(object sender, FormClosingEventArgs e) {
+
             #region 取消程式關閉
+
             //由於CtDockContetn中在表單關閉中事件會把e.Cancel寫為true
             //為了確實關閉程式，需再把e.Cancl寫為false
             //
             //當直接關閉表單時，改為隱藏至系統列
-            #endregion 
+            #endregion 取消程式關閉
+
             e.Cancel = true;
+
             HideWindow();
         }
 
@@ -399,20 +387,14 @@ namespace VehiclePlanner
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void MenuDock_Click(object sender, EventArgs e)
-        {
+        private void MenuDock_Click(object sender, EventArgs e) {
             ToolStripMenuItem item = sender as ToolStripMenuItem;
             /*-- 確認是否有對應DockContent物件 --*/
-            if (mDockContent.ContainsKey(item))
-            {
-
-                if (item.Checked)
-                {
+            if (mDockContent.ContainsKey(item)) {
+                if (item.Checked) {
                     (mDockContent[item] as CtDockContainer).Visible = false;
-                }
-                else
-                {
-                    mDockContent[item].Visible= true;
+                } else {
+                    mDockContent[item].Visible = true;
                 }
                 //if (item.Checked != item.Checked) {
                 //    item.Checked = !item.Checked;
@@ -425,8 +407,7 @@ namespace VehiclePlanner
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void miExit_Click(object sender, EventArgs e)
-        {
+        private void miExit_Click(object sender, EventArgs e) {
             Exit();
         }
 
@@ -435,10 +416,8 @@ namespace VehiclePlanner
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void miAbout_Click(object sender, EventArgs e)
-        {
-            using (CtAbout frm = new CtAbout())
-            {
+        private void miAbout_Click(object sender, EventArgs e) {
+            using (CtAbout frm = new CtAbout()) {
                 //新版本CtLib
                 //frm.Start(Assembly.GetExecutingAssembly(), this, Version, module);
                 //當前版本CtLib
@@ -451,14 +430,11 @@ namespace VehiclePlanner
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void miLogin_Click(object sender, EventArgs e)
-        {
+        private void miLogin_Click(object sender, EventArgs e) {
             Stat stt = Stat.SUCCESS;
             var usrData = new UserData("N/A", "", AccessLevel.None);
-            if (rVehiclePlanner.UserData.Level == AccessLevel.None)
-            {   
-                using (CtLogin frmLogin = new CtLogin())
-                {
+            if (rVehiclePlanner.UserData.Level == AccessLevel.None) {
+                using (CtLogin frmLogin = new CtLogin()) {
                     stt = frmLogin.Start(out usrData);
                 }
             }
@@ -472,10 +448,8 @@ namespace VehiclePlanner
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void miUserManager_Click(object sender, EventArgs e)
-        {
-            using (CtUserManager frmUsrMgr = new CtUserManager(UILanguage.English))
-            {
+        private void miUserManager_Click(object sender, EventArgs e) {
+            using (CtUserManager frmUsrMgr = new CtUserManager(UILanguage.English)) {
                 frmUsrMgr.ShowDialog();
             }
         }
@@ -506,7 +480,7 @@ namespace VehiclePlanner
         private void miMotionController_Click(object sender, EventArgs e) {
             ShowMotionController();
         }
-        
+
         #endregion MenuItem
 
         #region DockContent
@@ -516,8 +490,7 @@ namespace VehiclePlanner
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Value_DockStateChanged(object sender, EventArgs e)
-        {
+        private void Value_DockStateChanged(object sender, EventArgs e) {
             /*-- 取得發報的DockContent物件 --*/
             CtDockContainer dockWnd = sender as CtDockContainer;
 
@@ -549,8 +522,8 @@ namespace VehiclePlanner
         private void ShowWindow_OnClick(object sender, EventArgs e) {
             ShowWindow();
         }
-        
-        #endregion NotifyIcon
+
+        #endregion NotityIcon
 
         #region ITest
 
@@ -560,7 +533,7 @@ namespace VehiclePlanner
         private void ITest_SettingCarPos() {
             mIsSetting = true;
         }
-        
+
         /// <summary>
         /// 傳送Map檔
         /// </summary>
@@ -576,14 +549,14 @@ namespace VehiclePlanner
                 }
             }
         }
-        
+
         /// <summary>
         /// 要求VehicleConsole自動回傳資料
         /// </summary>
         protected virtual void ITest_GetCar() {
             rVehiclePlanner.Controller.AutoReport(!rVehiclePlanner.Controller.IsAutoReport);
         }
-        
+
         /// <summary>
         /// 載入Map檔
         /// </summary>
@@ -614,24 +587,24 @@ namespace VehiclePlanner
         private void ITest_Motion_Up() {
             rVehiclePlanner.Controller.MotionContorl(MotionDirection.Stop);
         }
-        
-        #endregion
+
+        #endregion ITest
 
         #region IMapGL事件連結
 
         private void IMapCtrl_GLClickEvent(object sender, GLMouseEventArgs e) {
             if (mIsSetting) {
-                    if (mNewPos == null) {
-                        mNewPos = e.Position;
-                    } else {
-                        OnConsoleMessage($"NewPos{mNewPos.ToString()}");
-                        Task.Run(() => {
-                            rVehiclePlanner.Controller.SetPosition(e.Position, mNewPos);
-                            mNewPos = null;
-                            mIsSetting = false;
-                        });
-                    }
-            } 
+                if (mNewPos == null) {
+                    mNewPos = e.Position;
+                } else {
+                    OnConsoleMessage($"NewPos{mNewPos.ToString()}");
+                    Task.Run(() => {
+                        rVehiclePlanner.Controller.SetPosition(e.Position, mNewPos);
+                        mNewPos = null;
+                        mIsSetting = false;
+                    });
+                }
+            }
             //顯示滑鼠點擊的座標
             mGoalSetting.UpdateNowPosition(e.Position);
         }
@@ -655,9 +628,9 @@ namespace VehiclePlanner
             }
         }
 
-        #endregion IMapGL 事件連結
+        #endregion IMapGL事件連結
 
-        #region IGoalSetting 事件連結   
+        #region IGoalSetting 事件連結
 
         private void IGoalSetting_RunLoopEvent(IEnumerable<IGoal> goal) {
             //int goalCount = goal?.Count() ?? -1;
@@ -675,7 +648,7 @@ namespace VehiclePlanner
             //}
         }
 
-        #endregion
+        #endregion IGoalSetting 事件連結
 
         #region ToolBox
 
@@ -689,21 +662,27 @@ namespace VehiclePlanner
                 case CursorMode.Drag:
                     IMapCtrl.SetDragMode();
                     break;
+
                 case CursorMode.Goal:
                     IMapCtrl.SetAddMode(FactoryMode.Factory.Goal($"Goal{Database.GoalGM.Count}"));
                     break;
+
                 case CursorMode.Power:
                     IMapCtrl.SetAddMode(FactoryMode.Factory.Power($"Power{Database.PowerGM.Count}"));
                     break;
+
                 case CursorMode.Select:
                     IMapCtrl.SetSelectMode();
                     break;
+
                 case CursorMode.Pen:
                     IMapCtrl.SetPenMode();
                     break;
+
                 case CursorMode.Eraser:
                     IMapCtrl.SetEraserMode(500);
                     break;
+
                 case CursorMode.Insert:
                     OpenFileDialog old = new OpenFileDialog();
                     old.Filter = ".Map|*.map";
@@ -711,12 +690,13 @@ namespace VehiclePlanner
                         IMapCtrl.SetInsertMapMode(old.FileName, mMapInsert as IMouseInsertPanel);
                     }
                     break;
+
                 case CursorMode.ForbiddenArea:
                     IMapCtrl.SetAddMode(FactoryMode.Factory.ForbiddenArea("ForbiddenArea"));
                     break;
+
                 default:
                     throw new ArgumentException($"未定義{mode}模式");
-
             }
         }
 
@@ -733,22 +713,22 @@ namespace VehiclePlanner
         /// </summary>
         /// <param name="usrLv"></param>
         private void UserChanged(UserData usrData) {
-            foreach(var kvp in mDockContent) {
+            foreach (var kvp in mDockContent) {
                 DockContentVisible(kvp.Key, kvp.Value.Authority(usrData));
             }
         }
-        
+
         /// <summary>
         /// 檢查Goal是否合法
         /// </summary>
         /// <param name="goal"></param>
         /// <param name="idxGoal"></param>
         /// <param name="act"></param>
-        private void CheckGoal(IGoal goal, int idxGoal,Action act) {
+        private void CheckGoal(IGoal goal, int idxGoal, Action act) {
             if (goal != null && idxGoal >= 0) {
                 act?.Invoke();
             } else {
-                CtMsgBox.Show(mHandle,"No target", "尚未選擇目標Goal點", MsgBoxBtn.OK, MsgBoxStyle.Information);
+                CtMsgBox.Show(mHandle, "No target", "尚未選擇目標Goal點", MsgBoxBtn.OK, MsgBoxStyle.Information);
             }
         }
 
@@ -837,19 +817,22 @@ namespace VehiclePlanner
                     case DockAreas.DockBottom:
                         panel.DockBottomPortion = portion;
                         break;
+
                     case DockAreas.DockLeft:
                         panel.DockLeftPortion = portion;
                         break;
+
                     case DockAreas.DockRight:
                         panel.DockRightPortion = portion;
                         break;
+
                     case DockAreas.DockTop:
                         panel.DockTopPortion = portion;
                         break;
                 }
             }
         }
-        
+
         /// <summary>
         /// 設定DockContent以及與之相關ToolStripMenuItem控制項之Visible屬性
         /// </summary>
@@ -875,11 +858,11 @@ namespace VehiclePlanner
             openMap.Filter = $"MAP|*.{type.ToString().ToLower()}";
             if (openMap.ShowDialog() == DialogResult.OK) {
                 Task.Run(() => {
-                    rVehiclePlanner.LoadFile(type,openMap.FileName);
+                    rVehiclePlanner.LoadFile(type, openMap.FileName);
                 });
             }
         }
-        
+
         #endregion Draw
 
         #region Load
@@ -888,9 +871,9 @@ namespace VehiclePlanner
         /// 設定事件連結
         /// </summary>
         private void SetEvents() {
-            
+
             #region IGoalSetting 事件連結
-                 
+
             mGoalSetting.AddCurrentGoalEvent += rVehiclePlanner.AddCurrentAsGoal;
             mGoalSetting.ClearGoalsEvent += rVehiclePlanner.ClearMarker;
             mGoalSetting.DeleteSingleEvent += rVehiclePlanner.DeleteMarker;
@@ -905,7 +888,7 @@ namespace VehiclePlanner
             mGoalSetting.Charging += rVehiclePlanner.Controller.DoCharging;
             mGoalSetting.ClearMap += rVehiclePlanner.ClearMap;
 
-            #endregion
+            #endregion IGoalSetting 事件連結
 
             #region IMapGL 事件連結
 
@@ -913,7 +896,7 @@ namespace VehiclePlanner
             IMapCtrl.DragTowerPairEvent += IMapCtrl_DragTowerPairEvent;
             IMapCtrl.GLMoveUp += IMapCtrl_GLMoveUp;
 
-            #endregion
+            #endregion IMapGL 事件連結
 
             #region ITesting 事件連結
 
@@ -934,10 +917,11 @@ namespace VehiclePlanner
             mTesting.StartScan += rVehiclePlanner.Controller.StartScan;
             mTesting.ShowMotionController += ShowMotionController;
             mTesting.Find += rVehiclePlanner.Controller.FindCar;
-            #endregion 
+            #endregion ITesting 事件連結
+
+
 
             (mDockContent[miToolBox] as CtToolBox).SwitchCursor += ToolBox_SwitchCursor;
-
         }
 
         /// <summary>
@@ -985,7 +969,6 @@ namespace VehiclePlanner
 
                 /*-- 委派工具列點擊事件 --*/
                 item.Click += MenuDock_Click;
-
             }
             mMapInsert.AssignmentDockPanel(dockPanel);
             /*-- 資料綁定 --*/
@@ -1064,7 +1047,7 @@ namespace VehiclePlanner
         /// <param name="source"></param>
         public void Bindings(ICtVehiclePlanner source) {
             Bindings<ICtVehiclePlanner>(source);
-            
+
             /*-- 是否忽略地圖檔讀寫 --*/
             miLoadFile.DataBindings.Add(nameof(miLoadFile.Checked), source, nameof(source.IsBypassLoadFile));
             /*-- 是否可視 --*/
@@ -1101,7 +1084,6 @@ namespace VehiclePlanner
             miBypass.DataBindings.ExAdd(nameof(miBypass.Visible), source, dataMember, (sender, e) => {
                 e.Value = (e.Value as UserData).Level == AccessLevel.Administrator;
             }, source.UserData.Level == AccessLevel.Administrator);
-
         }
 
         /// <summary>
@@ -1150,5 +1132,4 @@ namespace VehiclePlanner
 
         #endregion Implement - IDataDisplay
     }
-
 }

@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using CtOutLookBar.Public;
 using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using CtOutLookBar.Public;
+
 namespace CtOutLookBar.Internal {
 
     /// <summary>
@@ -48,7 +43,7 @@ namespace CtOutLookBar.Internal {
 
         public override string Text {
             get {
-                return  BandButton?.Text;
+                return BandButton?.Text;
             }
 
             set {
@@ -146,9 +141,9 @@ namespace CtOutLookBar.Internal {
         /// <summary>
         /// 書籤按鈕參考
         /// </summary>
-        public BandButton BandButton { get;set; }
+        public BandButton BandButton { get; set; }
 
-        #endregion Declaration - Properties
+        #endregion Declartion - Properties
 
         #region Function - Constructors
 
@@ -161,27 +156,26 @@ namespace CtOutLookBar.Internal {
             mBorder.BackColor = BackColor;
             mBorder.Text = "ITest";
             mBorder.Width = 1;
-            
+
             //涴爵岆覃誹芞梓潔擒腔
             AutoScroll = true;
             Controls.Add(mBorder);
             RefreshIconSpacing();
             //Dock = DockStyle.Fill;
-
         }
 
         #endregion Function - Constructors
 
         #region Funciton - Public Methods
-        
-        public IClickSender AddItem(string caption, Image image= null, int enumIdx=-1) {
+
+        public IClickSender AddItem(string caption, Image image = null, int enumIdx = -1) {
             Label lb = null;
             IOutlookItem item = null;
             SetItem(out lb, out item, caption, image, enumIdx);
             return new ClickObj(lb, item);
         }
 
-        #endregion Function - Public Mehtods
+        #endregion Funciton - Public Methods
 
         #region Funciton - Private Methods
 
@@ -216,7 +210,6 @@ namespace CtOutLookBar.Internal {
 
             /*-- 調整邊界 --*/
             AdaptiveBorder(label);
-
         }
 
         /// <summary>
@@ -259,7 +252,7 @@ namespace CtOutLookBar.Internal {
             // icon height + text height + margin
             mIconSpacing =
                 mItemSize.Height +
-                (int)mGraph.MeasureString(mBorder.Text, mBorder.Font).Height + 
+                (int)mGraph.MeasureString(mBorder.Text, mBorder.Font).Height +
                 mSpacing;
 
             RefreshItem();
@@ -274,7 +267,7 @@ namespace CtOutLookBar.Internal {
             ///因此用一個無用的Label控制項將其位置設為最下方控制項Top值+40
             ///以顯示最後一個選項的文字說明
             if (lb.Top > Height) {
-                mBorder.Top = lb.Top + 2* mMargin;
+                mBorder.Top = lb.Top + 2 * mMargin;
             }
         }
 
@@ -310,8 +303,6 @@ namespace CtOutLookBar.Internal {
             }
         }
 
-        #endregion Function - Private Methods
-
+        #endregion Funciton - Private Methods
     }
-    
 }

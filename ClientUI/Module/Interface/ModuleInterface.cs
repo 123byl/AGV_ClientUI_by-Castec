@@ -1,28 +1,17 @@
 ﻿using CtBind;
 using CtDockSuit;
 using Geometry;
-using GLCore;
 using GLUI;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using VehiclePlanner.Core;
-using VehiclePlanner.Module.Implement;
-using WeifenLuo.WinFormsUI.Docking;
 using static VehiclePlanner.Partial.VehiclePlannerUI.Events.ConsoleEvents;
 using static VehiclePlanner.Partial.VehiclePlannerUI.Events.GoalSettingEvents;
 using static VehiclePlanner.Partial.VehiclePlannerUI.Events.TestingEvents;
 
 namespace VehiclePlanner.Module.Interface {
-
     ///// <summary>
     ///// DockContnet接口
     ///// </summary>
     //public interface ICtDockContainer : IDisposable {
-
     //    #region Properties
 
     //    /// <summary>
@@ -66,14 +55,15 @@ namespace VehiclePlanner.Module.Interface {
     //    DockState DockState { get; set; }
     //    event EventHandler DockStateChanged;
     //    string Text { get; set; }
-    //    #endregion 
+    //    #endregion
 
     //}
 
     /// <summary>
     /// Console 視窗公開操作方法
     /// </summary>
-    public interface IConsole : ICtDockContainer,IDataDisplay<ICtVehiclePlanner> {
+    public interface IConsole : ICtDockContainer, IDataDisplay<ICtVehiclePlanner> {
+
         /// <summary>
         /// 加入文字
         /// </summary>
@@ -103,7 +93,8 @@ namespace VehiclePlanner.Module.Interface {
     /// <summary>
     /// GoalSetting 視窗公開操作方法
     /// </summary>
-    public interface IGoalSetting : ICtDockContainer ,IDataDisplay<ICtVehiclePlanner>{
+    public interface IGoalSetting : ICtDockContainer, IDataDisplay<ICtVehiclePlanner> {
+
         /// <summary>
         /// 加入 Goal 點
         /// </summary>
@@ -182,13 +173,12 @@ namespace VehiclePlanner.Module.Interface {
         /// 重新載入標示物
         /// </summary>
         void ReloadSingle();
-
     }
 
     /// <summary>
     /// Test視窗公開操作方法
     /// </summary>
-    public interface ITesting : ICtDockContainer,IDataDisplay<IiTSController> {
+    public interface ITesting : ICtDockContainer, IDataDisplay<IiTSController> {
 
         event DelConnect Connect;
 
@@ -223,18 +213,20 @@ namespace VehiclePlanner.Module.Interface {
         event DelShowMotionController ShowMotionController;
 
         event DelFind Find;
-        
     }
 
     /// <summary>
     /// MapGL視窗公開操作方法
     /// </summary>
-    public interface IMapGL : ICtDockContainer,IDataDisplay<ICtVehiclePlanner> {
+    public interface IMapGL : ICtDockContainer, IDataDisplay<ICtVehiclePlanner> {
+
         /// <summary>
         /// 地圖中心點
         /// </summary>
         IPair MapCenter { get; set; }
+
         IScene Ctrl { get; }
+
         void Show();
     }
 }

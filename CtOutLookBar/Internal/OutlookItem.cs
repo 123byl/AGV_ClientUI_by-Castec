@@ -1,13 +1,10 @@
 ﻿using CtOutLookBar.Public;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace CtOutLookBar.Internal {
+
     /// <summary>
     /// 功能按鈕
     /// </summary>
@@ -19,7 +16,7 @@ namespace CtOutLookBar.Internal {
         /// 項目列舉值
         /// </summary>
         public int mEnumIdx;
-        
+
         /// <summary>
         /// 滑鼠進入旗標
         /// </summary>
@@ -43,14 +40,14 @@ namespace CtOutLookBar.Internal {
             MouseEnter += new EventHandler(OnMouseEnter);
             MouseLeave += new EventHandler(OnMouseLeave);
             MouseMove += new MouseEventHandler(OnMouseMove);
-            
+
             mMouseEnter = false;
         }
 
         #endregion Function - Constructors
 
         #region Implement - IOutlookItem
-        
+
         /// <summary>
         /// 父節點
         /// </summary>
@@ -97,7 +94,6 @@ namespace CtOutLookBar.Internal {
             }
         }
 
-        #endregion Funciton - Events
+        #endregion Function - Events
     }
-
 }

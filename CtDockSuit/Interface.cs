@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WeifenLuo.WinFormsUI.Docking;
 
-namespace CtDockSuit
-{
+namespace CtDockSuit {
+
     /// <summary>
     /// DockContnet接口
     /// </summary>
@@ -53,10 +49,13 @@ namespace CtDockSuit
         #endregion Methods
 
         #region 原本就有實作的方法、屬性
+
         DockState DockState { get; set; }
+
         event EventHandler DockStateChanged;
+
         string Text { get; set; }
-        #endregion 
+        #endregion 原本就有實作的方法、屬性
 
     }
 }

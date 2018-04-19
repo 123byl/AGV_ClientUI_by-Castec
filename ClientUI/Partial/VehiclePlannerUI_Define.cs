@@ -1,9 +1,5 @@
 ﻿using GLCore;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using VehiclePlanner.Core;
 
 namespace VehiclePlanner.Partial.VehiclePlannerUI {
@@ -14,34 +10,42 @@ namespace VehiclePlanner.Partial.VehiclePlannerUI {
     /// 鼠標模式
     /// </summary>
     public enum CursorMode {
+
         /// <summary>
         /// 選擇模式
         /// </summary>
         Select,
+
         /// <summary>
         /// 新增Goal點模式
         /// </summary>
         Goal,
+
         /// <summary>
         /// 新增充電站模式
         /// </summary>
         Power,
+
         /// <summary>
         /// 拖曳模式
         /// </summary>
         Drag,
+
         /// <summary>
         /// 畫筆模式
         /// </summary>
         Pen,
+
         /// <summary>
         /// 橡皮擦模式
         /// </summary>
         Eraser,
+
         /// <summary>
         /// 地圖插入模式
         /// </summary>
         Insert,
+
         /// <summary>
         /// 禁止區模式
         /// </summary>
@@ -54,10 +58,12 @@ namespace VehiclePlanner.Partial.VehiclePlannerUI {
     /// 頂層 UI 控制事件集合
     /// </summary>
     public static class Events {
+
         /// <summary>
         /// Console 控制事件集合
         /// </summary>
         public static class ConsoleEvents {
+
             /// <summary>
             /// 文字已被加入
             /// </summary>
@@ -73,6 +79,7 @@ namespace VehiclePlanner.Partial.VehiclePlannerUI {
         /// GoalSetting 控制事件集合
         /// </summary>
         public static class GoalSettingEvents {
+
             /// <summary>
             /// 將目前位置設為Goal點
             /// </summary>
@@ -152,6 +159,7 @@ namespace VehiclePlanner.Partial.VehiclePlannerUI {
         /// Testing控制事件集合
         /// </summary>
         public static class TestingEvents {
+
             public delegate void DelConnect(bool cnn);
 
             public delegate void DelGetCar();
@@ -187,7 +195,6 @@ namespace VehiclePlanner.Partial.VehiclePlannerUI {
             public delegate void DelShowMotionController();
 
             public delegate void DelFind();
-
         }
 
         public static class FlowTemplate {
@@ -199,5 +206,4 @@ namespace VehiclePlanner.Partial.VehiclePlannerUI {
             public delegate void DelExecutingInfo();
         }
     }
-
 }

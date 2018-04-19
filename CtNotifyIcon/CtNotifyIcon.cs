@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace CtNotifyIcon
-{
+namespace CtNotifyIcon {
+
     /// <summary>
     /// 系統列圖示類
     /// </summary>
@@ -84,7 +81,6 @@ namespace CtNotifyIcon
             remove {
                 mNotifyIcon.MouseUp -= value;
             }
-
         }
 
         #endregion Declaration - Events
@@ -162,13 +158,13 @@ namespace CtNotifyIcon
         #endregion Function - Public Methods
 
         #region IDisposable Support
+
         private bool disposedValue = false; // 偵測多餘的呼叫
 
         protected virtual void Dispose(bool disposing) {
             if (!disposedValue) {
                 if (disposing) {
                     // TODO: 處置 Managed 狀態 (Managed 物件)。
-
                 }
 
                 // TODO: 釋放 Unmanaged 資源 (Unmanaged 物件) 並覆寫下方的完成項。
@@ -202,9 +198,8 @@ namespace CtNotifyIcon
             // TODO: 如果上方的完成項已被覆寫，即取消下行的註解狀態。
             // GC.SuppressFinalize(this);
         }
-        #endregion
 
-
+        #endregion IDisposable Support
     }
 
     /// <summary>
@@ -227,7 +222,7 @@ namespace CtNotifyIcon
         /// </summary>
         private List<EventHandler> mClickEvents = new List<EventHandler>();
 
-        #endregion Declaration -Fields
+        #endregion Declaration - Fields
 
         #region Declaration Properties
 
@@ -240,7 +235,7 @@ namespace CtNotifyIcon
             }
         }
 
-        #endregion Declaration - Properties
+        #endregion Declaration Properties
 
         #region Function - Public Methods
 
@@ -293,9 +288,10 @@ namespace CtNotifyIcon
             mClickEvents = null;
         }
 
-        #endregion Funciton - Public Methods
+        #endregion Function - Public Methods
 
         #region IDisposable Support
+
         private bool disposedValue = false; // 偵測多餘的呼叫
 
         protected virtual void Dispose(bool disposing) {
@@ -325,8 +321,7 @@ namespace CtNotifyIcon
             // TODO: 如果上方的完成項已被覆寫，即取消下行的註解狀態。
             // GC.SuppressFinalize(this);
         }
-        #endregion
 
+        #endregion IDisposable Support
     }
-
 }

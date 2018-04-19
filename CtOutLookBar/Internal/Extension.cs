@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 using System.Windows.Forms;
 
 namespace CtOutLookBar.Internal {
+
     /// <summary>
     /// 擴充方法
     /// </summary>
@@ -20,7 +16,5 @@ namespace CtOutLookBar.Internal {
             if (ctrl.InvokeRequired) ctrl.Invoke(action);
             else action();
         }
-
     }
-
 }

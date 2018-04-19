@@ -1,11 +1,6 @@
-﻿
-using CtOutLookBar.Public;
+﻿using CtOutLookBar.Public;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace CtOutLookBar.Internal {
@@ -21,6 +16,7 @@ namespace CtOutLookBar.Internal {
     }
 
     internal class BandPanel : Panel {
+
         public BandPanel(string caption, OutlookCategory content, BandTagInfo bti) {
             BackColor = System.Drawing.Color.LightPink;
             //Dock = DockStyle.Fill;
@@ -47,5 +43,4 @@ namespace CtOutLookBar.Internal {
             bti.outlookBar.SelectCategory(bti.index);
         }
     }
-
 }

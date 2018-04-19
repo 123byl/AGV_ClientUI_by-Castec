@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
 
-namespace BroadCast
-{
+namespace BroadCast {
 
     /// <summary>
     /// 執行緒函式庫
@@ -78,17 +75,18 @@ namespace BroadCast
             }
             return stt;
         }
-
     }
 
     /// <summary>
     /// 廣播事件參數
     /// </summary>
     public class BroadcastEventArgs : EventArgs {
+
         /// <summary>
         /// 廣播訊息
         /// </summary>
         public string Message { get; set; }
+
         /// <summary>
         /// 廣播發布位置
         /// </summary>
@@ -106,11 +104,11 @@ namespace BroadCast
         /// 網路接口
         /// </summary>
         protected Socket mSocket = null;
-        
+
         /// <summary>
         /// 本地端IP
         /// </summary>
-        protected IPEndPoint mLocal = new IPEndPoint(IPAddress.Any,1688);
+        protected IPEndPoint mLocal = new IPEndPoint(IPAddress.Any, 1688);
 
         /// <summary>
         /// 廣播接收執行緒
@@ -125,7 +123,7 @@ namespace BroadCast
         #endregion Declaration - Fields
 
         #region Declaration - Properties
-        
+
         /// <summary>
         /// 是否在接收廣播
         /// </summary>
@@ -135,7 +133,7 @@ namespace BroadCast
                     return mRecever?.IsAlive ?? false;
                 }
             }
-        } 
+        }
 
         /// <summary>
         /// 廣播埠號
@@ -145,7 +143,7 @@ namespace BroadCast
                 return mLocal.Port;
             }
         }
-        
+
         #endregion Declaration - Properties
 
         #region Evnents
@@ -155,7 +153,7 @@ namespace BroadCast
         /// </summary>
         public event EventHandler<BroadcastEventArgs> ReceivedData = null;
 
-        #endregion Events
+        #endregion Evnents
 
         #region Funciotn - Constructors
 
@@ -163,7 +161,7 @@ namespace BroadCast
             SetBroadcastPort(1688);
         }
 
-        #endregion Function - Constructors
+        #endregion Funciotn - Constructors
 
         #region Function - Private Methods
 
@@ -171,7 +169,7 @@ namespace BroadCast
         /// Socket初始化
         /// </summary>
         protected virtual void SocketInitial() {
-            mSocket.Bind(mLocal);            
+            mSocket.Bind(mLocal);
         }
 
         /// <summary>
@@ -198,7 +196,7 @@ namespace BroadCast
             mLocal.Port = port;
         }
 
-        #endregion Funciotn - Private Methods
+        #endregion Function - Private Methods
 
         #region Function - Public Methods
 
@@ -206,7 +204,7 @@ namespace BroadCast
         /// 開始/停止接收廣播
         /// </summary>
         /// <param name="start">是否開始接收廣播</param>
-        public virtual void StartReceive(bool start,int port = 1688) {
+        public virtual void StartReceive(bool start, int port = 1688) {
             lock (mKey) {
                 if (start != IsReceiving) {
                     if (start) {
@@ -228,7 +226,7 @@ namespace BroadCast
                 }
             }
         }
-        
+
         /// <summary>
         /// 傳遞訊息到指定IP
         /// </summary>
@@ -240,7 +238,7 @@ namespace BroadCast
             }
         }
 
-        #endregion Funciotn - Public Methods
+        #endregion Function - Public Methods
 
         #region Funciton - Task
 
@@ -263,12 +261,11 @@ namespace BroadCast
                 }
             } catch (Exception ex) {
                 Console.WriteLine($"[{this.GetType().Name}]{ex.Message}");
-                Task.Factory.StartNew(() =>StartReceive(false) );
+                Task.Factory.StartNew(() => StartReceive(false));
             }
         }
 
-        #endregion Funciotn - Task
-
+        #endregion Funciton - Task
     }
 
     /// <summary>
@@ -283,15 +280,14 @@ namespace BroadCast
         /// </summary>
         private List<IPEndPoint> mRemote = new List<IPEndPoint>();
 
-        #endregion Declaration - Fields
+        #endregion Declaration - Fiedls
 
         #region Funciotn - Consturctors
 
         public Broadcaster() : base() {
-            
         }
 
-        #endregion Funciton - Constructors
+        #endregion Funciotn - Consturctors
 
         #region Function - Private Methods
 
@@ -326,7 +322,7 @@ namespace BroadCast
             }
         }
 
-        #endregion Funciton - Private Methods
+        #endregion Function - Private Methods
 
         #region Funciton - Public Methods
 
@@ -342,7 +338,6 @@ namespace BroadCast
             }
         }
 
-        #endregion Function - Public Methods
+        #endregion Funciton - Public Methods
     }
-
 }

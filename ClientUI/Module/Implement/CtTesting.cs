@@ -1,24 +1,20 @@
-﻿using System;
+﻿using CtDockSuit;
+using CtLib.Library;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Windows.Forms;
-
-using WeifenLuo.WinFormsUI.Docking;
-using CtLib.Library;
-using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
+using VehiclePlanner.Core;
 using VehiclePlanner.Module.Interface;
 using VehiclePlanner.Partial.VehiclePlannerUI;
-using VehiclePlanner.Core;
-using CtLib.Module.Utility;
-using CtDockSuit;
+using WeifenLuo.WinFormsUI.Docking;
 
 namespace VehiclePlanner.Module.Implement {
+
     /// <summary>
     /// 測試功能介面
     /// </summary>
-    public partial class CtTesting : CtDockContainer ,ITesting{
+    public partial class CtTesting : CtDockContainer, ITesting {
 
         #region Declaration - Fields
 
@@ -28,7 +24,7 @@ namespace VehiclePlanner.Module.Implement {
         /// 紀錄鍵盤按下的方向
         /// </summary>
         private List<MotionDirection> mDirs = new List<MotionDirection>();
-        
+
         #endregion Declaration - Fields
 
         #region Function - Construcotrs
@@ -38,33 +34,49 @@ namespace VehiclePlanner.Module.Implement {
         /// </summary>
 
         public CtTesting(DockState defState = DockState.Float)
-            :base(defState) {
+            : base(defState) {
             InitializeComponent();
             FixedSize = new Size(718, 814);
         }
 
-        #endregion Function - Constructors
+        #endregion Function - Construcotrs
 
         #region Implement - ITest
 
         public event Events.GoalSettingEvents.DelLoadMap LoadMap;
+
         public event Events.TestingEvents.DelLoadOri LoadOri;
+
         public event Events.TestingEvents.DelGetOri GetOri;
+
         public event Events.TestingEvents.DelGetMap GetMap;
+
         public event Events.TestingEvents.DelGetLaser GetLaser;
+
         public event Events.TestingEvents.DelGetCar GetCar;
+
         public event Events.TestingEvents.DelSendMap SendMap;
+
         public event Events.TestingEvents.DelSimplifyOri SimplifyOri;
+
         public event Events.TestingEvents.DelSetVelocity SetVelocity;
+
         public event Events.TestingEvents.DelConnect Connect;
+
         public event Events.TestingEvents.DelMotorServoOn MotorServoOn;
+
         public event Events.TestingEvents.DelClearMap ClearMap;
+
         public event Events.TestingEvents.DelSettingCarPos SettingCarPos;
+
         public event Events.TestingEvents.DelCarPosConfirm CarPosConfirm;
+
         public event Events.TestingEvents.DelStartScan StartScan;
+
         public event Events.TestingEvents.DelShowMotionController ShowMotionController;
+
         public event Events.TestingEvents.DelFind Find;
-        
+
         #endregion Implement - ITest
 
         #region Function  - UI Events
@@ -78,11 +90,11 @@ namespace VehiclePlanner.Module.Implement {
                 }
             });
         }
-        
+
         private void btnLoadOri_Click(object sender, EventArgs e) {
             LoadOri?.Invoke();
         }
-        
+
         private void btnGetMap_Click(object sender, EventArgs e) {
             Task.Run(() => {
                 GetMap?.Invoke();
@@ -107,7 +119,7 @@ namespace VehiclePlanner.Module.Implement {
 
         private void btnSendMap_Click(object sender, EventArgs e) {
             //Task.Run(() => {
-                SendMap?.Invoke();
+            SendMap?.Invoke();
             //});
         }
 
@@ -127,7 +139,7 @@ namespace VehiclePlanner.Module.Implement {
         private void btnClrMap_Click(object sender, EventArgs e) {
             ClearMap?.Invoke();
         }
-        
+
         private void btnServoOnOff_Click(object sender, EventArgs e) {
             Task.Run(() => {
                 if (btnServoOnOff.Tag == null || (btnServoOnOff.Tag is bool && !(bool)btnServoOnOff.Tag)) {
@@ -163,10 +175,10 @@ namespace VehiclePlanner.Module.Implement {
             Find.Invoke();
         }
 
-        #endregion Funciton - UI Events
+        #endregion Function  - UI Events
 
         #region Implement - IDataDisplay<ICtVehiclePlanner>
-        
+
         /// <summary>
         /// 資料綁定
         /// </summary>
@@ -207,8 +219,6 @@ namespace VehiclePlanner.Module.Implement {
             cboHostIP.DisplayMember = source.iTSs.Columns[0].Caption;
         }
 
-        #endregion Implement - IDataDisplay<ICtVehiclPlanner>
-
+        #endregion Implement - IDataDisplay<ICtVehiclePlanner>
     }
-    
 }

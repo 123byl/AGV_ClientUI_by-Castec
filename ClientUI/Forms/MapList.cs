@@ -1,19 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace VehiclePlanner.Forms {
-    public partial class MapList : Form
-    {
 
+    public partial class MapList : Form {
         public string strMapList = "";
-        public MapList(string MapList):this(MapList.Split(new char[] { ',' },StringSplitOptions.RemoveEmptyEntries)){}
+
+        public MapList(string MapList) : this(MapList.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries)) {
+        }
 
         public MapList(IEnumerable<string> mapList) {
             InitializeComponent();
@@ -27,8 +22,7 @@ namespace VehiclePlanner.Forms {
             this.TopMost = true;
         }
 
-        private void btnOK_Click(object sender, EventArgs e)
-        {
+        private void btnOK_Click(object sender, EventArgs e) {
             strMapList = lstbMap.SelectedItem.ToString();
         }
     }
