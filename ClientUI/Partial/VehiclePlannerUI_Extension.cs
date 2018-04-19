@@ -1,4 +1,5 @@
-﻿using CtLib.Module.Utility;
+﻿using CtDockSuit;
+using CtLib.Module.Utility;
 using CtOutLookBar.Public;
 using System;
 using System.Collections.Generic;
@@ -45,7 +46,7 @@ namespace VehiclePlanner.Partial.VehiclePlannerUI {
         /// <typeparam name="T"></typeparam>
         /// <param name="user">使用者資料</param>
         /// <returns>是否有權限</returns>
-        public static bool Authority<T>(this UserData user) where T : ICtDockContent {
+        public static bool Authority<T>(this UserData user) where T : ICtDockContainer {
             return Authority(typeof(T), user);
         }
 
@@ -56,7 +57,7 @@ namespace VehiclePlanner.Partial.VehiclePlannerUI {
         /// <param name="component">要使用的元件</param>
         /// <param name="user">使用者資料</param>
         /// <returns>是否有權限</returns>
-        public static bool Authority<T>(this T component,UserData user)where T:ICtDockContent {
+        public static bool Authority<T>(this T component,UserData user)where T:ICtDockContainer {
             return Authority(component.GetType(),user);
         }
 

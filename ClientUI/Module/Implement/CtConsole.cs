@@ -14,13 +14,14 @@ using CtLib.Library;
 using VehiclePlanner.Module.Interface;
 using static VehiclePlanner.Partial.VehiclePlannerUI.Events.ConsoleEvents;
 using VehiclePlanner.Core;
+using CtDockSuit;
 
 namespace VehiclePlanner.Module.Implement {
     
     /// <summary>
     /// Console介面
     /// </summary>
-    public partial class CtConsole : CtDockContent, IConsole
+    public partial class CtConsole : CtDockContainer, IConsole
     {
 
         #region Declaration - Fields

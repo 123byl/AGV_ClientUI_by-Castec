@@ -66,10 +66,7 @@
     <Reference Include="UtilityLibrary">
       <HintPath>..\..\..\..\Downloads\UtilityLibrary\UtilityLibrary.dll</HintPath>
     </Reference>
-    <Reference Include="WeifenLuo.WinFormsUI.Docking, Version=2.4.0.16114, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>Dynamic Link Libraries\WeifenLuo.WinFormsUI.Docking.dll</HintPath>
-    </Reference>
+    <Reference Include="WeifenLuo.WinFormsUI.Docking, Version=2.4.0.16114, Culture=neutral, PublicKeyToken=null" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Forms\CtMapInsert.cs">
@@ -87,7 +84,6 @@
     <Compile Include="Module\Interface\ModuleInterface.cs" />
     <Compile Include="Partial\VehiclePlannerUI_Define.cs" />
     <Compile Include="Partial\VehiclePlannerUI_Extension.cs" />
-    <Compile Include="Partial\VehiclePlannerUI_MethodLibrary.cs" />
     <Compile Include="Partial\VehiclePlanner_SupportClass.cs" />
     <Compile Include="VehiclePlannerUI.cs">
       <SubType>Form</SubType>
@@ -100,9 +96,6 @@
     </Compile>
     <Compile Include="Module\Implement\CtConsole.Designer.cs">
       <DependentUpon>CtConsole.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Module\Implement\CtDockContent.cs">
-      <SubType>Form</SubType>
     </Compile>
     <Compile Include="Module\Implement\CtGoalSetting.cs">
       <SubType>Form</SubType>
@@ -148,9 +141,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Module\Implement\CtConsole.resx">
       <DependentUpon>CtConsole.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Module\Implement\CtDockContent.resx">
-      <DependentUpon>CtDockContent.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Module\Implement\CtGoalSetting.resx">
       <DependentUpon>CtGoalSetting.cs</DependentUpon>
@@ -517,6 +507,10 @@
     <ProjectReference Include="..\CtBind\CtBind.csproj">
       <Project>{76ef08f5-b0de-40ad-b468-15dc8908706b}</Project>
       <Name>CtBind</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CtDockSuit\CtDockSuit.csproj">
+      <Project>{bf4496a5-452d-44b2-aa68-d17fe68c45a3}</Project>
+      <Name>CtDockSuit</Name>
     </ProjectReference>
     <ProjectReference Include="..\CtLib\CtLib\CtLib.csproj">
       <Project>{a9bed8b3-2f9d-42a8-90bd-9fae0522eb09}</Project>

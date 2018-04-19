@@ -37,6 +37,7 @@ using VehiclePlanner.Forms;
 using VehiclePlanner.Partial.VehiclePlannerUI;
 using VehiclePlanner.Core;
 using CtBind;
+using CtDockSuit;
 
 namespace VehiclePlanner
 {
@@ -149,12 +150,12 @@ namespace VehiclePlanner
         /// <summary>
         /// 地圖插入控制器
         /// </summary>
-        private ICtDockContent mMapInsert = new CtMapInsert();
+        private CtDockContainer mMapInsert = new CtMapInsert();
 
         /// <summary>
-        /// ICtDockContent與MenuItem對照
+        /// ICtDockContainer與MenuItem對照
         /// </summary>
-        private Dictionary<ToolStripMenuItem, ICtDockContent> mDockContent = null;
+        private Dictionary<ToolStripMenuItem, CtDockContainer> mDockContent = null;
 
         /// <summary>
         /// AGV移動控制器
@@ -287,8 +288,8 @@ namespace VehiclePlanner
                 rVehiclePlanner.Controller.SelectFile = SelectFile;
                 rVehiclePlanner.Controller.InputBox = InputBox;
 
-                /*-- 載入ICtDockContent物件 --*/
-                LoadICtDockContent();
+                /*-- 載入ICtDockContainer物件 --*/
+                LoadICtDockContainer();
 
                 LoadCtNotifyIcon();
                 
@@ -406,7 +407,7 @@ namespace VehiclePlanner
 
                 if (item.Checked)
                 {
-                    (mDockContent[item] as CtDockContent).Visible = false;
+                    (mDockContent[item] as CtDockContainer).Visible = false;
                 }
                 else
                 {
@@ -517,7 +518,7 @@ namespace VehiclePlanner
         private void Value_DockStateChanged(object sender, EventArgs e)
         {
             /*-- 取得發報的DockContent物件 --*/
-            CtDockContent dockWnd = sender as CtDockContent;
+            CtDockContainer dockWnd = sender as CtDockContainer;
 
             /*--取得對應MenuItem物件--*/
             ToolStripMenuItem menuItem = mDockContent.First(v => v.Value == dockWnd).Key;
@@ -830,7 +831,7 @@ namespace VehiclePlanner
 
             /*-- 依照停靠區域計算所需顯示大小 --*/
             double portion = 0;
-            if (DockMth.CalculatePortion(area, dockSize, out portion)) {
+            if (area.CalculatePortion(dockSize, out portion)) {
                 switch (area) {
                     case DockAreas.DockBottom:
                         panel.DockBottomPortion = portion;
@@ -939,12 +940,12 @@ namespace VehiclePlanner
         }
 
         /// <summary>
-        /// 載入ICtDockContent物件
+        /// 載入ICtDockContainer物件
         /// </summary>
-        private void LoadICtDockContent() {
+        private void LoadICtDockContainer() {
             if (mDockContent != null) return;
             /*-- 載入DockContent --*/
-            mDockContent = new Dictionary<ToolStripMenuItem, ICtDockContent>() {
+            mDockContent = new Dictionary<ToolStripMenuItem, CtDockContainer>() {
                 { miConsole,new CtConsole(DockState.DockBottomAutoHide)},
                 { miGoalSetting,new CtGoalSetting(DockState.DockLeft)},
                 { miTesting,new CtTesting(DockState.DockLeft)},
@@ -961,7 +962,7 @@ namespace VehiclePlanner
             /*-- 遍歷所有DockContent與MenuItem物件 --*/
             foreach (var kvp in mDockContent) {
                 ToolStripMenuItem item = kvp.Key;
-                ICtDockContent dokContent = kvp.Value as ICtDockContent;
+                CtDockContainer dokContent = kvp.Value as CtDockContainer;
 
                 /*-- 參考分配 --*/
                 dokContent.AssignmentDockPanel(dockPanel);

@@ -1,22 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Drawing;
-using WeifenLuo.WinFormsUI.Docking;
 using System.Windows.Forms;
-using VehiclePlanner.Module.Interface;
-using VehiclePlanner.Partial.VehiclePlannerUI;
+using WeifenLuo.WinFormsUI.Docking;
 
-namespace VehiclePlanner.Module.Implement {
+namespace CtDockSuit {
     /// <summary>
     /// 基礎的DockContent類
     /// </summary>
-    public class CtDockContent : DockContent, ICtDockContent {
+    public class CtDockContainer : DockContent, ICtDockContainer {
 
         #region Declaration - Fiedls
-        
+
         /// <summary>
         /// 預設的DockState狀態
         /// </summary>
@@ -25,7 +23,7 @@ namespace VehiclePlanner.Module.Implement {
         /// <summary>
         /// 表單固定大小
         /// </summary>
-        private Size mFixedSize = new Size(0,0);
+        private Size mFixedSize = new Size(0, 0);
 
         /// <summary>
         /// <see cref="DockPanel"/>參考
@@ -44,7 +42,8 @@ namespace VehiclePlanner.Module.Implement {
         public new virtual event EventHandler DockStateChanged {
             add {
                 base.DockStateChanged += value;
-            }remove {
+            }
+            remove {
                 base.DockStateChanged -= value;
             }
         }
@@ -56,7 +55,9 @@ namespace VehiclePlanner.Module.Implement {
         /// <summary>
         /// 預設的DockState狀態
         /// </summary>
-        public DockState DefaultDockState { get { return mDefDockState; } set {
+        public DockState DefaultDockState {
+            get { return mDefDockState; }
+            set {
                 mDefDockState = value;
                 CorrectionAutoHidePortion();
             }
@@ -70,7 +71,9 @@ namespace VehiclePlanner.Module.Implement {
         /// 因此只能將設計階段設定的尺寸手動輸入FixedSize變數當中
         /// 透過將該屬性設為abstract強迫繼承時必須設定表單尺寸
         /// </remarks>
-        public Size FixedSize { get { return mFixedSize; } set {
+        public Size FixedSize {
+            get { return mFixedSize; }
+            set {
                 mFixedSize = value;
                 CorrectionAutoHidePortion();
             }
@@ -78,7 +81,8 @@ namespace VehiclePlanner.Module.Implement {
 
         public new virtual DockState DockState { get { return base.DockState; } set { base.DockState = value; } }
 
-        public  new bool Visible { get => mVisible;set {
+        public new bool Visible {
+            get => mVisible; set {
                 if (mVisible != value) {
                     mVisible = value;
                     if (value) {
@@ -98,7 +102,7 @@ namespace VehiclePlanner.Module.Implement {
         /// <summary>
         /// 具有預設DockState功能的建置方法
         /// </summary>
-        public CtDockContent(DockState defState) {
+        public CtDockContainer(DockState defState) {
             if (defState == DockState.Unknown) {
                 throw new ArgumentException($"預設DockState不可為{defState}");
             }
@@ -106,10 +110,10 @@ namespace VehiclePlanner.Module.Implement {
             /*-- 表單關閉中事件訂閱 --*/
             this.FormClosing += CtDockContent_FormClosing;
             this.AutoScroll = true;
-            
+
         }
 
-        private CtDockContent() { }
+        private CtDockContainer() { }
 
         #endregion Function - Constructors
 
@@ -131,7 +135,7 @@ namespace VehiclePlanner.Module.Implement {
         }
 
         #endregion Function - Events
-        
+
         #region Function - Public Methods
 
         /// <summary>
@@ -141,7 +145,7 @@ namespace VehiclePlanner.Module.Implement {
         public void AssignmentDockPanel(DockPanel dockPanel) {
             rDockPanel = dockPanel;
         }
-        
+
         #endregion Function - Public Methods
 
         #region Function - Private Methods
@@ -153,7 +157,7 @@ namespace VehiclePlanner.Module.Implement {
         private void BeginInvoke(MethodInvoker action) {
             if (this.InvokeRequired) {
                 this.Invoke(action);
-            }else {
+            } else {
                 action();
             }
         }
@@ -165,7 +169,7 @@ namespace VehiclePlanner.Module.Implement {
             DockAreas area = mDefDockState.ToAreas();//停靠區域
             Size dockPortion = mFixedSize;//視窗預設尺寸
             double portion = 0;//轉換後的Portion值
-            if (DockMth.CalculatePortion(area, dockPortion, out portion)){
+            if (area.CalculatePortion(dockPortion, out portion)) {
                 this.AutoHidePortion = portion;
             }
         }
@@ -212,7 +216,7 @@ namespace VehiclePlanner.Module.Implement {
         #endregion Funciton - Protected Methods
 
         private void InitializeComponent() {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CtDockContent));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CtDockContainer));
             this.SuspendLayout();
             // 
             // CtDockContent
@@ -231,5 +235,4 @@ namespace VehiclePlanner.Module.Implement {
         }
     }
 
-    
 }

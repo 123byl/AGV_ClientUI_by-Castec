@@ -1,4 +1,5 @@
 ﻿using CtBind;
+using CtDockSuit;
 using Geometry;
 using GLCore;
 using GLUI;
@@ -17,62 +18,62 @@ using static VehiclePlanner.Partial.VehiclePlannerUI.Events.TestingEvents;
 
 namespace VehiclePlanner.Module.Interface {
 
-    /// <summary>
-    /// DockContnet接口
-    /// </summary>
-    public interface ICtDockContent : IDisposable {
+    ///// <summary>
+    ///// DockContnet接口
+    ///// </summary>
+    //public interface ICtDockContainer : IDisposable {
 
-        #region Properties
+    //    #region Properties
 
-        /// <summary>
-        /// 預設停靠狀態
-        /// </summary>
-        DockState DefaultDockState { get; set; }
+    //    /// <summary>
+    //    /// 預設停靠狀態
+    //    /// </summary>
+    //    DockState DefaultDockState { get; set; }
 
-        /// <summary>
-        /// 表單固定尺寸
-        /// </summary>
-        Size FixedSize { get; set; }
+    //    /// <summary>
+    //    /// 表單固定尺寸
+    //    /// </summary>
+    //    Size FixedSize { get; set; }
 
-        /// <summary>
-        /// 是否可視
-        /// </summary>
-        bool Visible { get; set; }
+    //    /// <summary>
+    //    /// 是否可視
+    //    /// </summary>
+    //    bool Visible { get; set; }
 
-        #endregion Properties
+    //    #endregion Properties
 
-        #region Methods
+    //    #region Methods
 
-        /// <summary>
-        /// 分配<see cref="DockPanel"/>物件參考
-        /// </summary>
-        /// <param name="dockPanel"></param>
-        void AssignmentDockPanel(DockPanel dockPanel);
+    //    /// <summary>
+    //    /// 分配<see cref="DockPanel"/>物件參考
+    //    /// </summary>
+    //    /// <param name="dockPanel"></param>
+    //    void AssignmentDockPanel(DockPanel dockPanel);
 
-        ///// <summary>
-        ///// 隱藏視窗
-        ///// </summary>
-        //void HideWindow();
+    //    ///// <summary>
+    //    ///// 隱藏視窗
+    //    ///// </summary>
+    //    //void HideWindow();
 
-        ///// <summary>
-        ///// 依照預設停靠狀態顯示
-        ///// </summary>
-        //void ShowWindow();
+    //    ///// <summary>
+    //    ///// 依照預設停靠狀態顯示
+    //    ///// </summary>
+    //    //void ShowWindow();
 
-        #endregion Methods
+    //    #endregion Methods
 
-        #region 原本就有實作的方法、屬性
-        DockState DockState { get; set; }
-        event EventHandler DockStateChanged;
-        string Text { get; set; }
-        #endregion 
+    //    #region 原本就有實作的方法、屬性
+    //    DockState DockState { get; set; }
+    //    event EventHandler DockStateChanged;
+    //    string Text { get; set; }
+    //    #endregion 
 
-    }
+    //}
 
     /// <summary>
     /// Console 視窗公開操作方法
     /// </summary>
-    public interface IConsole : ICtDockContent,IDataDisplay<ICtVehiclePlanner> {
+    public interface IConsole : ICtDockContainer,IDataDisplay<ICtVehiclePlanner> {
         /// <summary>
         /// 加入文字
         /// </summary>
@@ -102,7 +103,7 @@ namespace VehiclePlanner.Module.Interface {
     /// <summary>
     /// GoalSetting 視窗公開操作方法
     /// </summary>
-    public interface IGoalSetting : ICtDockContent ,IDataDisplay<ICtVehiclePlanner>{
+    public interface IGoalSetting : ICtDockContainer ,IDataDisplay<ICtVehiclePlanner>{
         /// <summary>
         /// 加入 Goal 點
         /// </summary>
@@ -187,7 +188,7 @@ namespace VehiclePlanner.Module.Interface {
     /// <summary>
     /// Test視窗公開操作方法
     /// </summary>
-    public interface ITesting : ICtDockContent,IDataDisplay<IiTSController> {
+    public interface ITesting : ICtDockContainer,IDataDisplay<IiTSController> {
 
         event DelConnect Connect;
 
@@ -228,7 +229,7 @@ namespace VehiclePlanner.Module.Interface {
     /// <summary>
     /// MapGL視窗公開操作方法
     /// </summary>
-    public interface IMapGL : ICtDockContent,IDataDisplay<ICtVehiclePlanner> {
+    public interface IMapGL : ICtDockContainer,IDataDisplay<ICtVehiclePlanner> {
         /// <summary>
         /// 地圖中心點
         /// </summary>

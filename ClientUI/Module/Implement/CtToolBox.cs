@@ -1,4 +1,5 @@
-﻿using CtOutLookBar.Public;
+﻿using CtDockSuit;
+using CtOutLookBar.Public;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -15,7 +16,7 @@ using static VehiclePlanner.Partial.VehiclePlannerUI.Events.GoalSettingEvents;
 
 namespace VehiclePlanner.Module.Implement {
 
-    public partial class CtToolBox : CtDockContent {
+    public partial class CtToolBox : CtDockContainer {
 
         #region Declaration - Events
 

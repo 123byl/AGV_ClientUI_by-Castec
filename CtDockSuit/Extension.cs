@@ -4,14 +4,15 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 
-namespace VehiclePlanner.Partial.VehiclePlannerUI {
+namespace CtDockSuit {
+
     /// <summary>
     /// Dock常用方法
     /// </summary>
-    public static class DockMth {
+    public static class Extension {
+
         /// <summary>
         /// 將<see cref="DockState"/>轉換為<see cref="DockAreas"/>
         /// </summary>
@@ -61,7 +62,7 @@ namespace VehiclePlanner.Partial.VehiclePlannerUI {
         /// Form與DockContent的的Size似乎並不相同
         /// 下面的參數是試出來的近似值，不同解析度可能有不同的參數
         /// </remarks>
-        public static bool CalculatePortion(DockAreas area, Size dockSize, out double portion) {
+        public static bool CalculatePortion(this DockAreas area, Size dockSize, out double portion) {
             bool ret = true;
             portion = 0;
             switch (area) {
@@ -84,20 +85,5 @@ namespace VehiclePlanner.Partial.VehiclePlannerUI {
             return ret;
         }
 
-        /// <summary>
-        /// 判斷是否需要用Invoke來執行方法
-        /// </summary>
-        /// <param name="dockContent">方法相關的<see cref="DockContent"/>物件</param>
-        /// <param name="act">要執行的方法</param>
-        private static void BeginInvokeIfNecessary(this DockContent dockContent, MethodInvoker act) {
-            if (dockContent.InvokeRequired) {
-                dockContent.Invoke(act);
-            } else {
-                act();
-            }
-        }
-
-
     }
-
 }

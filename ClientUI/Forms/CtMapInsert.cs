@@ -1,4 +1,5 @@
-﻿using GLCore;
+﻿using CtDockSuit;
+using GLCore;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,7 +14,7 @@ using VehiclePlanner.Module.Implement;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace VehiclePlanner.Forms {
-    public partial class CtMapInsert : CtDockContent , IMouseInsertPanel {
+    public partial class CtMapInsert : CtDockContainer , IMouseInsertPanel {
 
         #region Declaration - Declaration - Fields
 

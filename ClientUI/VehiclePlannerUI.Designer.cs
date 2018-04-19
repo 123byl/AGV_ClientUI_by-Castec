@@ -14,12 +14,12 @@ namespace VehiclePlanner {
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing) {
             if (disposing && (components != null)) {
-                /*-- 遍歷所有CtDockContent物件 --*/
+                /*-- 遍歷所有CtDockContainer物件 --*/
                 foreach (var kvp in mDockContent) {
                     DockContent dokContent = kvp.Value as DockContent;
                     /*-- 註銷DockStateChanged事件訂閱 --*/
                     dokContent.DockStateChanged -= Value_DockStateChanged;
-                    /*-- 釋放CtDockContent物件 --*/
+                    /*-- 釋放CtDockContainer物件 --*/
                     dokContent.Dispose();
                 }
                 mDockContent.Clear();

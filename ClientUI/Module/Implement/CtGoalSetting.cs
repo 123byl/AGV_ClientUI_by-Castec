@@ -2,23 +2,23 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using WeifenLuo.WinFormsUI.Docking;
 using CtLib.Library;
 using GLCore;
 using Geometry;
-using CtLib.Forms;
 using System.Threading.Tasks;
 using VehiclePlanner.Module.Interface;
 using VehiclePlanner.Partial.VehiclePlannerUI;
 using static VehiclePlanner.Partial.VehiclePlannerUI.Events.GoalSettingEvents;
 using VehiclePlanner.Core;
+using CtDockSuit;
+using WeifenLuo.WinFormsUI.Docking;
 
 namespace VehiclePlanner.Module.Implement {
-    
+
     /// <summary>
     /// Goal點設定介面
     /// </summary>
-    public partial class CtGoalSetting : CtDockContent, IGoalSetting
+    public partial class CtGoalSetting : CtDockContainer, IGoalSetting
     {
 
         #region Declaration - Fields

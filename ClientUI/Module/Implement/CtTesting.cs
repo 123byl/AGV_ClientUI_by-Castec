@@ -12,12 +12,13 @@ using VehiclePlanner.Module.Interface;
 using VehiclePlanner.Partial.VehiclePlannerUI;
 using VehiclePlanner.Core;
 using CtLib.Module.Utility;
+using CtDockSuit;
 
 namespace VehiclePlanner.Module.Implement {
     /// <summary>
     /// 測試功能介面
     /// </summary>
-    public partial class CtTesting : CtDockContent ,ITesting{
+    public partial class CtTesting : CtDockContainer ,ITesting{
 
         #region Declaration - Fields
 

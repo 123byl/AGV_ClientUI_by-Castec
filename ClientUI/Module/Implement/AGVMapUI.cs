@@ -1,4 +1,5 @@
-﻿using CtLib.Library;
+﻿using CtDockSuit;
+using CtLib.Library;
 using Geometry;
 using GLUI;
 using System;
@@ -15,7 +16,7 @@ using VehiclePlanner.Module.Interface;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace VehiclePlanner.Module.Implement {
-    public partial class AGVMapUI : CtDockContent,IMapGL
+    public partial class AGVMapUI : CtDockContainer,IMapGL
     {
 
         #region Declaration  - Fields
