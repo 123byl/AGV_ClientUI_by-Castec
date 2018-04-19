@@ -161,6 +161,11 @@ namespace BroadCast {
             SetBroadcastPort(1688);
         }
 
+        public BroadcastReceiver(bool start,EventHandler<BroadcastEventArgs> handle):this() {
+            if (handle != null) ReceivedData += handle;
+            StartReceive(start);
+        }
+
         #endregion Funciotn - Constructors
 
         #region Function - Private Methods

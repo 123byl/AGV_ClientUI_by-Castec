@@ -470,9 +470,7 @@ namespace VehiclePlanner.Core {
             mServer.ConnectedEvent += MServer_ConnectedEvent;
             mServer.StartListening((int)EPort.VehiclePlanner, 3, VehiclePlannerReceiver);
             CtThread.CreateThread(ref t_VPSender, "mTdClientSender", tsk_AutoReportToVehiclePlanner);//iTS狀態自動回報(-> VehiclePlanner)
-            mBroadcastReceiver = new BroadcastReceiver();
-            mBroadcastReceiver.ReceivedData += mBroadcastReceiver_ReceivedData;
-            mBroadcastReceiver.StartReceive(true);
+            mBroadcastReceiver = new BroadcastReceiver(true,mBroadcastReceiver_ReceivedData);
         }
 
         #endregion Function - Constructors
