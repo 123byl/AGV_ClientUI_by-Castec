@@ -125,7 +125,7 @@ namespace VehiclePlanner.Core {
     /// <summary>
     /// iTS控制器
     /// </summary>
-    public interface IiTSController:IDataSource {
+    public interface IITSController:IDataSource {
         /// <summary>
         /// 資料是否自動回傳中
         /// </summary>
@@ -185,7 +185,7 @@ namespace VehiclePlanner.Core {
         /// <summary>
         /// 可用iTS IP清單
         /// </summary>
-        DataTable iTSs { get; }
+        DataTable ITSs { get; }
 
         /// <summary>
         /// Console訊息事件
@@ -298,7 +298,7 @@ namespace VehiclePlanner.Core {
         /// <summary>
         /// iTS控制器
         /// </summary>
-        IiTSController Controller { get; set; }
+        IITSController Controller { get; set; }
         /// <summary>
         /// 當前Map檔路徑
         /// </summary>
@@ -416,7 +416,7 @@ namespace VehiclePlanner.Core {
         /// </summary>
         private MapGLController mMapGL = MapGLController.GetInstance();
 
-        private IiTSController mITS = new iTSControllerSerial();
+        private IITSController mITS = new ITSControllerSerial();
 
         #endregion Declaration - Fields
 
@@ -425,7 +425,7 @@ namespace VehiclePlanner.Core {
         /// <summary>
         /// iTS控制器
         /// </summary>
-        public IiTSController Controller { get => mITS; set {
+        public IITSController Controller { get => mITS; set {
                 if (mITS != value && value != null) {
                     mITS = value;
                 }

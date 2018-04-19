@@ -247,10 +247,11 @@ namespace CtNotifyIcon {
         /// <param name="enable">是否可視</param>
         /// <returns>建構出的<see cref="MenuItem"/></returns>
         public MenuItem AddMenuItem(string caption, Action<object, EventArgs> even = null, bool enable = true) {
-            MenuItem item = new MenuItem();
-            item.Text = caption;
-            item.Index = mMenuItems.Count;
-            item.Enabled = enable;
+            MenuItem item = new MenuItem() {
+                Text = caption,
+                Index = mMenuItems.Count,
+                Enabled = enable
+            };
             EventHandler handler = even == null ? null : new EventHandler(even);
             mClickEvents.Add(handler);
 

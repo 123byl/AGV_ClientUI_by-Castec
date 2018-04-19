@@ -28,7 +28,7 @@ namespace VehiclePlanner {
     /// <summary>
     /// 客戶端介面
     /// </summary>
-    public partial class VehiclePlannerUI : Form, ICtVersion, IDataDisplay<ICtVehiclePlanner>, IDataDisplay<IiTSController> {
+    public partial class VehiclePlannerUI : Form, ICtVersion, IDataDisplay<ICtVehiclePlanner>, IDataDisplay<IITSController> {
 
         #region Version - Information
 
@@ -171,7 +171,7 @@ namespace VehiclePlanner {
         /// <summary>
         /// iTS控制器
         /// </summary>
-        private IiTSController Controller { get => rVehiclePlanner.Controller as IiTSController; }
+        private IITSController Controller { get => rVehiclePlanner.Controller as IITSController; }
 
         #endregion Tool
 
@@ -538,9 +538,10 @@ namespace VehiclePlanner {
         /// 傳送Map檔
         /// </summary>
         private void ITest_SendMap() {
-            OpenFileDialog openMap = new OpenFileDialog();
-            openMap.InitialDirectory = rVehiclePlanner.DefMapDir;
-            openMap.Filter = "MAP|*.map";
+            OpenFileDialog openMap = new OpenFileDialog() {
+                InitialDirectory = rVehiclePlanner.DefMapDir,
+                Filter = "MAP|*.map"
+            };
             if (openMap.ShowDialog() == DialogResult.OK) {
                 try {
                     Task.Run(() => rVehiclePlanner.Controller.SendAndSetMap(openMap.FileName));
@@ -684,8 +685,9 @@ namespace VehiclePlanner {
                     break;
 
                 case CursorMode.Insert:
-                    OpenFileDialog old = new OpenFileDialog();
-                    old.Filter = ".Map|*.map";
+                    OpenFileDialog old = new OpenFileDialog() {
+                        Filter = ".Map|*.map"
+                    };
                     if (old.ShowDialog() == DialogResult.OK) {
                         IMapCtrl.SetInsertMapMode(old.FileName, mMapInsert as IMouseInsertPanel);
                     }
@@ -806,13 +808,13 @@ namespace VehiclePlanner {
             if (!dockContents.Any()) return;
 
             /*-- 計算集合中最大的Width與Height值 --*/
-            Size dockSize = new Size();
-            dockSize.Width = dockContents.Max(v => v.Value.FixedSize.Width);
-            dockSize.Height = dockContents.Max(v => v.Value.FixedSize.Height);
+            Size dockSize = new Size() {
+                Width = dockContents.Max(v => v.Value.FixedSize.Width),
+                Height = dockContents.Max(v => v.Value.FixedSize.Height)
+            };
 
             /*-- 依照停靠區域計算所需顯示大小 --*/
-            double portion = 0;
-            if (area.CalculatePortion(dockSize, out portion)) {
+            if (area.CalculatePortion(dockSize, out double portion)) {
                 switch (area) {
                     case DockAreas.DockBottom:
                         panel.DockBottomPortion = portion;
@@ -853,9 +855,10 @@ namespace VehiclePlanner {
         /// </summary>
         /// <param name="type">載入檔案類型</param>
         public void LoadFile(FileType type) {
-            OpenFileDialog openMap = new OpenFileDialog();
-            openMap.InitialDirectory = rVehiclePlanner.DefMapDir;
-            openMap.Filter = $"MAP|*.{type.ToString().ToLower()}";
+            OpenFileDialog openMap = new OpenFileDialog() {
+                InitialDirectory = rVehiclePlanner.DefMapDir,
+                Filter = $"MAP|*.{type.ToString().ToLower()}"
+            };
             if (openMap.ShowDialog() == DialogResult.OK) {
                 Task.Run(() => {
                     rVehiclePlanner.LoadFile(type, openMap.FileName);
@@ -1087,11 +1090,11 @@ namespace VehiclePlanner {
         }
 
         /// <summary>
-        /// <see cref="IiTSController"/>資料綁定
+        /// <see cref="IITSController"/>資料綁定
         /// </summary>
         /// <param name="source">資料來源</param>
-        public void Bindings(IiTSController source) {
-            Bindings<IiTSController>(source);
+        public void Bindings(IITSController source) {
+            Bindings<IITSController>(source);
             /*-- 電池最大電量 --*/
             tsprgBattery.ProgressBar.DataBindings.Add(nameof(ProgressBar.Maximum), source, nameof(source.BatteryMaximum));
             /*-- 電池最小電量 --*/

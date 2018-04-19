@@ -168,8 +168,8 @@ namespace CtDockSuit {
         private void CorrectionAutoHidePortion() {
             DockAreas area = mDefDockState.ToAreas();//停靠區域
             Size dockPortion = mFixedSize;//視窗預設尺寸
-            double portion = 0;//轉換後的Portion值
-            if (area.CalculatePortion(dockPortion, out portion)) {
+            //轉換後的Portion值
+            if (area.CalculatePortion(dockPortion, out double portion)) {
                 this.AutoHidePortion = portion;
             }
         }

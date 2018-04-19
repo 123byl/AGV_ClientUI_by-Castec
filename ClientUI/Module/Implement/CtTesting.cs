@@ -130,8 +130,7 @@ namespace VehiclePlanner.Module.Implement {
 
         private void btnSetVelo_Click(object sender, EventArgs e) {
             Task.Run(() => {
-                int velocity = 0;
-                if (int.TryParse(txtVelocity.Text, out velocity)) {
+                if (int.TryParse(txtVelocity.Text, out int velocity)) {
                     SetVelocity?.Invoke(velocity);
                 }
             });
@@ -184,7 +183,7 @@ namespace VehiclePlanner.Module.Implement {
         /// 資料綁定
         /// </summary>
         /// <param name="source">資料來源</param>
-        public void Bindings(IiTSController source) {
+        public void Bindings(IITSController source) {
             /*-- Invoke方法委派 --*/
             if (source.DelInvoke == null) source.DelInvoke = invk => this.InvokeIfNecessary(invk);
             /*-- 地圖掃描狀態 --*/
@@ -216,8 +215,8 @@ namespace VehiclePlanner.Module.Implement {
             };
             btnServoOnOff.DataBindings.Add(nameof(btnServoOnOff.Tag), source, dataMember);
             /*-- iTS清單 --*/
-            cboHostIP.DataSource = source.iTSs;
-            cboHostIP.DisplayMember = source.iTSs.Columns[0].Caption;
+            cboHostIP.DataSource = source.ITSs;
+            cboHostIP.DisplayMember = source.ITSs.Columns[0].Caption;
             /*-- HostIP --*/
             cboHostIP.DataBindings.Add(nameof(cboHostIP.Text), source, nameof(source.HostIP));
             cboHostIP.TextChanged += (sender, e) => { source.HostIP = cboHostIP.Text; };

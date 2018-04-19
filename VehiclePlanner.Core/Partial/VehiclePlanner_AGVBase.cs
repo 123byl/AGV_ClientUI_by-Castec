@@ -171,7 +171,7 @@ namespace VehiclePlanner.Core {
     /// <summary>
     /// iTS控制抽象定義
     /// </summary>
-    internal abstract class BaseiTSController : IiTSController {
+    internal abstract class BaseiTSController : IITSController {
 
         #region Declaration - Fields
 
@@ -348,7 +348,7 @@ namespace VehiclePlanner.Core {
         /// <summary>
         /// iTS IP清單
         /// </summary>
-        public DataTable iTSs {
+        public DataTable ITSs {
             get {
                 /*-- 取得iTS IP清單 --*/
                 return mAgvList;
@@ -733,7 +733,7 @@ namespace VehiclePlanner.Core {
                     Thread.Sleep(2000);
                     mBroadcast.StartReceive(false);
                     IsSearchable = true;
-                    int count = iTSs.Rows.Count;
+                    int count = ITSs.Rows.Count;
                     if (count > 0) {
                         HostIP = mAgvList.Rows[0][0].ToString();
                     }
@@ -741,7 +741,7 @@ namespace VehiclePlanner.Core {
                     string msg = $"Find {count} iTS";
                     OnConsoleMessage($"[Planner]:{msg}");
                     OnBalloonTip("Search iTS", msg);
-                    OnPropertyChanged(nameof(iTSs));
+                    OnPropertyChanged(nameof(ITSs));
                 });
             }
         }
@@ -950,7 +950,7 @@ namespace VehiclePlanner.Core {
     /// <summary>
     /// 序列傳輸實作iTS控制
     /// </summary>
-    internal class iTSControllerSerial : BaseiTSController {
+    internal class ITSControllerSerial : BaseiTSController {
 
         #region Declaration - Fields
 
@@ -977,7 +977,7 @@ namespace VehiclePlanner.Core {
 
         #region Funciotn - Constructors
 
-        public iTSControllerSerial():base() {
+        public ITSControllerSerial():base() {
 
         }
 
