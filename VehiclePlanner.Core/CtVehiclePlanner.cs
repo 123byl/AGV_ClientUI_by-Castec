@@ -1,25 +1,13 @@
-﻿using AGVDefine;
-using BroadCast;
-using CtLib.Forms;
-using CtLib.Library;
+﻿using CtLib.Library;
 using CtLib.Module.Utility;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.NetworkInformation;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using Geometry;
 using System.Runtime.CompilerServices;
-using System.Data;
 
 namespace VehiclePlanner.Core {
 

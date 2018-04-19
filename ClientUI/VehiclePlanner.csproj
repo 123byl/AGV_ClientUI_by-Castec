@@ -514,6 +514,10 @@
       <Project>{10d930fd-ce9c-46fa-aa1e-fb8394ba287f}</Project>
       <Name>Broadcast</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CtBind\CtBind.csproj">
+      <Project>{76ef08f5-b0de-40ad-b468-15dc8908706b}</Project>
+      <Name>CtBind</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CtLib\CtLib\CtLib.csproj">
       <Project>{a9bed8b3-2f9d-42a8-90bd-9fae0522eb09}</Project>
       <Name>CtLib</Name>
