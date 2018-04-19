@@ -43,7 +43,7 @@ namespace VehiclePlanner
     /// <summary>
     /// 客戶端介面
     /// </summary>
-    public partial class VehiclePlannerUI : Form, ICtVersion,IDataDisplay<ICtVehiclePlanner>
+    public partial class VehiclePlannerUI : Form, ICtVersion,IDataDisplay<ICtVehiclePlanner>,IDataDisplay<IiTSController>
     {
 
         #region Version - Information
@@ -184,6 +184,11 @@ namespace VehiclePlanner
         /// </summary>
         private Dictionary<string, string> mModuleVersions = new Dictionary<string, string>();
 
+        /// <summary>
+        /// iTS控制器
+        /// </summary>
+        private IiTSController Controller { get =>rVehiclePlanner.Controller as IiTSController; }
+
         #endregion Tool
 
         #region Socket
@@ -273,13 +278,13 @@ namespace VehiclePlanner
                 rVehiclePlanner.Initial();
                 /*-- 事件委派 --*/
                 rVehiclePlanner.PropertyChanged += rVehiclePlanner_PropertyChanged;
-                rVehiclePlanner.ConsoleMessage += rVehiclePlanner_ConsoleMessage;
+                rVehiclePlanner.Controller.ConsoleMessage += rVehiclePlanner_ConsoleMessage;
                 rVehiclePlanner.VehiclePlannerEvent += rVehiclePlanner_VehiclePlannerEvent;
                 rVehiclePlanner.ErrorMessage += rVehiclePlanner_ErrorMessage;
-                rVehiclePlanner.BalloonTip += rVehiclePlanner_BalloonTip; ;
+                rVehiclePlanner.Controller.BalloonTip += rVehiclePlanner_BalloonTip; ;
                 /*-- 方法委派 --*/
-                rVehiclePlanner.SelectFile = SelectFile;
-                rVehiclePlanner.InputBox = InputBox;
+                rVehiclePlanner.Controller.SelectFile = SelectFile;
+                rVehiclePlanner.Controller.InputBox = InputBox;
 
                 /*-- 載入ICtDockContent物件 --*/
                 LoadICtDockContent();
@@ -478,7 +483,7 @@ namespace VehiclePlanner
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void miBypassSocket_Click(object sender, EventArgs e) {
-            rVehiclePlanner.IsBypassSocket = !rVehiclePlanner.IsBypassSocket;
+            Controller.IsBypassSocket = !Controller.IsBypassSocket;
         }
 
         /// <summary>
@@ -562,7 +567,7 @@ namespace VehiclePlanner
             openMap.Filter = "MAP|*.map";
             if (openMap.ShowDialog() == DialogResult.OK) {
                 try {
-                    Task.Run(() => rVehiclePlanner.SendAndSetMap(openMap.FileName));
+                    Task.Run(() => rVehiclePlanner.Controller.SendAndSetMap(openMap.FileName));
                 } catch (Exception ex) {
                     OnConsoleMessage(ex.Message);
                 }
@@ -573,7 +578,7 @@ namespace VehiclePlanner
         /// 要求VehicleConsole自動回傳資料
         /// </summary>
         protected virtual void ITest_GetCar() {
-            rVehiclePlanner.AutoReport(!rVehiclePlanner.IsAutoReport);
+            rVehiclePlanner.Controller.AutoReport(!rVehiclePlanner.Controller.IsAutoReport);
         }
         
         /// <summary>
@@ -604,7 +609,7 @@ namespace VehiclePlanner
         /// 停止手動控制
         /// </summary>
         private void ITest_Motion_Up() {
-            rVehiclePlanner.MotionContorl(MotionDirection.Stop);
+            rVehiclePlanner.Controller.MotionContorl(MotionDirection.Stop);
         }
         
         #endregion
@@ -618,7 +623,7 @@ namespace VehiclePlanner
                     } else {
                         OnConsoleMessage($"NewPos{mNewPos.ToString()}");
                         Task.Run(() => {
-                            rVehiclePlanner.SetPosition(e.Position, mNewPos);
+                            rVehiclePlanner.Controller.SetPosition(e.Position, mNewPos);
                             mNewPos = null;
                             mIsSetting = false;
                         });
@@ -750,11 +755,11 @@ namespace VehiclePlanner
         private void ShowMotionController() {
             if (mMotionController == null) {
                 mMotionController = new CtMotionController();
-                mMotionController.MotionDown += rVehiclePlanner.MotionContorl;
+                mMotionController.MotionDown += rVehiclePlanner.Controller.MotionContorl;
                 mMotionController.MotionUp += ITest_Motion_Up;
                 miMotionController.Checked = true;
                 mMotionController.FormClosing += (fSender, fE) => {
-                    mMotionController.MotionDown -= rVehiclePlanner.MotionContorl;
+                    mMotionController.MotionDown -= rVehiclePlanner.Controller.MotionContorl;
                     mMotionController.MotionUp -= ITest_Motion_Up;
                     mMotionController = null;
                     miMotionController.Checked = false;
@@ -886,15 +891,15 @@ namespace VehiclePlanner
             mGoalSetting.AddCurrentGoalEvent += rVehiclePlanner.AddCurrentAsGoal;
             mGoalSetting.ClearGoalsEvent += rVehiclePlanner.ClearMarker;
             mGoalSetting.DeleteSingleEvent += rVehiclePlanner.DeleteMarker;
-            mGoalSetting.FindPathEvent += rVehiclePlanner.FindPath;
+            mGoalSetting.FindPathEvent += rVehiclePlanner.Controller.FindPath;
             mGoalSetting.LoadMapEvent += ITest_LoadMap;
-            mGoalSetting.LoadMapFromAGVEvent += rVehiclePlanner.GetMap;
-            mGoalSetting.RunGoalEvent += rVehiclePlanner.DoRunningByGoalName;
+            mGoalSetting.LoadMapFromAGVEvent += rVehiclePlanner.Controller.GetMap;
+            mGoalSetting.RunGoalEvent += rVehiclePlanner.Controller.DoRunningByGoalName;
             mGoalSetting.RunLoopEvent += IGoalSetting_RunLoopEvent;
             mGoalSetting.SaveGoalEvent += rVehiclePlanner.SaveMap;
             mGoalSetting.SendMapToAGVEvent += ITest_SendMap;
-            mGoalSetting.GetGoalNames += rVehiclePlanner.GetGoalNames;
-            mGoalSetting.Charging += rVehiclePlanner.DoCharging;
+            mGoalSetting.GetGoalNames += rVehiclePlanner.Controller.GetGoalNames;
+            mGoalSetting.Charging += rVehiclePlanner.Controller.DoCharging;
             mGoalSetting.ClearMap += rVehiclePlanner.ClearMap;
 
             #endregion
@@ -911,21 +916,21 @@ namespace VehiclePlanner
 
             mTesting.LoadMap += ITest_LoadMap;
             mTesting.LoadOri += ITest_LoadOri;
-            mTesting.GetOri += rVehiclePlanner.GetOri;
-            mTesting.GetMap += rVehiclePlanner.GetMap;
-            mTesting.GetLaser += rVehiclePlanner.RequestLaser;
+            mTesting.GetOri += rVehiclePlanner.Controller.GetOri;
+            mTesting.GetMap += rVehiclePlanner.Controller.GetMap;
+            mTesting.GetLaser += rVehiclePlanner.Controller.RequestLaser;
             mTesting.GetCar += ITest_GetCar;
             mTesting.SendMap += ITest_SendMap;
-            mTesting.SetVelocity += rVehiclePlanner.SetWorkVelocity;
-            mTesting.Connect += rVehiclePlanner.ConnectToITS;
-            mTesting.MotorServoOn += rVehiclePlanner.SetServoMode;
+            mTesting.SetVelocity += rVehiclePlanner.Controller.SetWorkVelocity;
+            mTesting.Connect += rVehiclePlanner.Controller.ConnectToITS;
+            mTesting.MotorServoOn += rVehiclePlanner.Controller.SetServoMode;
             mTesting.SimplifyOri += rVehiclePlanner.SimplifyOri;
             mTesting.ClearMap += rVehiclePlanner.ClearMap;
             mTesting.SettingCarPos += ITest_SettingCarPos;
-            mTesting.CarPosConfirm += rVehiclePlanner.DoPositionComfirm;
-            mTesting.StartScan += rVehiclePlanner.StartScan;
+            mTesting.CarPosConfirm += rVehiclePlanner.Controller.DoPositionComfirm;
+            mTesting.StartScan += rVehiclePlanner.Controller.StartScan;
             mTesting.ShowMotionController += ShowMotionController;
-            mTesting.Find += rVehiclePlanner.FindCar;
+            mTesting.Find += rVehiclePlanner.Controller.FindCar;
             #endregion 
 
             (mDockContent[miToolBox] as CtToolBox).SwitchCursor += ToolBox_SwitchCursor;
@@ -982,6 +987,7 @@ namespace VehiclePlanner
             mMapInsert.AssignmentDockPanel(dockPanel);
             /*-- 資料綁定 --*/
             Bindings(rVehiclePlanner);
+            Bindings(Controller);
         }
 
         /// <summary>
@@ -1047,41 +1053,21 @@ namespace VehiclePlanner
 
         #endregion Function - Private Methods
 
-        #region Implement - IDataDisplay<ICtVehiclePlanner>
+        #region Implement - IDataDisplay
 
         /// <summary>
-        /// 資料綁定
+        /// <see cref="ICtVehiclePlanner"/>資料綁定
         /// </summary>
-        /// <param name="source">資料來源</param>
+        /// <param name="source"></param>
         public void Bindings(ICtVehiclePlanner source) {
-            if (source.DelInvoke == null) source.DelInvoke = invk => this.InvokeIfNecessary(invk);
-            var subDisplay = mDockContent.Where(kvp => kvp.Value is IDataDisplay<ICtVehiclePlanner>).Select(kvp => kvp.Value);
-            foreach (IDataDisplay<ICtVehiclePlanner> display in subDisplay) {
-                display.Bindings(source);
-            }
-            /*-- 電池最大電量 --*/
-            tsprgBattery.ProgressBar.DataBindings.Add(nameof(ProgressBar.Maximum), source, nameof(source.BatteryMaximum));
-            /*-- 電池最小電量 --*/
-            tsprgBattery.ProgressBar.DataBindings.Add(nameof(ProgressBar.Minimum), source, nameof(source.BatteryMinimum));
-            /*-- iTS資訊 --*/
-            string dataMember = nameof(source.Status);
-            tsprgBattery.ProgressBar.DataBindings.Add(nameof(ProgressBar.Value), source, dataMember).Format += (sender, e) => {
-                e.Value = (e.Value as IStatus).Battery;
-            };
-            tslbBattery.DataBindings.ExAdd(nameof(tslbBattery.Text), source, dataMember, (sender, e) => {
-                e.Value = $"{(e.Value as IStatus).Battery}%";
-            });
-            tslbStatus.DataBindings.ExAdd(nameof(tslbStatus.Text), source, dataMember, (sender, e) => {
-                e.Value = (e.Value as IStatus).Description.ToString();
-            });
-            /*-- 是否忽略Socket*/
-            miBypassSocket.DataBindings.Add(nameof(miBypassSocket.Checked), source, nameof(source.IsBypassSocket));
+            Bindings<ICtVehiclePlanner>(source);
+            
             /*-- 是否忽略地圖檔讀寫 --*/
             miLoadFile.DataBindings.Add(nameof(miLoadFile.Checked), source, nameof(source.IsBypassLoadFile));
-            /*-- iTS IP --*/
-            tslbHostIP.DataBindings.Add(nameof(tslbHostIP.Text), source, nameof(source.HostIP));
+            /*-- 是否可視 --*/
+            this.DataBindings.Add(nameof(Visible), source, nameof(source.MainVisible));
             /*-- 使用者資訊 --*/
-            dataMember = nameof(source.UserData);
+            string dataMember = nameof(source.UserData);
             miLogin.DataBindings.ExAdd(nameof(miLogin.Text), source, dataMember, (sender, e) => {
                 e.Value = (e.Value as UserData).Level == AccessLevel.None ? "Login" : "Logout";
             });
@@ -1112,15 +1098,54 @@ namespace VehiclePlanner
             miBypass.DataBindings.ExAdd(nameof(miBypass.Visible), source, dataMember, (sender, e) => {
                 e.Value = (e.Value as UserData).Level == AccessLevel.Administrator;
             }, source.UserData.Level == AccessLevel.Administrator);
-            /*-- 是否可視 --*/
-            this.DataBindings.Add(nameof(Visible), source, nameof(source.MainVisible));
+
+        }
+
+        /// <summary>
+        /// <see cref="IiTSController"/>資料綁定
+        /// </summary>
+        /// <param name="source">資料來源</param>
+        public void Bindings(IiTSController source) {
+            Bindings<IiTSController>(source);
+            /*-- 電池最大電量 --*/
+            tsprgBattery.ProgressBar.DataBindings.Add(nameof(ProgressBar.Maximum), source, nameof(source.BatteryMaximum));
+            /*-- 電池最小電量 --*/
+            tsprgBattery.ProgressBar.DataBindings.Add(nameof(ProgressBar.Minimum), source, nameof(source.BatteryMinimum));
+            /*-- iTS資訊 --*/
+            string dataMember = nameof(source.Status);
+            tsprgBattery.ProgressBar.DataBindings.Add(nameof(ProgressBar.Value), source, dataMember).Format += (sender, e) => {
+                e.Value = (e.Value as IStatus).Battery;
+            };
+            tslbBattery.DataBindings.ExAdd(nameof(tslbBattery.Text), source, dataMember, (sender, e) => {
+                e.Value = $"{(e.Value as IStatus).Battery}%";
+            });
+            tslbStatus.DataBindings.ExAdd(nameof(tslbStatus.Text), source, dataMember, (sender, e) => {
+                e.Value = (e.Value as IStatus).Description.ToString();
+            });
+            /*-- 是否忽略Socket*/
+            miBypassSocket.DataBindings.Add(nameof(miBypassSocket.Checked), source, nameof(source.IsBypassSocket));
+            /*-- iTS IP --*/
+            tslbHostIP.DataBindings.Add(nameof(tslbHostIP.Text), source, nameof(source.HostIP));
             /*-- 連線狀態 --*/
             miBypassSocket.DataBindings.ExAdd(nameof(miBypassSocket.Enabled), source, nameof(source.IsConnected), (sender, e) => {
                 e.Value = !(bool)e.Value;
             });
         }
-        
-        #endregion Implement - IDataDisplay<ICtVehiclePlanner>
+
+        /// <summary>
+        /// 子視窗Bind
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <param name="source"></param>
+        private void Bindings<TSource>(TSource source) where TSource : IDataSource {
+            if (source.DelInvoke == null) source.DelInvoke = invk => this.InvokeIfNecessary(invk);
+            var subDisplay = mDockContent.Where(kvp => kvp.Value is IDataDisplay<TSource>).Select(kvp => kvp.Value);
+            foreach (IDataDisplay<TSource> display in subDisplay) {
+                display.Bindings(source);
+            }
+        }
+
+        #endregion Implement - IDataDisplay
     }
 
 }

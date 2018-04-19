@@ -12,181 +12,181 @@ namespace VehiclePlanner.Core {
     /// <summary>
     /// IiTSController介面實作
     /// </summary>
-    internal partial class CtVehiclePlanner : IiTSControllerSerial {
+    //internal partial class CtVehiclePlanner : IiTSControllerSerial {
 
-        /// <summary>
-        /// iTS相關操作
-        /// </summary>
-        private IiTSControllerSerial mITS = new iTSControllerSerial();
+    //    /// <summary>
+    //    /// iTS相關操作
+    //    /// </summary>
+    //    private IiTSController mITS = new iTSControllerSerial();
 
-        public string HostIP {
-            get {
-                return mITS.HostIP;
-            }
-        }
+    //    public string HostIP {
+    //        get {
+    //            return mITS.HostIP;
+    //        }
+    //    }
 
-        public DelInputBox InputBox {
-            get {
-                return mITS.InputBox;
-            }
+    //    public DelInputBox InputBox {
+    //        get {
+    //            return mITS.InputBox;
+    //        }
 
-            set {
-                mITS.InputBox = value;
-            }
-        }
+    //        set {
+    //            mITS.InputBox = value;
+    //        }
+    //    }
 
-        public bool IsAutoReport {
-            get {
-                return mITS.IsAutoReport;
-            }
-        }
+    //    public bool IsAutoReport {
+    //        get {
+    //            return mITS.IsAutoReport;
+    //        }
+    //    }
 
-        public bool IsBypassSocket {
-            get {
-                return mITS.IsBypassSocket;
-            }
+    //    public bool IsBypassSocket {
+    //        get {
+    //            return mITS.IsBypassSocket;
+    //        }
 
-            set {
-                mITS.IsBypassSocket = value;
-            }
-        }
+    //        set {
+    //            mITS.IsBypassSocket = value;
+    //        }
+    //    }
 
-        public bool IsConnected {
-            get {
-                return mITS.IsConnected;
-            }
-        }
+    //    public bool IsConnected {
+    //        get {
+    //            return mITS.IsConnected;
+    //        }
+    //    }
 
-        public bool IsMotorServoOn {
-            get {
-                return mITS.IsMotorServoOn;
-            }
+    //    public bool IsMotorServoOn {
+    //        get {
+    //            return mITS.IsMotorServoOn;
+    //        }
 
-            set {
-                mITS.IsMotorServoOn = value;
-            }
-        }
+    //        set {
+    //            mITS.IsMotorServoOn = value;
+    //        }
+    //    }
 
-        public bool IsScanning {
-            get {
-                return mITS.IsScanning;
-            }
-        }
+    //    public bool IsScanning {
+    //        get {
+    //            return mITS.IsScanning;
+    //        }
+    //    }
 
-        public DelSelectFile SelectFile {
-            get {
-                return mITS.SelectFile;
-            }
+    //    public DelSelectFile SelectFile {
+    //        get {
+    //            return mITS.SelectFile;
+    //        }
 
-            set {
-                mITS.SelectFile = value;
-            }
-        }
+    //        set {
+    //            mITS.SelectFile = value;
+    //        }
+    //    }
 
-        public IStatus Status {
-            get {
-                return mITS.Status;
-            }
-        }
+    //    public IStatus Status {
+    //        get {
+    //            return mITS.Status;
+    //        }
+    //    }
 
-        public int Velocity {
-            get {
-                return mITS.Velocity;
-            }
+    //    public int Velocity {
+    //        get {
+    //            return mITS.Velocity;
+    //        }
 
-            set {
-                mITS.Velocity = value;
-            }
-        }
+    //        set {
+    //            mITS.Velocity = value;
+    //        }
+    //    }
 
-        /// <summary>
-        /// 電池電量最大值
-        /// </summary>
-        public double BatteryMaximum { get => mITS.BatteryMaximum; }
+    //    /// <summary>
+    //    /// 電池電量最大值
+    //    /// </summary>
+    //    public double BatteryMaximum { get => mITS.BatteryMaximum; }
 
-        /// <summary>
-        /// 電池電量最小值
-        /// </summary>
-        public double BatteryMinimum { get => mITS.BatteryMinimum; }
+    //    /// <summary>
+    //    /// 電池電量最小值
+    //    /// </summary>
+    //    public double BatteryMinimum { get => mITS.BatteryMinimum; }
 
-        public void AutoReport(bool auto) {
-            mITS.AutoReport(auto);
-        }
+    //    public void AutoReport(bool auto) {
+    //        mITS.AutoReport(auto);
+    //    }
 
-        public void ConnectToITS(bool cnn) {
-            mITS.ConnectToITS(cnn);
-        }
+    //    public void ConnectToITS(bool cnn) {
+    //        mITS.ConnectToITS(cnn);
+    //    }
 
-        public void DoCharging(string powerName) {
-            mITS.DoCharging(powerName);
-        }
+    //    public void DoCharging(string powerName) {
+    //        mITS.DoCharging(powerName);
+    //    }
 
-        public void DoPositionComfirm() {
-            mITS.DoPositionComfirm();
-        }
+    //    public void DoPositionComfirm() {
+    //        mITS.DoPositionComfirm();
+    //    }
 
-        public void DoRunningByGoalName(string goalName) {
-            mITS.DoRunningByGoalName(goalName);
-        }
+    //    public void DoRunningByGoalName(string goalName) {
+    //        mITS.DoRunningByGoalName(goalName);
+    //    }
 
-        public void FindPath(string goalName) {
-            mITS.FindPath(goalName);
-        }
+    //    public void FindPath(string goalName) {
+    //        mITS.FindPath(goalName);
+    //    }
 
-        public void GetGoalNames() {
-            mITS.GetGoalNames();
-        }
+    //    public void GetGoalNames() {
+    //        mITS.GetGoalNames();
+    //    }
 
-        public void GetMap() {
-            mITS.GetMap();
-        }
+    //    public void GetMap() {
+    //        mITS.GetMap();
+    //    }
 
-        public void GetOri() {
-            mITS.GetOri();
-        }
+    //    public void GetOri() {
+    //        mITS.GetOri();
+    //    }
 
-        public void MotionContorl(MotionDirection direction) {
-            mITS.MotionContorl(direction);
-        }
+    //    public void MotionContorl(MotionDirection direction) {
+    //        mITS.MotionContorl(direction);
+    //    }
 
-        public void RequestLaser() {
-            mITS.RequestLaser();
-        }
+    //    public void RequestLaser() {
+    //        mITS.RequestLaser();
+    //    }
 
-        public IDocument RequestMapFile(string mapName) {
-            return mITS.RequestMapFile(mapName);
-        }
+    //    public IDocument RequestMapFile(string mapName) {
+    //        return mITS.RequestMapFile(mapName);
+    //    }
 
-        public string RequestMapList() {
-            return mITS.RequestMapList();
-        }
+    //    public string RequestMapList() {
+    //        return mITS.RequestMapList();
+    //    }
 
-        public void SendAndSetMap(string mapPath) {
-            mITS.SendAndSetMap(mapPath);
-        }
+    //    public void SendAndSetMap(string mapPath) {
+    //        mITS.SendAndSetMap(mapPath);
+    //    }
 
-        public void SetPosition(IPair oldPosition, IPair newPosition) {
-            mITS.SetPosition(oldPosition, newPosition);
-        }
+    //    public void SetPosition(IPair oldPosition, IPair newPosition) {
+    //        mITS.SetPosition(oldPosition, newPosition);
+    //    }
 
-        public void SetServoMode(bool servoOn) {
-            mITS.SetServoMode(servoOn);
-        }
+    //    public void SetServoMode(bool servoOn) {
+    //        mITS.SetServoMode(servoOn);
+    //    }
 
-        public void SetWorkVelocity(int velocity) {
-            mITS.SetWorkVelocity(velocity);
-        }
+    //    public void SetWorkVelocity(int velocity) {
+    //        mITS.SetWorkVelocity(velocity);
+    //    }
 
-        public void StartScan(bool scan) {
-            mITS.StartScan(scan);
-        }
+    //    public void StartScan(bool scan) {
+    //        mITS.StartScan(scan);
+    //    }
 
-        public Action<MethodInvoker> DelInvoke {
-            get => mITS.DelInvoke;
-            set {
-                mITS.DelInvoke = value;
-            }
-        }
-    }
+    //    public Action<MethodInvoker> DelInvoke {
+    //        get => mITS.DelInvoke;
+    //        set {
+    //            mITS.DelInvoke = value;
+    //        }
+    //    }
+    //}
 
 }

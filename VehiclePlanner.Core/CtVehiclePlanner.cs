@@ -99,18 +99,7 @@ namespace VehiclePlanner.Core {
 
         #region BroadcastReceiver
 
-        /// <summary>
-        /// 廣播接收事件
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void mBroadcast_ReceivedData(object sender, BroadcastEventArgs e) {
-            /*-- 紀錄有回應的iTS IP位址 --*/
-            string ip = e.Remote.Address.ToString();            
-            if (!mAgvList.AsEnumerable().Any(v => (v["IP"].ToString() == ip))) {
-                DelInvoke(()=> mAgvList.Rows.Add(ip, e.Message));
-            }
-        }
+        
 
         #endregion BroadcastReceiver
 
@@ -146,9 +135,7 @@ namespace VehiclePlanner.Core {
         #region Funciont - Constructors
 
         public CtVehiclePlanner() {
-            mITS.PropertyChanged += (sender, e) => OnPropertyChanged(e.PropertyName);
-            mAgvList.Columns.Add("IP");
-            mAgvList.Columns.Add("Description");
+            
         }
 
         #endregion Function - Constructors
@@ -168,39 +155,9 @@ namespace VehiclePlanner.Core {
             mKeyboardHook.KeyUpEvent += mKeyboardHook_KeyUpEvent;
             mKeyboardHook.Start();
 
-            /*-- 委派廣播接收事件 --*/
-            mBroadcast.ReceivedData += mBroadcast_ReceivedData;
 
         }
-
-        /// <summary>
-        /// 搜尋可用的iTS設備
-        /// </summary>
-        public void FindCar() {
-            if (!mBroadcast.IsReceiving) {
-                Task.Run(() => {
-                    /*-- 開啟廣播接收 --*/
-                    mBroadcast.StartReceive(true);
-                    OnConsoleMessage("[Planner]: Start searching iTS.");
-                    /*-- 清除iTS清單 --*/
-                    DelInvoke(() => mAgvList.Clear());
-                    /*-- 廣播要求iTS回應 --*/
-                    for (int i = 0; i < 3; i++) {
-                        mBroadcast.Send("Count off");
-                        Thread.Sleep(30);
-                    }
-                    /*-- 等待iTS回應完畢後停止接收回應 --*/
-                    Thread.Sleep(2000);
-                    mBroadcast.StartReceive(false);
-                    /*-- 反饋至UI --*/
-                    string msg = $"Find {iTSs.Rows.Count} iTS";
-                    OnConsoleMessage($"[Planner]:{msg}");
-                    SetBalloonTip("Search iTS", msg);
-                    OnPropertyChanged(nameof(iTSs));
-                });
-            }
-        }
-
+        
         /// <summary>
         /// 清除地圖
         /// </summary>
@@ -236,7 +193,7 @@ namespace VehiclePlanner.Core {
                 }
                 if (isLoaded) {
                     SetBalloonTip($"Load { type}", $"\'{fileName}\' is loaded");
-                    if (IsConnected && type == FileType.Map) {
+                    if (mITS.IsConnected && type == FileType.Map) {
                         mITS.SendAndSetMap(fileName);
                     }
                 } else {
@@ -418,8 +375,17 @@ namespace VehiclePlanner.Core {
             }
             return isLoaded;
         }
-        
+
         #endregion Funciotn - Private Methods
+
+        #region Implement - IDataSource
+
+        /// <summary>
+        /// Invoke方法委派
+        /// </summary>
+        public Action<MethodInvoker> DelInvoke { get => mITS.DelInvoke; set => mITS.DelInvoke = value; }
+
+        #endregion Implement - IDataSource
 
         #region IDisposable Support
         private bool disposedValue = false; // 偵測多餘的呼叫

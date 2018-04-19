@@ -16,6 +16,9 @@ using System.ComponentModel;
 using System.IO;
 using System.Windows.Forms;
 using System.Runtime.CompilerServices;
+using System.Data;
+using BroadCast;
+using System.Threading;
 
 namespace VehiclePlanner.Core {
 
@@ -197,7 +200,7 @@ namespace VehiclePlanner.Core {
         /// <summary>
         /// 車子馬達轉速
         /// </summary>
-        protected int mVelocity = 500;
+        private int mVelocity = 500;
         
         /// <summary>
         /// 伺服馬達激磁狀態
@@ -214,15 +217,30 @@ namespace VehiclePlanner.Core {
         /// </summary>
         private bool mIsManualMoving = false;
 
+        /// <summary>
+        /// 是否Bypass Socket通訊
+        /// </summary>
+        protected bool mBypassSocket = false;
+
+        /// <summary>
+        /// 是否已連線
+        /// </summary>
+        private bool mIsConnected = false;
+
+        /// <summary>
+        /// iTS位置名稱對照表
+        /// </summary>
+        private DataTable mAgvList = new DataTable("iTS");
+
+        /// <summary>
+        /// 廣播發送物件
+        /// </summary>
+        private Broadcaster mBroadcast = new Broadcaster();
+
         #endregion Declaration - Fields
 
         #region Declaration - Properties
-
-        /// <summary>
-        /// 是否已建立連線
-        /// </summary>
-        public abstract bool IsConnected { get;protected set; }
-
+        
         /// <summary>
         /// Vehicle Console端IP
         /// </summary>
@@ -316,8 +334,7 @@ namespace VehiclePlanner.Core {
                 }
             }
         }
-
-
+        
         /// <summary>
         /// 電池最大電量
         /// </summary>
@@ -328,6 +345,45 @@ namespace VehiclePlanner.Core {
         /// </summary>
         public double BatteryMinimum { get; } = 0;
 
+        /// <summary>
+        /// iTS IP清單
+        /// </summary>
+        public DataTable iTSs {
+            get {
+                /*-- 取得iTS IP清單 --*/
+                return mAgvList;
+            }
+        }
+
+        /// <summary>
+        /// 是否已建立連線
+        /// </summary>
+        public bool IsConnected {
+            get {
+                return mIsConnected;
+            }
+            protected set {
+                if (mIsConnected != value) {
+                    mIsConnected = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        /// <summary>
+        /// 是否Bypass Socket功能
+        /// </summary>
+        public bool IsBypassSocket {
+            get {
+                return mBypassSocket;
+            }
+            set {
+                if (mBypassSocket != value) {
+                    mBypassSocket = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
         #endregion Declaration - Properties
 
         #region Declaration - Events
@@ -362,9 +418,39 @@ namespace VehiclePlanner.Core {
         public DelInputBox InputBox { get; set; } = null;
 
         #endregion Declaration - Delegates
+
+        #region Funciton - Constructors
+
+        public BaseiTSController() {
+            /*-- 委派廣播接收事件 --*/
+            mBroadcast.ReceivedData += mBroadcast_ReceivedData;
+
+            mAgvList.Columns.Add("IP");
+            mAgvList.Columns.Add("Description");
+
+        }
+
+        #endregion Funciton - Constructors
+
+        #region Function - Events
+
+        /// <summary>
+        /// 廣播接收事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void mBroadcast_ReceivedData(object sender, BroadcastEventArgs e) {
+            /*-- 紀錄有回應的iTS IP位址 --*/
+            string ip = e.Remote.Address.ToString();
+            if (!mAgvList.AsEnumerable().Any(v => (v["IP"].ToString() == ip))) {
+                DelInvoke(() => mAgvList.Rows.Add(ip, e.Message));
+            }
+        }
+
+        #endregion Function - Events
         
         #region Funciotn - Public Methods
-        
+
         /// <summary>
         /// 取得Map檔
         /// </summary>
@@ -618,6 +704,31 @@ namespace VehiclePlanner.Core {
         /// <param name="cnn"></param>
         public abstract void ConnectToITS(bool cnn);
 
+        public void FindCar() {
+            if (!mBroadcast.IsReceiving) {
+                Task.Run(() => {
+                    /*-- 開啟廣播接收 --*/
+                    mBroadcast.StartReceive(true);
+                    OnConsoleMessage("[Planner]: Start searching iTS.");
+                    /*-- 清除iTS清單 --*/
+                    DelInvoke(() => mAgvList.Clear());
+                    /*-- 廣播要求iTS回應 --*/
+                    for (int i = 0; i < 3; i++) {
+                        mBroadcast.Send("Count off");
+                        Thread.Sleep(30);
+                    }
+                    /*-- 等待iTS回應完畢後停止接收回應 --*/
+                    Thread.Sleep(2000);
+                    mBroadcast.StartReceive(false);
+                    /*-- 反饋至UI --*/
+                    string msg = $"Find {iTSs.Rows.Count} iTS";
+                    OnConsoleMessage($"[Planner]:{msg}");
+                    OnBalloonTip("Search iTS", msg);
+                    OnPropertyChanged(nameof(iTSs));
+                });
+            }
+        }
+
         #endregion Funciton - Public Methods
 
         #region Funciton - Private Methods
@@ -788,14 +899,14 @@ namespace VehiclePlanner.Core {
             }
             return SetManualVelocity(FactoryMode.Factory.Pair(l, r));
         }
-
+        
         #endregion Funciton - Private Methdos
 
         #region Implement - IDataSource
 
         /// <summary>
-        /// Invoke委派方法
-        /// </summary>
+            /// Invoke委派方法
+            /// </summary>
         protected Action<MethodInvoker> mInvoke = null;
 
         /// <summary>
@@ -816,12 +927,13 @@ namespace VehiclePlanner.Core {
         }
 
         #endregion Implement - IDataSource
+
     }
 
     /// <summary>
     /// 序列傳輸實作iTS控制
     /// </summary>
-    internal class iTSControllerSerial : BaseiTSController,IiTSControllerSerial {
+    internal class iTSControllerSerial : BaseiTSController {
 
         #region Declaration - Fields
 
@@ -834,52 +946,18 @@ namespace VehiclePlanner.Core {
         /// 回應等待清單
         /// </summary>
         private List<CtTaskCompletionSource<IProductPacket>> mCmdTsk = new List<CtTaskCompletionSource<IProductPacket>>();
-
-        /// <summary>
-        /// 是否Bypass Socket通訊
-        /// </summary>
-        protected bool mBypassSocket = false;
-
+        
         #endregion Declaration - Fields
 
         #region Declaration - Properties
-
-        private bool mIsConnected = false;
-        /// <summary>
-        /// 是否已建立連線
-        /// </summary>
-        public override bool IsConnected {
-            get {
-                return mIsConnected;
-            }
-            protected set {
-                if (mIsConnected != value) {
-                    mIsConnected = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        /// <summary>
-        /// 是否Bypass Socket功能
-        /// </summary>
-        public bool IsBypassSocket {
-            get {
-                return mBypassSocket;
-            }
-            set {
-                if (mBypassSocket != value) {
-                    mBypassSocket = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
+        
         #endregion Declaration - Properties
 
         #region Funciotn - Constructors
 
-        public iTSControllerSerial() {}
+        public iTSControllerSerial():base() {
+
+        }
 
         #endregion Funciotn - Constructors
 
@@ -944,11 +1022,11 @@ namespace VehiclePlanner.Core {
                 }
             }
         }
-
+        
         #endregion Funciton - Events
 
         #region Funciton - Public Methods
-
+        
         /// <summary>
         /// 與指定IP iTS連線/斷線
         /// </summary>

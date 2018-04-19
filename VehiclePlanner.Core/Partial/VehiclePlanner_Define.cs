@@ -165,6 +165,18 @@ namespace VehiclePlanner.Core {
         /// 電池電量最小值
         /// </summary>
         double BatteryMinimum { get; }
+        /// <summary>
+        /// Vehicle Console端IP
+        /// </summary>
+        string HostIP { get; }
+        /// <summary>
+        /// 是否Bypass Socket功能
+        /// </summary>
+        bool IsBypassSocket { get; set; }
+        /// <summary>
+        /// 可用iTS IP清單
+        /// </summary>
+        DataTable iTSs { get; }
 
         /// <summary>
         /// Console訊息事件
@@ -263,26 +275,21 @@ namespace VehiclePlanner.Core {
         /// </summary>
         /// <param name="cnn">連線/斷線</param>
         void ConnectToITS(bool cnn);
-    }
-
-    /// <summary>
-    /// 串列通訊之iTS控制器
-    /// </summary>
-    public interface IiTSControllerSerial : IiTSController {
         /// <summary>
-        /// Vehicle Console端IP
+        /// 搜尋可用的iTS設備
         /// </summary>
-        string HostIP { get; }
-        /// <summary>
-        /// 是否Bypass Socket功能
-        /// </summary>
-        bool IsBypassSocket { get; set; }
-    }
+        void FindCar();
 
+    }
+    
     /// <summary>
     /// 車輛規劃器
     /// </summary>
-    public interface ICtVehiclePlanner : IiTSControllerSerial,ICtVersion ,IDisposable{
+    public interface ICtVehiclePlanner : ICtVersion ,IDisposable,IDataSource{
+        /// <summary>
+        /// iTS控制器
+        /// </summary>
+        IiTSController Controller { get; set; }
         /// <summary>
         /// 當前Map檔路徑
         /// </summary>
@@ -295,10 +302,6 @@ namespace VehiclePlanner.Core {
         /// 預設地圖存放路徑
         /// </summary>
         string DefMapDir { get; }
-        /// <summary>
-        /// 可用iTS IP清單
-        /// </summary>
-        DataTable iTSs { get; }
         /// <summary>
         /// 主畫面是否可視
         /// </summary>
@@ -315,7 +318,6 @@ namespace VehiclePlanner.Core {
         /// 是否Bypass LoadFile功能
         /// </summary>
         bool IsBypassLoadFile { get; set; }
-
         /// <summary>
         /// 錯誤訊息事件
         /// </summary>
@@ -342,10 +344,6 @@ namespace VehiclePlanner.Core {
         /// </summary>
         /// <param name="markers"></param>
         void DeleteMarker(IEnumerable<uint> markers);
-        /// <summary>
-        /// 搜尋可用的iTS設備
-        /// </summary>
-        void FindCar();
         /// <summary>
         /// 系統初始化
         /// </summary>
@@ -409,11 +407,6 @@ namespace VehiclePlanner.Core {
         private string mCurMapPath = string.Empty;
         
         /// <summary>
-        /// iTS位置名稱對照表
-        /// </summary>
-        private DataTable mAgvList = new DataTable("iTS");
-
-        /// <summary>
         /// 主畫面是否可視
         /// </summary>
         private bool mMainVisible = true;
@@ -428,11 +421,6 @@ namespace VehiclePlanner.Core {
         /// </summary>
         private UserData mUserData = new UserData("CASTEC", "", AccessLevel.Administrator);
 
-        /// <summary>
-        /// 廣播發送物件
-        /// </summary>
-        private Broadcaster mBroadcast = new Broadcaster();
-
         ///<summary>全域鍵盤鉤子</summary>
         private KeyboardHook mKeyboardHook = new KeyboardHook();
 
@@ -440,10 +428,22 @@ namespace VehiclePlanner.Core {
         /// MapGL相關操作
         /// </summary>
         private MapGLController mMapGL = MapGLController.GetInstance();
-        
+
+        private IiTSController mITS = new iTSControllerSerial();
+
         #endregion Declaration - Fields
 
         #region Declaration - Properties
+
+        /// <summary>
+        /// iTS控制器
+        /// </summary>
+        public IiTSController Controller { get => mITS; set {
+                if (mITS != value && value != null) {
+                    mITS = value;
+                }
+            }
+        }
 
         /// <summary>
         /// Ori檔路徑
@@ -459,16 +459,6 @@ namespace VehiclePlanner.Core {
             }
             set {
                 mCurMapPath = value;
-            }
-        }
-
-        /// <summary>
-        /// iTS IP清單
-        /// </summary>
-        public DataTable iTSs {
-            get {
-                /*-- 取得iTS IP清單 --*/
-                return mAgvList;
             }
         }
 
