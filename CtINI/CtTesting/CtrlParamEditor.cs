@@ -24,11 +24,16 @@ namespace CtTesting {
         #region Declaration - Fields
 
         private IParamEditor mEditor = Factory.Param.Editor();
-        
+
+        /// <summary>
+        /// 檔案開啟對話視窗
+        /// </summary>
+        private OpenFileDialog mOdlg = new OpenFileDialog();
+
         #endregion Declaration - Fields
 
         #region Declaration - Enum
-        
+
         #endregion Declaration - Enum
 
         #region Function - Constructors
@@ -114,8 +119,14 @@ namespace CtTesting {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void btnOpen_Click(object sender, EventArgs e) {
-            if (mEditor.GridView == null) mEditor.GridView = dgvProperties;
-            mEditor.OpenINI();
+            //if (mEditor.GridView == null) mEditor.GridView = dgvProperties;
+            /*-- 設定要開啟得檔案類型 --*/
+            mOdlg.Filter = "Ini File|*.ini";
+            mOdlg.Title = "Select a Ini File";
+            if (mOdlg.ShowDialog() == DialogResult.OK) {
+                /*-- 讀取Ini檔 --*/
+                mEditor.ReadINI(mOdlg.FileName);
+            }
         }
         
         /// <summary>

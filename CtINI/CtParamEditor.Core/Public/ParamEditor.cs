@@ -30,12 +30,7 @@ namespace CtParamEditor.Core
         /// 檔案儲存對話視窗
         /// </summary>
         private SaveFileDialog mSdlg = new SaveFileDialog();
-
-        /// <summary>
-        /// 檔案開啟對話視窗
-        /// </summary>
-        private OpenFileDialog mOdlg = new OpenFileDialog();
-
+        
         /// <summary>
         /// 右鍵選單
         /// </summary>
@@ -224,6 +219,8 @@ namespace CtParamEditor.Core
             EnumData.ReadINI(inis);
             /*-- 讀取參數定義 --*/
             DataSource.ReadINI(inis);
+            /*-- 記錄INI檔路徑 --*/
+            mIniPath = fileName;
         }
 
         /// <summary>
@@ -294,23 +291,7 @@ namespace CtParamEditor.Core
 
             }
         }
-
-        /// <summary>
-        /// 以對話視窗開啟INI檔
-        /// </summary>
-        public void OpenINI() {
-            /*-- 設定要開啟得檔案類型 --*/
-            mOdlg.Filter = "Ini File|*.ini";
-            mOdlg.Title = "Select a Ini File";
-            if (mOdlg.ShowDialog() == DialogResult.OK) {
-                /*-- 紀錄檔案儲存位置 --*/
-                mIniPath = mOdlg.FileName;
-                /*-- 讀取Ini檔 --*/
-                ReadINI(mOdlg.FileName);
-                /*-- 資料繫結 --*/
-            }
-        }
-
+        
         /// <summary>
         /// 清除所有資料
         /// </summary>

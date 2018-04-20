@@ -25,7 +25,6 @@ namespace CtParamEditor.Comm
         void Filter(string keyWord);
         void Highlight(string keyWord);
         void Insert(int idxRow);
-        void OpenINI();
         void ReadINI(string fileName);
         void Remove(int idxRow);
         void RestoreDefault();
