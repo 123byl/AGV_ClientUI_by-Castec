@@ -12,6 +12,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -29,7 +30,7 @@ namespace CtParamEditor.Core
         /// <summary>
         /// 檔案儲存對話視窗
         /// </summary>
-        private SaveFileDialog mSdlg = new SaveFileDialog();
+        //private SaveFileDialog mSdlg = new SaveFileDialog();
         
         /// <summary>
         /// 右鍵選單
@@ -79,9 +80,49 @@ namespace CtParamEditor.Core
 
         private RtfConvert mMcConvert = new RtfConvert();
 
+        private Action<MethodInvoker> mDelinvoke = null;
+
+        /// <summary>
+        /// 要顯示的選項
+        /// </summary>
+        private CmsOption mShowOption = CmsOption.None;
+
+        /// <summary>
+        /// 要鎖住的選項
+        /// </summary>
+        private CmsOption mDisableOption = CmsOption.None;
+
         #endregion Declaration - Fields
 
         #region Declaration - Properties
+
+        /// <summary>
+        /// 被選取的行索引
+        /// </summary>
+        public int SelectedColumn {
+            get => mIdxCol;
+            set {
+                if (mIdxCol != value) {
+                    mIdxCol = value;
+                    DecidedShow(SelectedColumn, SelectedRow);
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        /// <summary>
+        /// 被選取的列索引
+        /// </summary>
+        public int SelectedRow {
+            get => mIdxRow;
+            set {
+                if (mIdxRow != value) {
+                    mIdxRow = value;
+                    DecidedShow(SelectedColumn, SelectedRow);
+                    OnPropertyChanged();
+                }
+            }
+        }
 
         /// <summary>
         /// 儲存格樣式管理
@@ -152,21 +193,55 @@ namespace CtParamEditor.Core
         /// </summary>
         private CtFieldEditor Field { get; } = new CtFieldEditor();
 
+        /// <summary>
+        /// Invoke方法委派
+        /// </summary>
+        public Action<MethodInvoker> DelInvoke { get => mDelinvoke; set {
+                if (mDelinvoke != value && value != null) {
+                    mDelinvoke = value;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 要顯示的選項
+        /// </summary>
+        public CmsOption ShowOption {
+            get => mShowOption;
+            set {
+                if (mShowOption != value) {
+                    mShowOption = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        /// <summary>
+        /// 要鎖住的選項
+        /// </summary>
+        public CmsOption DisableOption {
+            get => mDisableOption;
+            set {
+                if (mDisableOption != value) {
+                    mDisableOption = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         #endregion Declaration - Properteis
 
         #region Declaration - Enum
 
-        /// <summary>
-        /// 右鍵選單列舉
-        /// </summary>
-        private enum CmsOption {
-            None = 0,
-            Add = 1,
-            Edit = 2,
-            Delete = 4
-        }
+        
 
         #endregion Declaration - Enum
+
+        #region Declaration - Events
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        #endregion Declaration - Events
 
         #region Function - Constructors
 
@@ -359,27 +434,7 @@ namespace CtParamEditor.Core
                 e.Value = mRgConvert.ToRTF(val, CellStyles.Regular);
             }
         }
-
-        /// <summary>
-        /// 以儲存格為對象開啟右鍵選單
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void rDgv_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e) {
-            if (e.Button == MouseButtons.Right && e.RowIndex >= 0) {
-                mIdxRow = e.RowIndex;
-                mIdxCol = e.ColumnIndex;
-                CmsOption show = CmsOption.None;
-                CmsOption disable = CmsOption.None;
-                DecidedShow(e, out show, out disable);
-                if (show != CmsOption.None) {
-                    mCMS.Show(Cursor.Position);
-                    ShowOption(show);
-                    DisableOption(disable);
-                }
-            }
-        }
-
+        
         /// <summary>
         /// 開啟右鍵選單(增加新參數設定)
         /// </summary>
@@ -476,7 +531,7 @@ namespace CtParamEditor.Core
             /*-- 虛擬填充事件委派 --*/
             dgv.CellValueNeeded += rDgv_CellValueNeeded;
             /*-- 儲存格滑鼠點擊事件委派 --*/
-            dgv.CellMouseClick += rDgv_CellMouseClick;
+            //dgv.CellMouseClick += rDgv_CellMouseClick;
             /*-- 滑鼠點擊事件委派 --*/
             dgv.MouseClick += rDgv_MouseClick;
             /*-- 配置欄位標題 --*/
@@ -510,31 +565,31 @@ namespace CtParamEditor.Core
             sb.AppendLine();
         }
 
-        /// <summary>
-        /// 鎖住右鍵選單選項
-        /// </summary>
-        /// <param name="option"></param>
-        private void DisableOption(CmsOption option) {
-            bool isAdd = ((int)option & (int)CmsOption.Add) == (int)CmsOption.Add;
-            bool isEdit = ((int)option & (int)CmsOption.Edit) == (int)CmsOption.Edit;
-            bool isDelete = ((int)option & (int)CmsOption.Delete) == (int)CmsOption.Delete;
-            if (miAdd.Enabled == isAdd) miAdd.Enabled = !isAdd;
-            if (miEdit.Enabled == isEdit) miEdit.Enabled = !isEdit;
-            if (miDelete.Enabled == isDelete) miDelete.Enabled = !isDelete;
-        }
+        ///// <summary>
+        ///// 鎖住右鍵選單選項
+        ///// </summary>
+        ///// <param name="option"></param>
+        //private void DisableOption(CmsOption option) {
+        //    bool isAdd = ((int)option & (int)CmsOption.Add) == (int)CmsOption.Add;
+        //    bool isEdit = ((int)option & (int)CmsOption.Edit) == (int)CmsOption.Edit;
+        //    bool isDelete = ((int)option & (int)CmsOption.Delete) == (int)CmsOption.Delete;
+        //    if (miAdd.Enabled == isAdd) miAdd.Enabled = !isAdd;
+        //    if (miEdit.Enabled == isEdit) miEdit.Enabled = !isEdit;
+        //    if (miDelete.Enabled == isDelete) miDelete.Enabled = !isDelete;
+        //}
 
-        /// <summary>
-        /// 顯示右鍵選單選項
-        /// </summary>
-        /// <param name="option"></param>
-        private void ShowOption(CmsOption option) {
-            bool isAdd = ((int)option & (int)CmsOption.Add) == (int)CmsOption.Add;
-            bool isEdit = ((int)option & (int)CmsOption.Edit) == (int)CmsOption.Edit;
-            bool isDelete = ((int)option & (int)CmsOption.Delete) == (int)CmsOption.Delete;
-            if (miAdd.Visible != isAdd) miAdd.Visible = isAdd;
-            if (miEdit.Visible != isEdit) miEdit.Visible = isEdit;
-            if (miDelete.Visible != isDelete) miDelete.Visible = isDelete;
-        }
+        ///// <summary>
+        ///// 顯示右鍵選單選項
+        ///// </summary>
+        ///// <param name="option"></param>
+        //private void ShowOption(CmsOption option) {
+        //    bool isAdd = ((int)option & (int)CmsOption.Add) == (int)CmsOption.Add;
+        //    bool isEdit = ((int)option & (int)CmsOption.Edit) == (int)CmsOption.Edit;
+        //    bool isDelete = ((int)option & (int)CmsOption.Delete) == (int)CmsOption.Delete;
+        //    if (miAdd.Visible != isAdd) miAdd.Visible = isAdd;
+        //    if (miEdit.Visible != isEdit) miEdit.Visible = isEdit;
+        //    if (miDelete.Visible != isDelete) miDelete.Visible = isDelete;
+        //}
 
         /// <summary>
         /// 產生右鍵選單選項
@@ -629,6 +684,44 @@ namespace CtParamEditor.Core
             }
         }
 
+        private void DecidedShow(int idxCol,int idxRow) {
+            switch (idxCol) {
+                case PropField.Idx.Name:
+                case PropField.Idx.Description:
+                case PropField.Idx.ValType:
+                    ShowOption = CmsOption.Edit;
+                    break;
+                case PropField.Idx.Value:
+                case PropField.Idx.Max:
+                case PropField.Idx.Min:
+                case PropField.Idx.Default:
+                    IParam prop = DataSource[idxCol] as IParam;
+                    if (string.IsNullOrEmpty(prop.Type)) {
+                        DisableOption = CmsOption.Edit;
+                    } else {
+                        if (idxCol == PropField.Idx.Max || idxCol == PropField.Idx.Min) {
+                            Type type = prop.GetParamType();
+                            Type[] interfaces = type.GetInterfaces();
+                            if (prop.RangeDefinable) {
+                                //                            if (prop.Type != typeof(int).Name && prop.Type != typeof(float).Name) {
+                                DisableOption = CmsOption.Edit;
+                            }
+                        }
+                    }
+                    break;
+                default:
+                    ShowOption = CmsOption.Add | CmsOption.Delete;
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// 屬性變更發報
+        /// </summary>
+        /// <param name="propertyName"></param>
+        protected virtual void OnPropertyChanged([CallerMemberName]string propertyName = "") {
+            DelInvoke?.Invoke(() => PropertyChanged?.Invoke(this,new PropertyChangedEventArgs(propertyName)));
+        }
 
         public IParamValue<T> WriteParam<T>(string name, T val, string description) {
             return WriteParam<T>(name, val, description, default(T));

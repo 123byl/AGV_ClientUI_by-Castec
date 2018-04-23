@@ -62,6 +62,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\CtBind\CtBind.csproj">
+      <Project>{76EF08F5-B0DE-40AD-B468-15DC8908706B}</Project>
+      <Name>CtBind</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CtGenericParser\CtGenericParser.csproj">
       <Project>{E524A598-0BE5-4957-889D-CE738FAD378E}</Project>
       <Name>CtGenericParser</Name>

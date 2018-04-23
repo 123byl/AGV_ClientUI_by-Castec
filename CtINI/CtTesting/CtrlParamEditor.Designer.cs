@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CtBind;
+using System;
 
 namespace CtTesting {
     partial class CtrlParamEditor {
@@ -29,10 +30,17 @@ namespace CtTesting {
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dgvProperties = new System.Windows.Forms.DataGridView();
+            this.colName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colType = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colDescription = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colMax = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colMin = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colDefault = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.cmsDGV = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.miAdd = new System.Windows.Forms.ToolStripMenuItem();
-            this.miDelete = new System.Windows.Forms.ToolStripMenuItem();
-            this.miEdit = new System.Windows.Forms.ToolStripMenuItem();
+            this.miAdd = new CtBind.Bindable.ToolStripMenuItem();
+            this.miDelete = new CtBind.Bindable.ToolStripMenuItem();
+            this.miEdit = new CtBind.Bindable.ToolStripMenuItem();
             this.btnSave = new System.Windows.Forms.Button();
             this.btnOpen = new System.Windows.Forms.Button();
             this.btnFilter = new System.Windows.Forms.Button();
@@ -50,13 +58,6 @@ namespace CtTesting {
             this.txtKeyWord = new System.Windows.Forms.TextBox();
             this.btnHighlight = new System.Windows.Forms.Button();
             this.btnRead = new System.Windows.Forms.Button();
-            this.colName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colType = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colDescription = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colMax = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colMin = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colDefault = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dgvProperties)).BeginInit();
             this.cmsDGV.SuspendLayout();
             this.SuspendLayout();
@@ -89,9 +90,55 @@ namespace CtTesting {
             this.dgvProperties.RowTemplate.Height = 27;
             this.dgvProperties.Size = new System.Drawing.Size(1171, 479);
             this.dgvProperties.TabIndex = 0;
-            this.dgvProperties.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgvProperties_CellMouseClick);
-            this.dgvProperties.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgvProperties_CellMouseDoubleClick);
-            this.dgvProperties.MouseClick += new System.Windows.Forms.MouseEventHandler(this.dgvProperties_MouseClick);
+            // 
+            // colName
+            // 
+            this.colName.HeaderText = "Name";
+            this.colName.Name = "colName";
+            this.colName.ReadOnly = true;
+            this.colName.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            // 
+            // colType
+            // 
+            this.colType.HeaderText = "Type";
+            this.colType.Name = "colType";
+            this.colType.ReadOnly = true;
+            this.colType.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            // 
+            // colValue
+            // 
+            this.colValue.HeaderText = "Value";
+            this.colValue.Name = "colValue";
+            this.colValue.ReadOnly = true;
+            this.colValue.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            // 
+            // colDescription
+            // 
+            this.colDescription.HeaderText = "Description";
+            this.colDescription.Name = "colDescription";
+            this.colDescription.ReadOnly = true;
+            this.colDescription.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            // 
+            // colMax
+            // 
+            this.colMax.HeaderText = "Max";
+            this.colMax.Name = "colMax";
+            this.colMax.ReadOnly = true;
+            this.colMax.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            // 
+            // colMin
+            // 
+            this.colMin.HeaderText = "Min";
+            this.colMin.Name = "colMin";
+            this.colMin.ReadOnly = true;
+            this.colMin.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            // 
+            // colDefault
+            // 
+            this.colDefault.HeaderText = "Default";
+            this.colDefault.Name = "colDefault";
+            this.colDefault.ReadOnly = true;
+            this.colDefault.Resizable = System.Windows.Forms.DataGridViewTriState.True;
             // 
             // cmsDGV
             // 
@@ -101,26 +148,26 @@ namespace CtTesting {
             this.miDelete,
             this.miEdit});
             this.cmsDGV.Name = "cmsDGV";
-            this.cmsDGV.Size = new System.Drawing.Size(123, 76);
+            this.cmsDGV.Size = new System.Drawing.Size(176, 104);
             // 
             // miAdd
             // 
             this.miAdd.Name = "miAdd";
-            this.miAdd.Size = new System.Drawing.Size(122, 24);
+            this.miAdd.Size = new System.Drawing.Size(175, 24);
             this.miAdd.Text = "Add";
             this.miAdd.Click += new System.EventHandler(this.miAdd_Click);
             // 
             // miDelete
             // 
             this.miDelete.Name = "miDelete";
-            this.miDelete.Size = new System.Drawing.Size(122, 24);
+            this.miDelete.Size = new System.Drawing.Size(175, 24);
             this.miDelete.Text = "Delete";
             this.miDelete.Click += new System.EventHandler(this.miDelete_Click);
             // 
             // miEdit
             // 
             this.miEdit.Name = "miEdit";
-            this.miEdit.Size = new System.Drawing.Size(122, 24);
+            this.miEdit.Size = new System.Drawing.Size(175, 24);
             this.miEdit.Text = "Edit";
             this.miEdit.Click += new System.EventHandler(this.miEdit_Click);
             // 
@@ -309,56 +356,7 @@ namespace CtTesting {
             this.btnRead.UseVisualStyleBackColor = true;
             this.btnRead.Click += new System.EventHandler(this.btnRead_Click);
             // 
-            // colName
-            // 
-            this.colName.HeaderText = "Name";
-            this.colName.Name = "colName";
-            this.colName.ReadOnly = true;
-            this.colName.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            // 
-            // colType
-            // 
-            this.colType.HeaderText = "Type";
-            this.colType.Name = "colType";
-            this.colType.ReadOnly = true;
-            this.colType.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            // 
-            // colValue
-            // 
-            this.colValue.HeaderText = "Value";
-            this.colValue.Name = "colValue";
-            this.colValue.ReadOnly = true;
-            this.colValue.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            // 
-            // colDescription
-            // 
-            this.colDescription.HeaderText = "Description";
-            this.colDescription.Name = "colDescription";
-            this.colDescription.ReadOnly = true;
-            this.colDescription.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            // 
-            // colMax
-            // 
-            this.colMax.HeaderText = "Max";
-            this.colMax.Name = "colMax";
-            this.colMax.ReadOnly = true;
-            this.colMax.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            // 
-            // colMin
-            // 
-            this.colMin.HeaderText = "Min";
-            this.colMin.Name = "colMin";
-            this.colMin.ReadOnly = true;
-            this.colMin.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            // 
-            // colDefault
-            // 
-            this.colDefault.HeaderText = "Default";
-            this.colDefault.Name = "colDefault";
-            this.colDefault.ReadOnly = true;
-            this.colDefault.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            // 
-            // CtrlPropertiesSetting
+            // CtrlParamEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -381,7 +379,7 @@ namespace CtTesting {
             this.Controls.Add(this.btnFilter);
             this.Controls.Add(this.btnOpen);
             this.Controls.Add(this.btnSave);
-            this.Name = "CtrlPropertiesSetting";
+            this.Name = "CtrlParamEditor";
             this.Text = "CtrlPropertiesSetting";
             ((System.ComponentModel.ISupportInitialize)(this.dgvProperties)).EndInit();
             this.cmsDGV.ResumeLayout(false);
@@ -406,9 +404,9 @@ namespace CtTesting {
 
         private System.Windows.Forms.DataGridView dgvProperties;
         private System.Windows.Forms.ContextMenuStrip cmsDGV;
-        private System.Windows.Forms.ToolStripMenuItem miAdd;
-        private System.Windows.Forms.ToolStripMenuItem miDelete;
-        private System.Windows.Forms.ToolStripMenuItem miEdit;
+        private Bindable.ToolStripMenuItem miAdd;
+        private Bindable.ToolStripMenuItem miDelete;
+        private Bindable.ToolStripMenuItem miEdit;
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.Button btnOpen;
         private System.Windows.Forms.Button btnFilter;

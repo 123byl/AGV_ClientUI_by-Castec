@@ -111,6 +111,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\CtBind\CtBind.csproj">
+      <Project>{76EF08F5-B0DE-40AD-B468-15DC8908706B}</Project>
+      <Name>CtBind</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\CtLib\CtLib\CtLib.csproj">
       <Project>{a9bed8b3-2f9d-42a8-90bd-9fae0522eb09}</Project>
       <Name>CtLib</Name>

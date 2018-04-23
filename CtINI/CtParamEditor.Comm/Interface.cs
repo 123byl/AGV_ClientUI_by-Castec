@@ -1,4 +1,5 @@
-﻿using DataGridViewRichTextBox;
+﻿using CtBind;
+using DataGridViewRichTextBox;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -13,12 +14,22 @@ namespace CtParamEditor.Comm
     /// <summary>
     /// 參數編輯器
     /// </summary>
-    public interface IParamEditor :IParamEdit{
+    public interface IParamEditor :IParamEdit,IDataSource{
+        /// <summary>
+        /// 被選取的欄索引
+        /// </summary>
+        int SelectedColumn { get; set; }
+        /// <summary>
+        /// 被選取的列索引
+        /// </summary>
+        int SelectedRow { get; set; }
         ICellStyles CellStyles { get; }
         Input.ComboBox ComboBoxList { get; set; }
         DataGridView GridView { get; set; }
         Input.Text InputText { get; set; }
         IParamCollection ParamCollection { get; }
+        CmsOption ShowOption { get; }
+        CmsOption DisableOption { get; }
 
         void Clear();
         void CloseFilter();

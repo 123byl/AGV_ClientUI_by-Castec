@@ -48,6 +48,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\CtBind\CtBind.csproj">
+      <Project>{76ef08f5-b0de-40ad-b468-15dc8908706b}</Project>
+      <Name>CtBind</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DataGridViewRichTextBox\DataGridViewRichTextBox.csproj">
       <Project>{d9826cc9-bf43-4b72-a211-19e312e8c184}</Project>
       <Name>DataGridViewRichTextBox</Name>

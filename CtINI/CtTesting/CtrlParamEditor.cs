@@ -16,10 +16,11 @@ using static System.Collections.Generic.Dictionary<int, string>;
 using CtLib.Forms;
 using CtLib.Library;
 using CtParamEditor.Comm;
+using CtBind;
 
 namespace CtTesting {
 
-    public partial class CtrlParamEditor : Form {
+    public partial class CtrlParamEditor : Form ,IDataDisplay<IParamEditor>{
 
         #region Declaration - Fields
 
@@ -29,6 +30,16 @@ namespace CtTesting {
         /// 檔案開啟對話視窗
         /// </summary>
         private OpenFileDialog mOdlg = new OpenFileDialog();
+
+        /// <summary>
+        /// 被選取的欄索引
+        /// </summary>
+        private int mSelectedColumn = -1;
+
+        /// <summary>
+        /// 被選取的列索引
+        /// </summary>
+        private int mSelectedRow = -1;
 
         #endregion Declaration - Fields
 
@@ -46,7 +57,13 @@ namespace CtTesting {
             dgvProperties.Width = width;
             mEditor.GridView = dgvProperties;
             mEditor.InputText = InputText;
-            mEditor.ComboBoxList = ComboBoxList; 
+            mEditor.ComboBoxList = ComboBoxList;
+
+            dgvProperties.CellMouseClick += dgvProperties_CellMouseClick;
+            dgvProperties.CellMouseDoubleClick += dgvProperties_CellMouseDoubleClick;
+            dgvProperties.MouseClick += dgvProperties_MouseClick;
+
+            Bindings(mEditor);
         }
 
         #endregion Function - Constructors
@@ -65,8 +82,23 @@ namespace CtTesting {
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void dgvProperties_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e) {            
+        private void dgvProperties_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e) {
+            mEditor.SelectedColumn = e.ColumnIndex;
+            mEditor.SelectedRow = e.RowIndex;
             
+            if (e.Button == MouseButtons.Right && e.RowIndex >= 0) {
+                if (mEditor.ShowOption != CmsOption.None) {
+                    cmsDGV.Show(Cursor.Position);
+                }
+                //CmsOption show = CmsOption.None;
+                //CmsOption disable = CmsOption.None;
+                //DecidedShow(e, out show, out disable);
+                //if (show != CmsOption.None) {
+                //    mCMS.Show(Cursor.Position);
+                //    ShowOption(show);
+                //    DisableOption(disable);
+                //}
+            }
         }
         
 
@@ -258,6 +290,50 @@ namespace CtTesting {
         public class TestData {
             public int Value { get; set; } = 0;
         }
+
+        #region Implement - IDataDisplay<IParamEditor>
+
+        /// <summary>
+        /// 資料綁定
+        /// </summary>
+        /// <param name="source">資料源</param>
+        public void Bindings(IParamEditor source) {
+            if (source.DelInvoke == null) source.DelInvoke = invk => this.InvokeIfNecessary(invk);
+
+            /*-- Add選項顯示 --*/
+            miAdd.DataBindings.ExAdd(nameof(miAdd.Visible), source, nameof(source.ShowOption),(sender,e) => {
+                e.Value = ((CmsOption)e.Value).ShowAdd();
+            },mEditor.ShowOption.ShowAdd());
+            /*-- Delete選項 --*/
+            miDelete.DataBindings.ExAdd(nameof(miDelete.Visible), source, nameof(source.ShowOption),(sender,e) => {
+                e.Value = ((CmsOption)e.Value).ShowDelete();
+            },source.ShowOption.ShowDelete());
+            /*-- Edit選項 --*/
+            miEdit.DataBindings.ExAdd(nameof(miEdit.Visible), source, nameof(source.ShowOption), (sneder, e) => {
+                e.Value = ((CmsOption)e.Value).ShowEdit();
+            }, source.ShowOption.ShowEdit());
+
+        }
+
+        #endregion Implenent - IDataDisplay<IParamEditor>
+
     }
     
+    public static class Extenstion {
+        public static bool ShowAdd(this CmsOption option) {
+            CmsOption show = CmsOption.Add;
+            return (option & show) == show;
+        }
+
+        public static bool ShowDelete(this CmsOption option) {
+            CmsOption show = CmsOption.Delete;
+            return (option & show) == show;
+        }
+
+        public static bool ShowEdit(this CmsOption option) {
+            CmsOption show = CmsOption.Edit;
+            return (option & show) == show;
+        }
+    }
+
 }

@@ -5,6 +5,16 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace CtParamEditor.Comm {
+    
+    /// <summary>
+    /// 右鍵選單列舉
+    /// </summary>
+    public enum CmsOption {
+        None = 0,
+        Add = 1,
+        Edit = 2,
+        Delete = 4
+    }
 
     /// <summary>
     /// 輸入方法委派定義

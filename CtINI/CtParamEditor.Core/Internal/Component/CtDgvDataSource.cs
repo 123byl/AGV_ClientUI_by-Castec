@@ -32,7 +32,11 @@ namespace CtParamEditor.Core.Internal.Component {
 
         public IParamColumn this[int index] {
             get {
-                return Data[index];
+                if (index != -1) {
+                    return Data[index];
+                } else {
+                    return null;
+                }
             }
         }
 
