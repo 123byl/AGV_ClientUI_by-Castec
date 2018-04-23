@@ -254,7 +254,7 @@ namespace CtParamEditor.Core.Internal.Component {
         public void Insert(int mIdxRow) {
             IParamColumn prop = new CtParam(Item_ValueChanged);
             /*-- 紀錄非法欄位 --*/
-            AddIllegal?.Invoke(prop);
+            mIllegal.Add(prop);
             /*-- 插入新資料 --*/
             mFullData.Insert(mIdxRow, prop);
             /*-- 更新要顯示的資料筆數 --*/
