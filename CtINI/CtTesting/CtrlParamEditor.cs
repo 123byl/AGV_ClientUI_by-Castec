@@ -135,7 +135,6 @@ namespace CtTesting {
                 } else {
                     e.Value = mRgConvert.ToRTF(val, mCellStyle.Regular);
                 }
-                e.Value = val;
             } catch (Exception ex) {
                 Console.WriteLine(ex.Message);
             }

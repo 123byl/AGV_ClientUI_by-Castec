@@ -656,9 +656,9 @@ namespace CtParamEditor.Core
         private void AssignDelegation() {
             /*-- 修改欄位紀錄方法委派 --*/
             //Field.AddModifiedField = ModifiedField.Add;
-            /*-- 非法欄位紀錄方法委派 --*/
+            ///*-- 非法欄位紀錄方法委派 --*/
             //Field.RecordIllegalField = IllegalField.Add;
-            /*-- 非法欄位紀錄註銷方法委派 --*/
+            ///*-- 非法欄位紀錄註銷方法委派 --*/
             //Field.RemoveIllegalField = IllegalField.Remove;
 
             Field.GetItems = EnumData.GetItems;

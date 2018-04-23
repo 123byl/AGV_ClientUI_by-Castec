@@ -350,7 +350,7 @@ namespace CtParamEditor.Core.Internal.Component {
 
         private void Item_ValueChanged(object sender, string e) {
             IParamColumn prop = sender as IParamColumn;
-            string columnName = prop[e].ToString();
+            string columnName = e;
             mModified.Add(prop, columnName);
             if (string.IsNullOrEmpty(prop[e].ToString())) {
                 /*-- 記錄非法的欄位 --*/
