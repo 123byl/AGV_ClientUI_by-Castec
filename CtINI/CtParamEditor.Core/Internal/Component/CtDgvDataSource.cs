@@ -30,10 +30,10 @@ namespace CtParamEditor.Core.Internal.Component {
 
         #region Declaration - Properties
 
-        public IParamColumn this[int index] {
+        public IParamColumn this[int indxtRow] {
             get {
-                if (index != -1) {
-                    return Data[index];
+                if (indxtRow != -1) {
+                    return Data[indxtRow];
                 } else {
                     return null;
                 }

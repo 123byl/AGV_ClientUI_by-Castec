@@ -35,11 +35,30 @@ namespace CtParamEditor.Comm
         void CloseFilter();
         void Filter(string keyWord);
         void Highlight(string keyWord);
-        void Insert(int idxRow);
         void ReadINI(string fileName);
-        void Remove(int idxRow);
         void RestoreDefault();
         void SaveToINI(string path = null);
+        /// <summary>
+        /// 移除選定列
+        /// </summary>
+        void Remove();
+        /// <summary>
+        /// 移除指定列
+        /// </summary>
+        void Remove(int idxRow);
+        /// <summary>
+        /// 在選定列插入新列
+        /// </summary>
+        void Insert();
+        /// <summary>
+        /// 在指定列插入新列
+        /// </summary>
+        /// <param name="idxRow"></param>
+        void Insert(int idxRow);
+        /// <summary>
+        /// 編輯選定列
+        /// </summary>
+        void Edit();
     }
 
     public interface IParamEdit {

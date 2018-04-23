@@ -388,18 +388,6 @@ namespace CtTesting {
 
         }
 
-        private void miEdit_Click(object sender, EventArgs e) {
-            throw new NotImplementedException();
-        }
-
-        private void miDelete_Click(object sender, EventArgs e) {
-            throw new NotImplementedException();
-        }
-
-        private void miAdd_Click(object sender, EventArgs e) {
-            throw new NotImplementedException();
-        }
-
         #endregion
 
         private System.Windows.Forms.DataGridView dgvProperties;

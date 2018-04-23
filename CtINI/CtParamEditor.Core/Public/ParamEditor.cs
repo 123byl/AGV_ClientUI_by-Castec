@@ -303,7 +303,15 @@ namespace CtParamEditor.Core
         /// </summary>
         /// <param name="idxRow"></param>
         public void Insert(int idxRow) {
+            idxRow = idxRow != -1 ? idxRow : DataSource.RowCount();
             DataSource.Insert(idxRow);
+        }
+
+        /// <summary>
+        /// 在選定列插入新行
+        /// </summary>
+        public void Insert() {
+            Insert(SelectedRow);
         }
 
         /// <summary>
@@ -312,6 +320,26 @@ namespace CtParamEditor.Core
         /// <param name="idxRow"></param>
         public void Remove(int idxRow) {
             DataSource.Remove(idxRow);
+        }
+
+        /// <summary>
+        /// 移除選定列
+        /// </summary>
+        public void Remove(){
+            Remove(SelectedRow);
+        }
+
+        public void Edit() {
+            //IParam prop = DataSource[mIdxRow] as IParam;
+            //string rtnVal = string.Empty;
+            //string oriVal = cell.Value?.ToString();
+            //List<string> Types = EnumData.Data.Keys.ToList();
+            //if (Field.Edit(mIdxCol, prop) && rDgv != null) {
+            //    DataGridViewRow row = rDgv.Rows[mIdxRow];
+            //    cell.Style.ForeColor = Color.Red;
+            //    cell.Selected = false;
+            //    rDgv.Refresh();
+            //}
         }
 
         /// <summary>
@@ -533,7 +561,7 @@ namespace CtParamEditor.Core
             /*-- 儲存格滑鼠點擊事件委派 --*/
             //dgv.CellMouseClick += rDgv_CellMouseClick;
             /*-- 滑鼠點擊事件委派 --*/
-            dgv.MouseClick += rDgv_MouseClick;
+            //dgv.MouseClick += rDgv_MouseClick;
             /*-- 配置欄位標題 --*/
             DataGridViewRichTextBox.Factory FTY = new DataGridViewRichTextBox.Factory();
             List<DataGridViewColumn> cols = new List<DataGridViewColumn>() {
@@ -685,33 +713,36 @@ namespace CtParamEditor.Core
         }
 
         private void DecidedShow(int idxCol,int idxRow) {
-            switch (idxCol) {
-                case PropField.Idx.Name:
-                case PropField.Idx.Description:
-                case PropField.Idx.ValType:
-                    ShowOption = CmsOption.Edit;
-                    break;
-                case PropField.Idx.Value:
-                case PropField.Idx.Max:
-                case PropField.Idx.Min:
-                case PropField.Idx.Default:
-                    IParam prop = DataSource[idxCol] as IParam;
-                    if (string.IsNullOrEmpty(prop.Type)) {
-                        DisableOption = CmsOption.Edit;
-                    } else {
-                        if (idxCol == PropField.Idx.Max || idxCol == PropField.Idx.Min) {
-                            Type type = prop.GetParamType();
-                            Type[] interfaces = type.GetInterfaces();
-                            if (prop.RangeDefinable) {
-                                //                            if (prop.Type != typeof(int).Name && prop.Type != typeof(float).Name) {
-                                DisableOption = CmsOption.Edit;
+            if (idxRow == -1) {
+                ShowOption = CmsOption.Add;
+            } else {
+
+                switch (idxCol) {
+                    case PropField.Idx.Name:
+                    case PropField.Idx.Description:
+                    case PropField.Idx.ValType:
+                        ShowOption = CmsOption.Edit;
+                        break;
+                    case PropField.Idx.Value:
+                    case PropField.Idx.Max:
+                    case PropField.Idx.Min:
+                    case PropField.Idx.Default:
+                        ShowOption = CmsOption.Edit;
+                        IParam prop = DataSource[idxRow] as IParam;
+                        if (string.IsNullOrEmpty(prop.Type)) {
+                            DisableOption = CmsOption.Edit;
+                        } else {
+                            if (idxCol == PropField.Idx.Max || idxCol == PropField.Idx.Min) {
+                                if (prop.RangeDefinable) {
+                                    DisableOption = CmsOption.Edit;
+                                }
                             }
                         }
-                    }
-                    break;
-                default:
-                    ShowOption = CmsOption.Add | CmsOption.Delete;
-                    break;
+                        break;
+                    default:
+                        ShowOption = CmsOption.Add | CmsOption.Delete;
+                        break;
+                }
             }
         }
 

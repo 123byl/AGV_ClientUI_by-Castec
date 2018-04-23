@@ -18,6 +18,7 @@ using CtLib.Library;
 using CtParamEditor.Comm;
 using CtBind;
 
+
 namespace CtTesting {
 
     public partial class CtrlParamEditor : Form ,IDataDisplay<IParamEditor>{
@@ -85,8 +86,9 @@ namespace CtTesting {
         private void dgvProperties_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e) {
             mEditor.SelectedColumn = e.ColumnIndex;
             mEditor.SelectedRow = e.RowIndex;
-            
-            if (e.Button == MouseButtons.Right && e.RowIndex >= 0) {
+            Console.WriteLine($"{e.ColumnIndex},{e.RowIndex}");
+
+            if (e.Button == MouseButtons.Right) {
                 if (mEditor.ShowOption != CmsOption.None) {
                     cmsDGV.Show(Cursor.Position);
                 }
@@ -113,6 +115,31 @@ namespace CtTesting {
         #endregion DataGridView
 
         #region ToolStripMenuItem
+
+        private void miEdit_Click(object sender, EventArgs e) {
+            //mEditor.ParamCollection
+
+            //IParam prop = DataSource[mIdxRow] as IParam;
+            //string rtnVal = string.Empty;
+            //string oriVal = cell.Value?.ToString();
+            //List<string> Types = EnumData.Data.Keys.ToList();
+            //if (Field.Edit(mIdxCol, prop) && rDgv != null) {
+            //    DataGridViewRow row = rDgv.Rows[mIdxRow];
+            //    cell.Style.ForeColor = Color.Red;
+            //    cell.Selected = false;
+            //    rDgv.Refresh();
+            //}
+            //mEditor.Edit();
+        }
+
+        private void miDelete_Click(object sender, EventArgs e) {
+            mEditor.Remove();
+            dgvProperties.Refresh();
+        }
+
+        private void miAdd_Click(object sender, EventArgs e) {
+            mEditor.Insert();
+        }
 
         #endregion ToolStripMenuItem
 
@@ -317,8 +344,9 @@ namespace CtTesting {
 
         #endregion Implenent - IDataDisplay<IParamEditor>
 
+
     }
-    
+
     public static class Extenstion {
         public static bool ShowAdd(this CmsOption option) {
             CmsOption show = CmsOption.Add;
