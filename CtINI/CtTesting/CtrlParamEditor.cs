@@ -19,6 +19,8 @@ using CtParamEditor.Comm;
 using CtBind;
 using CtParamEditor.Core.Internal;
 using CtParamEditor.Core.Internal.Component.FIeldEditor;
+using CtParamEditor.Core.Internal.Component;
+using DataGridViewRichTextBox;
 
 namespace CtTesting {
 
@@ -34,6 +36,16 @@ namespace CtTesting {
         /// 檔案開啟對話視窗
         /// </summary>
         private OpenFileDialog mOdlg = new OpenFileDialog();
+
+        private ICellStyles mCellStyle = new CtCellStyles();
+
+        private RtfConvert mRgConvert = new RtfConvert();
+
+        private RtfConvert mRcConvert = new RtfConvert();
+
+        private RtfConvert mMrConvert = new RtfConvert();
+
+        private RtfConvert mMcConvert = new RtfConvert();
 
         #endregion Declaration - Fields
 
@@ -56,7 +68,9 @@ namespace CtTesting {
             dgvProperties.CellMouseClick += dgvProperties_CellMouseClick;
             dgvProperties.CellMouseDoubleClick += dgvProperties_CellMouseDoubleClick;
             dgvProperties.MouseClick += dgvProperties_MouseClick;
+            dgvProperties.CellValueNeeded += DgvProperties_CellValueNeeded;
 
+            mRgConvert.Regular = mCellStyle.Regular;
             Bindings(mEditor);
         }
 
@@ -93,6 +107,38 @@ namespace CtTesting {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void dgvProperties_MouseClick(object sender, MouseEventArgs e) {
+        }
+
+        private void DgvProperties_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e) {
+            string columnName = dgvProperties.Columns[e.ColumnIndex].HeaderText;
+            if (e.RowIndex >= mEditor.ParamCollection.RowCount()) {
+                return;
+            }
+            try {
+                /*-- 取得欄位資料 --*/
+                IParam prop = mEditor.ParamCollection[e.RowIndex]as IParam;
+                string v = prop.Default;
+                /*-- 取得欄位值 --*/
+                string val = prop.GetParamValue(columnName);
+                /*-- 必填欄位檢查 --*/
+                if (mEditor.ParamCollection.IsIlleagl(prop, columnName)) {
+                    e.Value = mRcConvert.ToRTF("Required cell", mCellStyle.RequiredCell, false);//必填欄位樣式
+                } else if (mEditor.ParamCollection.IsModified(prop)) {
+                    //已編輯儲存格樣式
+                    if (mEditor.ParamCollection.IsModified(prop, columnName)) {
+                        e.Value = mMcConvert.ToRTF(val, mCellStyle.ModifiedCell);
+                        //已編輯欄位樣式
+                    } else {
+                        e.Value = mMrConvert.ToRTF(val, mCellStyle.ModifiedRow);
+                    }
+                    /*-- 一般欄位 --*/
+                } else {
+                    e.Value = mRgConvert.ToRTF(val, mCellStyle.Regular);
+                }
+                e.Value = val;
+            } catch (Exception ex) {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         #endregion DataGridView
@@ -241,6 +287,7 @@ namespace CtTesting {
         }
 
         #endregion Function - Private Methods
+
         public enum TestEM {
             one = 2,
             two = 3,
@@ -334,8 +381,7 @@ namespace CtTesting {
         }
 
         #endregion Implenent - IDataDisplay<IParamEditor>
-
-
+        
     }
 
     public static class Extenstion {

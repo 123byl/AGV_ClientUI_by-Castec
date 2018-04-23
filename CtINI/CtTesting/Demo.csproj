@@ -131,6 +131,10 @@
       <Project>{31B4923E-C9AD-4322-BCEB-F46B3ECDCFC6}</Project>
       <Name>CtParamEditor.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DataGridViewRichTextBox\DataGridViewRichTextBox.csproj">
+      <Project>{D9826CC9-BF43-4B72-A211-19E312E8C184}</Project>
+      <Name>DataGridViewRichTextBox</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

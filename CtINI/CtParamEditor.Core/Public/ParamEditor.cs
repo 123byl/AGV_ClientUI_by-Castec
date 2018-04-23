@@ -483,7 +483,6 @@ namespace CtParamEditor.Core
             } catch(Exception ex) {
                 Console.WriteLine(ex.Message);
             }
-
         }
         
         /// <summary>
@@ -580,7 +579,7 @@ namespace CtParamEditor.Core
             PropertyInfo pi = dgvType.GetProperty("DoubleBuffered", BindingFlags.Instance | BindingFlags.NonPublic);
             pi.SetValue(dgv, true, null);
             /*-- 虛擬填充事件委派 --*/
-            dgv.CellValueNeeded += rDgv_CellValueNeeded;
+            //dgv.CellValueNeeded += rDgv_CellValueNeeded;
             /*-- 儲存格滑鼠點擊事件委派 --*/
             //dgv.CellMouseClick += rDgv_CellMouseClick;
             /*-- 滑鼠點擊事件委派 --*/

@@ -779,6 +779,7 @@ namespace DataGridViewRichTextBox
             RtfContent(data,  keyWord, rgFont, mHighlight);
 
             return mFullRTF.ToString();
+
         }
 
         #endregion Funciotn - Public Mehtods

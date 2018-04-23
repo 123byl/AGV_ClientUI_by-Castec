@@ -12,7 +12,7 @@ namespace CtParamEditor.Core.Internal.Component {
     /// <summary>
     /// 儲存格樣式管理器
     /// </summary>
-    internal class CtCellStyles : ICellStyles {
+    public class CtCellStyles : ICellStyles {
 
         /// <summary>
         /// 一般樣式

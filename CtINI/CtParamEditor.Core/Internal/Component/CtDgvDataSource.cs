@@ -151,6 +151,18 @@ namespace CtParamEditor.Core.Internal.Component {
             return isFund;
         }
 
+        public bool IsIlleagl(IParam prop, string columnName) {
+            return mIllegal.Contains(prop, columnName);
+        }
+
+        public bool IsModified(IParam prop) {
+            return mModified.ContainsRow(prop);
+        }
+
+        public bool IsModified(IParam prop, string columnName) {
+            return mModified.ContainsColumn(prop, columnName);
+        }
+
         #endregion Implement - IParamCollection
 
         #region Function - Public Methods

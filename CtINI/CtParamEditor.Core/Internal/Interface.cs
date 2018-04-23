@@ -21,24 +21,7 @@ namespace CtParamEditor.Core.Internal {
         Type GetParamType();
     }
 
-    /// <summary>
-    /// AGV參數介面
-    /// </summary>
-    /// <remarks>
-    /// 提供參數操作方法
-    /// </remarks>
-    public interface IParam : IParamColumn {
-        bool SetValue(string val, string columnName);
-        string GetParamValue(string columnName);
-        /// <summary>
-        /// 變數變更事件
-        /// </summary>
-        event EventHandler<string> ValueChanged;
-        Delegates.EnumData.DelContainItem ContainItem { get; set; }
-        Delegates.EnumData.DelContainType ContainType { get; set; }
-        bool RangeDefinable { get; }
-        Type GetParamType();
-    }
+
 
     /// <summary>
     /// Enum資料型態定義

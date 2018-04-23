@@ -115,6 +115,47 @@ namespace CtParamEditor.Comm
         /// <param name="val"></param>
         /// <returns></returns>
         bool FindVal<T>(string name, ref T val) where T : IConvertible;
+
+        int RowCount();
+        /// <summary>
+        /// 是否為非法值
+        /// </summary>
+        /// <param name="prop"></param>
+        /// <param name="columnName"></param>
+        /// <returns></returns>
+        bool IsIlleagl(IParam prop, string columnName);
+        /// <summary>
+        /// 該資料列是否已修改過
+        /// </summary>
+        /// <param name="prop"></param>
+        /// <returns></returns>
+        bool IsModified(IParam prop);
+        /// <summary>
+        /// 該資料是否修過
+        /// </summary>
+        /// <param name="prop"></param>
+        /// <param name="columnName"></param>
+        /// <returns></returns>
+        bool IsModified(IParam prop, string columnName);
+    }
+
+    /// <summary>
+    /// AGV參數介面
+    /// </summary>
+    /// <remarks>
+    /// 提供參數操作方法
+    /// </remarks>
+    public interface IParam : IParamColumn {
+        bool SetValue(string val, string columnName);
+        string GetParamValue(string columnName);
+        /// <summary>
+        /// 變數變更事件
+        /// </summary>
+        event EventHandler<string> ValueChanged;
+        //Delegates.EnumData.DelContainItem ContainItem { get; set; }
+        //Delegates.EnumData.DelContainType ContainType { get; set; }
+        bool RangeDefinable { get; }
+        Type GetParamType();
     }
 
     /// <summary>
@@ -227,5 +268,7 @@ namespace CtParamEditor.Comm
         /// </summary>
         IExFont ModifiedCell { get; }
     }
+
+
 
 }
