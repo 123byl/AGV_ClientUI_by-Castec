@@ -15,9 +15,9 @@ namespace CtParamEditor.Core.Internal.Component.FIeldEditor {
         #region Declaration - Properties
 
         /// <summary>
-        /// 編輯欄位索引值
+        /// 編輯欄位名稱
         /// </summary>
-        protected abstract int mIdx { get; }
+        protected abstract string mColumnName { get; }
         /// <summary>
         /// 輸入對話視窗標題
         /// </summary>
@@ -68,24 +68,23 @@ namespace CtParamEditor.Core.Internal.Component.FIeldEditor {
         /// </summary>
         /// <param name="prop"></param>
         /// <returns></returns>
-        public bool Edit(IParam prop) {
-            string rtn = string.Empty;
+        public bool Edit(IParam prop,out string returnValue) {
             /*-- 取得原始參數值 --*/
             string oriVal = OriVal(prop);
             /*-- 讓使用者輸入新值 --*/
-            bool suc = abEdit(prop.Type, oriVal, out rtn);
+            bool suc = abEdit(prop.Type, oriVal, out returnValue);
             if (suc) {
                 /*-- 將新值寫入欄位 --*/
-                suc = prop.SetValue(rtn, mIdx);
+                suc = prop.SetValue(returnValue, mColumnName);
                 if (suc) {
-                    AddModifiedField.Invoke(prop, mIdx);
-                    if (string.IsNullOrEmpty(rtn)) {
-                        /*-- 記錄非法的欄位 --*/
-                        RecordIllegal(prop, mIdx);
-                    } else {
-                        /*-- 移除非法紀錄 --*/
-                        RemoveIllegal(prop, mIdx);
-                    }
+                    //AddModifiedField.Invoke(prop, mColumnName);
+                    //if (string.IsNullOrEmpty(returnValue)) {
+                    //    /*-- 記錄非法的欄位 --*/
+                    //    RecordIllegal(prop, mColumnName);
+                    //} else {
+                    //    /*-- 移除非法紀錄 --*/
+                    //    RemoveIllegal(prop, mColumnName);
+                    //}
                 }
             }
             return suc;

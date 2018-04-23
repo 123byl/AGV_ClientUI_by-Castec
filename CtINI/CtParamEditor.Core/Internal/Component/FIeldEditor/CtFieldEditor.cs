@@ -10,7 +10,7 @@ namespace CtParamEditor.Core.Internal.Component.FIeldEditor {
     /// <summary>
     /// 欄位編輯器
     /// </summary>
-    internal class CtFieldEditor {
+    public class CtFieldEditor {
 
         #region Declaration Properties
 
@@ -63,7 +63,7 @@ namespace CtParamEditor.Core.Internal.Component.FIeldEditor {
         /// <param name="idx">欄位索引</param>
         /// <param name="prop">要修改的參數</param>
         /// <returns></returns>
-        public bool Edit(int idx, IParam prop) {
+        public bool Edit(int idx, IParam prop,out string returnValue) {
             /*-- 取得對應欄位編輯器 --*/
             BaseFieldEditor editor = GetEditor(idx);
             /*-- 指定委派方法 --*/
@@ -73,7 +73,7 @@ namespace CtParamEditor.Core.Internal.Component.FIeldEditor {
             editor.InputText = InputText;
             editor.ComboBoxList = ComboBoxList;
             /*-- 顯示對話視窗供使用者輸入並回傳結果 --*/
-            return editor.Edit(prop);
+            return editor.Edit(prop,out returnValue);
         }
 
         #endregion Funciton - Public Methods

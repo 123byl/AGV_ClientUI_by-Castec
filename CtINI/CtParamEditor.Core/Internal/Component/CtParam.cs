@@ -15,16 +15,16 @@ namespace CtParamEditor.Core.Internal.Component {
         #region Declaration - Fields
 
         private bool mIsDefRange = false;
-        private Dictionary<int, bool> mIsDef = new Dictionary<int, bool>() {
-            { PropField.Idx.Max,false},
-            { PropField.Idx.Min,false},
-            { PropField.Idx.Default,false}
+        private Dictionary<string, bool> mIsDef = new Dictionary<string, bool>() {
+            { nameof(IParamColumn.Max),false},
+            { nameof(IParamColumn.Min),false},
+            { nameof(IParamColumn.Default),false}
         };
-        private Dictionary<int, T> mVal = new Dictionary<int, T>() {
-            { PropField.Idx.Value,default(T)},
-            { PropField.Idx.Max,default(T)},
-            { PropField.Idx.Min,default(T)},
-            { PropField.Idx.Default,default(T)}
+        private Dictionary<string, T> mVal = new Dictionary<string, T>() {
+            { nameof(IParamColumn.Value),default(T)},
+            { nameof(IParamColumn.Max),default(T)},
+            { nameof(IParamColumn.Min),default(T)},
+            { nameof(IParamColumn.Default),default(T)}
         };
 
         #endregion Declaration - Fields
@@ -46,42 +46,42 @@ namespace CtParamEditor.Core.Internal.Component {
         #region Implement - IParamValue
 
         public string ValType { get; private set; }
-        public string Value { get { return mVal[PropField.Idx.Value].ToString(); } }
-        public string Max {
+        T IParamValue<T>.Value { get { return mVal[nameof(IParamColumn.Value)]; } }
+        T IParamValue<T>.Max {
             get {
                 if (IsDefMax) {
-                    return mVal[PropField.Idx.Max].ToString();
+                    return mVal[nameof(IParamColumn.Max)];
                 } else
-                    return null;
+                    return default(T);
             }
         }
-        public string Min {
+        T IParamValue<T>.Min {
             get {
                 if (IsDefMin) {
-                    return mVal[PropField.Idx.Min].ToString();
+                    return mVal[nameof(IParamColumn.Min)];
                 } else
-                    return null;
+                    return default(T);
             }
         }
-        public string Def {
+        T IParamValue<T>.Def {
             get {
                 if (IsDefDefault) {
-                    return mVal[PropField.Idx.Default].ToString();
-                } else return null;
+                    return mVal[nameof(IParamColumn.Default)];
+                } else return default(T);
             }
         }
 
         public bool IsDefMax {
-            get { return mIsDefRange && mIsDef[PropField.Idx.Max]; }
-            set { mIsDef[PropField.Idx.Max] = value; }
+            get { return mIsDefRange && mIsDef[nameof(IParamColumn.Max)]; }
+            set { mIsDef[nameof(IParamColumn.Max)] = value; }
         }
         public bool IsDefMin {
-            get { return mIsDefRange && mIsDef[PropField.Idx.Min]; }
-            set { mIsDef[PropField.Idx.Min] = value; }
+            get { return mIsDefRange && mIsDef[nameof(IParamColumn.Min)]; }
+            set { mIsDef[nameof(IParamColumn.Min)] = value; }
         }
         public bool IsDefDefault {
-            get { return mIsDef[PropField.Idx.Default]; }
-            set { mIsDef[PropField.Idx.Default] = value; }
+            get { return mIsDef[nameof(IParamColumn.Default)]; }
+            set { mIsDef[nameof(IParamColumn.Default)] = value; }
         }
 
         public bool RangeDefinable {
@@ -91,30 +91,32 @@ namespace CtParamEditor.Core.Internal.Component {
                 return interfaces != null &&  interfaces.Contains(typeof(IComparable)) && interfaces.Contains(typeof(IFormattable));
             }
         }
-
+        
         /// <summary>
         /// 設定參數值
         /// </summary>
         /// <param name="val">設定值</param>
         /// <param name="idx">要設定的參數索引</param>
         /// <returns>設定值無法轉換為T型態或者超出最大最小則為False</returns>
-        public bool SetValue(string val, int idx) {
+        public bool SetValue(string val, string columnName) {
             bool IsNullorEmpty = string.IsNullOrEmpty(val);
             T tmpVal = default(T);
             bool suc = SetValue(val, ref tmpVal);
             //suc = GenericParser.TryParse(val, out tmpVal);
             if (suc) {
-                if (idx == PropField.Idx.Value || idx == PropField.Idx.Default) {
+                if (columnName == nameof(IParamColumn.Value) || columnName == nameof(IParamColumn.Default)) {
                     /*-- 有設定最大值則比對之 --*/
-                    if (IsDefMax && (tmpVal as IComparable<T>).CompareTo(mVal[PropField.Idx.Max]) > 0) return false;
+                    if (IsDefMax && (tmpVal as IComparable<T>).CompareTo(mVal[nameof(IParamColumn.Max)]) > 0) return false;
                     /*-- 有設定最小值則比對之 --*/
-                    if (IsDefMin && (tmpVal as IComparable<T>).CompareTo(mVal[PropField.Idx.Min]) < 0) return false;
+                    if (IsDefMin && (tmpVal as IComparable<T>).CompareTo(mVal[nameof(IParamColumn.Min)]) < 0) return false;
                 }
-                if (mIsDef.ContainsKey(idx)) mIsDef[idx] = !IsNullorEmpty;
-                mVal[idx] = tmpVal;
+                if (mIsDef.ContainsKey(columnName)) mIsDef[columnName] = !IsNullorEmpty;
+                mVal[columnName] = tmpVal;
             }
             return suc;
         }
+
+
 
         public Type GetParamType() {
             return typeof(T);
@@ -123,41 +125,42 @@ namespace CtParamEditor.Core.Internal.Component {
         #endregion Implement - IParamValue
 
         #region Implement - IparamValue<T>
+        
+        string IParamValue.Value => mVal[nameof(IParamColumn.Value)]?.ToString() ?? "";
 
-        T IParamValue<T>.Value {get {return mVal[PropField.Idx.Value];}}
+        string IParamValue.Max => mVal[nameof(IParamColumn.Max)]?.ToString() ?? "";
 
-        T IParamValue<T>.Max {get {return mVal[PropField.Idx.Max];}}
+        string IParamValue.Min => mVal[nameof(IParamColumn.Min)]?.ToString() ?? "";
 
-        T IParamValue<T>.Min {get { return mVal[PropField.Idx.Min]; }}
+        string IParamValue.Def => mVal[nameof(IParamColumn.Default)]?.ToString() ?? "";
 
-        T IParamValue<T>.Def { get { return mVal[PropField.Idx.Default];} }
         public void SetMaximun(T max) {
             if (RangeDefinable) {
-                mVal[PropField.Idx.Max] = max;
+                mVal[nameof(IParamColumn.Max)] = max;
                 mIsDefRange = true;
-                mIsDef[PropField.Idx.Max] = true;
+                mIsDef[nameof(IParamColumn.Max)] = true;
             }
         }
 
         public void RemoveMinimun() {
-            mIsDef[PropField.Idx.Min] = false;
+            mIsDef[nameof(IParamColumn.Min)] = false;
         }
 
         public void RemoveMaxinum() {
-            mIsDef[PropField.Idx.Max] = false;
+            mIsDef[nameof(IParamColumn.Max)] = false;
         }
 
         public void SetMinimun(T min) {
             if (RangeDefinable) {
-                mVal[PropField.Idx.Min] = min;
+                mVal[nameof(IParamColumn.Min)] = min;
                 mIsDefRange = true;
-                mIsDef[PropField.Idx.Min] = true;
+                mIsDef[nameof(IParamColumn.Min)] = true;
             }
         }
 
         public void SetDefault(T def) {
-            mVal[PropField.Idx.Default] = def;
-            mIsDef[PropField.Idx.Default] = true;
+            mVal[nameof(IParamColumn.Default)] = def;
+            mIsDef[nameof(IParamColumn.Default)] = true;
         }
 
         public void SetRange(T max, T min) {
@@ -270,16 +273,47 @@ namespace CtParamEditor.Core.Internal.Component {
         #endregion Declaration - Fields
 
         #region Declaration - Properties
-
+        
+        public object this[string columnName] {
+            get {
+                switch (columnName) {
+                    case nameof(IParamColumn.Name):
+                        return Name;
+                    case nameof(IParamColumn.Description):
+                        return Description;
+                    case nameof(IParamColumn.Type):
+                        return mVal.ValType;
+                    case nameof(IParamColumn.Value):
+                        return mVal.Value;
+                    case nameof(IParamColumn.Min):
+                        return mVal.Min;
+                    case nameof(IParamColumn.Max):
+                        return mVal.Max;
+                    case nameof(IParamColumn.Default):
+                        return mVal.Def;
+                    default:
+                        throw new Exception($"未定義欄位名稱{columnName}");
+                }
+            }
+        }
         #endregion Declaration - Properteis
+
+        #region Declaration - Events
+
+        /// <summary>
+        /// 變數值變更事件
+        /// </summary>
+        public event EventHandler<string> ValueChanged;
+
+        #endregion Declaration - Events
 
         #region Function - Constructors
 
-        public CtParam() {
-
+        public CtParam(EventHandler<string> valueChangedHandle) {
+            ValueChanged += valueChangedHandle;
         }
 
-        public CtParam(string name, object val, string description, object def, object max, object min) {
+        private CtParam(string name, object val, string description, object def, object max, object min) {
             SetType(val.GetType().Name);
             SetValue(val.ToString());
             SetName(name);
@@ -290,7 +324,7 @@ namespace CtParamEditor.Core.Internal.Component {
         }
 
         #endregion Function - Constructors
-
+        
         #region Implement - IAgvToDgvCol
 
         public string Name { get { return mName; } }
@@ -338,34 +372,34 @@ namespace CtParamEditor.Core.Internal.Component {
         }
 
         public bool SetValue(string val) {
-            return mVal?.SetValue(val, PropField.Idx.Value) ?? false;
+            return mVal?.SetValue(val, nameof(IParamColumn.Value)) ?? false;
         }
 
         public bool SetMax(string val) {
-            return mVal.SetValue(val, PropField.Idx.Max);
+            return mVal.SetValue(val, nameof(IParamColumn.Max));
         }
 
         public bool SetMin(string val) {
-            return mVal.SetValue(val, PropField.Idx.Min);
+            return mVal.SetValue(val, nameof(IParamColumn.Min));
         }
 
         public bool SetDefault(string val) {
-            return mVal.SetValue(val, PropField.Idx.Default);
+            return mVal.SetValue(val, nameof(IParamColumn.Default));
         }
 
         #endregion Implement - IAgvToDgvCol
 
         #region Implement - IParam
 
-        public string GetParamValue(int idxCol) {
-            switch (idxCol) {
-                case PropField.Idx.Name: return mName;
-                case PropField.Idx.ValType: return mVal?.ValType;
-                case PropField.Idx.Value: return mVal?.Value;
-                case PropField.Idx.Description: return mDescription;
-                case PropField.Idx.Max: return mVal?.Max;
-                case PropField.Idx.Min: return mVal?.Min;
-                case PropField.Idx.Default: return mVal?.Def;
+        public string GetParamValue(string columnName) {
+            switch (columnName) {
+                case nameof(IParamColumn.Name): return mName;
+                case nameof(IParamColumn.Type): return mVal?.ValType;
+                case nameof(IParamColumn.Value): return mVal?.Value;
+                case nameof(IParamColumn.Description): return mDescription;
+                case nameof(IParamColumn.Max): return mVal?.Max;
+                case nameof(IParamColumn.Min): return mVal?.Min;
+                case nameof(IParamColumn.Default): return mVal?.Def;
                 default: throw new Exception("未定義的欄位索引");
             }
         }
@@ -386,20 +420,27 @@ namespace CtParamEditor.Core.Internal.Component {
             }
         }
 
-        public bool SetValue(string val, int idx) {
-            switch (idx) {
-                case PropField.Idx.Name: return SetName(val);
-                case PropField.Idx.ValType: return SetType(val);
-                case PropField.Idx.Description: return SetDescription(val);
-                case PropField.Idx.Value:
-                case PropField.Idx.Max:
-                case PropField.Idx.Min:
-                case PropField.Idx.Default:
-                    return mVal.SetValue(val, idx);
-                default: return false;
+        public bool SetValue(string val, string columnName) {
+            bool success = false;
+            switch (columnName) {
+                case nameof(IParamColumn.Name): success = SetName(val); break ;
+                case nameof(IParamColumn.Type): success = SetType(val); break ;
+                case nameof(IParamColumn.Description): success = SetDescription(val);break;
+                case nameof(IParamColumn.Value):
+                case nameof(IParamColumn.Max):
+                case nameof(IParamColumn.Min):
+                case nameof(IParamColumn.Default):
+                    success = mVal.SetValue(val, columnName);
+                    break;
+                default:
+                    throw new Exception($"未定義欄位名稱{columnName}");
             }
+            if (success) {
+                ValueChanged?.Invoke(this, columnName);
+            }
+            return success;
         }
-
+        
         public Type GetParamType() {
             return mVal?.GetParamType();
         }
@@ -420,42 +461,42 @@ namespace CtParamEditor.Core.Internal.Component {
         private bool SetType(IniStruct ini) {
             bool isContain = false;
             bool isSuc = false;
-            bool ret = (isContain = ini.ContainKey(PropField.Str.ValType)) && (isSuc = SetType(ini[PropField.Str.ValType]));
+            bool ret = (isContain = ini.ContainKey(nameof(IParamColumn.Type)) && (isSuc = SetType(ini[nameof(IParamColumn.Type)])));
             return ret;
         }
 
         private bool SetValue(IniStruct ini) {
             bool isContain = false;
             bool isSuc = false;
-            bool ret = (isContain = ini.ContainKey(PropField.Str.Value)) && (isSuc = SetValue(ini[PropField.Str.Value]));
+            bool ret = (isContain = ini.ContainKey(nameof(IParamColumn.Value)) && (isSuc = SetValue(ini[nameof(IParamColumn.Value)])));
             return ret;
         }
 
         private bool SetDescription(IniStruct ini) {
             bool isContain = false;
             bool isSuc = false;
-            bool ret = (isContain = ini.ContainKey(PropField.Str.Description)) && (isSuc = SetDescription(ini[PropField.Str.Description]));
+            bool ret = (isContain = ini.ContainKey(nameof(IParamColumn.Description)) && (isSuc = SetDescription(ini[nameof(IParamColumn.Description)])));
             return ret;
         }
 
         private bool SetMax(IniStruct ini) {
             bool isContain = false;
             bool isSuc = false;
-            bool ret = (isContain = ini.ContainKey(PropField.Str.Max)) && (isSuc = SetMax(ini[PropField.Str.Max]));
+            bool ret = (isContain = ini.ContainKey(nameof(IParamColumn.Max)) && (isSuc = SetMax(ini[nameof(IParamColumn.Max)])));
             return ret;
         }
 
         private bool SetMin(IniStruct ini) {
             bool isContain = false;
             bool isSuc = false;
-            bool ret = (isContain = ini.ContainKey(PropField.Str.Min)) && (isSuc = SetMin(ini[PropField.Str.Min]));
+            bool ret = (isContain = ini.ContainKey(nameof(IParamColumn.Min)) && (isSuc = SetMin(ini[nameof(IParamColumn.Min)])));
             return ret;
         }
 
         private bool SetDefault(IniStruct ini) {
             bool isContain = false;
             bool isSuc = false;
-            bool ret = (isContain = ini.ContainKey(PropField.Str.Default)) && (isSuc = SetDefault(ini[PropField.Str.Default]));
+            bool ret = (isContain = ini.ContainKey(nameof(IParamColumn.Default)) && (isSuc = SetDefault(ini[nameof(IParamColumn.Default)])));
             return ret;
         }
         

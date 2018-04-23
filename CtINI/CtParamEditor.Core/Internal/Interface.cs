@@ -16,7 +16,7 @@ namespace CtParamEditor.Core.Internal {
         string Min { get; }
         string Def { get; }
         bool RangeDefinable { get; }
-        bool SetValue(string val, int idx);
+        bool SetValue(string val, string columnName);
         Delegates.EnumData.DelContainItem ContainItem { get; set; }
         Type GetParamType();
     }
@@ -27,9 +27,13 @@ namespace CtParamEditor.Core.Internal {
     /// <remarks>
     /// 提供參數操作方法
     /// </remarks>
-    internal interface IParam : IParamColumn {
-        bool SetValue(string val, int idx);
-        string GetParamValue(int idxCol);
+    public interface IParam : IParamColumn {
+        bool SetValue(string val, string columnName);
+        string GetParamValue(string columnName);
+        /// <summary>
+        /// 變數變更事件
+        /// </summary>
+        event EventHandler<string> ValueChanged;
         Delegates.EnumData.DelContainItem ContainItem { get; set; }
         Delegates.EnumData.DelContainType ContainType { get; set; }
         bool RangeDefinable { get; }

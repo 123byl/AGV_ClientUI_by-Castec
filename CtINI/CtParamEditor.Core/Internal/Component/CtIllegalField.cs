@@ -17,13 +17,13 @@ namespace CtParamEditor.Core.Internal.Component {
         /// <summary>
         /// 非法欄位紀錄
         /// </summary>
-        private Dictionary<IParamColumn, List<int>> Data { get; set; } = new Dictionary<IParamColumn, List<int>>();
+        private Dictionary<IParamColumn, List<string>> Data { get; set; } = new Dictionary<IParamColumn, List<string>>();
 
         #endregion Declaration - Fields
 
         #region Declaration - Properties
 
-        public KeyValuePair<IParamColumn, List<int>> this[int idx] {
+        public KeyValuePair<IParamColumn, List<string>> this[int idx] {
             get {
                 return Data.ElementAt(idx);
             }
@@ -43,10 +43,10 @@ namespace CtParamEditor.Core.Internal.Component {
         /// 檢查是否為非法欄位
         /// </summary>
         /// <param name="prop"></param>
-        /// <param name="idxCol"></param>
+        /// <param name="columnName"></param>
         /// <returns></returns>
-        public bool Contains(IParamColumn prop, int idxCol) {
-            return Data.ContainsKey(prop) && Data[prop].Contains(idxCol);
+        public bool Contains(IParamColumn prop, string columnName) {
+            return Data.ContainsKey(prop) && Data[prop].Contains(columnName);
         }
 
         /// <summary>
@@ -55,11 +55,11 @@ namespace CtParamEditor.Core.Internal.Component {
         /// <param name="prop"></param>
         public void Add(IParamColumn prop) {
             /*-- 是否以有紀錄 --*/
-            if (!Data.ContainsKey(prop)) Data.Add(prop, new List<int>());
+            if (!Data.ContainsKey(prop)) Data.Add(prop, new List<string>());
             /*-- 是否已有名稱欄位紀錄 --*/
-            if (!Data[prop].Contains(PropField.Idx.Name)) Data[prop].Add(PropField.Idx.Name);
+            if (!Data[prop].Contains(nameof(IParamColumn.Name))) Data[prop].Add(nameof(IParamColumn.Name));
             /*-- 是否已有資料型態欄位紀錄 --*/
-            if (!Data[prop].Contains(PropField.Idx.ValType)) Data[prop].Add(PropField.Idx.ValType);
+            if (!Data[prop].Contains(nameof(IParamColumn.Type))) Data[prop].Add(nameof(IParamColumn.Type));
         }
 
         /// <summary>
@@ -76,22 +76,22 @@ namespace CtParamEditor.Core.Internal.Component {
         /// 增加非法欄位紀錄
         /// </summary>
         /// <param name="prop"></param>
-        /// <param name="idx"></param>
-        public void Add(IParamColumn prop, int idx) {
+        /// <param name="columnName"></param>
+        public void Add(IParamColumn prop, string columnName) {
             /*-- 是否以有紀錄 --*/
-            if (!Data.ContainsKey(prop)) Data.Add(prop, new List<int>());
+            if (!Data.ContainsKey(prop)) Data.Add(prop, new List<string>());
             /*-- 是否已有對應欄位紀錄 --*/
-            if (!Data[prop].Contains(idx)) Data[prop].Add(idx);
+            if (!Data[prop].Contains(columnName)) Data[prop].Add(columnName);
         }
 
         /// <summary>
         /// 移除非法欄位紀錄
         /// </summary>
         /// <param name="prop"></param>
-        /// <param name="idx"></param>
-        public void Remove(IParamColumn prop, int idx) {
-            if (Data.ContainsKey(prop) && Data[prop].Contains(idx)) {
-                Data[prop].Remove(idx);
+        /// <param name="columnName"></param>
+        public void Remove(IParamColumn prop, string columnName) {
+            if (Data.ContainsKey(prop) && Data[prop].Contains(columnName)) {
+                Data[prop].Remove(columnName);
                 if (Data[prop].Count() == 0) {
                     Data.Remove(prop);
                 }

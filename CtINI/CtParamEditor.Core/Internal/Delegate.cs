@@ -10,7 +10,7 @@ namespace CtParamEditor.Core.Internal {
     /// <summary>
     /// 委派定義
     /// </summary>
-    internal static class Delegates {
+    public static class Delegates {
 
         /// <summary>
         /// 非法欄位紀錄委派方法

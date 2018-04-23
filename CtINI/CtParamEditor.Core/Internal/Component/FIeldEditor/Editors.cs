@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CtParamEditor.Comm;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,7 +11,7 @@ namespace CtParamEditor.Core.Internal.Component.FIeldEditor {
     /// 名稱欄位編輯器
     /// </summary>
     internal class NameEditor : BaseFieldEditor {
-        protected override int mIdx { get; } = PropField.Idx.Name;
+        protected override string mColumnName { get; } = nameof(IParamColumn.Name);
         protected override string mTitle { get; } = "Param name";
         protected override string mDescription { get; } = "Please enter the parameter name";
         public override bool RecordEmpty { get; } = true;
@@ -26,7 +27,7 @@ namespace CtParamEditor.Core.Internal.Component.FIeldEditor {
     /// 參數型態編輯器
     /// </summary>
     internal class ValTypeEditor : BaseFieldEditor {
-        protected override int mIdx { get; } = PropField.Idx.ValType;
+        protected override string mColumnName { get; } = nameof(IParamColumn.Type);
         protected override string mTitle { get; } = "New data type";
         protected override string mDescription { get; } = "Please select a new data type";
         public override bool RecordEmpty { get; } = true;
@@ -49,7 +50,7 @@ namespace CtParamEditor.Core.Internal.Component.FIeldEditor {
     /// 說明欄位編輯器
     /// </summary>
     internal class DescriptionEditor : BaseFieldEditor {
-        protected override int mIdx { get; } = PropField.Idx.Description;
+        protected override string mColumnName { get; } = nameof(IParamColumn.Description);
         protected override string mTitle { get; } = "Description";
         protected override string mDescription { get; } = "Please enter the description";
         protected override bool abEdit(string type, string oriVal, out string rtnVal) {
@@ -64,7 +65,7 @@ namespace CtParamEditor.Core.Internal.Component.FIeldEditor {
     /// 最大值欄位編輯器
     /// </summary>
     internal class MaxEditor : BaseFieldEditor {
-        protected override int mIdx { get; } = PropField.Idx.Max;
+        protected override string mColumnName { get; } = nameof(IParamColumn.Max);
         protected override string mTitle { get; } = "Max";
         protected override string mDescription { get; } = "Please enter the Max";
         protected override bool abEdit(string type, string oriVal, out string rtnVal) {
@@ -79,7 +80,7 @@ namespace CtParamEditor.Core.Internal.Component.FIeldEditor {
     /// 最小值欄位編輯器
     /// </summary>
     internal class MinEditor : BaseFieldEditor {
-        protected override int mIdx { get; } = PropField.Idx.Min;
+        protected override string mColumnName { get; } = nameof(IParamColumn.Min);
         protected override string mTitle { get; } = "Min";
         protected override string mDescription { get; } = "Please enter the Min";
         protected override bool abEdit(string type, string oriVal, out string rtnVal) {
@@ -94,7 +95,7 @@ namespace CtParamEditor.Core.Internal.Component.FIeldEditor {
     /// 預設值欄位編輯器
     /// </summary>
     internal class DefEditor : BaseFieldEditor {
-        protected override int mIdx { get; } = PropField.Idx.Default;
+        protected override string mColumnName { get; } = nameof(IParamColumn.Default);
         protected override string mTitle { get; } = "Default";
         protected override string mDescription { get; } = "Please enter the Default";
         protected override bool abEdit(string type, string oriVal, out string rtnVal) {
@@ -109,7 +110,7 @@ namespace CtParamEditor.Core.Internal.Component.FIeldEditor {
     /// 參數值欄位編輯器
     /// </summary>
     internal class ValueEditor : BaseFieldEditor {
-        protected override int mIdx { get; } = PropField.Idx.Value;
+        protected override string mColumnName { get; } = nameof(IParamColumn.Value);
         protected override string mTitle { get; } = "New value";
         protected override string mDescription { get; } = "Please enter new value";
         protected override bool abEdit(string type, string oriVal, out string rtnVal) {

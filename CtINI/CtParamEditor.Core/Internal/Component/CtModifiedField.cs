@@ -17,7 +17,7 @@ namespace CtParamEditor.Core.Internal.Component {
         /// <summary>
         /// 已修改欄位紀錄
         /// </summary>
-        private Dictionary<IParamColumn, List<int>> mData = new Dictionary<IParamColumn, List<int>>();
+        private Dictionary<IParamColumn, List<string>> mData = new Dictionary<IParamColumn, List<string>>();
 
         #endregion Declaration - Fields
 
@@ -33,12 +33,12 @@ namespace CtParamEditor.Core.Internal.Component {
         /// 增加已修改欄位紀錄
         /// </summary>
         /// <param name="prop"></param>
-        /// <param name="idxCol"></param>
-        public void Add(IParamColumn prop, int idxCol) {
-            if (!mData.ContainsKey(prop)) mData.Add(prop, new List<int>());
-            if (!mData[prop].Contains(idxCol)) mData[prop].Add(idxCol);
+        /// <param name="columnName"></param>
+        public void Add(IParamColumn prop, string columnName) {
+            if (!mData.ContainsKey(prop)) mData.Add(prop, new List<string>());
+            if (!mData[prop].Contains(columnName)) mData[prop].Add(columnName);
         }
-
+        
         /// <summary>
         /// 已修改欄位是否包含該筆資料
         /// </summary>
@@ -52,10 +52,10 @@ namespace CtParamEditor.Core.Internal.Component {
         /// 已修改欄位資料是否該儲存格
         /// </summary>
         /// <param name="prop"></param>
-        /// <param name="idxCol"></param>
+        /// <param name="columnName"></param>
         /// <returns></returns>
-        public bool ContainsColumn(IParam prop, int idxCol) {
-            return mData[prop].Contains(idxCol);
+        public bool ContainsColumn(IParam prop, string columnName) {
+            return mData[prop].Contains(columnName);
         }
 
         /// <summary>

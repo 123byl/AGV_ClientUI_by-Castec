@@ -59,6 +59,11 @@ namespace CtParamEditor.Comm
         /// 編輯選定列
         /// </summary>
         void Edit();
+        /// <summary>
+        /// 將值寫入選定儲存格
+        /// </summary>
+        /// <param name="value"></param>
+        void SetValue(string value);
     }
 
     public interface IParamEdit {
@@ -71,6 +76,20 @@ namespace CtParamEditor.Comm
     /// </summary>
     public interface IParamCollection {
 
+        /// <summary>
+        /// 對應列索引的資料列
+        /// </summary>
+        /// <param name="indxtRow"></param>
+        /// <returns></returns>
+        IParamColumn this[int indxtRow] { get; }
+
+        /// <summary>
+        /// 指定的資料
+        /// </summary>
+        /// <param name="indexRow"></param>
+        /// <param name="indexColumn"></param>
+        /// <returns></returns>
+        object this[int indexRow, string columnName] { get; }
         /// <summary>
         /// 參數值讀取，使用IAgvToDgvCol型別進行讀取，可增加其他判斷
         /// </summary>
@@ -105,6 +124,7 @@ namespace CtParamEditor.Comm
     /// 僅用於定義dgv控制項中的欄位名稱與順序
     /// </remarks>
     public interface IParamColumn {
+        object this[string columnName] { get; }
         string Name { get; }
         string Type { get; }
         string Value { get; }

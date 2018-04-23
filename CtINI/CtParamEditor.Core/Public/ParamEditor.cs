@@ -414,10 +414,27 @@ namespace CtParamEditor.Core
         public void RestoreDefault() {
             DataSource.Foreach(prop => {
                 if (prop.Default != null) {
-                    prop.SetValue(prop.Default.ToString(), PropField.Idx.Value);
+                    prop.SetValue(prop.Default.ToString(), nameof(IParamColumn.Value));
                 }
             });
             rDgv?.Refresh();
+        }
+
+        /// <summary>
+        /// 將值寫入選定的儲存格
+        /// </summary>
+        /// <param name="value"></param>
+        public void SetValue(string value) {
+            //IParamColumn prop = DataSource[SelectedRow];
+            //ModifiedField.Add(prop, SelectedColumn);
+            //AddModifiedField.Invoke(prop, mIdx);
+            //if (string.IsNullOrEmpty(returnValue)) {
+            //    /*-- 記錄非法的欄位 --*/
+            //    RecordIllegal(prop, mIdx);
+            //} else {
+            //    /*-- 移除非法紀錄 --*/
+            //    RemoveIllegal(prop, mIdx);
+            //}
         }
 
         //public void WriteParam<T>(string name, T val, string description, T def) {
@@ -438,29 +455,35 @@ namespace CtParamEditor.Core
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void rDgv_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e) {
+            string columnName = rDgv.Columns[e.ColumnIndex].HeaderText;
             if (e.RowIndex >= DataSource.RowCount()) {
                 return;
             }
-            /*-- 取得欄位資料 --*/
-            IParam prop = DataSource[e.RowIndex] as IParam;
-            string v = prop.Default;
-            /*-- 取得欄位值 --*/
-            string val = prop.GetParamValue(e.ColumnIndex);
-            /*-- 必填欄位檢查 --*/
-            if (IllegalField.Contains(prop, e.ColumnIndex)) {
-                e.Value = mRcConvert.ToRTF("Required cell", CellStyles.RequiredCell, false);//必填欄位樣式
-            } else if (ModifiedField.ContainsRow((prop))) {
-                //已編輯儲存格樣式
-                if (ModifiedField.ContainsColumn(prop, e.ColumnIndex)) {
-                    e.Value = mMcConvert.ToRTF(val, CellStyles.ModifiedCell);
-                    //已編輯欄位樣式
+            try {
+                /*-- 取得欄位資料 --*/
+                IParam prop = DataSource[e.RowIndex] as IParam;
+                string v = prop.Default;
+                /*-- 取得欄位值 --*/
+                string val = prop.GetParamValue(columnName);
+                /*-- 必填欄位檢查 --*/
+                if (IllegalField.Contains(prop, columnName)) {
+                    e.Value = mRcConvert.ToRTF("Required cell", CellStyles.RequiredCell, false);//必填欄位樣式
+                } else if (ModifiedField.ContainsRow((prop))) {
+                    //已編輯儲存格樣式
+                    if (ModifiedField.ContainsColumn(prop, columnName)) {
+                        e.Value = mMcConvert.ToRTF(val, CellStyles.ModifiedCell);
+                        //已編輯欄位樣式
+                    } else {
+                        e.Value = mMrConvert.ToRTF(val, CellStyles.ModifiedRow);
+                    }
+                    /*-- 一般欄位 --*/
                 } else {
-                    e.Value = mMrConvert.ToRTF(val, CellStyles.ModifiedRow);
+                    e.Value = mRgConvert.ToRTF(val, CellStyles.Regular);
                 }
-                /*-- 一般欄位 --*/
-            } else {
-                e.Value = mRgConvert.ToRTF(val, CellStyles.Regular);
+            } catch(Exception ex) {
+                Console.WriteLine(ex.Message);
             }
+
         }
         
         /// <summary>
@@ -513,7 +536,7 @@ namespace CtParamEditor.Core
             string rtnVal = string.Empty;
             string oriVal = cell.Value?.ToString();
             List<string> Types = EnumData.Data.Keys.ToList();
-            if (Field.Edit(mIdxCol, prop) && rDgv != null) {
+            if (Field.Edit(mIdxCol, prop,out string returnValue) && rDgv != null) {
                 DataGridViewRow row = rDgv.Rows[mIdxRow];
                 cell.Style.ForeColor = Color.Red;
                 cell.Selected = false;
@@ -633,11 +656,11 @@ namespace CtParamEditor.Core
         /// </summary>
         private void AssignDelegation() {
             /*-- 修改欄位紀錄方法委派 --*/
-            Field.AddModifiedField = ModifiedField.Add;
+            //Field.AddModifiedField = ModifiedField.Add;
             /*-- 非法欄位紀錄方法委派 --*/
-            Field.RecordIllegalField = IllegalField.Add;
+            //Field.RecordIllegalField = IllegalField.Add;
             /*-- 非法欄位紀錄註銷方法委派 --*/
-            Field.RemoveIllegalField = IllegalField.Remove;
+            //Field.RemoveIllegalField = IllegalField.Remove;
 
             Field.GetItems = EnumData.GetItems;
             /*-- 非法欄位紀錄方法委派 --*/
@@ -722,6 +745,7 @@ namespace CtParamEditor.Core
                     case PropField.Idx.Description:
                     case PropField.Idx.ValType:
                         ShowOption = CmsOption.Edit;
+                        DisableOption = CmsOption.None;
                         break;
                     case PropField.Idx.Value:
                     case PropField.Idx.Max:

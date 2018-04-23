@@ -26,19 +26,31 @@ namespace CtParamEditor.Core.Internal.Component {
         /// </summary>
         private BindingList<IParamColumn> mFilter = new BindingList<IParamColumn>();
 
+        CtModifiedField mModified = new CtModifiedField();
+
+        CtIllegalField mIllegal = new CtIllegalField();
         #endregion Declaration - Fields
 
         #region Declaration - Properties
 
-        public IParamColumn this[int indxtRow] {
+        public IParamColumn this[int indexRow] {
             get {
-                if (indxtRow != -1) {
-                    return Data[indxtRow];
+                if (indexRow >=0 && indexRow < RowCount()) {
+                    return Data[indexRow];
                 } else {
                     return null;
                 }
             }
         }
+
+
+        public object this[int indexRow, string columnName] {
+            get {
+                
+                return Data[indexRow][columnName];
+            }
+        }
+
 
         /// <summary>
         /// RTF格式轉換器
@@ -157,7 +169,7 @@ namespace CtParamEditor.Core.Internal.Component {
         /// </summary>
         /// <param name="param"></param>
         public IParamValue<T> WriteParam<T>(string name, T val, string description, T def) {
-            CtParam prop = new CtParam();
+            CtParam prop = new CtParam(Item_ValueChanged);
             if (val is Enum && !ContainType.Invoke(val.GetType().Name)) {
                 ReadEnum.Invoke(val as Enum);
                 prop.ContainType = ContainType;
@@ -179,19 +191,20 @@ namespace CtParamEditor.Core.Internal.Component {
         /// </summary>
         /// <param name="keyWord"></param>
         public void Filter(string keyWord) {
-            mFilter.Clear();
-            foreach (IParam prop in mFullData) {
-                int idx = 0;
-                do {
-                    string val = prop.GetParamValue(idx++);
-                    if (!string.IsNullOrEmpty(val) && val.Contains(keyWord)) {
-                        mFilter.Add(prop);
-                        break;
-                    }
-                } while (idx <= PropField.Idx.Default);
-            }
-            IsFilterMode = true;
-            UpdateRowCount?.Invoke(RowCount());
+            throw new NotImplementedException();
+            //mFilter.Clear();
+            //foreach (IParam prop in mFullData) {
+            //    int idx = 0;
+            //    do {
+            //        string val = prop.GetParamValue(idx++);
+            //        if (!string.IsNullOrEmpty(val) && val.Contains(keyWord)) {
+            //            mFilter.Add(prop);
+            //            break;
+            //        }
+            //    } while (idx <= PropField.Idx.Default);
+            //}
+            //IsFilterMode = true;
+            //UpdateRowCount?.Invoke(RowCount());
         }
 
         /// <summary>
@@ -227,7 +240,7 @@ namespace CtParamEditor.Core.Internal.Component {
         /// <param name="mIdxRow"></param>
         /// <param name="prop"></param>
         public void Insert(int mIdxRow) {
-            IParamColumn prop = new CtParam();
+            IParamColumn prop = new CtParam(Item_ValueChanged);
             /*-- 紀錄非法欄位 --*/
             AddIllegal?.Invoke(prop);
             /*-- 插入新資料 --*/
@@ -312,13 +325,27 @@ namespace CtParamEditor.Core.Internal.Component {
         /// <param name="ini"></param>
         /// <returns></returns>
         private IParamColumn GetDgvCol(IniStruct ini) {
-            CtParam item = new CtParam();
-            item.ContainType = ContainType;
-            item.ContainItem = ContainItem;
+            CtParam item = new CtParam(Item_ValueChanged) {
+                ContainType = ContainType,
+                ContainItem = ContainItem
+            };
             if (item.ReadIni(ini)) {
                 return item;
             } else {
                 return null;
+            }
+        }
+
+        private void Item_ValueChanged(object sender, string e) {
+            IParamColumn prop = sender as IParamColumn;
+            string columnName = prop[e].ToString();
+            mModified.Add(prop, columnName);
+            if (string.IsNullOrEmpty(prop[e].ToString())) {
+                /*-- 記錄非法的欄位 --*/
+                mIllegal.Add(prop, columnName);
+            } else {
+                /*-- 移除非法紀錄 --*/
+                mIllegal.Remove(prop, columnName);
             }
         }
 
