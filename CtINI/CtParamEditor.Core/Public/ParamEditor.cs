@@ -175,16 +175,6 @@ namespace CtParamEditor.Core
         private CtModifiedField ModifiedField { get; set; } = new CtModifiedField();
         
         /// <summary>
-        /// Invoke方法委派
-        /// </summary>
-        public Action<MethodInvoker> DelInvoke { get => mDelinvoke; set {
-                if (mDelinvoke != value && value != null) {
-                    mDelinvoke = value;
-                }
-            }
-        }
-
-        /// <summary>
         /// 要顯示的選項
         /// </summary>
         public CmsOption ShowOption {
@@ -217,13 +207,7 @@ namespace CtParamEditor.Core
         
 
         #endregion Declaration - Enum
-
-        #region Declaration - Events
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        #endregion Declaration - Events
-
+        
         #region Function - Constructors
 
         internal ParamEditor() {
@@ -382,9 +366,6 @@ namespace CtParamEditor.Core
         /// 清除所有資料
         /// </summary>
         public void Clear() {
-            ///為避免DataSource清除後虛擬填充事件觸發撈不到資料
-            ///必須先把觸發顯示的資料筆數清除
-            if (rDgv != null) rDgv.RowCount = 0;
             DataSource.Clear();
             ModifiedField.Clear();
             EnumData.Data.Clear();
@@ -400,7 +381,6 @@ namespace CtParamEditor.Core
                     prop.SetValue(prop.Default.ToString(), nameof(IParamColumn.Value));
                 }
             });
-            rDgv?.Refresh();
         }
 
         /// <summary>
@@ -669,6 +649,50 @@ namespace CtParamEditor.Core
         }
 
         #endregion Funciton - Private Methods
+
+        #region Implement - IDataSource
+
+        /// <summary>
+        /// Invoke方法委派
+        /// </summary>
+        public Action<MethodInvoker> DelInvoke {
+            get => mDelinvoke; set {
+                if (mDelinvoke != value && value != null) {
+                    mDelinvoke = value;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 屬性變更事件
+        /// </summary>
+        public event PropertyChangedEventHandler PropertyChanged;
+        
+        #endregion Implement - IDataSource
+
+        #region Implement - IUndoable
+
+        /// <summary>
+        /// 命令管理器
+        /// </summary>
+        private CommandManager mCommandManager = new CommandManager();
+
+        /// <summary>
+        /// 可撤銷次數
+        /// </summary>
+        public int UndoCount { get => mCommandManager.UndoCount; set => mCommandManager.UndoCount = value; }
+
+        /// <summary>
+        /// 撤銷
+        /// </summary>
+        public void Undo() => mCommandManager.Undo();
+
+        /// <summary>
+        /// 重做
+        /// </summary>
+        public void Redo() => mCommandManager.Redo();
+        
+        #endregion Implement - IUndoable
 
     }
 

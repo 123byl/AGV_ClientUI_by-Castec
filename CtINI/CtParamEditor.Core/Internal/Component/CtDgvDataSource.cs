@@ -331,6 +331,7 @@ namespace CtParamEditor.Core.Internal.Component {
         public void Clear() {
             mFullData.Clear();
             mFilter.Clear();
+            OnPropertyChanged(nameof(RowCount));
         }
 
         /// <summary>

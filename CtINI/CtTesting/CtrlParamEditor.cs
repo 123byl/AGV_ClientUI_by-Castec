@@ -37,7 +37,6 @@ namespace CtTesting {
         /// 檔案開啟對話視窗
         /// </summary>
         private OpenFileDialog mOdlg = new OpenFileDialog();
-
         private ICellStyles mCellStyle = new CtCellStyles();
 
         private RtfConvert mRgConvert = new RtfConvert();
@@ -47,7 +46,7 @@ namespace CtTesting {
         private RtfConvert mMrConvert = new RtfConvert();
 
         private RtfConvert mMcConvert = new RtfConvert();
-
+        
         #endregion Declaration - Fields
 
         #region Declaration - Enum
@@ -56,20 +55,7 @@ namespace CtTesting {
 
         #region Function - Constructors
 
-        public CtrlParamEditor() {
-            InitializeComponent();
-            /*-- DataGridView寬度預設 --*/
-            DeployDGV(dgvProperties);
-
-            mEditor.InputText = InputText;
-            mEditor.ComboBoxList = ComboBoxList;
-
-            mEditor.ParamCollection.DataChanged += ParamCollection_DataChanged;
-
-            Bindings(mEditor);
-            Bindings(mEditor.ParamCollection);
-        }
-
+        
         #endregion Function - Constructors
 
         #region Function - Evnets
@@ -373,6 +359,7 @@ namespace CtTesting {
             mEditor.ParamCollection.FindVal("StringName", ref sVal);
             mEditor.ParamCollection.FindVal("EnumName", ref emVal);
         }
+
         public class TestData {
             public int Value { get; set; } = 0;
         }
@@ -427,7 +414,19 @@ namespace CtTesting {
         }
 
         #endregion Implenent - IDataDisplay
-        
+
+        private void btnUndo_Click(object sender, EventArgs e) {
+
+        }
+
+        private void btnRedo_Click(object sender, EventArgs e) {
+
+        }
+
+    }
+
+    public class RefType {
+        public int Value { get; set; }
     }
 
     public static class Extenstion {
@@ -440,5 +439,6 @@ namespace CtTesting {
             return (option & disable) != disable;
         }
     }
+
 
 }
