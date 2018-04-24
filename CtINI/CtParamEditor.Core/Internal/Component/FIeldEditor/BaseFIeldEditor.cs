@@ -68,7 +68,8 @@ namespace CtParamEditor.Core.Internal.Component.FIeldEditor {
         /// </summary>
         /// <param name="prop"></param>
         /// <returns></returns>
-        public bool Edit(IParam prop,out string returnValue) {
+        public bool Edit(IParam prop) {
+            string returnValue;
             /*-- 取得原始參數值 --*/
             string oriVal = OriVal(prop);
             /*-- 讓使用者輸入新值 --*/
@@ -76,16 +77,6 @@ namespace CtParamEditor.Core.Internal.Component.FIeldEditor {
             if (suc) {
                 /*-- 將新值寫入欄位 --*/
                 suc = prop.SetValue(returnValue, mColumnName);
-                if (suc) {
-                    //AddModifiedField.Invoke(prop, mColumnName);
-                    //if (string.IsNullOrEmpty(returnValue)) {
-                    //    /*-- 記錄非法的欄位 --*/
-                    //    RecordIllegal(prop, mColumnName);
-                    //} else {
-                    //    /*-- 移除非法紀錄 --*/
-                    //    RemoveIllegal(prop, mColumnName);
-                    //}
-                }
             }
             return suc;
         }

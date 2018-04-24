@@ -32,9 +32,7 @@ namespace CtTesting {
         #region Declaration - Fields
 
         private IParamEditor mEditor = Factory.Param.Editor();
-
-        private CtFieldEditor mFieldEditor = new CtFieldEditor();
-
+        
         /// <summary>
         /// 檔案開啟對話視窗
         /// </summary>
@@ -63,12 +61,8 @@ namespace CtTesting {
             /*-- DataGridView寬度預設 --*/
             DeployDGV(dgvProperties);
 
-            //mEditor.GridView = dgvProperties;
-            mFieldEditor.InputText = InputText;
-            mFieldEditor.ComboBoxList = ComboBoxList;
-            
-
-            mRgConvert.Regular = mCellStyle.Regular;
+            mEditor.InputText = InputText;
+            mEditor.ComboBoxList = ComboBoxList;
 
             mEditor.ParamCollection.DataChanged += ParamCollection_DataChanged;
 
@@ -141,21 +135,15 @@ namespace CtTesting {
         #region ToolStripMenuItem
 
         private void miEdit_Click(object sender, EventArgs e) {
+            var columnName = dgvProperties.Columns[mEditor.SelectedColumn].HeaderText;
             /*-- 取得目前選取的資料列 --*/
             IParam prop = mEditor.ParamCollection[mEditor.SelectedRow] as IParam;
             /*-- 使用者輸入 --*/
-            if (mFieldEditor.Edit(mEditor.SelectedColumn, prop,out string returnValue)) {
-                /*-- 寫入使用者輸入 --*/
-                //mEditor.SetValue(returnValue);
-                //dgvProperties.InvokeIfNecessary(() => {
-                //    dgvProperties.Refresh();
-                //});
-            }
+            mEditor.Edit(columnName);
         }
 
         private void miDelete_Click(object sender, EventArgs e) {
             mEditor.Remove();
-            dgvProperties.Refresh();
         }
 
         private void miAdd_Click(object sender, EventArgs e) {

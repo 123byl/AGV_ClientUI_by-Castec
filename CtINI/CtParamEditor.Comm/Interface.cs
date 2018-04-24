@@ -65,9 +65,9 @@ namespace CtParamEditor.Comm
         /// <param name="idxRow"></param>
         void Insert(int idxRow);
         /// <summary>
-        /// 編輯選定列
+        /// 編輯使用者選定參數
         /// </summary>
-        void Edit();
+        void Edit(string columnName);
         /// <summary>
         /// 將值寫入選定儲存格
         /// </summary>

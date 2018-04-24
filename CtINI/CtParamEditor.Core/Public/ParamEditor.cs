@@ -147,26 +147,12 @@ namespace CtParamEditor.Core
         /// <summary>
         /// 文字輸入視窗方法委派
         /// </summary>
-        public Input.Text InputText {
-            get {
-                return Field.InputText;
-            }
-            set {
-                if (value != null) Field.InputText = value;
-            }
-        }
+        public Input.Text InputText { get; set; }
 
         /// <summary>
         /// 下拉選單輸入視窗方法委派
         /// </summary>
-        public Input.ComboBox ComboBoxList {
-            get {
-                return Field.ComboBoxList;
-            }
-            set {
-                if (value != null) Field.ComboBoxList = value;
-            }
-        }
+        public Input.ComboBox ComboBoxList { get; set; }
 
         /// <summary>
         /// 列舉定義管理器
@@ -187,12 +173,7 @@ namespace CtParamEditor.Core
         /// 被修改欄位紀錄
         /// </summary>
         private CtModifiedField ModifiedField { get; set; } = new CtModifiedField();
-
-        /// <summary>
-        /// 欄位編輯器
-        /// </summary>
-        private CtFieldEditor Field { get; } = new CtFieldEditor();
-
+        
         /// <summary>
         /// Invoke方法委派
         /// </summary>
@@ -329,17 +310,19 @@ namespace CtParamEditor.Core
             Remove(SelectedRow);
         }
 
-        public void Edit() {
-            //IParam prop = DataSource[mIdxRow] as IParam;
-            //string rtnVal = string.Empty;
-            //string oriVal = cell.Value?.ToString();
-            //List<string> Types = EnumData.Data.Keys.ToList();
-            //if (Field.Edit(mIdxCol, prop) && rDgv != null) {
-            //    DataGridViewRow row = rDgv.Rows[mIdxRow];
-            //    cell.Style.ForeColor = Color.Red;
-            //    cell.Selected = false;
-            //    rDgv.Refresh();
-            //}
+        /// <summary>
+        /// 要編輯的欄位
+        /// </summary>
+        /// <param name="columnName"></param>
+        public void Edit(string columnName) {
+            /*-- 取得要編輯的資料列 --*/
+            IParam prop = DataSource[mIdxRow] as IParam;
+
+            /*-- 取得對應欄位編輯器 --*/
+            BaseFieldEditor editor = GetEditor(columnName);
+
+            /*-- 使用者輸入 --*/
+            editor.Edit(prop);            
         }
 
         /// <summary>
@@ -444,109 +427,7 @@ namespace CtParamEditor.Core
         //}
         
         #endregion Function - Public Methods
-
-        #region Function - Events
-
-        #region DataGridView
-
-        /// <summary>
-        /// 虛擬填充儲存格資料要求事件
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void rDgv_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e) {
-            string columnName = rDgv.Columns[e.ColumnIndex].HeaderText;
-            if (e.RowIndex >= DataSource.RowCount) {
-                return;
-            }
-            try {
-                /*-- 取得欄位資料 --*/
-                IParam prop = DataSource[e.RowIndex] as IParam;
-                string v = prop.Default;
-                /*-- 取得欄位值 --*/
-                string val = prop.GetParamValue(columnName);
-                /*-- 必填欄位檢查 --*/
-                if (IllegalField.Contains(prop, columnName)) {
-                    e.Value = mRcConvert.ToRTF("Required cell", CellStyles.RequiredCell, false);//必填欄位樣式
-                } else if (ModifiedField.ContainsRow((prop))) {
-                    //已編輯儲存格樣式
-                    if (ModifiedField.ContainsColumn(prop, columnName)) {
-                        e.Value = mMcConvert.ToRTF(val, CellStyles.ModifiedCell);
-                        //已編輯欄位樣式
-                    } else {
-                        e.Value = mMrConvert.ToRTF(val, CellStyles.ModifiedRow);
-                    }
-                    /*-- 一般欄位 --*/
-                } else {
-                    e.Value = mRgConvert.ToRTF(val, CellStyles.Regular);
-                }
-            } catch(Exception ex) {
-                Console.WriteLine(ex.Message);
-            }
-        }
-        
-        /// <summary>
-        /// 開啟右鍵選單(增加新參數設定)
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void rDgv_MouseClick(object sender, MouseEventArgs e) {
-            if (e.Button == MouseButtons.Right && !mCMS.Visible) {
-                mCMS.Show(Cursor.Position);
-                if (!miAdd.Visible) miAdd.Visible = true;
-                if (miEdit.Visible) miEdit.Visible = false;
-                if (miDelete.Visible) miDelete.Visible = false;
-                mIdxRow = rDgv.RowCount;
-            }
-        }
-
-        #endregion DataGridView
-
-        #region ToolStripItem
-
-        /// <summary>
-        /// 新增參數
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void miAdd_Click(object sender, EventArgs e) {
-            Insert(mIdxRow);
-        }
-
-        /// <summary>
-        /// 刪除參數
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void miDelete_Click(object sender, EventArgs e) {
-            Remove(mIdxRow);
-        }
-
-        /// <summary>
-        /// 編輯欄位
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void miEdit_Click(object sender, EventArgs e) {
-            DataGridViewCell cell = rDgv[mIdxCol, mIdxRow];
-            if (DataSource == null) throw new Exception("繫結資料源為null");
-            if (DataSource.RowCount < mIdxRow + 1) throw new Exception("超出資料範圍");
-            IParam prop = DataSource[mIdxRow] as IParam;
-            string rtnVal = string.Empty;
-            string oriVal = cell.Value?.ToString();
-            List<string> Types = EnumData.Data.Keys.ToList();
-            if (Field.Edit(mIdxCol, prop,out string returnValue) && rDgv != null) {
-                DataGridViewRow row = rDgv.Rows[mIdxRow];
-                cell.Style.ForeColor = Color.Red;
-                cell.Selected = false;
-                rDgv.Refresh();
-            }
-        }
-
-        #endregion ToolStripItem
-
-        #endregion Function - Events
-
+            
         #region Function-  Private Methods
 
         /// <summary>
@@ -661,7 +542,7 @@ namespace CtParamEditor.Core
             ///*-- 非法欄位紀錄註銷方法委派 --*/
             //Field.RemoveIllegalField = IllegalField.Remove;
 
-            Field.GetItems = EnumData.GetItems;
+            //Field.GetItems = EnumData.GetItems;
             /*-- 非法欄位紀錄方法委派 --*/
             DataSource.AddIllegal = IllegalField.Add;
             /*-- 非法欄位移除方法委派 --*/
@@ -675,65 +556,19 @@ namespace CtParamEditor.Core
 
             DataSource.ReadEnum = EnumData.ReadEnum;
 
-            Field.ContainItem = EnumData.ContainItem;
+            //Field.ContainItem = EnumData.ContainItem;
 
-            Field.ContainType = EnumData.ContainType;
+            //Field.ContainType = EnumData.ContainType;
 
-            Field.GetTypes = EnumData.GetTypes;
-
-            /*-- 右鍵選單選項事件委派 --*/
-            miAdd.Click += miAdd_Click;
-            miEdit.Click += miEdit_Click;
-            miDelete.Click += miDelete_Click;
+            //Field.GetTypes = EnumData.GetTypes;
+            
         }
-
+        
         /// <summary>
-        /// 更新要顯示的資料筆數
+        /// 決策是否顯示&鎖住右鍵選單
         /// </summary>
-        /// <param name="rowCount"></param>
-        private void UpdateRowCount(int rowCount) {
-            if (rDgv != null) rDgv.RowCount = rowCount;
-        }
-
-        /// <summary>
-        /// 依照欄位索引決定右鍵選單樣式
-        /// </summary>
-        /// <param name="e"></param>
-        /// <param name="show"></param>
-        /// <param name="disable"></param>
-        private void DecidedShow(DataGridViewCellMouseEventArgs e, out CmsOption show, out CmsOption disable) {
-            int idxCol = e.ColumnIndex;
-            disable = CmsOption.None;
-            show = CmsOption.Edit;
-            switch (idxCol) {
-                case PropField.Idx.Name:
-                case PropField.Idx.Description:
-                case PropField.Idx.ValType:
-                    break;
-                case PropField.Idx.Value:
-                case PropField.Idx.Max:
-                case PropField.Idx.Min:
-                case PropField.Idx.Default:
-                    IParam prop = DataSource[e.RowIndex] as IParam;
-                    if (string.IsNullOrEmpty(prop.Type)) {
-                        disable = CmsOption.Edit;
-                    } else {
-                        if (idxCol == PropField.Idx.Max || idxCol == PropField.Idx.Min) {
-                            Type type = prop.GetParamType();
-                            Type[] interfaces = type.GetInterfaces();
-                            if (prop.RangeDefinable) { 
-//                            if (prop.Type != typeof(int).Name && prop.Type != typeof(float).Name) {
-                                disable = CmsOption.Edit;
-                            }
-                        }
-                    }
-                    break;
-                default:
-                    show = CmsOption.Add | CmsOption.Delete;
-                    break;
-            }
-        }
-
+        /// <param name="idxCol"></param>
+        /// <param name="idxRow"></param>
         private void DecidedShow(int idxCol,int idxRow) {
             if (idxRow == -1) {
                 ShowOption = CmsOption.Add;
@@ -768,6 +603,53 @@ namespace CtParamEditor.Core
                 }
             }
         }
+
+        /// <summary>
+        /// 依照欄位索引回傳對應的欄位編輯器
+        /// </summary>
+        /// <param name="columnName"></param>
+        /// <returns></returns>
+        private BaseFieldEditor GetEditor(string columnName) {
+            BaseFieldEditor editor = null;
+            switch (columnName) {
+                case nameof(IParamColumn.Name):
+                    editor = new NameEditor();
+                    break;
+                case nameof(IParamColumn.Type):
+                    editor = new ValTypeEditor() {
+                        ContainType = EnumData.ContainType,
+                        GetTypes = EnumData.GetTypes
+                    };
+                    break;
+                case nameof(IParamColumn.Description):
+                    editor = new DescriptionEditor();
+                    break;
+                case nameof(IParamColumn.Max):
+                    editor = new MaxEditor();
+                    break;
+                case nameof(IParamColumn.Min):
+                    editor = new MinEditor();
+                    break;
+                case nameof(IParamColumn.Default):
+                    editor = new DefEditor() {
+                        ContainType = EnumData.ContainType,
+                        GetItems = EnumData.GetItems
+                    };
+                    break;
+                case nameof(IParamColumn.Value):
+                    editor = new ValueEditor() {
+                        ContainType = EnumData.ContainType,
+                        GetItems = EnumData.GetItems
+                    };
+                    break;
+                default:
+                    throw new Exception("未定義欄位");
+            }
+            editor.ComboBoxList = ComboBoxList;
+            editor.InputText = InputText;
+            return editor;
+        }
+
 
         /// <summary>
         /// 屬性變更發報
