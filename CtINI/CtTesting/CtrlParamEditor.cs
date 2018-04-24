@@ -69,6 +69,9 @@ namespace CtTesting {
             
 
             mRgConvert.Regular = mCellStyle.Regular;
+
+            mEditor.ParamCollection.DataChanged += ParamCollection_DataChanged;
+
             Bindings(mEditor);
             Bindings(mEditor.ParamCollection);
         }
@@ -78,7 +81,7 @@ namespace CtTesting {
         #region Function - Evnets
 
         #region DataGridView
-        
+
         /// <summary>
         /// 以儲存格為對象開啟右鍵選單
         /// </summary>
@@ -94,7 +97,6 @@ namespace CtTesting {
             }
         }
         
-
         /// <summary>
         /// 開啟右鍵選單(增加新參數設定)
         /// </summary>
@@ -144,10 +146,10 @@ namespace CtTesting {
             /*-- 使用者輸入 --*/
             if (mFieldEditor.Edit(mEditor.SelectedColumn, prop,out string returnValue)) {
                 /*-- 寫入使用者輸入 --*/
-                mEditor.SetValue(returnValue);
-                dgvProperties.InvokeIfNecessary(() => {
-                    dgvProperties.Refresh();
-                });
+                //mEditor.SetValue(returnValue);
+                //dgvProperties.InvokeIfNecessary(() => {
+                //    dgvProperties.Refresh();
+                //});
             }
         }
 
@@ -259,10 +261,18 @@ namespace CtTesting {
 
         #endregion Label
 
+        #region IParamCollection
+
+        private void ParamCollection_DataChanged(object sender, EventArgs e) {
+            dgvProperties.Refresh();
+        }
+
+        #endregion IParamCollection
+
         #endregion Function - Events
 
         #region  Function - Private Methods
-        
+
         private bool InputText(out string result, string title, string describe, string defValue = "") {
             return Stat.SUCCESS == CtInput.Text(out result, title, describe, defValue);
         }
@@ -423,6 +433,9 @@ namespace CtTesting {
 
             /*-- 資料筆數 --*/
             dgvProperties.DataBindings.ExAdd(nameof(dgvProperties.RowCount), source, nameof(source.RowCount));
+            lbRowCount.DataBindings.ExAdd(nameof(lbRowCount.Text), source, nameof(source.RowCount),(sender,e) => {
+                e.Value = $"Row Count:{e.Value}";
+            });
         }
 
         #endregion Implenent - IDataDisplay

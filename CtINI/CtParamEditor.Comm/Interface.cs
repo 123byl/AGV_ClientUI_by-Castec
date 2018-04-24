@@ -27,8 +27,17 @@ namespace CtParamEditor.Comm
         Input.ComboBox ComboBoxList { get; set; }
         DataGridView GridView { get; set; }
         Input.Text InputText { get; set; }
+        /// <summary>
+        /// 參數集合
+        /// </summary>
         IParamCollection ParamCollection { get; }
+        /// <summary>
+        /// 要顯示的選項
+        /// </summary>
         CmsOption ShowOption { get; }
+        /// <summary>
+        /// 要鎖住的選項
+        /// </summary>
         CmsOption DisableOption { get; }
 
         void Clear();
@@ -142,6 +151,11 @@ namespace CtParamEditor.Comm
         /// <param name="columnName"></param>
         /// <returns></returns>
         bool IsModified(IParam prop, string columnName);
+
+        /// <summary>
+        /// 資料變更事件
+        /// </summary>
+        event EventHandler DataChanged;
     }
 
     /// <summary>

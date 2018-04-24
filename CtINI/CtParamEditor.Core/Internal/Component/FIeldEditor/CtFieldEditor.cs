@@ -67,9 +67,6 @@ namespace CtParamEditor.Core.Internal.Component.FIeldEditor {
             /*-- 取得對應欄位編輯器 --*/
             BaseFieldEditor editor = GetEditor(idx);
             /*-- 指定委派方法 --*/
-            editor.RemoveIllegalField = RemoveIllegalField;
-            editor.RecordIllegalField = RecordIllegalField;
-            editor.AddModifiedField = AddModifiedField;
             editor.InputText = InputText;
             editor.ComboBoxList = ComboBoxList;
             /*-- 顯示對話視窗供使用者輸入並回傳結果 --*/

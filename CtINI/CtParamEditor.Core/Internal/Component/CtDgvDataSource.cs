@@ -100,7 +100,7 @@ namespace CtParamEditor.Core.Internal.Component {
         private BindingList<IParamColumn> Data { get { return IsFilterMode ? mFilter : mFullData; } }
 
         #endregion Declaration - Properties
-        
+
         #region Function -  Constructors
 
         internal CtDgvDataSource() { }
@@ -108,6 +108,11 @@ namespace CtParamEditor.Core.Internal.Component {
         #endregion Function - Construcotrs
 
         #region Implement - IParamCollection
+
+        /// <summary>
+        /// 資料變更事件
+        /// </summary>
+        public event EventHandler DataChanged;
 
         /// <summary>
         /// 尋找是否有目標參數名稱，使用參數讀取委派方法讀取參數
@@ -187,6 +192,7 @@ namespace CtParamEditor.Core.Internal.Component {
             DelInvoke?.Invoke(() => {
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             });
+            OnDataChanged();
         }
 
         #endregion Implement - IDataSource
@@ -252,7 +258,6 @@ namespace CtParamEditor.Core.Internal.Component {
             IsFilterMode = false;
             mFilter.Clear();
             OnPropertyChanged(nameof(RowCount));
-            //UpdateRowCount?.Invoke(RowCount());
         }
 
         /// <summary>
@@ -287,7 +292,6 @@ namespace CtParamEditor.Core.Internal.Component {
             mFullData.Insert(mIdxRow, prop);
             /*-- 更新要顯示的資料筆數 --*/
             OnPropertyChanged(nameof(RowCount));
-            //UpdateRowCount?.Invoke(RowCount());
         }
 
         /// <summary>
@@ -302,7 +306,6 @@ namespace CtParamEditor.Core.Internal.Component {
             mFullData.Remove(prop);
             /*-- 更新要顯示的資料筆數 --*/
             OnPropertyChanged(nameof(RowCount));
-            //UpdateRowCount?.Invoke(RowCount());
         }
 
         /// <summary>
@@ -389,6 +392,14 @@ namespace CtParamEditor.Core.Internal.Component {
                 /*-- 移除非法紀錄 --*/
                 mIllegal.Remove(prop, columnName);
             }
+            OnDataChanged();
+        }
+
+        /// <summary>
+        /// 資料變更發報
+        /// </summary>
+        protected virtual void OnDataChanged() {
+            DataChanged?.Invoke(this, new EventArgs());
         }
 
         #endregion Function - Private Methods

@@ -58,6 +58,7 @@ namespace CtTesting {
             this.txtKeyWord = new System.Windows.Forms.TextBox();
             this.btnHighlight = new System.Windows.Forms.Button();
             this.btnRead = new System.Windows.Forms.Button();
+            this.lbRowCount = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dgvProperties)).BeginInit();
             this.cmsDGV.SuspendLayout();
             this.SuspendLayout();
@@ -148,26 +149,26 @@ namespace CtTesting {
             this.miDelete,
             this.miEdit});
             this.cmsDGV.Name = "cmsDGV";
-            this.cmsDGV.Size = new System.Drawing.Size(176, 104);
+            this.cmsDGV.Size = new System.Drawing.Size(123, 76);
             // 
             // miAdd
             // 
             this.miAdd.Name = "miAdd";
-            this.miAdd.Size = new System.Drawing.Size(175, 24);
+            this.miAdd.Size = new System.Drawing.Size(122, 24);
             this.miAdd.Text = "Add";
             this.miAdd.Click += new System.EventHandler(this.miAdd_Click);
             // 
             // miDelete
             // 
             this.miDelete.Name = "miDelete";
-            this.miDelete.Size = new System.Drawing.Size(175, 24);
+            this.miDelete.Size = new System.Drawing.Size(122, 24);
             this.miDelete.Text = "Delete";
             this.miDelete.Click += new System.EventHandler(this.miDelete_Click);
             // 
             // miEdit
             // 
             this.miEdit.Name = "miEdit";
-            this.miEdit.Size = new System.Drawing.Size(175, 24);
+            this.miEdit.Size = new System.Drawing.Size(122, 24);
             this.miEdit.Text = "Edit";
             this.miEdit.Click += new System.EventHandler(this.miEdit_Click);
             // 
@@ -356,11 +357,23 @@ namespace CtTesting {
             this.btnRead.UseVisualStyleBackColor = true;
             this.btnRead.Click += new System.EventHandler(this.btnRead_Click);
             // 
+            // lbRowCount
+            // 
+            this.lbRowCount.AutoSize = true;
+            this.lbRowCount.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.lbRowCount.Location = new System.Drawing.Point(1077, 672);
+            this.lbRowCount.Name = "lbRowCount";
+            this.lbRowCount.Size = new System.Drawing.Size(69, 25);
+            this.lbRowCount.TabIndex = 19;
+            this.lbRowCount.Tag = "一般文字";
+            this.lbRowCount.Text = "label1";
+            // 
             // CtrlParamEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1238, 730);
+            this.Controls.Add(this.lbRowCount);
             this.Controls.Add(this.btnRead);
             this.Controls.Add(this.btnHighlight);
             this.Controls.Add(this.txtKeyWord);
@@ -419,5 +432,6 @@ namespace CtTesting {
         private System.Windows.Forms.DataGridViewTextBoxColumn colMax;
         private System.Windows.Forms.DataGridViewTextBoxColumn colMin;
         private System.Windows.Forms.DataGridViewTextBoxColumn colDefault;
+        private System.Windows.Forms.Label lbRowCount;
     }
 }
