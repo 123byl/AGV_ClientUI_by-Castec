@@ -5,8 +5,10 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace CtParamEditor.Core.Internal.Component {
     /// <summary>
@@ -35,7 +37,7 @@ namespace CtParamEditor.Core.Internal.Component {
 
         public IParamColumn this[int indexRow] {
             get {
-                if (indexRow >=0 && indexRow < RowCount()) {
+                if (indexRow >=0 && indexRow < RowCount) {
                     return Data[indexRow];
                 } else {
                     return null;
@@ -80,7 +82,7 @@ namespace CtParamEditor.Core.Internal.Component {
         /// <summary>
         /// 顯示資料筆數更新方法委派
         /// </summary>
-        public Delegates.Dgv.DelUpdateRowCount UpdateRowCount { get; set; } = null;
+        //public Delegates.Dgv.DelUpdateRowCount UpdateRowCount { get; set; } = null;
 
         /// <summary>
         /// Enum定義讀取方法委派
@@ -98,7 +100,7 @@ namespace CtParamEditor.Core.Internal.Component {
         private BindingList<IParamColumn> Data { get { return IsFilterMode ? mFilter : mFullData; } }
 
         #endregion Declaration - Properties
-
+        
         #region Function -  Constructors
 
         internal CtDgvDataSource() { }
@@ -165,6 +167,30 @@ namespace CtParamEditor.Core.Internal.Component {
 
         #endregion Implement - IParamCollection
 
+        #region Implement - IDataSource
+
+        /// <summary>
+        /// 屬性變更通知事件
+        /// </summary>
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        /// <summary>
+        /// Invoke方法委派
+        /// </summary>
+        public Action<MethodInvoker> DelInvoke { get; set; } = null;
+
+        /// <summary>
+        /// 屬性變更發報
+        /// </summary>
+        /// <param name="propertyName"></param>
+        protected virtual void OnPropertyChanged([CallerMemberName]string propertyName = "") {
+            DelInvoke?.Invoke(() => {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            });
+        }
+
+        #endregion Implement - IDataSource
+
         #region Function - Public Methods
 
         /// <summary>
@@ -225,7 +251,8 @@ namespace CtParamEditor.Core.Internal.Component {
         public void CloseFilter() {
             IsFilterMode = false;
             mFilter.Clear();
-            UpdateRowCount?.Invoke(RowCount());
+            OnPropertyChanged(nameof(RowCount));
+            //UpdateRowCount?.Invoke(RowCount());
         }
 
         /// <summary>
@@ -243,7 +270,8 @@ namespace CtParamEditor.Core.Internal.Component {
             /*-- 轉換成BindingList用於DataGridView進行資料繫結 --*/
             mFullData = new BindingList<IParamColumn>(props);
             /*-- 更新要顯示的資料數目配合虛擬填充模式使用 --*/
-            UpdateRowCount?.Invoke(RowCount());
+            OnPropertyChanged(nameof(RowCount));
+            //UpdateRowCount?.Invoke(RowCount());
         }
 
         /// <summary>
@@ -258,7 +286,8 @@ namespace CtParamEditor.Core.Internal.Component {
             /*-- 插入新資料 --*/
             mFullData.Insert(mIdxRow, prop);
             /*-- 更新要顯示的資料筆數 --*/
-            UpdateRowCount?.Invoke(RowCount());
+            OnPropertyChanged(nameof(RowCount));
+            //UpdateRowCount?.Invoke(RowCount());
         }
 
         /// <summary>
@@ -272,7 +301,8 @@ namespace CtParamEditor.Core.Internal.Component {
             /*-- 移除資料 --*/
             mFullData.Remove(prop);
             /*-- 更新要顯示的資料筆數 --*/
-            UpdateRowCount?.Invoke(RowCount());
+            OnPropertyChanged(nameof(RowCount));
+            //UpdateRowCount?.Invoke(RowCount());
         }
 
         /// <summary>
@@ -323,8 +353,8 @@ namespace CtParamEditor.Core.Internal.Component {
         /// 回傳要顯示的資料筆數
         /// </summary>
         /// <returns></returns>
-        public int RowCount() {
-            return Data?.Count() ?? 0;
+        public int RowCount {
+            get { return Data?.Count() ?? 0; }
         }
 
         #endregion Function - Public Mehtods

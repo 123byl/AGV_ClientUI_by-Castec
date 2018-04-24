@@ -24,7 +24,10 @@ using DataGridViewRichTextBox;
 
 namespace CtTesting {
 
-    public partial class CtrlParamEditor : Form ,IDataDisplay<IParamEditor>{
+    /// <summary>
+    /// 參數編輯器介面
+    /// </summary>
+    public partial class CtrlParamEditor : Form ,IDataDisplay<IParamEditor>,IDataDisplay<IParamCollection>{
 
         #region Declaration - Fields
 
@@ -58,20 +61,16 @@ namespace CtTesting {
         public CtrlParamEditor() {
             InitializeComponent();
             /*-- DataGridView寬度預設 --*/
-            int width = dgvProperties.RowHeadersWidth +3;
-            foreach (DataGridViewColumn col in dgvProperties.Columns) width += col.Width;
-            dgvProperties.Width = width;
-            mEditor.GridView = dgvProperties;
+            DeployDGV(dgvProperties);
+
+            //mEditor.GridView = dgvProperties;
             mFieldEditor.InputText = InputText;
             mFieldEditor.ComboBoxList = ComboBoxList;
-
-            dgvProperties.CellMouseClick += dgvProperties_CellMouseClick;
-            dgvProperties.CellMouseDoubleClick += dgvProperties_CellMouseDoubleClick;
-            dgvProperties.MouseClick += dgvProperties_MouseClick;
-            dgvProperties.CellValueNeeded += DgvProperties_CellValueNeeded;
+            
 
             mRgConvert.Regular = mCellStyle.Regular;
             Bindings(mEditor);
+            Bindings(mEditor.ParamCollection);
         }
 
         #endregion Function - Constructors
@@ -79,12 +78,7 @@ namespace CtTesting {
         #region Function - Evnets
 
         #region DataGridView
-
-        private void dgvProperties_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e) {
-            //dgvProperties.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = "Modified";
-           
-        }
-
+        
         /// <summary>
         /// 以儲存格為對象開啟右鍵選單
         /// </summary>
@@ -111,7 +105,7 @@ namespace CtTesting {
 
         private void DgvProperties_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e) {
             string columnName = dgvProperties.Columns[e.ColumnIndex].HeaderText;
-            if (e.RowIndex >= mEditor.ParamCollection.RowCount()) {
+            if (e.RowIndex >= mEditor.ParamCollection.RowCount) {
                 return;
             }
             try {
@@ -285,6 +279,47 @@ namespace CtTesting {
             }
         }
 
+
+        /// <summary>
+        /// 部署<see cref="DataGridView"/>
+        /// </summary>
+        /// <param name="dgv"></param>
+        private void DeployDGV(DataGridView dgv) {
+            int width = dgv.RowHeadersWidth + 3;
+            foreach (DataGridViewColumn col in dgv.Columns) width += col.Width;
+            dgv.Width = width;
+            /*-- 關閉欄位名稱自動產生 --*/
+            dgv.AutoGenerateColumns = false;
+            /*-- 開啟虛擬填充模式 --*/
+            dgv.VirtualMode = true;
+            /*-- 鎖住直接編輯功能 --*/
+            dgv.ReadOnly = true;
+            /*-- 啟用雙緩衝 --*/
+            Type dgvType = dgv.GetType();
+            PropertyInfo pi = dgvType.GetProperty("DoubleBuffered", BindingFlags.Instance | BindingFlags.NonPublic);
+            pi.SetValue(dgv, true, null);
+            /*-- 虛擬填充事件委派 --*/
+            dgv.CellValueNeeded += DgvProperties_CellValueNeeded;
+            /*-- 儲存格滑鼠點擊事件委派 --*/
+            dgv.CellMouseClick += dgvProperties_CellMouseClick;
+            /*-- 滑鼠點擊事件委派 --*/
+            dgv.MouseClick += dgvProperties_MouseClick;
+            /*-- 配置欄位標題 --*/
+            DataGridViewRichTextBox.Factory FTY = new DataGridViewRichTextBox.Factory();
+            List<DataGridViewColumn> cols = new List<DataGridViewColumn>() {
+                FTY.GetRichTextColumn(PropField.Str.Name),
+                FTY.GetRichTextColumn(PropField.Str.ValType),
+                FTY.GetRichTextColumn(PropField.Str.Value),
+                FTY.GetRichTextColumn(PropField.Str.Description),
+                FTY.GetRichTextColumn(PropField.Str.Max),
+                FTY.GetRichTextColumn(PropField.Str.Min),
+                FTY.GetRichTextColumn(PropField.Str.Default),
+            };
+            dgv.Columns.Clear();
+            dgv.Columns.AddRange(cols.ToArray());
+        }
+
+
         #endregion Function - Private Methods
 
         public enum TestEM {
@@ -344,10 +379,10 @@ namespace CtTesting {
             public int Value { get; set; } = 0;
         }
 
-        #region Implement - IDataDisplay<IParamEditor>
+        #region Implement - IDataDisplay
 
         /// <summary>
-        /// 資料綁定
+        /// <see cref="IParamEditor"/>資料綁定
         /// </summary>
         /// <param name="source">資料源</param>
         public void Bindings(IParamEditor source) {
@@ -379,7 +414,18 @@ namespace CtTesting {
             },source.DisableOption.DisableOption(CmsOption.Edit));
         }
 
-        #endregion Implenent - IDataDisplay<IParamEditor>
+        /// <summary>
+        /// <see cref="IParamCollection"/>資料綁定
+        /// </summary>
+        /// <param name="source"></param>
+        public void Bindings(IParamCollection source) {
+            if (source.DelInvoke == null) source.DelInvoke = invk => this.InvokeIfNecessary(invk);
+
+            /*-- 資料筆數 --*/
+            dgvProperties.DataBindings.ExAdd(nameof(dgvProperties.RowCount), source, nameof(source.RowCount));
+        }
+
+        #endregion Implenent - IDataDisplay
         
     }
 

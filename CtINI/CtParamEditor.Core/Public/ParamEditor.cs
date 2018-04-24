@@ -303,7 +303,7 @@ namespace CtParamEditor.Core
         /// </summary>
         /// <param name="idxRow"></param>
         public void Insert(int idxRow) {
-            idxRow = idxRow != -1 ? idxRow : DataSource.RowCount();
+            idxRow = idxRow != -1 ? idxRow : DataSource.RowCount;
             DataSource.Insert(idxRow);
         }
 
@@ -456,7 +456,7 @@ namespace CtParamEditor.Core
         /// <param name="e"></param>
         private void rDgv_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e) {
             string columnName = rDgv.Columns[e.ColumnIndex].HeaderText;
-            if (e.RowIndex >= DataSource.RowCount()) {
+            if (e.RowIndex >= DataSource.RowCount) {
                 return;
             }
             try {
@@ -530,7 +530,7 @@ namespace CtParamEditor.Core
         private void miEdit_Click(object sender, EventArgs e) {
             DataGridViewCell cell = rDgv[mIdxCol, mIdxRow];
             if (DataSource == null) throw new Exception("繫結資料源為null");
-            if (DataSource.RowCount() < mIdxRow + 1) throw new Exception("超出資料範圍");
+            if (DataSource.RowCount < mIdxRow + 1) throw new Exception("超出資料範圍");
             IParam prop = DataSource[mIdxRow] as IParam;
             string rtnVal = string.Empty;
             string oriVal = cell.Value?.ToString();
@@ -671,7 +671,7 @@ namespace CtParamEditor.Core
 
             DataSource.ContainItem = EnumData.ContainItem;
 
-            DataSource.UpdateRowCount = UpdateRowCount;
+            //DataSource.UpdateRowCount = UpdateRowCount;
 
             DataSource.ReadEnum = EnumData.ReadEnum;
 

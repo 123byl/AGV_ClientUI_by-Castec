@@ -74,7 +74,7 @@ namespace CtParamEditor.Comm
     /// <summary>
     /// 參數集合
     /// </summary>
-    public interface IParamCollection {
+    public interface IParamCollection:IDataSource {
 
         /// <summary>
         /// 對應列索引的資料列
@@ -90,6 +90,12 @@ namespace CtParamEditor.Comm
         /// <param name="indexColumn"></param>
         /// <returns></returns>
         object this[int indexRow, string columnName] { get; }
+
+        /// <summary>
+        /// 資料筆數
+        /// </summary>
+        int RowCount { get; }
+
         /// <summary>
         /// 參數值讀取，使用IAgvToDgvCol型別進行讀取，可增加其他判斷
         /// </summary>
@@ -116,7 +122,6 @@ namespace CtParamEditor.Comm
         /// <returns></returns>
         bool FindVal<T>(string name, ref T val) where T : IConvertible;
 
-        int RowCount();
         /// <summary>
         /// 是否為非法值
         /// </summary>
