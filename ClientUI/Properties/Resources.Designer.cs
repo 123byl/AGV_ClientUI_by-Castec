@@ -383,6 +383,16 @@ namespace VehiclePlanner.Properties {
         /// <summary>
         ///   查詢類型 System.Drawing.Bitmap 的當地語系化資源。
         /// </summary>
+        internal static System.Drawing.Bitmap Controller {
+            get {
+                object obj = ResourceManager.GetObject("Controller", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類型 System.Drawing.Bitmap 的當地語系化資源。
+        /// </summary>
         internal static System.Drawing.Bitmap D1403_Teach {
             get {
                 object obj = ResourceManager.GetObject("D1403_Teach", resourceCulture);
@@ -416,6 +426,16 @@ namespace VehiclePlanner.Properties {
         internal static System.Drawing.Bitmap Disconnect {
             get {
                 object obj = ResourceManager.GetObject("Disconnect", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類型 System.Drawing.Bitmap 的當地語系化資源。
+        /// </summary>
+        internal static System.Drawing.Bitmap Download {
+            get {
+                object obj = ResourceManager.GetObject("Download", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -566,6 +586,16 @@ namespace VehiclePlanner.Properties {
         internal static System.Drawing.Bitmap Info_S {
             get {
                 object obj = ResourceManager.GetObject("Info_S", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類型 System.Drawing.Bitmap 的當地語系化資源。
+        /// </summary>
+        internal static System.Drawing.Bitmap Laser {
+            get {
+                object obj = ResourceManager.GetObject("Laser", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -753,6 +783,16 @@ namespace VehiclePlanner.Properties {
         /// <summary>
         ///   查詢類型 System.Drawing.Bitmap 的當地語系化資源。
         /// </summary>
+        internal static System.Drawing.Bitmap Radar {
+            get {
+                object obj = ResourceManager.GetObject("Radar", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類型 System.Drawing.Bitmap 的當地語系化資源。
+        /// </summary>
         internal static System.Drawing.Bitmap Red_Ball {
             get {
                 object obj = ResourceManager.GetObject("Red_Ball", resourceCulture);
@@ -916,6 +956,16 @@ namespace VehiclePlanner.Properties {
         internal static System.Drawing.Bitmap Sub_2 {
             get {
                 object obj = ResourceManager.GetObject("Sub_2", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類型 System.Drawing.Bitmap 的當地語系化資源。
+        /// </summary>
+        internal static System.Drawing.Bitmap Upload {
+            get {
+                object obj = ResourceManager.GetObject("Upload", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

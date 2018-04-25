@@ -549,6 +549,11 @@
     <Content Include="OpenGLDLL\SharpGL.SceneGraph.dll" />
     <Content Include="OpenGLDLL\SharpGL.WinForms.dll" />
     <Content Include="Resources\CASTEC.ico" />
+    <Content Include="Resources\Controller.png" />
+    <Content Include="Resources\Download.png" />
+    <Content Include="Resources\Laser.png" />
+    <Content Include="Resources\Radar.png" />
+    <Content Include="Resources\Upload.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
