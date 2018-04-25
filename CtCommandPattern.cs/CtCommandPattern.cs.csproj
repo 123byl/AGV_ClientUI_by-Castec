@@ -1,17 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{4304D4B0-4172-4148-BECF-65210ED3C6C5}</ProjectGuid>
+    <ProjectGuid>{FF21E9E3-F6AC-4160-97FA-016711A02C93}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CtParamEditor.Comm</RootNamespace>
-    <AssemblyName>CtParamEditor.Comm</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <RootNamespace>CtCommandPattern.cs</RootNamespace>
+    <AssemblyName>CtCommandPattern.cs</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -33,8 +32,6 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -43,30 +40,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Delegate.cs" />
-    <Compile Include="Interface.cs" />
+    <Compile Include="CtCommandPattern.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\CtBind\CtBind.csproj">
-      <Project>{76ef08f5-b0de-40ad-b468-15dc8908706b}</Project>
-      <Name>CtBind</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\CtCommandPattern.cs\CtCommandPattern.cs.csproj">
-      <Project>{ff21e9e3-f6ac-4160-97fa-016711a02c93}</Project>
-      <Name>CtCommandPattern.cs</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DataGridViewRichTextBox\DataGridViewRichTextBox.csproj">
-      <Project>{d9826cc9-bf43-4b72-a211-19e312e8c184}</Project>
-      <Name>DataGridViewRichTextBox</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

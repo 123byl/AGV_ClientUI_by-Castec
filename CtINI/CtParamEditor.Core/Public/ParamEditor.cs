@@ -1,4 +1,5 @@
-﻿using CtINI;
+﻿using CtCommandPattern.cs;
+using CtINI;
 using CtParamEditor.Comm;
 using CtParamEditor.Core.Internal;
 using CtParamEditor.Core.Internal.Component;
@@ -373,6 +374,8 @@ namespace CtParamEditor.Core
             ModifiedField.Clear();
             EnumData.Data.Clear();
             IllegalField.Clear();
+            OnPropertyChanged(nameof(UndoCount));
+            OnPropertyChanged(nameof(RedoCount));
         }
 
         /// <summary>
@@ -683,18 +686,35 @@ namespace CtParamEditor.Core
         /// <summary>
         /// 可撤銷次數
         /// </summary>
-        public int UndoCount { get => mCommandManager.UndoCount; set => mCommandManager.UndoCount = value; }
+        public int UndoLimit { get => mCommandManager.UndoLimit; set => mCommandManager.UndoLimit = value; }
+
+        /// <summary>
+        /// 可撤銷次數
+        /// </summary>
+        public int UndoCount => mCommandManager.UndoCount;
+
+        /// <summary>
+        /// 可重做次數
+        /// </summary>
+        public int RedoCount => mCommandManager.RedoCount;
 
         /// <summary>
         /// 撤銷
         /// </summary>
-        public void Undo() => mCommandManager.Undo();
+        public void Undo() {
+            mCommandManager.Undo();
+            OnPropertyChanged(nameof(UndoCount));
+            OnPropertyChanged(nameof(RedoCount));
+        }
 
         /// <summary>
         /// 重做
         /// </summary>
-        public void Redo() => mCommandManager.Redo();
-        
+        public void Redo() {
+            mCommandManager.Redo();
+            OnPropertyChanged(nameof(UndoCount));
+            OnPropertyChanged(nameof(RedoCount));
+        }        
         #endregion Implement - IUndoable
 
     }

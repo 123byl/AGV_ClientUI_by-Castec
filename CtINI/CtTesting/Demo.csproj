@@ -115,6 +115,10 @@
       <Project>{76EF08F5-B0DE-40AD-B468-15DC8908706B}</Project>
       <Name>CtBind</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\CtCommandPattern.cs\CtCommandPattern.cs.csproj">
+      <Project>{FF21E9E3-F6AC-4160-97FA-016711A02C93}</Project>
+      <Name>CtCommandPattern.cs</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\CtLib\CtLib\CtLib.csproj">
       <Project>{a9bed8b3-2f9d-42a8-90bd-9fae0522eb09}</Project>
       <Name>CtLib</Name>

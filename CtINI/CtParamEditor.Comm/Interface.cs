@@ -1,4 +1,5 @@
 ﻿using CtBind;
+using CtCommandPattern.cs;
 using DataGridViewRichTextBox;
 using System;
 using System.Collections.Generic;
@@ -39,8 +40,7 @@ namespace CtParamEditor.Comm
         /// 要鎖住的選項
         /// </summary>
         CmsOption DisableOption { get; }
-
-        void Clear();
+        
         void CloseFilter();
         void Filter(string keyWord);
         void Highlight(string keyWord);
@@ -325,109 +325,5 @@ namespace CtParamEditor.Comm
         IExFont ModifiedCell { get; }
     }
 
-    /// <summary>
-    /// 可撤銷接口
-    /// </summary>
-    public interface IUndoable {
-        /// <summary>
-        /// 可複原次數
-        /// </summary>
-        int UndoCount { get; set; }
 
-        /// <summary>
-        /// 撤銷
-        /// </summary>
-        void Undo();
-
-        /// <summary>
-        /// 重做
-        /// </summary>
-        void Redo();
-    }
-    
-    /// <summary>
-    /// 命令定義接口
-    /// </summary>
-    public interface ICommand {
-        void Execute();
-        void Undo();
-    }
-
-    /// <summary>
-    /// 命令基類
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public abstract class BaseCommand<T> : ICommand {
-        protected T mReceiver = default(T);
-        public BaseCommand(T receiver) {
-            mReceiver = receiver;
-        }
-
-        /// <summary>
-        /// 執行/重做
-        /// </summary>
-        public abstract void Execute();
-
-        /// <summary>
-        /// 復原
-        /// </summary>
-        public abstract void Undo();
-    }
-
-    /// <summary>
-    /// 命令管理器
-    /// </summary>
-    public class CommandManager :IUndoable {
-        /// <summary>
-        /// 撤銷堆疊
-        /// </summary>
-        private List<ICommand> mUndoList = new List<ICommand>();
-        /// <summary>
-        /// 重做堆疊
-        /// </summary>
-        private List<ICommand> mRedoList = new List<ICommand>();
-
-        /// <summary>
-        /// 可撤銷次數,-1表無限
-        /// </summary>
-        public int UndoCount { get; set; } = -1;
-
-        /// <summary>
-        /// 執行命令
-        /// </summary>
-        /// <param name="cmd"></param>
-        public void ExecutCmd(ICommand cmd) {
-            cmd.Execute();
-            mUndoList.Add(cmd);
-            if (UndoCount != -1 && mUndoList.Count > UndoCount) {
-                mUndoList.RemoveAt(0);
-            }
-            mRedoList.Clear();
-        }
-
-        /// <summary>
-        /// 撤銷命令
-        /// </summary>
-        public void Undo() {
-            if (mUndoList.Any()) {
-                var cmd = mUndoList.Last();
-                cmd.Undo();
-                mUndoList.Remove(cmd);
-                mRedoList.Add(cmd);
-            }
-        }
-
-        /// <summary>
-        /// 重做命令
-        /// </summary>
-        public void Redo() {
-            if (mRedoList.Any()) {
-                var cmd = mRedoList.Last();
-                cmd.Execute();
-                mRedoList.Remove(cmd);
-                mUndoList.Add(cmd);
-            }
-        }
-
-    }
 }

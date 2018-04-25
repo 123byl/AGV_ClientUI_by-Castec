@@ -67,6 +67,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CtGenericParser", "CtINI\Ct
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataGridViewRichTextBox", "CtINI\DataGridViewRichTextBox\DataGridViewRichTextBox.csproj", "{D9826CC9-BF43-4B72-A211-19E312E8C184}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CtCommandPattern.cs", "CtCommandPattern.cs\CtCommandPattern.cs.csproj", "{FF21E9E3-F6AC-4160-97FA-016711A02C93}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -270,6 +272,14 @@ Global
 		{D9826CC9-BF43-4B72-A211-19E312E8C184}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D9826CC9-BF43-4B72-A211-19E312E8C184}.Release|x86.ActiveCfg = Release|Any CPU
 		{D9826CC9-BF43-4B72-A211-19E312E8C184}.Release|x86.Build.0 = Release|Any CPU
+		{FF21E9E3-F6AC-4160-97FA-016711A02C93}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF21E9E3-F6AC-4160-97FA-016711A02C93}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF21E9E3-F6AC-4160-97FA-016711A02C93}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{FF21E9E3-F6AC-4160-97FA-016711A02C93}.Debug|x86.Build.0 = Debug|Any CPU
+		{FF21E9E3-F6AC-4160-97FA-016711A02C93}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF21E9E3-F6AC-4160-97FA-016711A02C93}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FF21E9E3-F6AC-4160-97FA-016711A02C93}.Release|x86.ActiveCfg = Release|Any CPU
+		{FF21E9E3-F6AC-4160-97FA-016711A02C93}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

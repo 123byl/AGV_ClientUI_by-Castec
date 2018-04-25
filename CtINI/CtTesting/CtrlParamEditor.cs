@@ -37,6 +37,7 @@ namespace CtTesting {
         /// 檔案開啟對話視窗
         /// </summary>
         private OpenFileDialog mOdlg = new OpenFileDialog();
+
         private ICellStyles mCellStyle = new CtCellStyles();
 
         private RtfConvert mRgConvert = new RtfConvert();
@@ -48,11 +49,7 @@ namespace CtTesting {
         private RtfConvert mMcConvert = new RtfConvert();
 
         #endregion Declaration - Fields
-
-        #region Declaration - Enum
-
-        #endregion Declaration - Enum
-
+        
         #region Function - Constructors
 
         public CtrlParamEditor() {
@@ -98,6 +95,11 @@ namespace CtTesting {
         private void dgvProperties_MouseClick(object sender, MouseEventArgs e) {
         }
 
+        /// <summary>
+        /// 虛擬填充
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void DgvProperties_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e) {
             string columnName = dgvProperties.Columns[e.ColumnIndex].HeaderText;
             if (e.RowIndex >= mEditor.ParamCollection.RowCount) {
@@ -222,9 +224,80 @@ namespace CtTesting {
             mEditor.RestoreDefault();
         }
 
+        /// <summary>
+        /// 標記
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnHighlight_Click(object sender, EventArgs e) {
             mEditor.Highlight(txtKeyWord.Text);
             dgvProperties.Refresh();
+        }
+        
+        /// <summary>
+        /// 參數範本輸出
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnTest_Click(object sender, EventArgs e) {
+            //參數設定樣本輸出
+            if (mEditor.GridView != null) mEditor.GridView = null;
+            mEditor.Clear();
+            mEditor.WriteParam("IntName", 20, "IntDescription", 20);
+            mEditor.WriteParam("BoolName", false, "BoolDescription", false);
+            mEditor.WriteParam("FloatName", 20f, "FloatDescription", 20f);
+            mEditor.WriteParam("StringName", "value", "StringDescription", "default");
+            mEditor.WriteParam("EnumName", TestEM.one, "EnumDescription", TestEM.three);
+
+            mEditor.WriteParam("MaxSetting", 20, "MaxSetting").SetMaximun(100);
+            mEditor.WriteParam("MinSetting", 20, "MinSetting").SetMinimun(0);
+            mEditor.WriteParam("RangeSetting", 20, "RangeSetting").SetRange(0, 100);
+            mEditor.SaveToINI(@"D:\Test1123.ini");
+        }
+
+        private void btnNewRow_Click(object sender, EventArgs e) {
+
+        }
+
+        /// <summary>
+        /// 撤銷
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnUndo_Click(object sender, EventArgs e) {
+            mEditor.Undo();
+        }
+
+        /// <summary>
+        /// 重做
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnRedo_Click(object sender, EventArgs e) {
+            mEditor.Redo();
+        }
+
+        /// <summary>
+        /// 參數讀取
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnRead_Click(object sender, EventArgs e) {
+            if (mEditor.GridView != null) mEditor.GridView = null;
+            int iVal = 0;
+            float fVal = 0f;
+            bool bVal = false;
+            string sVal = string.Empty;
+            TestEM emVal = TestEM.two;
+            TestData data = new TestData();
+            mEditor.Clear();
+            mEditor.ReadINI(@"D:\Test1122.ini");
+            mEditor.ParamCollection.FindVal<int>("IntName", val => data.Value = val);
+            mEditor.ParamCollection.FindVal("IntName", ref iVal);
+            mEditor.ParamCollection.FindVal("FloatName", ref fVal);
+            mEditor.ParamCollection.FindVal("BoolName", ref bVal);
+            mEditor.ParamCollection.FindVal("StringName", ref sVal);
+            mEditor.ParamCollection.FindVal("EnumName", ref emVal);
         }
 
         #endregion Button
@@ -333,58 +406,6 @@ namespace CtTesting {
             three = 4
         }
 
-        /// <summary>
-        /// 參數範本輸出
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void btnTest_Click(object sender, EventArgs e) {
-            //參數設定樣本輸出
-            if (mEditor.GridView != null)mEditor.GridView = null;
-            mEditor.Clear();
-            mEditor.WriteParam("IntName",20,"IntDescription",20);
-            mEditor.WriteParam("BoolName", false, "BoolDescription", false);
-            mEditor.WriteParam("FloatName", 20f, "FloatDescription", 20f);
-            mEditor.WriteParam("StringName", "value", "StringDescription", "default");
-            mEditor.WriteParam("EnumName", TestEM.one, "EnumDescription", TestEM.three);
-
-            mEditor.WriteParam("MaxSetting", 20, "MaxSetting").SetMaximun(100);
-            mEditor.WriteParam("MinSetting", 20, "MinSetting").SetMinimun(0);
-            mEditor.WriteParam("RangeSetting", 20, "RangeSetting").SetRange(0, 100);
-            mEditor.SaveToINI(@"D:\Test1123.ini");
-        }
-
-        private void btnNewRow_Click(object sender, EventArgs e) {
-
-        }
-
-        /// <summary>
-        /// 參數讀取
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void btnRead_Click(object sender, EventArgs e) {
-            if (mEditor.GridView != null) mEditor.GridView = null;
-            int iVal = 0;
-            float fVal = 0f;
-            bool bVal = false;
-            string sVal = string.Empty;
-            TestEM emVal = TestEM.two;
-            TestData data = new TestData();
-            mEditor.Clear();
-            mEditor.ReadINI(@"D:\Test1122.ini");
-            mEditor.ParamCollection.FindVal<int>("IntName",val => data.Value = val);
-            mEditor.ParamCollection.FindVal("IntName", ref iVal);
-            mEditor.ParamCollection.FindVal("FloatName", ref fVal);
-            mEditor.ParamCollection.FindVal("BoolName", ref bVal);
-            mEditor.ParamCollection.FindVal("StringName", ref sVal);
-            mEditor.ParamCollection.FindVal("EnumName", ref emVal);
-        }
-
-        public class TestData {
-            public int Value { get; set; } = 0;
-        }
-
         #region Implement - IDataDisplay
 
         /// <summary>
@@ -418,6 +439,15 @@ namespace CtTesting {
             miEdit.DataBindings.ExAdd(nameof(miEdit.Enabled), source, nameof(source.DisableOption), (sender, e) => {
                 e.Value = ((CmsOption)e.Value).DisableOption(CmsOption.Edit);
             },source.DisableOption.DisableOption(CmsOption.Edit));
+            /*-- 可撤銷次數 --*/
+            btnUndo.DataBindings.ExAdd(nameof(btnUndo.Enabled), source, nameof(source.UndoCount),(snemder,e)=> {
+                e.Value = (int)e.Value > 0;
+            });
+            /*-- 可重做次數 --*/
+            btnRedo.DataBindings.ExAdd(nameof(btnRedo.Enabled), source, nameof(source.RedoCount), (sneder, e) => {
+                e.Value = (int)e.Value > 0;
+            });
+
         }
 
         /// <summary>
@@ -436,16 +466,12 @@ namespace CtTesting {
 
         #endregion Implenent - IDataDisplay
 
-        private void btnUndo_Click(object sender, EventArgs e) {
-            mEditor.Undo();
-        }
-
-        private void btnRedo_Click(object sender, EventArgs e) {
-            mEditor.Redo();
-        }
-
     }
-    
+
+    internal class TestData {
+        public object Value { get; internal set; }
+    }
+
     public static class Extenstion {
         
         public static bool ShowOption(this CmsOption option, CmsOption show) {
