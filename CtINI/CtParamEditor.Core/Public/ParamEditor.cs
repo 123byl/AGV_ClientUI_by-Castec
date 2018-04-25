@@ -23,7 +23,7 @@ namespace CtParamEditor.Core
     /// <summary>
     /// 參數編輯器
     /// </summary>
-    public class ParamEditor: IParamEditor {
+    internal class ParamEditor: IParamEditor {
 
         #region Declaration - Fields
 
@@ -91,7 +91,7 @@ namespace CtParamEditor.Core
         /// 要鎖住的選項
         /// </summary>
         private CmsOption mDisableOption = CmsOption.None;
-
+        
         #endregion Declaration - Fields
 
         #region Declaration - Properties
@@ -157,17 +157,17 @@ namespace CtParamEditor.Core
         /// <summary>
         /// 列舉定義管理器
         /// </summary>
-        private CtEnumData EnumData { get; set; } = new CtEnumData();
+        public CtEnumData EnumData = new CtEnumData();
 
         /// <summary>
         /// 參數資料
         /// </summary>
-        private CtDgvDataSource DataSource { get; set; } = new CtDgvDataSource();
+        public CtDgvDataSource DataSource  = new CtDgvDataSource();
 
         /// <summary>
         /// 非法欄位紀錄
         /// </summary>
-        private CtIllegalField IllegalField { get; set; } = new CtIllegalField();
+        private CtIllegalField IllegalField  = new CtIllegalField();
 
         /// <summary>
         /// 被修改欄位紀錄
@@ -211,6 +211,9 @@ namespace CtParamEditor.Core
         #region Function - Constructors
 
         internal ParamEditor() {
+
+            ExtensionCommand.RefEditor = this;
+
             /*-- 產生右鍵選單選項 --*/
             CreateOption();
 
@@ -269,7 +272,7 @@ namespace CtParamEditor.Core
         /// <param name="idxRow"></param>
         public void Insert(int idxRow) {
             idxRow = idxRow != -1 ? idxRow : DataSource.RowCount;
-            DataSource.Insert(idxRow);
+            mCommandManager.Insert(idxRow);
         }
 
         /// <summary>
@@ -284,7 +287,7 @@ namespace CtParamEditor.Core
         /// </summary>
         /// <param name="idxRow"></param>
         public void Remove(int idxRow) {
-            DataSource.Remove(idxRow);
+            mCommandManager.Remove(idxRow);
         }
 
         /// <summary>
@@ -694,6 +697,75 @@ namespace CtParamEditor.Core
         
         #endregion Implement - IUndoable
 
+    }
+
+    /// <summary>
+    /// 擴充命令
+    /// </summary>
+    internal static class ExtensionCommand {
+
+        /// <summary>
+        /// 編輯器物件參考
+        /// </summary>
+        public static ParamEditor RefEditor = null;
+        
+        /// <summary>
+        /// 插入資料列
+        /// </summary>
+        /// <param name="cmdManager"></param>
+        /// <param name="idxRow"></param>
+        public static void Insert(this CommandManager cmdManager, int idxRow) {
+            cmdManager.ExecutCmd(new CmdInsert(RefEditor, idxRow));
+        }
+
+        /// <summary>
+        /// 移除資料列
+        /// </summary>
+        /// <param name="cmdManager"></param>
+        /// <param name="idxRow"></param>
+        public static void Remove(this CommandManager cmdManager,int idxRow) {
+            cmdManager.ExecutCmd(new CmdRemove(RefEditor, idxRow));
+        }
+    }
+
+    /// <summary>
+    /// 插入新資料列
+    /// </summary>
+    internal class CmdInsert : BaseCommand<ParamEditor> {
+
+        private int mIdxRow;
+
+        public CmdInsert(ParamEditor receiver,int idxRow) : base(receiver) {
+            mIdxRow = idxRow;
+        }
+
+        public override void Execute() {
+            mReceiver.DataSource.Insert(mIdxRow);
+        }
+
+        public override void Undo() {
+            mReceiver.DataSource.Remove(mIdxRow);
+        }
+    }
+
+    /// <summary>
+    /// 移除資料
+    /// </summary>
+    internal class CmdRemove : BaseCommand<ParamEditor> {
+        private IParamColumn rParam = null;
+        private int mIdxRow = -1;
+        public CmdRemove(ParamEditor receiver,int idxRow) : base(receiver) {
+            rParam = mReceiver.DataSource[idxRow];
+            mIdxRow = idxRow;
+        }
+
+        public override void Execute() {
+            mReceiver.DataSource.Remove(mIdxRow);
+        }
+
+        public override void Undo() {
+            mReceiver.DataSource.Insert(mIdxRow, rParam);
+        }
     }
 
 }

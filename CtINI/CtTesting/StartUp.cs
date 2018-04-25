@@ -29,26 +29,26 @@ namespace CtTesting {
         }
 
         private void Test() {
-            int executeCount = 1000000;
-            Type classType = typeof(TestClass1);
-            Stopwatch sw = new Stopwatch();
-            sw.Restart();
-            for (int i = 0;i < executeCount; i++) {
-                TestClass1 TestClass1 = new TestClass1();
-            }
-            Console.WriteLine($"直接創建{executeCount}次花費{sw.ElapsedMilliseconds:F2}(ms)");
+            //int executeCount = 1000000;
+            //Type classType = typeof(TestClass1);
+            //Stopwatch sw = new Stopwatch();
+            //sw.Restart();
+            //for (int i = 0;i < executeCount; i++) {
+            //    TestClass1 TestClass1 = new TestClass1();
+            //}
+            //Console.WriteLine($"直接創建{executeCount}次花費{sw.ElapsedMilliseconds:F2}(ms)");
 
-            sw.Restart();
-            for (int i = 0; i < executeCount; i++) {
-                TestClass1 TestClass1 = (TestClass1)Activator.CreateInstance(classType);
-            }
-            Console.WriteLine($"Activator創建{executeCount}次花費{sw.ElapsedMilliseconds:F2}(ms)");
+            //sw.Restart();
+            //for (int i = 0; i < executeCount; i++) {
+            //    TestClass1 TestClass1 = (TestClass1)Activator.CreateInstance(classType);
+            //}
+            //Console.WriteLine($"Activator創建{executeCount}次花費{sw.ElapsedMilliseconds:F2}(ms)");
 
-            sw.Restart();
-            for (int i = 0; i < executeCount; i++) {
-                TestClass1 TestClass1 = (TestClass1)classType.GetConstructors()[0].Invoke(null);
-            }
-            Console.WriteLine($"GetConstructors創建{executeCount}次花費{sw.ElapsedMilliseconds:F2}(ms)");
+            //sw.Restart();
+            //for (int i = 0; i < executeCount; i++) {
+            //    TestClass1 TestClass1 = (TestClass1)classType.GetConstructors()[0].Invoke(null);
+            //}
+            //Console.WriteLine($"GetConstructors創建{executeCount}次花費{sw.ElapsedMilliseconds:F2}(ms)");
 
         }
 

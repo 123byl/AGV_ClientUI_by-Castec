@@ -7,6 +7,44 @@ using System.Threading.Tasks;
 namespace CtParamEditor.Comm {
     
     /// <summary>
+    /// 欄位列舉
+    /// </summary>
+    public enum EmColumn :int{
+        /// <summary>
+        /// 無
+        /// </summary>
+        None = 0,
+        /// <summary>
+        /// 參數名稱
+        /// </summary>
+        Name = 1,
+        /// <summary>
+        /// 參數說明
+        /// </summary>
+        Description = 2,
+        /// <summary>
+        /// 參數類型
+        /// </summary>
+        Type = 4,
+        /// <summary>
+        /// 參數值
+        /// </summary>
+        Value = 8,
+        /// <summary>
+        /// 參數最大值
+        /// </summary>
+        Max = 0x10,
+        /// <summary>
+        /// 參數最小值
+        /// </summary>
+        Min = 0x20,
+        /// <summary>
+        /// 參數預設值
+        /// </summary>
+        Default = 0x40,
+    }
+
+    /// <summary>
     /// 右鍵選單列舉
     /// </summary>
     public enum CmsOption {

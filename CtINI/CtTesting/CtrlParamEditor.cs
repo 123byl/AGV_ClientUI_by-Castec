@@ -46,7 +46,7 @@ namespace CtTesting {
         private RtfConvert mMrConvert = new RtfConvert();
 
         private RtfConvert mMcConvert = new RtfConvert();
-        
+
         #endregion Declaration - Fields
 
         #region Declaration - Enum
@@ -55,7 +55,20 @@ namespace CtTesting {
 
         #region Function - Constructors
 
-        
+        public CtrlParamEditor() {
+            InitializeComponent();
+            /*-- DataGridView寬度預設 --*/
+            DeployDGV(dgvProperties);
+            /*-- 使用者輸入方法委派 --*/
+            mEditor.InputText = InputText;
+            mEditor.ComboBoxList = ComboBoxList;
+            /*-- 事件委派 --*/
+            mEditor.ParamCollection.DataChanged += ParamCollection_DataChanged;
+            /*-- 資料綁定 --*/
+            Bindings(mEditor);
+            Bindings(mEditor.ParamCollection);
+        }
+
         #endregion Function - Constructors
 
         #region Function - Evnets
@@ -96,18 +109,26 @@ namespace CtTesting {
                 string v = prop.Default;
                 /*-- 取得欄位值 --*/
                 string val = prop.GetParamValue(columnName);
-                /*-- 必填欄位檢查 --*/
-                if (mEditor.ParamCollection.IsIlleagl(prop, columnName)) {
+                EmColumn emColumn = EmColumn.None;
+                switch (columnName) {
+                    case nameof(IParamColumn.Name):emColumn = EmColumn.Name;break;
+                    case nameof(IParamColumn.Description):emColumn = EmColumn.Description;break;
+                    case nameof(IParamColumn.Type):emColumn = EmColumn.Type;break;
+                    case nameof(IParamColumn.Value):emColumn = EmColumn.Value;break;
+                    case nameof(IParamColumn.Min):emColumn = EmColumn.Min;break;
+                    case nameof(IParamColumn.Max):emColumn = EmColumn.Max;break;
+                    case nameof(IParamColumn.Default):emColumn = EmColumn.Default;break;
+                    default:throw new Exception($"未定義欄位名稱{columnName}");
+                }
+
+                if ((prop.IlleaglColumn() & emColumn) != EmColumn.None) {
                     e.Value = mRcConvert.ToRTF("Required cell", mCellStyle.RequiredCell, false);//必填欄位樣式
-                } else if (mEditor.ParamCollection.IsModified(prop)) {
-                    //已編輯儲存格樣式
-                    if (mEditor.ParamCollection.IsModified(prop, columnName)) {
+                }else if (prop.ModifiedColumn() != EmColumn.None) {
+                    if ((prop.ModifiedColumn() & emColumn) != EmColumn.None) {
                         e.Value = mMcConvert.ToRTF(val, mCellStyle.ModifiedCell);
-                        //已編輯欄位樣式
                     } else {
                         e.Value = mMrConvert.ToRTF(val, mCellStyle.ModifiedRow);
                     }
-                    /*-- 一般欄位 --*/
                 } else {
                     e.Value = mRgConvert.ToRTF(val, mCellStyle.Regular);
                 }
@@ -416,19 +437,15 @@ namespace CtTesting {
         #endregion Implenent - IDataDisplay
 
         private void btnUndo_Click(object sender, EventArgs e) {
-
+            mEditor.Undo();
         }
 
         private void btnRedo_Click(object sender, EventArgs e) {
-
+            mEditor.Redo();
         }
 
     }
-
-    public class RefType {
-        public int Value { get; set; }
-    }
-
+    
     public static class Extenstion {
         
         public static bool ShowOption(this CmsOption option, CmsOption show) {
@@ -440,5 +457,6 @@ namespace CtTesting {
         }
     }
 
+    
 
 }

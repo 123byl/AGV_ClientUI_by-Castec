@@ -184,14 +184,51 @@ namespace CtParamEditor.Comm
     /// 僅用於定義dgv控制項中的欄位名稱與順序
     /// </remarks>
     public interface IParamColumn {
+        /// <summary>
+        /// 欄位對應參數值
+        /// </summary>
+        /// <param name="columnName"></param>
+        /// <returns></returns>
         object this[string columnName] { get; }
+        /// <summary>
+        /// 參數名稱
+        /// </summary>
         string Name { get; }
+        /// <summary>
+        /// 參數類型
+        /// </summary>
         string Type { get; }
+        /// <summary>
+        /// 參數值
+        /// </summary>
         string Value { get; }
+        /// <summary>
+        /// 參數說明
+        /// </summary>
         string Description { get; }
+        /// <summary>
+        /// 參數最大值
+        /// </summary>
         string Max { get; }
+        /// <summary>
+        /// 參數最小值
+        /// </summary>
         string Min { get; }
+        /// <summary>
+        /// 參數預設值
+        /// </summary>
         string Default { get; }
+
+        /// <summary>
+        /// 非法欄位
+        /// </summary>
+        /// <returns></returns>
+        EmColumn IlleaglColumn();
+        /// <summary>
+        /// 修改欄位
+        /// </summary>
+        /// <returns></returns>
+        EmColumn ModifiedColumn();
     }
 
     /// <summary>

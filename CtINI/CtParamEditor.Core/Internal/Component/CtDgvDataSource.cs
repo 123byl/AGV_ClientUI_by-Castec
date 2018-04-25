@@ -284,8 +284,8 @@ namespace CtParamEditor.Core.Internal.Component {
         /// </summary>
         /// <param name="mIdxRow"></param>
         /// <param name="prop"></param>
-        public void Insert(int mIdxRow) {
-            IParamColumn prop = new CtParam(Item_ValueChanged);
+        public void Insert(int mIdxRow,IParamColumn prop = null) {
+            prop = prop ?? new CtParam(Item_ValueChanged);
             /*-- 紀錄非法欄位 --*/
             mIllegal.Add(prop);
             /*-- 插入新資料 --*/
@@ -300,12 +300,22 @@ namespace CtParamEditor.Core.Internal.Component {
         /// <param name="mIdxRow"></param>
         public void Remove(int mIdxRow) {
             IParamColumn prop = mFullData[mIdxRow];
-            /*-- 移除非法紀錄 --*/
-            RemoveIllegalRecord?.Invoke(prop);
-            /*-- 移除資料 --*/
-            mFullData.Remove(prop);
-            /*-- 更新要顯示的資料筆數 --*/
-            OnPropertyChanged(nameof(RowCount));
+            Remove(prop);
+        }
+
+        /// <summary>
+        /// 移除指定資料
+        /// </summary>
+        /// <param name="prop"></param>
+        public void Remove(IParamColumn prop) {
+            if (mFullData.Contains(prop)) {
+                /*-- 移除非法紀錄 --*/
+                RemoveIllegalRecord?.Invoke(prop);
+                /*-- 移除資料 --*/
+                mFullData.Remove(prop);
+                /*-- 更新要顯示的資料筆數 --*/
+                OnPropertyChanged(nameof(RowCount));
+            }
         }
 
         /// <summary>

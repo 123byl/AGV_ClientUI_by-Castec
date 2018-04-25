@@ -270,6 +270,16 @@ namespace CtParamEditor.Core.Internal.Component {
         /// </summary>
         private string mDescription = null;
 
+        /// <summary>
+        /// 非法欄位
+        /// </summary>
+        private EmColumn mIlleaglColumn = EmColumn.None;
+
+        /// <summary>
+        /// 已修改欄位
+        /// </summary>
+        private EmColumn mModifiedColumn = EmColumn.None;
+
         #endregion Declaration - Fields
 
         #region Declaration - Properties
@@ -311,6 +321,7 @@ namespace CtParamEditor.Core.Internal.Component {
 
         public CtParam(EventHandler<string> valueChangedHandle) {
             ValueChanged += valueChangedHandle;
+            mIlleaglColumn = EmColumn.Name | EmColumn.Type;
         }
 
         private CtParam(string name, object val, string description, object def, object max, object min) {
@@ -325,7 +336,7 @@ namespace CtParamEditor.Core.Internal.Component {
 
         #endregion Function - Constructors
         
-        #region Implement - IAgvToDgvCol
+        #region Implement - IParamColumn
 
         public string Name { get { return mName; } }
         public string Type {
@@ -339,20 +350,48 @@ namespace CtParamEditor.Core.Internal.Component {
         public string Min { get { return mVal?.Min; } }
         public string Default { get { return mVal?.Def; } }
 
+        /// <summary>
+        /// 從INI檔讀取參數設定
+        /// </summary>
+        /// <param name="ini"></param>
+        /// <returns></returns>
         public bool ReadIni(IniStruct ini) {
-            this.mName = ini.Section;
-            if (SetType(ini) && SetValue(ini)) {                
+            bool success = SetType(ini) && SetValue(ini);
+            if (success) {
+                SetName(ini);
                 SetDescription(ini);
                 SetMax(ini);
                 SetMin(ini);
                 SetDefault(ini);
-                return true;
-            } else {
-                return false;
             }
+            return success;
         }
 
-        public bool SetType(string type) {
+        public bool SetName(string val,bool modify = true) {
+            EmColumn column = EmColumn.Name;
+            bool success = !string.IsNullOrEmpty((mName = val?.ToString()));
+            if (modify) {
+                mModifiedColumn |= column;
+            }
+
+            if (success) {
+                mIlleaglColumn &= (int.MaxValue - column);
+            } else {
+                mIlleaglColumn |= column;
+            }
+            return success;
+        }
+
+        public bool SetDescription(string description,bool modify = true) {
+            var column = modify ? EmColumn.Description : EmColumn.None;
+            mDescription = description;
+            mModifiedColumn |= column;
+            return true;
+        }
+
+        public bool SetType(string type,bool modify = true) {
+            EmColumn column = EmColumn.Type;
+            bool success = true;
             if (type == typeof(string).Name) {
                 mVal = new ParamValue<string>();
             } else if (type == typeof(int).Name) {
@@ -365,29 +404,72 @@ namespace CtParamEditor.Core.Internal.Component {
                 mVal = new ParamValue<IEnum>(type);
                 mVal.ContainItem = ContainItem;
             } else {
+                success = false;
                 mVal = null;
                 //throw new Exception($"未定義{type}類型");
             }
-            return true;
+
+            if (modify) {
+                mModifiedColumn |= column;
+            }
+
+            if (success) {
+                mIlleaglColumn &= (int.MaxValue - column); 
+            } else {
+                mIlleaglColumn |= column;
+            }
+            
+            return success;
         }
 
-        public bool SetValue(string val) {
-            return mVal?.SetValue(val, nameof(IParamColumn.Value)) ?? false;
+        public bool SetValue(string val,bool modify = true) {
+            EmColumn column = modify ? EmColumn.Value : EmColumn.None;
+            bool success =  mVal?.SetValue(val, nameof(IParamColumn.Value)) ?? false;
+            if (success) {
+                mModifiedColumn |= column;
+            }
+            return success;
         }
 
-        public bool SetMax(string val) {
-            return mVal.SetValue(val, nameof(IParamColumn.Max));
+        public bool SetMax(string val,bool modify = true) {
+            EmColumn column = modify ? EmColumn.Max : EmColumn.None;
+            bool success =  mVal.SetValue(val, nameof(IParamColumn.Max));
+            if (success) {
+                mModifiedColumn |= column;
+            }
+            return success;
         }
 
-        public bool SetMin(string val) {
-            return mVal.SetValue(val, nameof(IParamColumn.Min));
+        public bool SetMin(string val,bool modify = true) {
+            EmColumn column = modify ? EmColumn.Min : EmColumn.None;
+            bool success =  mVal.SetValue(val, nameof(IParamColumn.Min));
+            if (success) {
+                mModifiedColumn |= column;
+            }
+            return success;
         }
 
-        public bool SetDefault(string val) {
-            return mVal.SetValue(val, nameof(IParamColumn.Default));
+        public bool SetDefault(string val,bool modify = true) {
+            EmColumn column = modify ? EmColumn.Default : EmColumn.None;
+            bool success =  mVal.SetValue(val, nameof(IParamColumn.Default));
+            if (success) {
+                mModifiedColumn |= column;
+            }
+            return success;
         }
 
-        #endregion Implement - IAgvToDgvCol
+        /// <summary>
+        /// 非法欄位
+        /// </summary>
+        /// <returns></returns>
+        public EmColumn IlleaglColumn() => mIlleaglColumn;
+        /// <summary>
+        /// 修改欄位
+        /// </summary>
+        /// <returns></returns>
+        public EmColumn ModifiedColumn() => mModifiedColumn;
+
+        #endregion Implement - IParamColumn
 
         #region Implement - IParam
 
@@ -423,14 +505,26 @@ namespace CtParamEditor.Core.Internal.Component {
         public bool SetValue(string val, string columnName) {
             bool success = false;
             switch (columnName) {
-                case nameof(IParamColumn.Name): success = SetName(val); break ;
-                case nameof(IParamColumn.Type): success = SetType(val); break ;
-                case nameof(IParamColumn.Description): success = SetDescription(val);break;
+                case nameof(IParamColumn.Name):
+                    success = SetName(val);
+                    break ;
+                case nameof(IParamColumn.Type):
+                    success = SetType(val);
+                    break ;
+                case nameof(IParamColumn.Description):
+                    success = SetDescription(val);
+                    break;
                 case nameof(IParamColumn.Value):
+                    success = SetValue(val);
+                    break;
                 case nameof(IParamColumn.Max):
+                    success = SetMax(val);
+                    break;
                 case nameof(IParamColumn.Min):
+                    success = SetMin(val);
+                    break;
                 case nameof(IParamColumn.Default):
-                    success = mVal.SetValue(val, columnName);
+                    success = SetDefault(val);
                     break;
                 default:
                     throw new Exception($"未定義欄位名稱{columnName}");
@@ -448,55 +542,51 @@ namespace CtParamEditor.Core.Internal.Component {
 
         #region Function - Private Methods
 
-        public bool SetName(string val) {
-            mName = val.ToString();
-            return true;
-        }
-
-        public bool SetDescription(string description) {
-            mDescription = description;
-            return true;
+        private bool SetName(IniStruct ini) {
+            return SetName(ini.Section, false);
         }
 
         private bool SetType(IniStruct ini) {
             bool isContain = false;
             bool isSuc = false;
-            bool ret = (isContain = ini.ContainKey(nameof(IParamColumn.Type)) && (isSuc = SetType(ini[nameof(IParamColumn.Type)])));
+            bool ret = (isContain = ini.ContainKey(nameof(IParamColumn.Type)) && (isSuc = SetType(ini[nameof(IParamColumn.Type)],false)));
+
             return ret;
         }
 
         private bool SetValue(IniStruct ini) {
             bool isContain = false;
             bool isSuc = false;
-            bool ret = (isContain = ini.ContainKey(nameof(IParamColumn.Value)) && (isSuc = SetValue(ini[nameof(IParamColumn.Value)])));
+            bool ret = (isContain = ini.ContainKey(nameof(IParamColumn.Value)) && (isSuc = SetValue(ini[nameof(IParamColumn.Value)],false)));
+            
             return ret;
         }
 
         private bool SetDescription(IniStruct ini) {
             bool isContain = false;
             bool isSuc = false;
-            bool ret = (isContain = ini.ContainKey(nameof(IParamColumn.Description)) && (isSuc = SetDescription(ini[nameof(IParamColumn.Description)])));
+            bool ret = (isContain = ini.ContainKey(nameof(IParamColumn.Description)) && (isSuc = SetDescription(ini[nameof(IParamColumn.Description)],false)));
             return ret;
         }
 
         private bool SetMax(IniStruct ini) {
             bool isContain = false;
             bool isSuc = false;
-            bool ret = (isContain = ini.ContainKey(nameof(IParamColumn.Max)) && (isSuc = SetMax(ini[nameof(IParamColumn.Max)])));
+            bool ret = (isContain = ini.ContainKey(nameof(IParamColumn.Max)) && (isSuc = SetMax(ini[nameof(IParamColumn.Max)],false)));
             return ret;
         }
 
         private bool SetMin(IniStruct ini) {
             bool isContain = false;
             bool isSuc = false;
-            bool ret = (isContain = ini.ContainKey(nameof(IParamColumn.Min)) && (isSuc = SetMin(ini[nameof(IParamColumn.Min)])));
+            bool ret = (isContain = ini.ContainKey(nameof(IParamColumn.Min)) && (isSuc = SetMin(ini[nameof(IParamColumn.Min)],false)));
             return ret;
         }
 
         private bool SetDefault(IniStruct ini) {
             bool isContain = false;
             bool isSuc = false;
-            bool ret = (isContain = ini.ContainKey(nameof(IParamColumn.Default)) && (isSuc = SetDefault(ini[nameof(IParamColumn.Default)])));
+            bool ret = (isContain = ini.ContainKey(nameof(IParamColumn.Default)) && (isSuc = SetDefault(ini[nameof(IParamColumn.Default)],false)));
             return ret;
         }
         
