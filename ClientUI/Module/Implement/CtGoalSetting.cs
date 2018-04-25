@@ -421,5 +421,9 @@ namespace VehiclePlanner.Module.Implement {
         }
 
         #endregion Implement - IDataDisplay<ICtVehiclePlanner>
+
+        private void grbMap_Enter(object sender, EventArgs e) {
+
+        }
     }
 }
