@@ -13,7 +13,7 @@ namespace CtParamEditor.Core {
         /// </summary>
         /// <param name="columnName"></param>
         /// <returns></returns>
-        public static EmColumn ToEnum(this string columnName) {
+        public static EmColumn ToEnumColumn(this string columnName) {
             EmColumn emColumn = EmColumn.None;
             switch (columnName) {
                 case nameof(IParamColumn.Name):

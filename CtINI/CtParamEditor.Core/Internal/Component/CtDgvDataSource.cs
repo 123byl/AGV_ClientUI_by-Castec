@@ -27,10 +27,7 @@ namespace CtParamEditor.Core.Internal.Component {
         /// 過濾後的資料
         /// </summary>
         private BindingList<IParamColumn> mFilter = new BindingList<IParamColumn>();
-
-        CtModifiedField mModified = new CtModifiedField();
-
-        CtIllegalField mIllegal = new CtIllegalField();
+        
         #endregion Declaration - Fields
 
         #region Declaration - Properties
@@ -161,19 +158,7 @@ namespace CtParamEditor.Core.Internal.Component {
             if (isFund) val = tVal;
             return isFund;
         }
-
-        public bool IsIlleagl(IParam prop, string columnName) {
-            return mIllegal.Contains(prop, columnName);
-        }
-
-        public bool IsModified(IParam prop) {
-            return mModified.ContainsRow(prop);
-        }
-
-        public bool IsModified(IParam prop, string columnName) {
-            return mModified.ContainsColumn(prop, columnName);
-        }
-
+        
         #endregion Implement - IParamCollection
 
         #region Implement - IDataSource
@@ -290,8 +275,6 @@ namespace CtParamEditor.Core.Internal.Component {
         /// <param name="prop"></param>
         public void Insert(int mIdxRow,IParamColumn prop = null) {
             prop = prop ?? new CtParam(Item_ValueChanged);
-            /*-- 紀錄非法欄位 --*/
-            mIllegal.Add(prop);
             /*-- 插入新資料 --*/
             mFullData.Insert(mIdxRow, prop);
             /*-- 更新要顯示的資料筆數 --*/
@@ -396,17 +379,7 @@ namespace CtParamEditor.Core.Internal.Component {
             }
         }
 
-        private void Item_ValueChanged(object sender, string e) {
-            IParamColumn prop = sender as IParamColumn;
-            string columnName = e;
-            mModified.Add(prop, columnName);
-            if (string.IsNullOrEmpty(prop[e].ToString())) {
-                /*-- 記錄非法的欄位 --*/
-                mIllegal.Add(prop, columnName);
-            } else {
-                /*-- 移除非法紀錄 --*/
-                mIllegal.Remove(prop, columnName);
-            }
+        private void Item_ValueChanged(object sender, string e) {            
             OnDataChanged();
         }
 

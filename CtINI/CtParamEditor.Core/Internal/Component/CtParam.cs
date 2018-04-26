@@ -52,7 +52,7 @@ namespace CtParamEditor.Core.Internal.Component {
         T IParamValue<T>.Value { get { return mVal[nameof(IParamColumn.Value)]; } }
         T IParamValue<T>.Max {
             get {
-                if (IsDefMax) {
+                if (IsDefineMax) {
                     return mVal[nameof(IParamColumn.Max)];
                 } else
                     return default(T);
@@ -60,7 +60,7 @@ namespace CtParamEditor.Core.Internal.Component {
         }
         T IParamValue<T>.Min {
             get {
-                if (IsDefMin) {
+                if (IsDefineMin) {
                     return mVal[nameof(IParamColumn.Min)];
                 } else
                     return default(T);
@@ -68,21 +68,21 @@ namespace CtParamEditor.Core.Internal.Component {
         }
         T IParamValue<T>.Def {
             get {
-                if (IsDefDefault) {
+                if (IsDefineDefault) {
                     return mVal[nameof(IParamColumn.Default)];
                 } else return default(T);
             }
         }
 
-        public bool IsDefMax {
+        public bool IsDefineMax {
             get { return mIsDefRange && mIsDef[nameof(IParamColumn.Max)]; }
             set { mIsDef[nameof(IParamColumn.Max)] = value; }
         }
-        public bool IsDefMin {
+        public bool IsDefineMin {
             get { return mIsDefRange && mIsDef[nameof(IParamColumn.Min)]; }
             set { mIsDef[nameof(IParamColumn.Min)] = value; }
         }
-        public bool IsDefDefault {
+        public bool IsDefineDefault {
             get { return mIsDef[nameof(IParamColumn.Default)]; }
             set { mIsDef[nameof(IParamColumn.Default)] = value; }
         }
@@ -109,9 +109,9 @@ namespace CtParamEditor.Core.Internal.Component {
             if (suc) {
                 if (columnName == nameof(IParamColumn.Value) || columnName == nameof(IParamColumn.Default)) {
                     /*-- 有設定最大值則比對之 --*/
-                    if (IsDefMax && (tmpVal as IComparable<T>).CompareTo(mVal[nameof(IParamColumn.Max)]) > 0) return false;
+                    if (IsDefineMax && (tmpVal as IComparable<T>).CompareTo(mVal[nameof(IParamColumn.Max)]) > 0) return false;
                     /*-- 有設定最小值則比對之 --*/
-                    if (IsDefMin && (tmpVal as IComparable<T>).CompareTo(mVal[nameof(IParamColumn.Min)]) < 0) return false;
+                    if (IsDefineMin && (tmpVal as IComparable<T>).CompareTo(mVal[nameof(IParamColumn.Min)]) < 0) return false;
                 }
                 if (mIsDef.ContainsKey(columnName)) mIsDef[columnName] = !IsNullorEmpty;
                 mVal[columnName] = tmpVal;
@@ -131,11 +131,11 @@ namespace CtParamEditor.Core.Internal.Component {
         
         string IParamValue.Value => mVal[nameof(IParamColumn.Value)]?.ToString() ?? "";
 
-        string IParamValue.Max => mVal[nameof(IParamColumn.Max)]?.ToString() ?? "";
+        string IParamValue.Max => IsDefineMax ? mVal[nameof(IParamColumn.Max)].ToString()  : "";
 
-        string IParamValue.Min => mVal[nameof(IParamColumn.Min)]?.ToString() ?? "";
+        string IParamValue.Min => IsDefineMin ? mVal[nameof(IParamColumn.Min)].ToString() :"";
 
-        string IParamValue.Def => mVal[nameof(IParamColumn.Default)]?.ToString() ?? "";
+        string IParamValue.Def => IsDefineDefault ? mVal[nameof(IParamColumn.Default)].ToString() : "";
 
         public void SetMaximun(T max) {
             if (RangeDefinable) {
@@ -347,6 +347,10 @@ namespace CtParamEditor.Core.Internal.Component {
         public string Min { get { return mVal?.Min; } }
         public string Default { get { return mVal?.Def; } }
 
+        public bool IsDefineMax() => mVal?.IsDefineMax ?? false;
+        public bool IsDefineMin() => mVal?.IsDefineMin ?? false;
+        public bool IsDefineDefault() => mVal?.IsDefineDefault ?? false;
+
         /// <summary>
         /// 從INI檔讀取參數設定
         /// </summary>
@@ -498,6 +502,7 @@ namespace CtParamEditor.Core.Internal.Component {
                 return mVal?.RangeDefinable ?? false;
             }
         }
+        
 
         public bool SetValue(string val, string columnName) {
             bool success = false;
@@ -541,15 +546,17 @@ namespace CtParamEditor.Core.Internal.Component {
 
         public object Clone() {
             var clone = new CtParam();
-            clone.SetType(this.Type);
-            clone.SetValue(this.Value);
-            clone.SetName(this.Name);
-            clone.SetDescription(this.Description);
-            clone.SetMax(this.Max);
-            clone.SetMin(this.Min);
-            clone.SetDefault(this.Default);
-            clone.mModifiedColumn = this.mModifiedColumn;
-            clone.mIlleaglColumn = this.mIlleaglColumn;
+            if (!string.IsNullOrEmpty(this.Type)) {
+                clone.SetType(this.Type);
+                clone.SetValue(this.Value);
+                clone.SetName(this.Name);
+                clone.SetDescription(this.Description);
+                clone.SetMax(this.Max);
+                clone.SetMin(this.Min);
+                clone.SetDefault(this.Default);
+                clone.mModifiedColumn = this.mModifiedColumn;
+                clone.mIlleaglColumn = this.mIlleaglColumn;
+            }
             clone.ValueChanged += this.ValueChanged;
             return clone;
         }

@@ -132,27 +132,6 @@ namespace CtParamEditor.Comm
         bool FindVal<T>(string name, ref T val) where T : IConvertible;
 
         /// <summary>
-        /// 是否為非法值
-        /// </summary>
-        /// <param name="prop"></param>
-        /// <param name="columnName"></param>
-        /// <returns></returns>
-        bool IsIlleagl(IParam prop, string columnName);
-        /// <summary>
-        /// 該資料列是否已修改過
-        /// </summary>
-        /// <param name="prop"></param>
-        /// <returns></returns>
-        bool IsModified(IParam prop);
-        /// <summary>
-        /// 該資料是否修過
-        /// </summary>
-        /// <param name="prop"></param>
-        /// <param name="columnName"></param>
-        /// <returns></returns>
-        bool IsModified(IParam prop, string columnName);
-
-        /// <summary>
         /// 資料變更事件
         /// </summary>
         event EventHandler DataChanged;
@@ -229,6 +208,10 @@ namespace CtParamEditor.Comm
         /// </summary>
         /// <returns></returns>
         EmColumn ModifiedColumn();
+
+        bool IsDefineMax();
+        bool IsDefineMin();
+        bool IsDefineDefault();
         
     }
 
@@ -256,15 +239,15 @@ namespace CtParamEditor.Comm
         /// <summary>
         /// 是否有最大值定義
         /// </summary>
-        bool IsDefMax { get; }
+        bool IsDefineMax { get; }
         /// <summary>
         /// 是否有最小值定義
         /// </summary>
-        bool IsDefMin { get; }
+        bool IsDefineMin { get; }
         /// <summary>
         /// 是否有最小值定義
         /// </summary>
-        bool IsDefDefault { get; }
+        bool IsDefineDefault { get; }
         /// <summary>
         /// 是否可以定義範圍
         /// </summary>

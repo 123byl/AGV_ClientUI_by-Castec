@@ -5,9 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace CtParamEditor.Core.Internal.Component {
-    internal static class CtBoundaryType {
 
-        
-        
-    }
+
 }

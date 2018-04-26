@@ -23,6 +23,7 @@ using CtParamEditor.Core.Internal.Component;
 using DataGridViewRichTextBox;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization;
+using CtParamEditor.Core;
 
 namespace CtTesting {
 
@@ -83,7 +84,7 @@ namespace CtTesting {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void dgvProperties_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e) {
-            mEditor.SelectedColumnName = dgvProperties.Columns[e.ColumnIndex].HeaderText;
+            mEditor.SelectedColumnName = e.ColumnIndex != -1 ? dgvProperties.Columns[e.ColumnIndex].HeaderText : "";
             mEditor.SelectedRow = e.RowIndex;
             if (e.Button == MouseButtons.Right) {
                 if (mEditor.ShowOption != CmsOption.None) {
@@ -116,17 +117,7 @@ namespace CtTesting {
                 string v = prop.Default;
                 /*-- 取得欄位值 --*/
                 string val = prop.GetParamValue(columnName);
-                EmColumn emColumn = EmColumn.None;
-                switch (columnName) {
-                    case nameof(IParamColumn.Name):emColumn = EmColumn.Name;break;
-                    case nameof(IParamColumn.Description):emColumn = EmColumn.Description;break;
-                    case nameof(IParamColumn.Type):emColumn = EmColumn.Type;break;
-                    case nameof(IParamColumn.Value):emColumn = EmColumn.Value;break;
-                    case nameof(IParamColumn.Min):emColumn = EmColumn.Min;break;
-                    case nameof(IParamColumn.Max):emColumn = EmColumn.Max;break;
-                    case nameof(IParamColumn.Default):emColumn = EmColumn.Default;break;
-                    default:throw new Exception($"未定義欄位名稱{columnName}");
-                }
+                EmColumn emColumn = columnName.ToEnumColumn();
 
                 if ((prop.IlleaglColumn() & emColumn) != EmColumn.None) {
                     e.Value = mRcConvert.ToRTF("Required cell", mCellStyle.RequiredCell, false);//必填欄位樣式
@@ -137,6 +128,7 @@ namespace CtTesting {
                         e.Value = mMrConvert.ToRTF(val, mCellStyle.ModifiedRow);
                     }
                 } else {
+                    
                     e.Value = mRgConvert.ToRTF(val, mCellStyle.Regular);
                 }
             } catch (Exception ex) {
@@ -149,7 +141,7 @@ namespace CtTesting {
         #region ToolStripMenuItem
 
         private void miEdit_Click(object sender, EventArgs e) {
-            var columnName = dgvProperties.Columns[mEditor.SelectedColumnName].HeaderText;
+            var columnName = mEditor.SelectedColumnName;
             /*-- 取得目前選取的資料列 --*/
             IParam prop = mEditor.ParamCollection[mEditor.SelectedRow] as IParam;
             /*-- 使用者輸入 --*/

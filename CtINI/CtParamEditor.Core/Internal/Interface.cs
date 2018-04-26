@@ -15,6 +15,9 @@ namespace CtParamEditor.Core.Internal {
         string Max { get; }
         string Min { get; }
         string Def { get; }
+        bool IsDefineMax { get; }
+        bool IsDefineMin { get; }
+        bool IsDefineDefault { get; }
         bool RangeDefinable { get; }
         bool SetValue(string val, string columnName);
         Delegates.EnumData.DelContainItem ContainItem { get; set; }

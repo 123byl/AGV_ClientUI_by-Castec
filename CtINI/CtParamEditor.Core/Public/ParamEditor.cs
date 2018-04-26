@@ -32,12 +32,7 @@ namespace CtParamEditor.Core
         /// INI檔案路徑
         /// </summary>
         private string mIniPath = null;
-
-        /// <summary>
-        /// <see cref="DataGridView"/>物件參考
-        ///// </summary>
-        //private DataGridView rDgv = null;
-
+        
         /// <summary>
         /// 被點選的DataGridCell列數
         /// </summary>
@@ -47,15 +42,7 @@ namespace CtParamEditor.Core
         /// 被點選的DataGridCell行數
         /// </summary>
         private string mSelectedColumnName;
-
-        private RtfConvert mRgConvert = new RtfConvert();
-
-        private RtfConvert mRcConvert = new RtfConvert();
-
-        private RtfConvert mMrConvert = new RtfConvert();
-
-        private RtfConvert mMcConvert = new RtfConvert();
-
+        
         private Action<MethodInvoker> mDelinvoke = null;
 
         /// <summary>
@@ -105,19 +92,6 @@ namespace CtParamEditor.Core
         /// </summary>
         public ICellStyles CellStyles { get; } = new CtCellStyles();
 
-        /// <summary>
-        /// 顯示資料用的<see cref="DataGridView"/>
-        /// </summary>
-        //public DataGridView GridView {
-        //    get { return rDgv; }
-        //    set {
-        //        rDgv = value;
-        //        if (rDgv != null) {
-        //            DeployDGV(rDgv);
-        //        }
-        //    }
-        //}
-
         public IParamCollection ParamCollection { get { return DataSource; } }
 
         /// <summary>
@@ -139,16 +113,6 @@ namespace CtParamEditor.Core
         /// 參數資料
         /// </summary>
         public CtDgvDataSource DataSource  = new CtDgvDataSource();
-
-        /// <summary>
-        /// 非法欄位紀錄
-        /// </summary>
-        private CtIllegalField IllegalField  = new CtIllegalField();
-
-        /// <summary>
-        /// 被修改欄位紀錄
-        /// </summary>
-        private CtModifiedField ModifiedField { get; set; } = new CtModifiedField();
         
         /// <summary>
         /// 要顯示的選項
@@ -198,9 +162,7 @@ namespace CtParamEditor.Core
 
             /*-- 分配委派 --*/
             AssignDelegation();
-
-            /*-- 分配字型樣式 --*/
-            AssignFontStyle();
+            
 
         }
 
@@ -213,9 +175,7 @@ namespace CtParamEditor.Core
         /// </summary>
         /// <param name="keyWord"></param>
         public void Highlight(string keyWord) {
-            mRgConvert.KeyWord = keyWord;
-            mMrConvert.KeyWord = keyWord;
-            mMcConvert.KeyWord = keyWord;
+
         }
 
         /// <summary>
@@ -299,14 +259,10 @@ namespace CtParamEditor.Core
         /// 將參數寫入INI檔
         /// </summary>
         public void SaveToINI(string path = null) {
-            if (IllegalField.Count() > 0) {
-                /*-- 反白未填入的儲存格 --*/
-                //if (rDgv != null) {
-                    IParamColumn prop = IllegalField[0].Key;
-                    int idx = DataSource.IndexOf(prop);
-                    //rDgv[nameof(IParamColumn.Name, idx].Selected = true;
-                //}
-                throw new Exception("尚有必填資料未輸入");
+
+            bool isIlleagl = true;
+            if (isIlleagl) {
+                throw new Exception("有非法欄位導致無法儲存");
             } else {
                 string savePath = string.IsNullOrEmpty(path) ? mIniPath : path;
                 StringBuilder iniContent = new StringBuilder();
@@ -321,30 +277,6 @@ namespace CtParamEditor.Core
 
                 /*-- 寫入INI檔 --*/
                 File.WriteAllText(savePath, iniContent.ToString(), Encoding.UTF8);
-
-                /*-- 將修改的儲存格樣式復原 --*/
-                #region 資料繫結 
-                /////資料繫結需逐儲存格將樣式復原
-                //if (ModifiedField.Data.Count() > 0 && rDgv != null) {
-                //    foreach(var kvp in ModifiedField.Data) {
-                //        int idxRow = DataSource.Data.IndexOf(kvp.Key);
-                //        rDgv.Rows[idxRow].DefaultCellStyle.Font = RegularFont;
-                //        foreach(int idxCol in kvp.Value) {
-                //            rDgv[idxCol, idxRow].Style.ForeColor = Color.Black;
-                //        }
-                //    }
-                //}
-                #endregion 資料繫結需逐儲存格將樣式復原
-
-                #region 虛擬填充
-
-                ///由於虛擬填充是顯示時設定顯示樣式
-                ///清除特殊樣式欄位紀錄即可
-                ModifiedField.Clear();
-                //rDgv?.Refresh();
-
-                #endregion   
-
             }
         }
         
@@ -353,9 +285,7 @@ namespace CtParamEditor.Core
         /// </summary>
         public void Clear() {
             DataSource.Clear();
-            ModifiedField.Clear();
             EnumData.Data.Clear();
-            IllegalField.Clear();
             mCommandManager.Clear();
         }
 
@@ -396,57 +326,7 @@ namespace CtParamEditor.Core
         #endregion Function - Public Methods
             
         #region Function-  Private Methods
-
-        /// <summary>
-        /// 分配字型樣式
-        /// </summary>
-        private void AssignFontStyle() {
-            mRgConvert.Regular = CellStyles.Regular;
-            mRcConvert.Regular = CellStyles.RequiredCell;
-            mMcConvert.Regular = CellStyles.ModifiedCell;
-            mMrConvert.Regular = CellStyles.ModifiedRow;
-
-            mRgConvert.Highlight = CellStyles.Highlight;
-            mMcConvert.Highlight = CellStyles.Highlight;
-            mMrConvert.Highlight = CellStyles.Highlight;
-        }
-
-        /// <summary>
-        /// 部署<see cref="DataGridView"/>
-        /// </summary>
-        /// <param name="dgv"></param>
-        private void DeployDGV(DataGridView dgv) {
-            /*-- 關閉欄位名稱自動產生 --*/
-            dgv.AutoGenerateColumns = false;
-            /*-- 開啟虛擬填充模式 --*/
-            dgv.VirtualMode = true;
-            /*-- 鎖住直接編輯功能 --*/
-            dgv.ReadOnly = true;
-            /*-- 啟用雙緩衝 --*/
-            Type dgvType = dgv.GetType();
-            PropertyInfo pi = dgvType.GetProperty("DoubleBuffered", BindingFlags.Instance | BindingFlags.NonPublic);
-            pi.SetValue(dgv, true, null);
-            /*-- 虛擬填充事件委派 --*/
-            //dgv.CellValueNeeded += rDgv_CellValueNeeded;
-            /*-- 儲存格滑鼠點擊事件委派 --*/
-            //dgv.CellMouseClick += rDgv_CellMouseClick;
-            /*-- 滑鼠點擊事件委派 --*/
-            //dgv.MouseClick += rDgv_MouseClick;
-            /*-- 配置欄位標題 --*/
-            DataGridViewRichTextBox.Factory FTY = new DataGridViewRichTextBox.Factory();
-            //List<DataGridViewColumn> cols = new List<DataGridViewColumn>() {
-            //    FTY.GetRichTextColumn(PropField.Str.Name),
-            //    FTY.GetRichTextColumn(PropField.Str.ValType),
-            //    FTY.GetRichTextColumn(PropField.Str.Value),
-            //    FTY.GetRichTextColumn(PropField.Str.Description),
-            //    FTY.GetRichTextColumn(PropField.Str.Max),
-            //    FTY.GetRichTextColumn(PropField.Str.Min),
-            //    FTY.GetRichTextColumn(PropField.Str.Default),
-            ////};
-            //dgv.Columns.Clear();
-            //dgv.Columns.AddRange(cols.ToArray());
-        }
-
+            
         /// <summary>
         /// 將參數設定寫入<see cref="StringBuilder"/>
         /// </summary>
@@ -467,10 +347,7 @@ namespace CtParamEditor.Core
         /// 分配委派
         /// </summary>
         private void AssignDelegation() {
-            /*-- 非法欄位紀錄方法委派 --*/
-            DataSource.AddIllegal = IllegalField.Add;
-            /*-- 非法欄位移除方法委派 --*/
-            DataSource.RemoveIllegalRecord = IllegalField.Remove;
+
 
             DataSource.ContainType = EnumData.ContainType;
 
