@@ -288,7 +288,11 @@ namespace CtParamEditor.Core
             BaseFieldEditor editor = GetEditor(columnName);
 
             /*-- 使用者輸入 --*/
-            editor.Edit(prop);            
+            if (editor.Edit(prop,out string newValue)) {
+                /*-- 寫入參數 --*/
+                mCommandManager.Edit(newValue, SelectedRow, columnName);
+            }
+
         }
 
         /// <summary>
@@ -352,8 +356,7 @@ namespace CtParamEditor.Core
             ModifiedField.Clear();
             EnumData.Data.Clear();
             IllegalField.Clear();
-            OnPropertyChanged(nameof(UndoCount));
-            OnPropertyChanged(nameof(RedoCount));
+            mCommandManager.Clear();
         }
 
         /// <summary>
@@ -630,8 +633,6 @@ namespace CtParamEditor.Core
         /// </summary>
         public void Undo() {
             mCommandManager.Undo();
-            OnPropertyChanged(nameof(UndoCount));
-            OnPropertyChanged(nameof(RedoCount));
         }
 
         /// <summary>
@@ -639,8 +640,6 @@ namespace CtParamEditor.Core
         /// </summary>
         public void Redo() {
             mCommandManager.Redo();
-            OnPropertyChanged(nameof(UndoCount));
-            OnPropertyChanged(nameof(RedoCount));
         }        
         #endregion Implement - IUndoable
 
@@ -673,6 +672,17 @@ namespace CtParamEditor.Core
         public static void Remove(this CommandManager cmdManager,int idxRow) {
             cmdManager.ExecutCmd(new CmdRemove(RefEditor, idxRow));
         }
+
+        /// <summary>
+        /// 編輯資料
+        /// </summary>
+        /// <param name="cmdManager"></param>
+        /// <param name="value"></param>
+        /// <param name="idxRow"></param>
+        /// <param name="columnName"></param>
+        public static void Edit(this CommandManager cmdManager,string value,int idxRow,string columnName) {
+            cmdManager.ExecutCmd(new CmdEdit(RefEditor,value, idxRow, columnName));
+        }
     }
 
     /// <summary>
@@ -686,8 +696,9 @@ namespace CtParamEditor.Core
             mIdxRow = idxRow;
         }
 
-        public override void Execute() {
+        public override bool Execute() {
             mReceiver.DataSource.Insert(mIdxRow);
+            return true;
         }
 
         public override void Undo() {
@@ -706,13 +717,61 @@ namespace CtParamEditor.Core
             mIdxRow = idxRow;
         }
 
-        public override void Execute() {
+        public override bool Execute() {
             mReceiver.DataSource.Remove(mIdxRow);
+            return true;
         }
 
         public override void Undo() {
             mReceiver.DataSource.Insert(mIdxRow, rParam);
         }
+    }
+
+    /// <summary>
+    /// 編輯資料
+    /// </summary>
+    internal class CmdEdit : BaseCommand<ParamEditor> {
+
+        /// <summary>
+        /// 編輯目標列索引
+        /// </summary>
+        private int mIdxRow;
+
+        /// <summary>
+        /// 設定值
+        /// </summary>
+        private string mValue;
+
+        /// <summary>
+        /// 編輯欄位名稱
+        /// </summary>
+        private string mColumnName;
+
+        /// <summary>
+        /// 原始參數備份
+        /// </summary>
+        private IParam mParamClone;
+
+        public CmdEdit(ParamEditor receiver,string value,int idxRow,string columnName) : base(receiver) {
+            mParamClone = mReceiver.DataSource[idxRow].Clone() as IParam;
+            mIdxRow = idxRow;
+            mValue = value;
+            mColumnName = columnName;
+        }
+
+        public override bool Execute() {
+            /*-- 取得目標參數 --*/
+            var param = mReceiver.DataSource[mIdxRow] as IParam;
+            /*-- 寫入設定值 --*/
+            bool success =  param.SetValue(mValue, mColumnName);
+            return success;
+        }
+
+        public override void Undo() {
+            /*-- 將參數備份副本覆蓋回修改後的資料 --*/
+            mReceiver.DataSource[mIdxRow] = mParamClone.Clone() as IParamColumn;
+        }
+
     }
 
 }

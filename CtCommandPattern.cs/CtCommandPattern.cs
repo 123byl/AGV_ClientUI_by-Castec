@@ -51,9 +51,10 @@ namespace CtCommandPattern.cs
     /// </summary>
     public interface ICommand {
         /// <summary>
-        /// 執行
+        /// 執行/重做
         /// </summary>
-        void Execute();
+        /// <returns>是否執行成功</returns>
+        bool Execute();
         /// <summary>
         /// 撤銷
         /// </summary>
@@ -73,7 +74,7 @@ namespace CtCommandPattern.cs
         /// <summary>
         /// 執行/重做
         /// </summary>
-        public abstract void Execute();
+        public abstract bool Execute();
 
         /// <summary>
         /// 復原
@@ -210,13 +211,14 @@ namespace CtCommandPattern.cs
         /// </summary>
         /// <param name="cmd"></param>
         public override void ExecutCmd(ICommand cmd) {
-            cmd.Execute();
-            UndoOperate(undo => undo.Add(cmd));
-            if (UndoLimit != -1 && UndoCount > UndoLimit) {
-                UndoOperate(undo => undo.RemoveAt(0));
+            bool success = cmd.Execute();
+            if (success) {
+                UndoOperate(undo => undo.Add(cmd));
+                if (UndoLimit != -1 && UndoCount > UndoLimit) {
+                    UndoOperate(undo => undo.RemoveAt(0));
+                }
+                RedoOperate(redo => redo.Clear());
             }
-            RedoOperate(redo => redo.Clear());
-
         }
 
         /// <summary>

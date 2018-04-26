@@ -43,6 +43,10 @@ namespace CtParamEditor.Core.Internal.Component {
                     return null;
                 }
             }
+            internal set {
+                Data[indexRow] = value;
+                OnDataChanged();
+            }
         }
 
 

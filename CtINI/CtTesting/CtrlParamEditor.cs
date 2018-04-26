@@ -21,6 +21,8 @@ using CtParamEditor.Core.Internal;
 using CtParamEditor.Core.Internal.Component.FIeldEditor;
 using CtParamEditor.Core.Internal.Component;
 using DataGridViewRichTextBox;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Serialization;
 
 namespace CtTesting {
 
@@ -54,6 +56,9 @@ namespace CtTesting {
 
         public CtrlParamEditor() {
             InitializeComponent();
+
+            CloneClass c1 = new CloneClass(10);
+            CloneClass c2 = c1.Clone() as CloneClass;
             /*-- DataGridView寬度預設 --*/
             DeployDGV(dgvProperties);
             /*-- 使用者輸入方法委派 --*/
@@ -483,6 +488,20 @@ namespace CtTesting {
         }
     }
 
-    
+    [Serializable]
+    public class CloneClass {
+        public int Value { get; set; } = 0;
+        public CloneClass(int value) { Value = value; }
+        public object Clone() {
+            object clone = null;
+            using (var memory = new MemoryStream()) {
+                IFormatter formatter = new BinaryFormatter();
+                formatter.Serialize(memory, this);
+                memory.Seek(0, SeekOrigin.Begin);
+                clone = formatter.Deserialize(memory);
+            }
+            return clone;
+        }
+    }
 
 }

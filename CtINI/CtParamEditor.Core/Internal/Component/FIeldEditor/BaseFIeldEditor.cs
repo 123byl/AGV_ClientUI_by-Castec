@@ -68,16 +68,12 @@ namespace CtParamEditor.Core.Internal.Component.FIeldEditor {
         /// </summary>
         /// <param name="prop"></param>
         /// <returns></returns>
-        public bool Edit(IParam prop) {
-            string returnValue;
+        public bool Edit(IParam prop,out string returnValue) {
             /*-- 取得原始參數值 --*/
             string oriVal = OriVal(prop);
             /*-- 讓使用者輸入新值 --*/
             bool suc = abEdit(prop.Type, oriVal, out returnValue);
-            if (suc) {
-                /*-- 將新值寫入欄位 --*/
-                suc = prop.SetValue(returnValue, mColumnName);
-            }
+
             return suc;
         }
 

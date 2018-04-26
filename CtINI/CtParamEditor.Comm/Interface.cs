@@ -183,7 +183,7 @@ namespace CtParamEditor.Comm
     /// <remarks>
     /// 僅用於定義dgv控制項中的欄位名稱與順序
     /// </remarks>
-    public interface IParamColumn {
+    public interface IParamColumn:ICloneable {
         /// <summary>
         /// 欄位對應參數值
         /// </summary>
@@ -229,6 +229,7 @@ namespace CtParamEditor.Comm
         /// </summary>
         /// <returns></returns>
         EmColumn ModifiedColumn();
+        
     }
 
     /// <summary>

@@ -3,8 +3,11 @@ using CtINI;
 using CtParamEditor.Comm;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -251,6 +254,7 @@ namespace CtParamEditor.Core.Internal.Component {
     /// AGV參數物件
     /// </summary>
     /// <typeparam name="T"></typeparam>
+    [Serializable]
     internal class CtParam : IParam {
 
         #region Declaration - Fields
@@ -319,30 +323,23 @@ namespace CtParamEditor.Core.Internal.Component {
 
         #region Function - Constructors
 
+        private CtParam() { }
+
         public CtParam(EventHandler<string> valueChangedHandle) {
             ValueChanged += valueChangedHandle;
             mIlleaglColumn = EmColumn.Name | EmColumn.Type;
         }
-
-        private CtParam(string name, object val, string description, object def, object max, object min) {
-            SetType(val.GetType().Name);
-            SetValue(val.ToString());
-            SetName(name);
-            SetDescription(description);
-            SetDefault(def?.ToString());
-            if (max != null) SetMax(max.ToString());
-            if (min != null) SetMin(min.ToString());
-        }
-
+        
         #endregion Function - Constructors
         
         #region Implement - IParamColumn
 
-        public string Name { get { return mName; } }
+        public string Name { get { return mName; } private set => mName = value; }
         public string Type {
             get {
                 return mVal?.ValType;
             }
+            
         }
         public string Value { get { return mVal?.Value; } }
         public string Description { get { return mDescription; } }
@@ -539,6 +536,25 @@ namespace CtParamEditor.Core.Internal.Component {
             return mVal?.GetParamType();
         }
         #endregion Implement - IParam
+
+        #region Implement - ICloneable
+
+        public object Clone() {
+            var clone = new CtParam();
+            clone.SetType(this.Type);
+            clone.SetValue(this.Value);
+            clone.SetName(this.Name);
+            clone.SetDescription(this.Description);
+            clone.SetMax(this.Max);
+            clone.SetMin(this.Min);
+            clone.SetDefault(this.Default);
+            clone.mModifiedColumn = this.mModifiedColumn;
+            clone.mIlleaglColumn = this.mIlleaglColumn;
+            clone.ValueChanged += this.ValueChanged;
+            return clone;
+        }
+
+        #endregion Implement - ICloneable
 
         #region Function - Private Methods
 
