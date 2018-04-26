@@ -83,7 +83,7 @@ namespace CtTesting {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void dgvProperties_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e) {
-            mEditor.SelectedColumn = e.ColumnIndex;
+            mEditor.SelectedColumnName = dgvProperties.Columns[e.ColumnIndex].HeaderText;
             mEditor.SelectedRow = e.RowIndex;
             if (e.Button == MouseButtons.Right) {
                 if (mEditor.ShowOption != CmsOption.None) {
@@ -149,7 +149,7 @@ namespace CtTesting {
         #region ToolStripMenuItem
 
         private void miEdit_Click(object sender, EventArgs e) {
-            var columnName = dgvProperties.Columns[mEditor.SelectedColumn].HeaderText;
+            var columnName = dgvProperties.Columns[mEditor.SelectedColumnName].HeaderText;
             /*-- 取得目前選取的資料列 --*/
             IParam prop = mEditor.ParamCollection[mEditor.SelectedRow] as IParam;
             /*-- 使用者輸入 --*/
@@ -246,7 +246,7 @@ namespace CtTesting {
         /// <param name="e"></param>
         private void btnTest_Click(object sender, EventArgs e) {
             //參數設定樣本輸出
-            if (mEditor.GridView != null) mEditor.GridView = null;
+            //if (mEditor.GridView != null) mEditor.GridView = null;
             mEditor.Clear();
             mEditor.WriteParam("IntName", 20, "IntDescription", 20);
             mEditor.WriteParam("BoolName", false, "BoolDescription", false);
@@ -288,7 +288,7 @@ namespace CtTesting {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void btnRead_Click(object sender, EventArgs e) {
-            if (mEditor.GridView != null) mEditor.GridView = null;
+            //if (mEditor.GridView != null) mEditor.GridView = null;
             int iVal = 0;
             float fVal = 0f;
             bool bVal = false;
@@ -390,13 +390,13 @@ namespace CtTesting {
             /*-- 配置欄位標題 --*/
             DataGridViewRichTextBox.Factory FTY = new DataGridViewRichTextBox.Factory();
             List<DataGridViewColumn> cols = new List<DataGridViewColumn>() {
-                FTY.GetRichTextColumn(PropField.Str.Name),
-                FTY.GetRichTextColumn(PropField.Str.ValType),
-                FTY.GetRichTextColumn(PropField.Str.Value),
-                FTY.GetRichTextColumn(PropField.Str.Description),
-                FTY.GetRichTextColumn(PropField.Str.Max),
-                FTY.GetRichTextColumn(PropField.Str.Min),
-                FTY.GetRichTextColumn(PropField.Str.Default),
+                FTY.GetRichTextColumn(nameof(IParamColumn.Name)),
+                FTY.GetRichTextColumn(nameof(IParamColumn.Type)),
+                FTY.GetRichTextColumn(nameof(IParamColumn.Value)),
+                FTY.GetRichTextColumn(nameof(IParamColumn.Description)),
+                FTY.GetRichTextColumn(nameof(IParamColumn.Max)),
+                FTY.GetRichTextColumn(nameof(IParamColumn.Min)),
+                FTY.GetRichTextColumn(nameof(IParamColumn.Default)),
             };
             dgv.Columns.Clear();
             dgv.Columns.AddRange(cols.ToArray());

@@ -19,14 +19,14 @@ namespace CtParamEditor.Comm
         /// <summary>
         /// 被選取的欄索引
         /// </summary>
-        int SelectedColumn { get; set; }
+        string SelectedColumnName { get; set; }
         /// <summary>
         /// 被選取的列索引
         /// </summary>
         int SelectedRow { get; set; }
         ICellStyles CellStyles { get; }
         Input.ComboBox ComboBoxList { get; set; }
-        DataGridView GridView { get; set; }
+        //DataGridView GridView { get; set; }
         Input.Text InputText { get; set; }
         /// <summary>
         /// 參數集合

@@ -35,18 +35,18 @@ namespace CtParamEditor.Core
 
         /// <summary>
         /// <see cref="DataGridView"/>物件參考
-        /// </summary>
-        private DataGridView rDgv = null;
+        ///// </summary>
+        //private DataGridView rDgv = null;
 
         /// <summary>
         /// 被點選的DataGridCell列數
         /// </summary>
-        private int mIdxRow = -1;
+        private int mSelectedRow = -1;
 
         /// <summary>
         /// 被點選的DataGridCell行數
         /// </summary>
-        private int mIdxCol = -1;
+        private string mSelectedColumnName;
 
         private RtfConvert mRgConvert = new RtfConvert();
 
@@ -75,12 +75,12 @@ namespace CtParamEditor.Core
         /// <summary>
         /// 被選取的行索引
         /// </summary>
-        public int SelectedColumn {
-            get => mIdxCol;
+        public string SelectedColumnName {
+            get => mSelectedColumnName;
             set {
-                if (mIdxCol != value) {
-                    mIdxCol = value;
-                    DecidedShow(SelectedColumn, SelectedRow);
+                if (mSelectedColumnName != value) {
+                    mSelectedColumnName = value;
+                    DecidedShow(SelectedColumnName, SelectedRow);
                     OnPropertyChanged();
                 }
             }
@@ -90,11 +90,11 @@ namespace CtParamEditor.Core
         /// 被選取的列索引
         /// </summary>
         public int SelectedRow {
-            get => mIdxRow;
+            get => mSelectedRow;
             set {
-                if (mIdxRow != value) {
-                    mIdxRow = value;
-                    DecidedShow(SelectedColumn, SelectedRow);
+                if (mSelectedRow != value) {
+                    mSelectedRow = value;
+                    DecidedShow(SelectedColumnName, SelectedRow);
                     OnPropertyChanged();
                 }
             }
@@ -108,15 +108,15 @@ namespace CtParamEditor.Core
         /// <summary>
         /// 顯示資料用的<see cref="DataGridView"/>
         /// </summary>
-        public DataGridView GridView {
-            get { return rDgv; }
-            set {
-                rDgv = value;
-                if (rDgv != null) {
-                    DeployDGV(rDgv);
-                }
-            }
-        }
+        //public DataGridView GridView {
+        //    get { return rDgv; }
+        //    set {
+        //        rDgv = value;
+        //        if (rDgv != null) {
+        //            DeployDGV(rDgv);
+        //        }
+        //    }
+        //}
 
         public IParamCollection ParamCollection { get { return DataSource; } }
 
@@ -282,7 +282,7 @@ namespace CtParamEditor.Core
         /// <param name="columnName"></param>
         public void Edit(string columnName) {
             /*-- 取得要編輯的資料列 --*/
-            IParam prop = DataSource[mIdxRow] as IParam;
+            IParam prop = DataSource[mSelectedRow] as IParam;
 
             /*-- 取得對應欄位編輯器 --*/
             BaseFieldEditor editor = GetEditor(columnName);
@@ -301,11 +301,11 @@ namespace CtParamEditor.Core
         public void SaveToINI(string path = null) {
             if (IllegalField.Count() > 0) {
                 /*-- 反白未填入的儲存格 --*/
-                if (rDgv != null) {
+                //if (rDgv != null) {
                     IParamColumn prop = IllegalField[0].Key;
                     int idx = DataSource.IndexOf(prop);
-                    rDgv[PropField.Idx.Name, idx].Selected = true;
-                }
+                    //rDgv[nameof(IParamColumn.Name, idx].Selected = true;
+                //}
                 throw new Exception("尚有必填資料未輸入");
             } else {
                 string savePath = string.IsNullOrEmpty(path) ? mIniPath : path;
@@ -341,7 +341,7 @@ namespace CtParamEditor.Core
                 ///由於虛擬填充是顯示時設定顯示樣式
                 ///清除特殊樣式欄位紀錄即可
                 ModifiedField.Clear();
-                rDgv?.Refresh();
+                //rDgv?.Refresh();
 
                 #endregion   
 
@@ -434,17 +434,17 @@ namespace CtParamEditor.Core
             //dgv.MouseClick += rDgv_MouseClick;
             /*-- 配置欄位標題 --*/
             DataGridViewRichTextBox.Factory FTY = new DataGridViewRichTextBox.Factory();
-            List<DataGridViewColumn> cols = new List<DataGridViewColumn>() {
-                FTY.GetRichTextColumn(PropField.Str.Name),
-                FTY.GetRichTextColumn(PropField.Str.ValType),
-                FTY.GetRichTextColumn(PropField.Str.Value),
-                FTY.GetRichTextColumn(PropField.Str.Description),
-                FTY.GetRichTextColumn(PropField.Str.Max),
-                FTY.GetRichTextColumn(PropField.Str.Min),
-                FTY.GetRichTextColumn(PropField.Str.Default),
-            };
-            dgv.Columns.Clear();
-            dgv.Columns.AddRange(cols.ToArray());
+            //List<DataGridViewColumn> cols = new List<DataGridViewColumn>() {
+            //    FTY.GetRichTextColumn(PropField.Str.Name),
+            //    FTY.GetRichTextColumn(PropField.Str.ValType),
+            //    FTY.GetRichTextColumn(PropField.Str.Value),
+            //    FTY.GetRichTextColumn(PropField.Str.Description),
+            //    FTY.GetRichTextColumn(PropField.Str.Max),
+            //    FTY.GetRichTextColumn(PropField.Str.Min),
+            //    FTY.GetRichTextColumn(PropField.Str.Default),
+            ////};
+            //dgv.Columns.Clear();
+            //dgv.Columns.AddRange(cols.ToArray());
         }
 
         /// <summary>
@@ -483,30 +483,29 @@ namespace CtParamEditor.Core
         /// <summary>
         /// 決策是否顯示&鎖住右鍵選單
         /// </summary>
-        /// <param name="idxCol"></param>
+        /// <param name="columnName"></param>
         /// <param name="idxRow"></param>
-        private void DecidedShow(int idxCol,int idxRow) {
+        private void DecidedShow(string columnName,int idxRow) {
             if (idxRow == -1) {
                 ShowOption = CmsOption.Add;
             } else {
-
-                switch (idxCol) {
-                    case PropField.Idx.Name:
-                    case PropField.Idx.Description:
-                    case PropField.Idx.ValType:
+                switch (columnName) {
+                    case nameof(IParamColumn.Name):
+                    case nameof(IParamColumn.Description):
+                    case nameof(IParamColumn.Type):
                         ShowOption = CmsOption.Edit;
                         DisableOption = CmsOption.None;
                         break;
-                    case PropField.Idx.Value:
-                    case PropField.Idx.Max:
-                    case PropField.Idx.Min:
-                    case PropField.Idx.Default:
+                    case nameof(IParamColumn.Value):
+                    case nameof(IParamColumn.Max):
+                    case nameof(IParamColumn.Min):
+                    case nameof(IParamColumn.Default):
                         ShowOption = CmsOption.Edit;
                         IParam prop = DataSource[idxRow] as IParam;
                         if (string.IsNullOrEmpty(prop.Type)) {
                             DisableOption = CmsOption.Edit;
                         } else {
-                            if (idxCol == PropField.Idx.Max || idxCol == PropField.Idx.Min) {
+                            if (columnName == nameof(IParamColumn.Max) || columnName == nameof(IParamColumn.Min)) {
                                 if (prop.RangeDefinable) {
                                     DisableOption = CmsOption.Edit;
                                 }
