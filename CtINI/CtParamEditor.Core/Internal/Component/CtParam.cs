@@ -554,9 +554,10 @@ namespace CtParamEditor.Core.Internal.Component {
                 clone.SetMax(this.Max);
                 clone.SetMin(this.Min);
                 clone.SetDefault(this.Default);
-                clone.mModifiedColumn = this.mModifiedColumn;
-                clone.mIlleaglColumn = this.mIlleaglColumn;
             }
+
+            clone.mModifiedColumn = this.mModifiedColumn;
+            clone.mIlleaglColumn = this.mIlleaglColumn;
             clone.ValueChanged += this.ValueChanged;
             return clone;
         }
