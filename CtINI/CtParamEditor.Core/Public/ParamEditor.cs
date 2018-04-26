@@ -27,32 +27,7 @@ namespace CtParamEditor.Core
     internal class ParamEditor: IParamEditor {
 
         #region Declaration - Fields
-
-        /// <summary>
-        /// 檔案儲存對話視窗
-        /// </summary>
-        //private SaveFileDialog mSdlg = new SaveFileDialog();
         
-        /// <summary>
-        /// 右鍵選單
-        /// </summary>
-        private ContextMenuStrip mCMS = new ContextMenuStrip();
-
-        /// <summary>
-        /// 新增參數選項
-        /// </summary>
-        private ToolStripItem miAdd = null;
-
-        /// <summary>
-        /// 編輯欄位選項
-        /// </summary>
-        private ToolStripItem miEdit = null;
-
-        /// <summary>
-        /// 刪除參數選項
-        /// </summary>
-        private ToolStripItem miDelete = null;
-
         /// <summary>
         /// INI檔案路徑
         /// </summary>
@@ -213,10 +188,13 @@ namespace CtParamEditor.Core
 
         internal ParamEditor() {
 
+            /*-- 參考分配 --*/
             ExtensionCommand.RefEditor = this;
 
-            /*-- 產生右鍵選單選項 --*/
-            CreateOption();
+            /*-- 命令管理器屬性變更事件訂閱 --*/
+            mCommandManager.PropertyChanged += (sender, e) => {
+                OnPropertyChanged(e.PropertyName);
+            };
 
             /*-- 分配委派 --*/
             AssignDelegation();
@@ -481,54 +459,11 @@ namespace CtParamEditor.Core
             if (data.Default != null) sb.AppendLine($"Default={data.Default}");
             sb.AppendLine();
         }
-
-        ///// <summary>
-        ///// 鎖住右鍵選單選項
-        ///// </summary>
-        ///// <param name="option"></param>
-        //private void DisableOption(CmsOption option) {
-        //    bool isAdd = ((int)option & (int)CmsOption.Add) == (int)CmsOption.Add;
-        //    bool isEdit = ((int)option & (int)CmsOption.Edit) == (int)CmsOption.Edit;
-        //    bool isDelete = ((int)option & (int)CmsOption.Delete) == (int)CmsOption.Delete;
-        //    if (miAdd.Enabled == isAdd) miAdd.Enabled = !isAdd;
-        //    if (miEdit.Enabled == isEdit) miEdit.Enabled = !isEdit;
-        //    if (miDelete.Enabled == isDelete) miDelete.Enabled = !isDelete;
-        //}
-
-        ///// <summary>
-        ///// 顯示右鍵選單選項
-        ///// </summary>
-        ///// <param name="option"></param>
-        //private void ShowOption(CmsOption option) {
-        //    bool isAdd = ((int)option & (int)CmsOption.Add) == (int)CmsOption.Add;
-        //    bool isEdit = ((int)option & (int)CmsOption.Edit) == (int)CmsOption.Edit;
-        //    bool isDelete = ((int)option & (int)CmsOption.Delete) == (int)CmsOption.Delete;
-        //    if (miAdd.Visible != isAdd) miAdd.Visible = isAdd;
-        //    if (miEdit.Visible != isEdit) miEdit.Visible = isEdit;
-        //    if (miDelete.Visible != isDelete) miDelete.Visible = isDelete;
-        //}
-
-        /// <summary>
-        /// 產生右鍵選單選項
-        /// </summary>
-        private void CreateOption() {
-            miAdd = mCMS.Items.Add("Add");
-            miEdit = mCMS.Items.Add("Edit");
-            miDelete = mCMS.Items.Add("Delete"); 
-        }
-
+        
         /// <summary>
         /// 分配委派
         /// </summary>
         private void AssignDelegation() {
-            /*-- 修改欄位紀錄方法委派 --*/
-            //Field.AddModifiedField = ModifiedField.Add;
-            ///*-- 非法欄位紀錄方法委派 --*/
-            //Field.RecordIllegalField = IllegalField.Add;
-            ///*-- 非法欄位紀錄註銷方法委派 --*/
-            //Field.RemoveIllegalField = IllegalField.Remove;
-
-            //Field.GetItems = EnumData.GetItems;
             /*-- 非法欄位紀錄方法委派 --*/
             DataSource.AddIllegal = IllegalField.Add;
             /*-- 非法欄位移除方法委派 --*/
@@ -537,16 +472,8 @@ namespace CtParamEditor.Core
             DataSource.ContainType = EnumData.ContainType;
 
             DataSource.ContainItem = EnumData.ContainItem;
-
-            //DataSource.UpdateRowCount = UpdateRowCount;
-
+            
             DataSource.ReadEnum = EnumData.ReadEnum;
-
-            //Field.ContainItem = EnumData.ContainItem;
-
-            //Field.ContainType = EnumData.ContainType;
-
-            //Field.GetTypes = EnumData.GetTypes;
             
         }
         
