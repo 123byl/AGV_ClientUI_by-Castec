@@ -363,6 +363,8 @@ namespace CtParamEditor.Core
         /// <param name="columnName"></param>
         /// <param name="idxRow"></param>
         private void DecidedShow(string columnName,int idxRow) {
+            ShowOption = CmsOption.None;
+            DisableOption = CmsOption.None;
             if (idxRow == -1) {
                 ShowOption = CmsOption.Add;
             } else {
@@ -371,7 +373,6 @@ namespace CtParamEditor.Core
                     case nameof(IParamColumn.Description):
                     case nameof(IParamColumn.Type):
                         ShowOption = CmsOption.Edit;
-                        DisableOption = CmsOption.None;
                         break;
                     case nameof(IParamColumn.Value):
                     case nameof(IParamColumn.Max):
