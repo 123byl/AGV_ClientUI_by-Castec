@@ -383,7 +383,7 @@ namespace CtParamEditor.Core
                             DisableOption = CmsOption.Edit;
                         } else {
                             if (columnName == nameof(IParamColumn.Max) || columnName == nameof(IParamColumn.Min)) {
-                                if (prop.RangeDefinable) {
+                                if (!prop.RangeDefinable) {
                                     DisableOption = CmsOption.Edit;
                                 }
                             }
