@@ -24,6 +24,8 @@ using DataGridViewRichTextBox;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization;
 using CtParamEditor.Core;
+using System.Xml.Serialization;
+using System.Xml;
 
 namespace CtTesting {
 
@@ -41,6 +43,11 @@ namespace CtTesting {
         /// </summary>
         private OpenFileDialog mOdlg = new OpenFileDialog();
 
+        /// <summary>
+        /// 檔案儲存對話視窗
+        /// </summary>
+        private SaveFileDialog mSdlg = new SaveFileDialog();
+
         private ICellStyles mCellStyle = new CtCellStyles();
 
         private RtfConvert mRgConvert = new RtfConvert();
@@ -57,9 +64,7 @@ namespace CtTesting {
 
         public CtrlParamEditor() {
             InitializeComponent();
-
-            CloneClass c1 = new CloneClass(10);
-            CloneClass c2 = c1.Clone() as CloneClass;
+            
             /*-- DataGridView寬度預設 --*/
             DeployDGV(dgvProperties);
             /*-- 使用者輸入方法委派 --*/
@@ -166,7 +171,17 @@ namespace CtTesting {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void btnSave_Click(object sender, EventArgs e) {
-            mEditor.SaveToINI();
+            string path = mEditor.IniPath;
+            if (string.IsNullOrEmpty(path)) {
+                mSdlg.Filter = "Ini File|*.ini";
+                mSdlg.Title = "Select save path";
+                mSdlg.FileName = "iTS_Setting.ini";
+                if (mSdlg.ShowDialog() != DialogResult.OK) {
+                    return;
+                }
+                path = mSdlg.FileName;
+            }
+            mEditor.SaveToINI(path);
         }
 
         /// <summary>
@@ -444,7 +459,10 @@ namespace CtTesting {
             btnRedo.DataBindings.ExAdd(nameof(btnRedo.Enabled), source, nameof(source.RedoCount), (sneder, e) => {
                 e.Value = (int)e.Value > 0;
             });
-
+            /*-- INI檔路徑 --*/
+            tslbPath.DataBindings.ExAdd(nameof(tslbPath.Text), source, nameof(source.IniPath), (sneder, e) => {
+                e.Value = $"Path：{e.Value}";
+            }, source.IniPath);
         }
 
         /// <summary>
@@ -459,6 +477,10 @@ namespace CtTesting {
             lbRowCount.DataBindings.ExAdd(nameof(lbRowCount.Text), source, nameof(source.RowCount),(sender,e) => {
                 e.Value = $"Row Count:{e.Value}";
             });
+            tslbCount.DataBindings.ExAdd(nameof(tslbCount.Text), source, nameof(source.RowCount), (sneder, e) => {
+                e.Value = $"Count：{(int)e.Value}";
+            }, (int)source.RowCount);
+
         }
 
         #endregion Implenent - IDataDisplay
@@ -495,5 +517,5 @@ namespace CtTesting {
             return clone;
         }
     }
-
+    
 }

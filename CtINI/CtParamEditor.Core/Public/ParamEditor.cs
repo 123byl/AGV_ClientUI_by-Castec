@@ -86,12 +86,7 @@ namespace CtParamEditor.Core
                 }
             }
         }
-
-        /// <summary>
-        /// 儲存格樣式管理
-        /// </summary>
-        public ICellStyles CellStyles { get; } = new CtCellStyles();
-
+        
         public IParamCollection ParamCollection { get { return DataSource; } }
 
         /// <summary>
@@ -135,6 +130,18 @@ namespace CtParamEditor.Core
             set {
                 if (mDisableOption != value) {
                     mDisableOption = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        /// <summary>
+        /// INI檔路徑
+        /// </summary>
+        public string IniPath { get => mIniPath;
+            set {
+                if (mIniPath != value) {
+                    mIniPath = value;
                     OnPropertyChanged();
                 }
             }
@@ -202,7 +209,7 @@ namespace CtParamEditor.Core
             /*-- 讀取參數定義 --*/
             DataSource.ReadINI(inis);
             /*-- 記錄INI檔路徑 --*/
-            mIniPath = fileName;
+            IniPath = fileName;
         }
 
         /// <summary>
@@ -259,12 +266,11 @@ namespace CtParamEditor.Core
         /// 將參數寫入INI檔
         /// </summary>
         public void SaveToINI(string path = null) {
-
-            bool isIlleagl = true;
+            bool isIlleagl = DataSource.Any(prop =>  (prop as IParam).IlleaglColumn() != EmColumn.None);
             if (isIlleagl) {
                 throw new Exception("有非法欄位導致無法儲存");
             } else {
-                string savePath = string.IsNullOrEmpty(path) ? mIniPath : path;
+                string savePath = string.IsNullOrEmpty(path) ? IniPath : path;
                 StringBuilder iniContent = new StringBuilder();
                 ///Note: Section定義不可相同
                 ///     WriteINI方法並不會檢查已寫入的Section名稱
@@ -277,6 +283,8 @@ namespace CtParamEditor.Core
 
                 /*-- 寫入INI檔 --*/
                 File.WriteAllText(savePath, iniContent.ToString(), Encoding.UTF8);
+                IniPath = path;
+                
             }
         }
         
@@ -287,6 +295,7 @@ namespace CtParamEditor.Core
             DataSource.Clear();
             EnumData.Data.Clear();
             mCommandManager.Clear();
+            IniPath = string.Empty;
         }
 
         /// <summary>
@@ -347,8 +356,7 @@ namespace CtParamEditor.Core
         /// 分配委派
         /// </summary>
         private void AssignDelegation() {
-
-
+            
             DataSource.ContainType = EnumData.ContainType;
 
             DataSource.ContainItem = EnumData.ContainItem;

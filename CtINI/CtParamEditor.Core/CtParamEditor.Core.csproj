@@ -47,8 +47,6 @@
     <Compile Include="Extension.cs" />
     <Compile Include="Internal\Component\CtCellStyles.cs" />
     <Compile Include="Internal\Component\CtDgvDataSource.cs" />
-    <Compile Include="Internal\Component\CtIllegalField.cs" />
-    <Compile Include="Internal\Component\CtModifiedField.cs" />
     <Compile Include="Internal\Component\CtParam.cs" />
     <Compile Include="Internal\Component\CtValueTypeDefine.cs" />
     <Compile Include="Internal\Component\FIeldEditor\BaseFIeldEditor.cs" />

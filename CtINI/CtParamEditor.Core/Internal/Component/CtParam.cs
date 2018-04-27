@@ -284,6 +284,8 @@ namespace CtParamEditor.Core.Internal.Component {
         /// </summary>
         private EmColumn mModifiedColumn = EmColumn.None;
 
+        private List<string> mDataTable = new List<string>();
+
         #endregion Declaration - Fields
 
         #region Declaration - Properties
@@ -503,7 +505,6 @@ namespace CtParamEditor.Core.Internal.Component {
             }
         }
         
-
         public bool SetValue(string val, string columnName) {
             bool success = false;
             switch (columnName) {
@@ -540,6 +541,18 @@ namespace CtParamEditor.Core.Internal.Component {
         public Type GetParamType() {
             return mVal?.GetParamType();
         }
+        
+        public bool FieldContains(string keyWord) {
+            if (Name.Contains(keyWord)) return true;
+            if (Value.Contains(keyWord)) return true;
+            if (Type.Contains(keyWord)) return true;
+            if (Description.Contains(keyWord)) return true;
+            if (Max.Contains(keyWord)) return true;
+            if (Min.Contains(keyWord)) return true;
+            if (Default.Contains(keyWord)) return true;
+            return false;
+        }
+        
         #endregion Implement - IParam
 
         #region Implement - ICloneable

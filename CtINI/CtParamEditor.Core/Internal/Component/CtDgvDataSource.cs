@@ -21,12 +21,12 @@ namespace CtParamEditor.Core.Internal.Component {
         /// <summary>
         /// 完整資料
         /// </summary>
-        private BindingList<IParamColumn> mFullData = new BindingList<IParamColumn>();
+        private List<IParamColumn> mFullData = new List<IParamColumn>();
 
         /// <summary>
         /// 過濾後的資料
         /// </summary>
-        private BindingList<IParamColumn> mFilter = new BindingList<IParamColumn>();
+        private List<IParamColumn> mFilter = new List<IParamColumn>();
         
         #endregion Declaration - Fields
 
@@ -53,23 +53,7 @@ namespace CtParamEditor.Core.Internal.Component {
                 return Data[indexRow][columnName];
             }
         }
-
-
-        /// <summary>
-        /// RTF格式轉換器
-        /// </summary>
-        public RtfConvert RtfConfigurator { get; } = new RtfConvert();
-
-        /// <summary>
-        /// 非法欄位增加方法委派
-        /// </summary>
-        public Delegates.IllegalField.DelAddIllegal AddIllegal { get; set; } = null;
-
-        /// <summary>
-        /// 移除非法欄位記錄方法委派
-        /// </summary>
-        public Delegates.IllegalField.DelRemoveIllegalRecord RemoveIllegalRecord { get; set; } = null;
-
+        
         /// <summary>
         /// 判斷Enum類型定義存在方法委派
         /// </summary>
@@ -79,12 +63,7 @@ namespace CtParamEditor.Core.Internal.Component {
         /// 判斷列舉定義存在方法委派
         /// </summary>
         public Delegates.EnumData.DelContainItem ContainItem { get; set; } = null;
-
-        /// <summary>
-        /// 顯示資料筆數更新方法委派
-        /// </summary>
-        //public Delegates.Dgv.DelUpdateRowCount UpdateRowCount { get; set; } = null;
-
+        
         /// <summary>
         /// Enum定義讀取方法委派
         /// </summary>
@@ -98,7 +77,7 @@ namespace CtParamEditor.Core.Internal.Component {
         /// <summary>
         /// 要顯示的資料
         /// </summary>
-        private BindingList<IParamColumn> Data { get { return IsFilterMode ? mFilter : mFullData; } }
+        private List<IParamColumn> Data { get { return IsFilterMode ? mFilter : mFullData; } }
 
         #endregion Declaration - Properties
 
@@ -159,6 +138,21 @@ namespace CtParamEditor.Core.Internal.Component {
             return isFund;
         }
         
+        /// <summary>
+        /// 回傳是否有符合條件的項目
+        /// </summary>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
+        public bool Any(Func<IParamColumn,bool> predicate = null) {
+            bool ret = false;
+            if (predicate == null) {
+                ret = mFullData.Any();
+            } else {
+                ret = mFullData.Any(predicate);
+            }
+            return ret;
+        }
+
         #endregion Implement - IParamCollection
 
         #region Implement - IDataSource
@@ -224,20 +218,10 @@ namespace CtParamEditor.Core.Internal.Component {
         /// </summary>
         /// <param name="keyWord"></param>
         public void Filter(string keyWord) {
-            throw new NotImplementedException();
-            //mFilter.Clear();
-            //foreach (IParam prop in mFullData) {
-            //    int idx = 0;
-            //    do {
-            //        string val = prop.GetParamValue(idx++);
-            //        if (!string.IsNullOrEmpty(val) && val.Contains(keyWord)) {
-            //            mFilter.Add(prop);
-            //            break;
-            //        }
-            //    } while (idx <= PropField.Idx.Default);
-            //}
-            //IsFilterMode = true;
-            //UpdateRowCount?.Invoke(RowCount());
+            mFilter.Clear();
+            mFilter = mFullData.FindAll(p => p.FieldContains(keyWord));            
+            IsFilterMode = true;
+            OnPropertyChanged(nameof(RowCount));
         }
 
         /// <summary>
@@ -262,10 +246,9 @@ namespace CtParamEditor.Core.Internal.Component {
                 /*-- 轉換為IAgvToDgvCol型態 --*/
                 ConvertAll(v => GetDgvCol(v));
             /*-- 轉換成BindingList用於DataGridView進行資料繫結 --*/
-            mFullData = new BindingList<IParamColumn>(props);
+            mFullData = new List<IParamColumn>(props);
             /*-- 更新要顯示的資料數目配合虛擬填充模式使用 --*/
-            OnPropertyChanged(nameof(RowCount));
-            //UpdateRowCount?.Invoke(RowCount());
+            OnPropertyChanged(nameof(RowCount));;
         }
 
         /// <summary>
@@ -296,8 +279,6 @@ namespace CtParamEditor.Core.Internal.Component {
         /// <param name="prop"></param>
         public void Remove(IParamColumn prop) {
             if (mFullData.Contains(prop)) {
-                /*-- 移除非法紀錄 --*/
-                RemoveIllegalRecord?.Invoke(prop);
                 /*-- 移除資料 --*/
                 mFullData.Remove(prop);
                 /*-- 更新要顯示的資料筆數 --*/

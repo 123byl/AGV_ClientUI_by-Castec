@@ -24,10 +24,12 @@ namespace CtParamEditor.Comm
         /// 被選取的列索引
         /// </summary>
         int SelectedRow { get; set; }
-        ICellStyles CellStyles { get; }
         Input.ComboBox ComboBoxList { get; set; }
-        //DataGridView GridView { get; set; }
         Input.Text InputText { get; set; }
+        /// <summary>
+        /// INI檔路徑
+        /// </summary>
+        string IniPath { get; }
         /// <summary>
         /// 參數集合
         /// </summary>
@@ -91,7 +93,6 @@ namespace CtParamEditor.Comm
         /// <param name="indxtRow"></param>
         /// <returns></returns>
         IParamColumn this[int indxtRow] { get; }
-
         /// <summary>
         /// 指定的資料
         /// </summary>
@@ -99,12 +100,26 @@ namespace CtParamEditor.Comm
         /// <param name="indexColumn"></param>
         /// <returns></returns>
         object this[int indexRow, string columnName] { get; }
-
         /// <summary>
         /// 資料筆數
         /// </summary>
         int RowCount { get; }
 
+        /// <summary>
+        /// 資料變更事件
+        /// </summary>
+        event EventHandler DataChanged;
+        /// <summary>
+        /// 是否有符合條件的項目
+        /// </summary>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
+        bool Any(Func<IParamColumn, bool> predicate = null);
+        /// <summary>
+        /// 對完整資料進行Foreach訪問
+        /// </summary>
+        /// <param name="act"></param>
+        void Foreach(Action<IParam> act);
         /// <summary>
         /// 參數值讀取，使用IAgvToDgvCol型別進行讀取，可增加其他判斷
         /// </summary>
@@ -112,7 +127,6 @@ namespace CtParamEditor.Comm
         /// <param name="reader">參數讀取方法委派</param>
         /// <returns>是否有找到目標參數</returns>
         bool FindVal(string name, Action<IParamColumn> reader);
-
         /// <summary>
         /// 參數值讀取，用於寫入物件屬性
         /// </summary>
@@ -121,7 +135,6 @@ namespace CtParamEditor.Comm
         /// <param name="reader"></param>
         /// <returns></returns>
         bool FindVal<T>(string name, Action<T> reader) where T : IConvertible;
-
         /// <summary>
         /// 參數讀取，將參數直接寫入變數
         /// </summary>
@@ -131,10 +144,6 @@ namespace CtParamEditor.Comm
         /// <returns></returns>
         bool FindVal<T>(string name, ref T val) where T : IConvertible;
 
-        /// <summary>
-        /// 資料變更事件
-        /// </summary>
-        event EventHandler DataChanged;
     }
 
     /// <summary>
@@ -154,6 +163,7 @@ namespace CtParamEditor.Comm
         //Delegates.EnumData.DelContainType ContainType { get; set; }
         bool RangeDefinable { get; }
         Type GetParamType();
+
     }
 
     /// <summary>
@@ -212,7 +222,11 @@ namespace CtParamEditor.Comm
         bool IsDefineMax();
         bool IsDefineMin();
         bool IsDefineDefault();
-        
+        /// <summary>
+        /// 是否有欄位包含關鍵字
+        /// </summary>
+        /// <param name="keyWord"></param>
+        bool FieldContains(string keyWord);
     }
 
     /// <summary>
