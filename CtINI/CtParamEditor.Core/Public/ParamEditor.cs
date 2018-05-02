@@ -176,15 +176,7 @@ namespace CtParamEditor.Core
         #endregion Funciton - Constructors
 
         #region Function - Public Methods
-
-        /// <summary>
-        /// 標記關鍵字
-        /// </summary>
-        /// <param name="keyWord"></param>
-        public void Highlight(string keyWord) {
-
-        }
-
+        
         /// <summary>
         /// 將含有
         /// </summary>
@@ -192,11 +184,7 @@ namespace CtParamEditor.Core
         public void Filter() {
             DataSource.Filter();
         }
-
-        public void CloseFilter() {
-            DataSource.CloseFilter();
-        }
-
+        
         /// <summary>
         /// 讀取INI檔
         /// </summary>
@@ -304,30 +292,13 @@ namespace CtParamEditor.Core
         /// 恢復預設值
         /// </summary>
         public void RestoreDefault() {
-            DataSource.Foreach(prop => {
-                if (prop.Default != null) {
-                    prop.SetValue(prop.Default.ToString(), nameof(IParamColumn.Value));
-                }
-            });
+            //DataSource.Foreach(prop => {
+            //    if (prop.Default != null) {
+            //        prop.SetValue(prop.Default.ToString(), nameof(IParamColumn.Value));
+            //    }
+            //});
         }
-
-        /// <summary>
-        /// 將值寫入選定的儲存格
-        /// </summary>
-        /// <param name="value"></param>
-        public void SetValue(string value) {
-            //IParamColumn prop = DataSource[SelectedRow];
-            //ModifiedField.Add(prop, SelectedColumn);
-            //AddModifiedField.Invoke(prop, mIdx);
-            //if (string.IsNullOrEmpty(returnValue)) {
-            //    /*-- 記錄非法的欄位 --*/
-            //    RecordIllegal(prop, mIdx);
-            //} else {
-            //    /*-- 移除非法紀錄 --*/
-            //    RemoveIllegal(prop, mIdx);
-            //}
-        }
-
+        
         //public void WriteParam<T>(string name, T val, string description, T def) {
         //    if (DataSource.Contains(name)) throw new ArgumentException($"已有{name}參數名稱定義");
 

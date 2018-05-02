@@ -104,11 +104,12 @@ namespace CtLib.Forms.TestPlatform {
 				else
 					SetEnumIdx(mIOList);
 			}
-			SaveFileDialog dialog = new SaveFileDialog();
-			dialog.DefaultExt = "xml";
-			dialog.Filter = "XML|*.xml";
-			dialog.InitialDirectory = CtDefaultPath.GetPath(SystemPath.Configuration);
-			if (dialog.ShowDialog() == DialogResult.OK) {
+            SaveFileDialog dialog = new SaveFileDialog() {
+                DefaultExt = "xml",
+                Filter = "XML|*.xml",
+                InitialDirectory = CtDefaultPath.GetPath(SystemPath.Configuration)
+            };
+            if (dialog.ShowDialog() == DialogResult.OK) {
 				CtIO.SaveToXML(dialog.FileName, mIOList);
 			}
 		}
@@ -130,33 +131,30 @@ namespace CtLib.Forms.TestPlatform {
 		private void adeptToolStripMenuItem_Click(object sender, EventArgs e) {
 			Stat stt = Stat.SUCCESS;
 
-			/*-- 輸入 IO 編號 --*/
-			string strIONum = "";
-			stt = CtInput.Text(out strIONum, "I/O 編號", "請輸入此 I/O 編號");
-			if (stt == Stat.WN_SYS_USRCNC) return;
+            /*-- 輸入 IO 編號 --*/
+            stt = CtInput.Text(out string strIONum, "I/O 編號", "請輸入此 I/O 編號");
+            if (stt == Stat.WN_SYS_USRCNC) return;
 
-			/*-- 輸入註解 --*/
-			string strComment = "";
-			stt = CtInput.Text(out strComment, "I/O 註解", "請輸入註解");
-			if (stt == Stat.WN_SYS_USRCNC) return;
+            /*-- 輸入註解 --*/
+            stt = CtInput.Text(out string strComment, "I/O 註解", "請輸入註解");
+            if (stt == Stat.WN_SYS_USRCNC) return;
 
-			/*-- 加到 TreeView --*/
-			int ioNum;
-			if (int.TryParse(strIONum, out ioNum)) {
-				TreeNode AdeptACE;
-				if (ioNum > 1999) {
-					AdeptACE = treeView.Nodes[2].Nodes.Add(strIONum);
-				} else if (ioNum > 999) {
-					AdeptACE = treeView.Nodes[0].Nodes.Add(strIONum);
-				} else {
-					AdeptACE = treeView.Nodes[1].Nodes.Add(strIONum);
-				}
-				AdeptACE.Nodes.Add("註解: " + strComment);
+            /*-- 加到 TreeView --*/
+            if (int.TryParse(strIONum, out int ioNum)) {
+                TreeNode AdeptACE;
+                if (ioNum > 1999) {
+                    AdeptACE = treeView.Nodes[2].Nodes.Add(strIONum);
+                } else if (ioNum > 999) {
+                    AdeptACE = treeView.Nodes[0].Nodes.Add(strIONum);
+                } else {
+                    AdeptACE = treeView.Nodes[1].Nodes.Add(strIONum);
+                }
+                AdeptACE.Nodes.Add("註解: " + strComment);
 
-				/*-- 加到 mIOLisy --*/
-				mIOList.Add(new AceIO(int.Parse(strIONum), strComment));
-			} else CtMsgBox.Show("錯誤", "I/O 編號錯誤，請重新新增", MsgBoxBtn.OK, MsgBoxStyle.Error);
-		}
+                /*-- 加到 mIOLisy --*/
+                mIOList.Add(new AceIO(int.Parse(strIONum), strComment));
+            } else CtMsgBox.Show("錯誤", "I/O 編號錯誤，請重新新增", MsgBoxBtn.OK, MsgBoxStyle.Error);
+        }
 
 		private void beckhoffToolStripMenuItem_Click(object sender, EventArgs e) {
 			Stat stt = Stat.SUCCESS;

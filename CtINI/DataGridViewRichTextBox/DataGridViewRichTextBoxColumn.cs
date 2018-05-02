@@ -159,10 +159,7 @@ namespace DataGridViewRichTextBox
         {
             base.InitializeEditingControl(rowIndex, initialFormattedValue, dataGridViewCellStyle);
 
-            RichTextBox ctl = DataGridView.EditingControl as RichTextBox;
-
-            if (ctl != null)
-            {
+            if (DataGridView.EditingControl is RichTextBox ctl) {
                 SetRichTextBoxText(ctl, Convert.ToString(initialFormattedValue));
             }
         }
@@ -728,11 +725,12 @@ namespace DataGridViewRichTextBox
 
         public RtfConvert() {
             /*-- 取得字型對照資料 --*/
-            rtfFontFamily = new HybridDictionary();
-            rtfFontFamily.Add(System.Drawing.FontFamily.GenericMonospace.Name, RtfFontFamilyDef.Modern);
-            rtfFontFamily.Add(System.Drawing.FontFamily.GenericSansSerif, RtfFontFamilyDef.Swiss);
-            rtfFontFamily.Add(System.Drawing.FontFamily.GenericSerif, RtfFontFamilyDef.Roman);
-            rtfFontFamily.Add(FF_UNKNOWN, RtfFontFamilyDef.Unknown);
+            rtfFontFamily = new HybridDictionary {
+                { System.Drawing.FontFamily.GenericMonospace.Name, RtfFontFamilyDef.Modern },
+                { System.Drawing.FontFamily.GenericSansSerif, RtfFontFamilyDef.Swiss },
+                { System.Drawing.FontFamily.GenericSerif, RtfFontFamilyDef.Roman },
+                { FF_UNKNOWN, RtfFontFamilyDef.Unknown }
+            };
         }
 
         #endregion Function - Constructors

@@ -36,4 +36,28 @@ namespace CtParamEditor.Core.Internal {
         Delegates.EnumData.DelContainItem ContainItem { get; set; }
     }
 
+    /// <summary>
+    /// AGV參數介面
+    /// </summary>
+    /// <remarks>
+    /// 提供參數操作方法
+    /// </remarks>
+    internal interface IParam : IParamColumn {
+        bool SetValue(string val, string columnName);
+        /// <summary>
+        /// 變數變更事件
+        /// </summary>
+        event EventHandler<string> ValueChanged;
+        bool RangeDefinable { get; }
+        Type GetParamType();
+        //bool IsDefineMax();
+        //bool IsDefineMin();
+        //bool IsDefineDefault();
+        /// <summary>
+        /// 是否有欄位包含關鍵字
+        /// </summary>
+        /// <param name="keyWord"></param>
+        bool FieldContains(string keyWord);
+    }
+
 }

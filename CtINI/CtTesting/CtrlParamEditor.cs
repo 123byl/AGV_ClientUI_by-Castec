@@ -114,7 +114,7 @@ namespace CtTesting {
                     case Keys.F:
                         Filter();
                         break;
-                    case Keys.H:
+                    case Keys.L:
                         Highlight();
                         break;
                     case Keys.O:
@@ -191,10 +191,10 @@ namespace CtTesting {
             }
             try {
                 /*-- 取得欄位資料 --*/
-                IParam prop = mEditor.ParamCollection[e.RowIndex]as IParam;
+                IParamColumn prop = mEditor.ParamCollection[e.RowIndex]as IParamColumn;
                 string v = prop.Default;
                 /*-- 取得欄位值 --*/
-                string val = prop.GetParamValue(columnName);
+                string val = prop[columnName].ToString();
                 EmColumn emColumn = columnName.ToEnumColumn();
 
                 if ((prop.IlleaglColumn() & emColumn) != EmColumn.None) {
@@ -226,7 +226,7 @@ namespace CtTesting {
         private void miEdit_Click(object sender, EventArgs e) {
             var columnName = mEditor.SelectedColumnName;
             /*-- 取得目前選取的資料列 --*/
-            IParam prop = mEditor.ParamCollection[mEditor.SelectedRow] as IParam;
+            IParamColumn prop = mEditor.ParamCollection[mEditor.SelectedRow] as IParamColumn;
             /*-- 使用者輸入 --*/
             mEditor.Edit(columnName);
         }
@@ -619,6 +619,12 @@ namespace CtTesting {
         #endregion Implenent - IDataDisplay
 
         private void CtrlParamEditor_Load(object sender, EventArgs e) {
+        }
+
+        private void tstKeyWord_KeyDown(object sender, KeyEventArgs e) {
+            if (e.Control) {
+                e.Handled = true;
+            }
         }
     }
 

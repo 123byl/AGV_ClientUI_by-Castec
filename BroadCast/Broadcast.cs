@@ -34,9 +34,10 @@ namespace BroadCast {
         /// </remarks>
         public static void CreateThread(ref Thread thread, string name, Action method, bool background = true, bool start = true) {
             if (thread != null) KillThread(ref thread);
-            thread = new Thread(new ThreadStart(method));
-            thread.IsBackground = background;
-            thread.Name = name;
+            thread = new Thread(new ThreadStart(method)) {
+                IsBackground = background,
+                Name = name
+            };
             if (start) thread.Start();
         }
 

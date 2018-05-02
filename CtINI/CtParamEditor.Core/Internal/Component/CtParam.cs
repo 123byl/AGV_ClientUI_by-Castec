@@ -283,9 +283,7 @@ namespace CtParamEditor.Core.Internal.Component {
         /// 已修改欄位
         /// </summary>
         private EmColumn mModifiedColumn = EmColumn.None;
-
-        private List<string> mDataTable = new List<string>();
-
+        
         #endregion Declaration - Fields
 
         #region Declaration - Properties
@@ -482,20 +480,7 @@ namespace CtParamEditor.Core.Internal.Component {
         #endregion Implement - IParamColumn
 
         #region Implement - IParam
-
-        public string GetParamValue(string columnName) {
-            switch (columnName) {
-                case nameof(IParamColumn.Name): return mName;
-                case nameof(IParamColumn.Type): return mVal?.ValType;
-                case nameof(IParamColumn.Value): return mVal?.Value;
-                case nameof(IParamColumn.Description): return mDescription;
-                case nameof(IParamColumn.Max): return mVal?.Max;
-                case nameof(IParamColumn.Min): return mVal?.Min;
-                case nameof(IParamColumn.Default): return mVal?.Def;
-                default: throw new Exception("未定義的欄位索引");
-            }
-        }
-
+        
         /// <summary>
         /// Enum類型是否存在判斷方法委派
         /// </summary>
@@ -550,13 +535,15 @@ namespace CtParamEditor.Core.Internal.Component {
         }
         
         public bool FieldContains(string keyWord) {
-            if (Name.Contains(keyWord)) return true;
-            if (Value.Contains(keyWord)) return true;
-            if (Type.Contains(keyWord)) return true;
-            if (Description.Contains(keyWord)) return true;
-            if (Max.Contains(keyWord)) return true;
-            if (Min.Contains(keyWord)) return true;
-            if (Default.Contains(keyWord)) return true;
+            if (keyWord != null) {
+                if (Name.Contains(keyWord)) return true;
+                if (Value.Contains(keyWord)) return true;
+                if (Type.Contains(keyWord)) return true;
+                if (Description.Contains(keyWord)) return true;
+                if (Max.Contains(keyWord)) return true;
+                if (Min.Contains(keyWord)) return true;
+                if (Default.Contains(keyWord)) return true;
+            }
             return false;
         }
         

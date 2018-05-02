@@ -107,7 +107,7 @@ namespace CtParamEditor.Core.Internal.Component {
         /// <summary>
         /// 要顯示的資料
         /// </summary>
-        private List<IParamColumn> Data { get { return IsFilterMode ? mFilter : mFullData; } }
+        private List<IParamColumn> Data { get { return (IsFilterMode ? mFilter : mFullData) ; } }
         
         public bool IsModified {
             get {
@@ -263,21 +263,12 @@ namespace CtParamEditor.Core.Internal.Component {
             if (IsFilterMode) {
                 mFilter.Clear();
             } else {
-                mFilter = mFullData.FindAll(p => p.FieldContains(KeyWord));
+                mFilter = mFullData.FindAll(p => (p as IParam).FieldContains(KeyWord));
             }
             IsFilterMode = !IsFilterMode;
             OnPropertyChanged(nameof(RowCount));
         }
-
-        /// <summary>
-        /// 關閉參數過濾
-        /// </summary>
-        public void CloseFilter() {
-            IsFilterMode = false;
-            mFilter.Clear();
-            OnPropertyChanged(nameof(RowCount));
-        }
-
+        
         /// <summary>
         /// 從INI資料集合中讀取資料
         /// </summary>
@@ -361,7 +352,7 @@ namespace CtParamEditor.Core.Internal.Component {
         /// 對完整資料進行Foreach訪問
         /// </summary>
         /// <param name="act"></param>
-        public void Foreach(Action<IParam> act) {
+        public void Foreach(Action<IParamColumn> act) {
             foreach (IParam prop in mFullData) {
                 act(prop);
             }

@@ -15,7 +15,7 @@ namespace CtParamEditor.Comm
     /// <summary>
     /// 參數編輯器
     /// </summary>
-    public interface IParamEditor :IParamEdit,IDataSource,IUndoable{
+    public interface IParamEditor :IDataSource,IUndoable{
         /// <summary>
         /// 被選取的欄索引
         /// </summary>
@@ -24,7 +24,13 @@ namespace CtParamEditor.Comm
         /// 被選取的列索引
         /// </summary>
         int SelectedRow { get; set; }
+        /// <summary>
+        /// 使用者ComboBox輸入委派
+        /// </summary>
         Input.ComboBox ComboBoxList { get; set; }
+        /// <summary>
+        /// 使用者文字輸入委派
+        /// </summary>
         Input.Text InputText { get; set; }
         /// <summary>
         /// INI檔路徑
@@ -42,50 +48,42 @@ namespace CtParamEditor.Comm
         /// 要鎖住的選項
         /// </summary>
         CmsOption DisableOption { get; }
-        void CloseFilter();
+        /// <summary>
+        /// 參數過濾/復原
+        /// </summary>
         void Filter();
-        void Highlight(string keyWord);
+        /// <summary>
+        /// 讀取INI檔
+        /// </summary>
+        /// <param name="fileName"></param>
         void ReadINI(string fileName);
-        void RestoreDefault();
+        //void RestoreDefault();
+        ///// <summary>
+        ///// 儲存為INI檔
+        /// </summary>
+        /// <param name="path"></param>
         void SaveToINI(string path = null);
         /// <summary>
         /// 移除選定列
         /// </summary>
         void Remove();
         /// <summary>
-        /// 移除指定列
-        /// </summary>
-        void Remove(int idxRow);
-        /// <summary>
         /// 在選定列插入新列
         /// </summary>
         void Insert();
         /// <summary>
-        /// 在指定列插入新列
-        /// </summary>
-        /// <param name="idxRow"></param>
-        void Insert(int idxRow);
-        /// <summary>
         /// 編輯使用者選定參數
         /// </summary>
         void Edit(string columnName);
-        /// <summary>
-        /// 將值寫入選定儲存格
-        /// </summary>
-        /// <param name="value"></param>
-        void SetValue(string value);
-    }
-
-    public interface IParamEdit {
         IParamValue<T> WriteParam<T>(string name, T val, string description, T def);
         IParamValue<T> WriteParam<T>(string name, T val, string description);
+
     }
 
     /// <summary>
     /// 參數集合
     /// </summary>
     public interface IParamCollection:IDataSource {
-
         /// <summary>
         /// 對應列索引的資料列
         /// </summary>
@@ -130,7 +128,7 @@ namespace CtParamEditor.Comm
         /// 對完整資料進行Foreach訪問
         /// </summary>
         /// <param name="act"></param>
-        void Foreach(Action<IParam> act);
+        void Foreach(Action<IParamColumn> act);
         /// <summary>
         /// 參數值讀取，使用IAgvToDgvCol型別進行讀取，可增加其他判斷
         /// </summary>
@@ -157,25 +155,7 @@ namespace CtParamEditor.Comm
 
     }
 
-    /// <summary>
-    /// AGV參數介面
-    /// </summary>
-    /// <remarks>
-    /// 提供參數操作方法
-    /// </remarks>
-    public interface IParam : IParamColumn {
-        bool SetValue(string val, string columnName);
-        string GetParamValue(string columnName);
-        /// <summary>
-        /// 變數變更事件
-        /// </summary>
-        event EventHandler<string> ValueChanged;
-        //Delegates.EnumData.DelContainItem ContainItem { get; set; }
-        //Delegates.EnumData.DelContainType ContainType { get; set; }
-        bool RangeDefinable { get; }
-        Type GetParamType();
-
-    }
+    
 
     /// <summary>
     /// DGV欄位定義
@@ -230,14 +210,6 @@ namespace CtParamEditor.Comm
         /// <returns></returns>
         EmColumn ModifiedColumn { get; set; }
 
-        bool IsDefineMax();
-        bool IsDefineMin();
-        bool IsDefineDefault();
-        /// <summary>
-        /// 是否有欄位包含關鍵字
-        /// </summary>
-        /// <param name="keyWord"></param>
-        bool FieldContains(string keyWord);
     }
 
     /// <summary>
@@ -265,18 +237,18 @@ namespace CtParamEditor.Comm
         /// 是否有最大值定義
         /// </summary>
         bool IsDefineMax { get; }
-        /// <summary>
-        /// 是否有最小值定義
-        /// </summary>
-        bool IsDefineMin { get; }
-        /// <summary>
-        /// 是否有最小值定義
-        /// </summary>
-        bool IsDefineDefault { get; }
-        /// <summary>
-        /// 是否可以定義範圍
-        /// </summary>
-        bool RangeDefinable { get; }
+        ///// <summary>
+        ///// 是否有最小值定義
+        ///// </summary>
+        //bool IsDefineMin { get; }
+        ///// <summary>
+        ///// 是否有最小值定義
+        ///// </summary>
+        //bool IsDefineDefault { get; }
+        ///// <summary>
+        ///// 是否可以定義範圍
+        ///// </summary>
+        //bool RangeDefinable { get; }
         /// <summary>
         /// 設定參數最大值
         /// </summary>
@@ -287,18 +259,18 @@ namespace CtParamEditor.Comm
         /// </summary>
         /// <param name="min"></param>
         void SetMinimun(T min);
-        /// <summary>
-        /// 設定預設值
-        /// </summary>
-        void SetDefault(T Def);
-        /// <summary>
-        /// 清除最小值
-        /// </summary>
-        void RemoveMaxinum();
-        /// <summary>
-        /// 清除最小值
-        /// </summary>
-        void RemoveMinimun();
+        ///// <summary>
+        ///// 設定預設值
+        ///// </summary>
+        //void SetDefault(T Def);
+        ///// <summary>
+        ///// 清除最小值
+        ///// </summary>
+        //void RemoveMaxinum();
+        ///// <summary>
+        ///// 清除最小值
+        ///// </summary>
+        //void RemoveMinimun();
         /// <summary>
         /// 設定參數範圍
         /// </summary>
