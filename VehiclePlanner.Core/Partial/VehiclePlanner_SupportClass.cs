@@ -33,7 +33,7 @@ namespace VehiclePlanner.Core {
         private HookProc KeyboardHookProcedure; //声明KeyboardHookProcedure作为HookProc类型
 
         private List<Keys> mKeyDowns = new List<Keys>();
-
+        
         #endregion Declaration - Fields
 
         #region Declartion - Events
@@ -187,12 +187,22 @@ namespace VehiclePlanner.Core {
             // 侦听键盘事件
             if (nCode >= 0) {
                 KeyboardHookStruct MyKeyboardHookStruct = (KeyboardHookStruct)Marshal.PtrToStructure(lParam, typeof(KeyboardHookStruct));
+                Keys auxiliaryKey = Keys.None;
                 // raise KeyDown
                 if (wParam == WM_KEYDOWN || wParam == WM_SYSKEYDOWN) {
                     Keys keyData = (Keys)MyKeyboardHookStruct.vkCode;
                     if (!mKeyDowns.Contains(keyData)) {
                         mKeyDowns.Add(keyData);
-                        KeyEventArgs e = new KeyEventArgs(keyData);
+                        if (mKeyDowns.Any(k => k == Keys.LControlKey || k == Keys.RControlKey)) {
+                            auxiliaryKey |= Keys.Control;
+                        }
+                        if (mKeyDowns.Any(k => k == Keys.LMenu || k == Keys.RMenu)) {
+                            auxiliaryKey |= Keys.Alt;
+                        }
+                        if (mKeyDowns.Any(k => k == Keys.LShiftKey || k == Keys.RShiftKey)) {
+                            auxiliaryKey |= Keys.Shift;
+                        }
+                        KeyEventArgs e = new KeyEventArgs(keyData | auxiliaryKey);
                         KeyDownEvent?.Invoke(this, e);
                     }
                 }
@@ -214,8 +224,17 @@ namespace VehiclePlanner.Core {
                     Keys keyData = (Keys)MyKeyboardHookStruct.vkCode;
                     if (mKeyDowns.Contains(keyData)) {
                         mKeyDowns.Remove(keyData);
+                        if (mKeyDowns.Any(k => k == Keys.LControlKey || k == Keys.RControlKey)) {
+                            auxiliaryKey |= Keys.Control;
+                        }
+                        if (mKeyDowns.Any(k => k == Keys.LMenu || k == Keys.RMenu)) {
+                            auxiliaryKey |= Keys.Alt;
+                        }
+                        if (mKeyDowns.Any(k => k == Keys.LShiftKey || k == Keys.RShiftKey)) {
+                            auxiliaryKey |= Keys.Shift;
+                        }
                     }
-                    KeyEventArgs e = new KeyEventArgs(keyData);
+                    KeyEventArgs e = new KeyEventArgs(keyData | auxiliaryKey);
                     KeyUpEvent?.Invoke(this, e);
                 }
 

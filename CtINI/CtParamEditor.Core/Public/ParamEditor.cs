@@ -146,7 +146,7 @@ namespace CtParamEditor.Core
                 }
             }
         }
-
+        
         #endregion Declaration - Properteis
 
         #region Declaration - Enum
@@ -189,8 +189,8 @@ namespace CtParamEditor.Core
         /// 將含有
         /// </summary>
         /// <param name="keyWord"></param>
-        public void Filter(string keyWord) {
-            DataSource.Filter(keyWord);
+        public void Filter() {
+            DataSource.Filter();
         }
 
         public void CloseFilter() {
@@ -284,6 +284,8 @@ namespace CtParamEditor.Core
                 /*-- 寫入INI檔 --*/
                 File.WriteAllText(savePath, iniContent.ToString(), Encoding.UTF8);
                 IniPath = path;
+                mCommandManager.Clear();
+                DataSource.IsModified = false;
                 
             }
         }

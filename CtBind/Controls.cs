@@ -9,7 +9,7 @@ namespace CtBind {
 
         private Bindable() {
         }
-
+        
         /// <summary>
         /// 可綁定的StripLabel控制項
         /// </summary>
@@ -111,5 +111,77 @@ namespace CtBind {
 
             #endregion IBindableComponent Members
         }
+
+        /// <summary>
+        /// 可綁定的StripButton控制項
+        /// </summary>
+        public class ToolStripButton: System.Windows.Forms.ToolStripButton, IBindableComponent {
+            
+            #region IBindableComponent Members
+
+            private BindingContext bindingContext;
+            private ControlBindingsCollection dataBindings;
+
+            public BindingContext BindingContext {
+                get {
+                    if (bindingContext == null) {
+                        bindingContext = new BindingContext();
+                    }
+                    return bindingContext;
+                }
+                set {
+                    bindingContext = value;
+                }
+            }
+
+            public ControlBindingsCollection DataBindings {
+                get {
+                    if (dataBindings == null) {
+                        dataBindings = new ControlBindingsCollection(this);
+                    }
+                    return dataBindings;
+                }
+            }
+
+            #endregion IBindableComponent Members
+
+        }
+
+        /// <summary>
+        /// 可綁定的StripTextBox控制項
+        /// </summary>
+        public class ToolStripTextBox : System.Windows.Forms.ToolStripTextBox, IBindableComponent {
+
+
+            #region IBindableComponent Members
+
+            private BindingContext bindingContext;
+            private ControlBindingsCollection dataBindings;
+
+            public BindingContext BindingContext {
+                get {
+                    if (bindingContext == null) {
+                        bindingContext = new BindingContext();
+                    }
+                    return bindingContext;
+                }
+                set {
+                    bindingContext = value;
+                }
+            }
+
+            public ControlBindingsCollection DataBindings {
+                get {
+                    if (dataBindings == null) {
+                        dataBindings = new ControlBindingsCollection(this);
+                    }
+                    return dataBindings;
+                }
+            }
+
+            #endregion IBindableComponent Members
+
+        }
+
     }
 }

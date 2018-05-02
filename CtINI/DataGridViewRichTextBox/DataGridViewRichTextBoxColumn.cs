@@ -939,6 +939,7 @@ namespace DataGridViewRichTextBox
         }
 
         private DataGridViewColumn ConfigColumn(DataGridViewColumn column, string colName, Font font = null) {
+            column.Name = colName;
             column.DataPropertyName = colName;
             column.HeaderText = colName;
             if (font != null) column.DefaultCellStyle.Font = font;

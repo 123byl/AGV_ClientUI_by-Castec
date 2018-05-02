@@ -123,6 +123,10 @@
       <Project>{a9bed8b3-2f9d-42a8-90bd-9fae0522eb09}</Project>
       <Name>CtLib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\VehiclePlanner.Core\VehiclePlanner.Core.csproj">
+      <Project>{03034D39-18C7-449A-95D3-B941DC4DF743}</Project>
+      <Name>VehiclePlanner.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CtINI\CtINI.csproj">
       <Project>{023378c0-67e4-4424-ad75-13572f89e9a5}</Project>
       <Name>CtINI</Name>
@@ -139,6 +143,24 @@
       <Project>{D9826CC9-BF43-4B72-A211-19E312E8C184}</Project>
       <Name>DataGridViewRichTextBox</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Filter.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Highlight.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Unfilter.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Unhighlight.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Undo1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Redo2.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

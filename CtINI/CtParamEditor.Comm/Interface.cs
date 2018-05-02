@@ -42,9 +42,8 @@ namespace CtParamEditor.Comm
         /// 要鎖住的選項
         /// </summary>
         CmsOption DisableOption { get; }
-        
         void CloseFilter();
-        void Filter(string keyWord);
+        void Filter();
         void Highlight(string keyWord);
         void ReadINI(string fileName);
         void RestoreDefault();
@@ -104,6 +103,18 @@ namespace CtParamEditor.Comm
         /// 資料筆數
         /// </summary>
         int RowCount { get; }
+        /// <summary>
+        /// 是否已過濾
+        /// </summary>
+        bool IsFilterMode { get; }
+        /// <summary>
+        /// 過濾關鍵字
+        /// </summary>
+        string KeyWord { get; set; }
+        /// <summary>
+        /// 是否已修改過
+        /// </summary>
+        bool IsModified { get; }
 
         /// <summary>
         /// 資料變更事件
@@ -217,7 +228,7 @@ namespace CtParamEditor.Comm
         /// 修改欄位
         /// </summary>
         /// <returns></returns>
-        EmColumn ModifiedColumn();
+        EmColumn ModifiedColumn { get; set; }
 
         bool IsDefineMax();
         bool IsDefineMin();

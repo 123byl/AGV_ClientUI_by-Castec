@@ -470,7 +470,14 @@ namespace CtParamEditor.Core.Internal.Component {
         /// 修改欄位
         /// </summary>
         /// <returns></returns>
-        public EmColumn ModifiedColumn() => mModifiedColumn;
+        public EmColumn ModifiedColumn {
+            get => mModifiedColumn;
+            set {
+                if (mModifiedColumn != value) {
+                    mModifiedColumn = value;                    
+                }
+            }
+        }
 
         #endregion Implement - IParamColumn
 

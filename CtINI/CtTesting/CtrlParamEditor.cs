@@ -26,6 +26,7 @@ using System.Runtime.Serialization;
 using CtParamEditor.Core;
 using System.Xml.Serialization;
 using System.Xml;
+using VehiclePlanner.Core;
 
 namespace CtTesting {
 
@@ -58,8 +59,76 @@ namespace CtTesting {
 
         private RtfConvert mMcConvert = new RtfConvert();
 
+        private string mHighlight = null;
+
+        private KeyboardHook mKeyboardHook = null;
+
         #endregion Declaration - Fields
-        
+
+        #region Declaration - Properties
+
+        public KeyboardHook KeyboardHook { get => mKeyboardHook;
+            set {
+                if (mKeyboardHook != value && value != null) {
+                    mKeyboardHook = value;
+                    mKeyboardHook.KeyDownEvent += MKeyboardHook_KeyDownEvent;
+                    mKeyboardHook.KeyUpEvent += MKeyboardHook_KeyUpEvent;
+                    mKeyboardHook.KeyPressEvent += MKeyboardHook_KeyPressEvent;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 按鈕放開事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MKeyboardHook_KeyPressEvent(object sender, KeyPressEventArgs e) {
+            //Console.WriteLine("KeyPredd");
+
+        }
+
+        /// <summary>
+        /// 按鈕過程事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MKeyboardHook_KeyUpEvent(object sender, KeyEventArgs e) {
+        }
+
+        /// <summary>
+        /// 按鈕按下事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MKeyboardHook_KeyDownEvent(object sender, KeyEventArgs e) {
+            if (e.Control) {
+                switch (e.KeyCode) {
+                    case Keys.Z:
+                        if (e.Shift) {
+                            Redo();
+                        } else {
+                            Undo();
+                        }
+                        break;
+                    case Keys.F:
+                        Filter();
+                        break;
+                    case Keys.H:
+                        Highlight();
+                        break;
+                    case Keys.O:
+                        OpenFile();
+                        break;
+                    case Keys.S:
+                        SaveFile();
+                        break;
+                }
+            }
+        }
+
+        #endregion Declaration - Properties
+
         #region Function - Constructors
 
         public CtrlParamEditor() {
@@ -75,6 +144,10 @@ namespace CtTesting {
             /*-- 資料綁定 --*/
             Bindings(mEditor);
             Bindings(mEditor.ParamCollection);
+
+            KeyboardHook = new KeyboardHook();
+            KeyboardHook.Start();
+            
         }
 
         #endregion Function - Constructors
@@ -126,8 +199,8 @@ namespace CtTesting {
 
                 if ((prop.IlleaglColumn() & emColumn) != EmColumn.None) {
                     e.Value = mRcConvert.ToRTF("Required cell", mCellStyle.RequiredCell, false);//必填欄位樣式
-                }else if (prop.ModifiedColumn() != EmColumn.None) {
-                    if ((prop.ModifiedColumn() & emColumn) != EmColumn.None) {
+                }else if (prop.ModifiedColumn != EmColumn.None) {
+                    if ((prop.ModifiedColumn & emColumn) != EmColumn.None) {
                         e.Value = mMcConvert.ToRTF(val, mCellStyle.ModifiedCell);
                     } else {
                         e.Value = mMrConvert.ToRTF(val, mCellStyle.ModifiedRow);
@@ -145,6 +218,11 @@ namespace CtTesting {
 
         #region ToolStripMenuItem
 
+        /// <summary>
+        /// 參數編輯
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void miEdit_Click(object sender, EventArgs e) {
             var columnName = mEditor.SelectedColumnName;
             /*-- 取得目前選取的資料列 --*/
@@ -153,10 +231,20 @@ namespace CtTesting {
             mEditor.Edit(columnName);
         }
 
+        /// <summary>
+        /// 參數刪除
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void miDelete_Click(object sender, EventArgs e) {
             mEditor.Remove();
         }
 
+        /// <summary>
+        /// 參數加入
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void miAdd_Click(object sender, EventArgs e) {
             mEditor.Insert();
         }
@@ -164,87 +252,6 @@ namespace CtTesting {
         #endregion ToolStripMenuItem
 
         #region Button
-
-        /// <summary>
-        /// 儲存參數設定檔
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void btnSave_Click(object sender, EventArgs e) {
-            string path = mEditor.IniPath;
-            if (string.IsNullOrEmpty(path)) {
-                mSdlg.Filter = "Ini File|*.ini";
-                mSdlg.Title = "Select save path";
-                mSdlg.FileName = "iTS_Setting.ini";
-                if (mSdlg.ShowDialog() != DialogResult.OK) {
-                    return;
-                }
-                path = mSdlg.FileName;
-            }
-            mEditor.SaveToINI(path);
-        }
-
-        /// <summary>
-        /// 過濾欄位
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void btnFilter_Click(object sender, EventArgs e) {
-            mEditor.Filter(txtKeyWord.Text);
-        }
-
-        /// <summary>
-        /// 顯示全部欄位
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void btnAll_Click(object sender, EventArgs e) {
-            mEditor.CloseFilter();
-        }
-
-        /// <summary>
-        /// 開啟參數設定檔
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void btnOpen_Click(object sender, EventArgs e) {
-            //if (mEditor.GridView == null) mEditor.GridView = dgvProperties;
-            /*-- 設定要開啟得檔案類型 --*/
-            mOdlg.Filter = "Ini File|*.ini";
-            mOdlg.Title = "Select a Ini File";
-            if (mOdlg.ShowDialog() == DialogResult.OK) {
-                /*-- 讀取Ini檔 --*/
-                mEditor.ReadINI(mOdlg.FileName);
-            }
-        }
-        
-        /// <summary>
-        /// 清除DGV
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void btnClear_Click(object sender, EventArgs e) {
-            mEditor.Clear();
-        }
-
-        /// <summary>
-        /// 恢復預設
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void btnRestoreDefault_Click(object sender, EventArgs e) {
-            mEditor.RestoreDefault();
-        }
-
-        /// <summary>
-        /// 標記
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void btnHighlight_Click(object sender, EventArgs e) {
-            mEditor.Highlight(txtKeyWord.Text);
-            dgvProperties.Refresh();
-        }
         
         /// <summary>
         /// 參數範本輸出
@@ -266,29 +273,7 @@ namespace CtTesting {
             mEditor.WriteParam("RangeSetting", 20, "RangeSetting").SetRange(0, 100);
             mEditor.SaveToINI(@"D:\Test1123.ini");
         }
-
-        private void btnNewRow_Click(object sender, EventArgs e) {
-
-        }
-
-        /// <summary>
-        /// 撤銷
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void btnUndo_Click(object sender, EventArgs e) {
-            mEditor.Undo();
-        }
-
-        /// <summary>
-        /// 重做
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void btnRedo_Click(object sender, EventArgs e) {
-            mEditor.Redo();
-        }
-
+        
         /// <summary>
         /// 參數讀取
         /// </summary>
@@ -313,50 +298,104 @@ namespace CtTesting {
         }
 
         #endregion Button
-
-        #region Label
-
-        private void lbHightlightFont_OnDoubleClick(object sender, EventArgs e) {
-
-        }
-
-        private void lbRegularFont_DoubleClick(object sender, EventArgs e) {
-
-        }
-
-        private void lbRgFore_DoubleClick(object sender, EventArgs e) {
-
-        }
-
-        private void lbRgBack_DoubleClick(object sender, EventArgs e) {
-
-        }
-        private void lbHlFore_DoubleClick(object sender, EventArgs e) {
-
-        }
-
-        private void lbHlBack_DoubleClick(object sender, EventArgs e) {
-
-        }
-
-        #endregion Label
-
+        
         #region IParamCollection
 
+        /// <summary>
+        /// 參數變更事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ParamCollection_DataChanged(object sender, EventArgs e) {
             dgvProperties.Refresh();
         }
 
         #endregion IParamCollection
 
+        #region ToolStrip
+
+        #endregion ToolStrip
+        
+        /// <summary>
+        /// 開啟檔案
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void tsbOpen_Click(object sender, EventArgs e) {
+            OpenFile();
+        }
+
+        /// <summary>
+        /// 儲存檔案
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void tsbSave_Click(object sender, EventArgs e) {
+            SaveFile();
+        }
+
+        /// <summary>
+        /// 復原
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void tsbUndo_Click(object sender, EventArgs e) {
+            Undo();
+        }
+
+        /// <summary>
+        /// 重做
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void tsbRedo_Click(object sender, EventArgs e) {
+            Redo();
+        }
+
+        /// <summary>
+        /// 參數過濾
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void tsbFilter_Click(object sender, EventArgs e) {
+            Filter();
+        }
+
+        /// <summary>
+        /// 參數標記
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void tsbHighlight_Click(object sender, EventArgs e) {
+            Highlight();
+        }
+
         #endregion Function - Events
 
         #region  Function - Private Methods
 
+        /// <summary>
+        /// 使用者文字輸入方法委派
+        /// </summary>
+        /// <param name="result"></param>
+        /// <param name="title"></param>
+        /// <param name="describe"></param>
+        /// <param name="defValue"></param>
+        /// <returns></returns>
         private bool InputText(out string result, string title, string describe, string defValue = "") {
             return Stat.SUCCESS == CtInput.Text(out result, title, describe, defValue);
         }
 
+        /// <summary>
+        /// 使用者ComboBox輸入方法委派
+        /// </summary>
+        /// <param name="result"></param>
+        /// <param name="title"></param>
+        /// <param name="describe"></param>
+        /// <param name="itemList"></param>
+        /// <param name="defValue"></param>
+        /// <param name="allowEdit"></param>
+        /// <returns></returns>
         private bool ComboBoxList(out string result, string title, string describe, IEnumerable<string> itemList, string defValue = "", bool allowEdit = false) {
             return Stat.SUCCESS == CtInput.ComboBoxList(out result, title, describe, itemList,defValue, allowEdit);
         }
@@ -368,8 +407,7 @@ namespace CtTesting {
                 return Color.FromArgb(color.A, 255 - color.R, 255 - color.G, 255 - color.B);
             }
         }
-
-
+        
         /// <summary>
         /// 部署<see cref="DataGridView"/>
         /// </summary>
@@ -407,8 +445,89 @@ namespace CtTesting {
             };
             dgv.Columns.Clear();
             dgv.Columns.AddRange(cols.ToArray());
+            foreach(DataGridViewColumn column in dgv.Columns) {
+                Console.WriteLine(column.HeaderText);
+            }
+            int valWidth = 80;
+            var k = dgv.Columns[nameof(IParamColumn.Name)].Width = 230;
+            dgv.Columns[nameof(IParamColumn.Value)].Width = valWidth;
+            dgv.Columns[nameof(IParamColumn.Type)].Width = 80;
+            dgv.Columns[nameof(IParamColumn.Description)].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dgv.Columns[nameof(IParamColumn.Max)].Width = valWidth;
+            dgv.Columns[nameof(IParamColumn.Min)].Width = valWidth;
+            dgv.Columns[nameof(IParamColumn.Default)].Width = valWidth;
         }
 
+        /// <summary>
+        /// 復原
+        /// </summary>
+        protected void Undo() {
+            mEditor.Undo();
+        }
+
+        /// <summary>
+        /// 重做
+        /// </summary>
+        protected void Redo() {
+            mEditor.Redo();
+        }
+
+        /// <summary>
+        /// 參數過濾
+        /// </summary>
+        protected void Filter() {
+            mEditor.Filter();
+        }
+
+        /// <summary>
+        /// 參數標記
+        /// </summary>
+        protected void Highlight() {
+            Image img = null;
+            if (mHighlight != mEditor.ParamCollection.KeyWord) {
+                mHighlight = mEditor.ParamCollection.KeyWord;
+                img = Properties.Resources.Unhighlight;
+            } else {
+                mHighlight = string.Empty;
+                img = Properties.Resources.Highlight;
+            }
+            mMrConvert.KeyWord = mHighlight;
+            mMcConvert.KeyWord = mHighlight;
+            mRcConvert.KeyWord = mHighlight;
+            mRgConvert.KeyWord = mHighlight;
+            dgvProperties.Refresh();
+            CtInvoke.ToolStripItemImage(tsbHighlight, img);
+        }
+
+        /// <summary>
+        /// 開啟檔案
+        /// </summary>
+        protected void OpenFile() {
+            /*-- 設定要開啟得檔案類型 --*/
+            mOdlg.Filter = "Ini File|*.ini";
+            mOdlg.Title = "Select a Ini File";
+            if (mOdlg.ShowDialog() == DialogResult.OK) {
+                /*-- 讀取Ini檔 --*/
+                mEditor.ReadINI(mOdlg.FileName);
+            }
+        }
+
+        /// <summary>
+        /// 儲存檔案
+        /// </summary>
+        protected void SaveFile() {
+            string path = mEditor.IniPath;
+            if (string.IsNullOrEmpty(path)) {
+                mSdlg.Filter = "Ini File|*.ini";
+                mSdlg.Title = "Select save path";
+                mSdlg.FileName = "iTS_Setting.ini";
+                if (mSdlg.ShowDialog() != DialogResult.OK) {
+                    return;
+                }
+                path = mSdlg.FileName;
+            }
+            mEditor.SaveToINI(path);
+        }
 
         #endregion Function - Private Methods
 
@@ -426,43 +545,49 @@ namespace CtTesting {
         /// <param name="source">資料源</param>
         public void Bindings(IParamEditor source) {
             if (source.DelInvoke == null) source.DelInvoke = invk => this.InvokeIfNecessary(invk);
-
-            /*-- Add選項顯示 --*/
-            miAdd.DataBindings.ExAdd(nameof(miAdd.Visible), source, nameof(source.ShowOption),(sender,e) => {
-                e.Value = ((CmsOption)e.Value).ShowOption(CmsOption.Add);
-            },mEditor.ShowOption.ShowOption(CmsOption.Add));
-            /*-- Delete選項 --*/
-            miDelete.DataBindings.ExAdd(nameof(miDelete.Visible), source, nameof(source.ShowOption),(sender,e) => {
-                e.Value = ((CmsOption)e.Value).ShowOption(CmsOption.Delete);
-            },source.ShowOption.ShowOption(CmsOption.Delete));
-            /*-- Edit選項 --*/
-            miEdit.DataBindings.ExAdd(nameof(miEdit.Visible), source, nameof(source.ShowOption), (sneder, e) => {
-                e.Value = ((CmsOption)e.Value).ShowOption(CmsOption.Edit);
-            }, source.ShowOption.ShowOption(CmsOption.Edit));
-            /*-- Add Disable --*/
-            miAdd.DataBindings.ExAdd(nameof(miAdd.Enabled), source, nameof(source.DisableOption), (sneder, e) => {
-                e.Value = ((CmsOption)e.Value).DisableOption(CmsOption.Add);
-            },source.DisableOption.DisableOption(CmsOption.Delete));
-            /*-- Delete Disable --*/
-            miDelete.DataBindings.ExAdd(nameof(miDelete.Enabled), source, nameof(source.DisableOption), (sender, e) => {
-                e.Value = ((CmsOption)e.Value).DisableOption(CmsOption.Delete);
-            },source.DisableOption.DisableOption(CmsOption.Delete));
-            /*-- Edit Disable --*/
-            miEdit.DataBindings.ExAdd(nameof(miEdit.Enabled), source, nameof(source.DisableOption), (sender, e) => {
-                e.Value = ((CmsOption)e.Value).DisableOption(CmsOption.Edit);
-            },source.DisableOption.DisableOption(CmsOption.Edit));
-            /*-- 可撤銷次數 --*/
-            btnUndo.DataBindings.ExAdd(nameof(btnUndo.Enabled), source, nameof(source.UndoCount),(snemder,e)=> {
-                e.Value = (int)e.Value > 0;
-            });
-            /*-- 可重做次數 --*/
-            btnRedo.DataBindings.ExAdd(nameof(btnRedo.Enabled), source, nameof(source.RedoCount), (sneder, e) => {
-                e.Value = (int)e.Value > 0;
-            });
-            /*-- INI檔路徑 --*/
-            tslbPath.DataBindings.ExAdd(nameof(tslbPath.Text), source, nameof(source.IniPath), (sneder, e) => {
-                e.Value = $"Path：{e.Value}";
-            }, source.IniPath);
+            try {
+                /*-- Add選項顯示 --*/
+                miAdd.DataBindings.ExAdd(nameof(miAdd.Visible), source, nameof(source.ShowOption), (sender, e) => {
+                    e.Value = ((CmsOption)e.Value).ShowOption(CmsOption.Add);
+                }, mEditor.ShowOption.ShowOption(CmsOption.Add));
+                /*-- Delete選項 --*/
+                miDelete.DataBindings.ExAdd(nameof(miDelete.Visible), source, nameof(source.ShowOption), (sender, e) => {
+                    e.Value = ((CmsOption)e.Value).ShowOption(CmsOption.Delete);
+                }, source.ShowOption.ShowOption(CmsOption.Delete));
+                /*-- Edit選項 --*/
+                miEdit.DataBindings.ExAdd(nameof(miEdit.Visible), source, nameof(source.ShowOption), (sneder, e) => {
+                    e.Value = ((CmsOption)e.Value).ShowOption(CmsOption.Edit);
+                }, source.ShowOption.ShowOption(CmsOption.Edit));
+                /*-- Add Disable --*/
+                miAdd.DataBindings.ExAdd(nameof(miAdd.Enabled), source, nameof(source.DisableOption), (sneder, e) => {
+                    e.Value = ((CmsOption)e.Value).DisableOption(CmsOption.Add);
+                }, source.DisableOption.DisableOption(CmsOption.Delete));
+                /*-- Delete Disable --*/
+                miDelete.DataBindings.ExAdd(nameof(miDelete.Enabled), source, nameof(source.DisableOption), (sender, e) => {
+                    e.Value = ((CmsOption)e.Value).DisableOption(CmsOption.Delete);
+                }, source.DisableOption.DisableOption(CmsOption.Delete));
+                /*-- Edit Disable --*/
+                miEdit.DataBindings.ExAdd(nameof(miEdit.Enabled), source, nameof(source.DisableOption), (sender, e) => {
+                    e.Value = ((CmsOption)e.Value).DisableOption(CmsOption.Edit);
+                }, source.DisableOption.DisableOption(CmsOption.Edit));
+                /*-- 可撤銷次數 --*/
+                tsbUndo.DataBindings.ExAdd(nameof(tsbUndo.Enabled), source, nameof(source.UndoCount), (sender, e) => {
+                    e.Value = (int)e.Value > 0;
+                }, source.UndoCount > 0);
+                tsbSave.DataBindings.ExAdd(nameof(tsbSave.Enabled), source, nameof(source.UndoCount), (sender, e) => {
+                    e.Value = (int)e.Value > 0;
+                },source.UndoCount > 0);
+                /*-- 可重做次數 --*/
+                tsbRedo.DataBindings.ExAdd(nameof(tsbRedo.Enabled), source, nameof(source.RedoCount), (sender, e) => {
+                    e.Value = (int)e.Value > 0;
+                }, source.RedoCount > 0);
+                /*-- INI檔路徑 --*/
+                tslbPath.DataBindings.ExAdd(nameof(tslbPath.Text), source, nameof(source.IniPath), (sneder, e) => {
+                    e.Value = $"Path：{e.Value}";
+                }, source.IniPath);
+            } catch (Exception ex) {
+                CtStatus.Report(Stat.ER_SYSTEM, ex,true);
+            }
         }
 
         /// <summary>
@@ -471,20 +596,30 @@ namespace CtTesting {
         /// <param name="source"></param>
         public void Bindings(IParamCollection source) {
             if (source.DelInvoke == null) source.DelInvoke = invk => this.InvokeIfNecessary(invk);
-
-            /*-- 資料筆數 --*/
-            dgvProperties.DataBindings.ExAdd(nameof(dgvProperties.RowCount), source, nameof(source.RowCount));
-            lbRowCount.DataBindings.ExAdd(nameof(lbRowCount.Text), source, nameof(source.RowCount),(sender,e) => {
-                e.Value = $"Row Count:{e.Value}";
-            });
-            tslbCount.DataBindings.ExAdd(nameof(tslbCount.Text), source, nameof(source.RowCount), (sneder, e) => {
-                e.Value = $"Count：{(int)e.Value}";
-            }, (int)source.RowCount);
-
+            try {
+                /*-- 資料筆數 --*/
+                dgvProperties.DataBindings.ExAdd(nameof(dgvProperties.RowCount), source, nameof(source.RowCount));
+                tslbCount.DataBindings.ExAdd(nameof(tslbCount.Text), source, nameof(source.RowCount), (sneder, e) => {
+                    e.Value = $"Count：{(int)e.Value}";
+                }, (int)source.RowCount);
+                /*-- 是否已過濾資料 --*/
+                tsbFilter.DataBindings.ExAdd(nameof(tsbFilter.Image), source, nameof(source.IsFilterMode), (sender, e) => {
+                    e.Value = (bool)e.Value ? Properties.Resources.Unfilter : Properties.Resources.Filter;
+                }, source.IsFilterMode ? Properties.Resources.Unfilter : Properties.Resources.Filter);
+                tsbFilter.DataBindings.ExAdd(nameof(tsbFilter.ToolTipText), source, nameof(source.IsFilterMode), (sender, e) => {
+                    e.Value = (bool)e.Value ? "Unfilter" : "Filter";
+                }, source.IsFilterMode ? "Unfilter" : "Filter");
+                /*-- 過濾關鍵字 --*/
+                tstKeyWord.DataBindings.ExAdd(nameof(tstKeyWord.Text), source, nameof(source.KeyWord));
+            } catch (Exception ex) {
+                CtStatus.Report(Stat.ER_SYSTEM, ex,true);
+            }
         }
 
         #endregion Implenent - IDataDisplay
 
+        private void CtrlParamEditor_Load(object sender, EventArgs e) {
+        }
     }
 
     internal class TestData {

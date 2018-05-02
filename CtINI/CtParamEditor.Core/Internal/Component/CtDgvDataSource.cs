@@ -27,7 +27,17 @@ namespace CtParamEditor.Core.Internal.Component {
         /// 過濾後的資料
         /// </summary>
         private List<IParamColumn> mFilter = new List<IParamColumn>();
-        
+
+        /// <summary>
+        /// 是否已經過濾資料
+        /// </summary>
+        private bool mIsFilterMode = false;
+
+        /// <summary>
+        /// 過濾關鍵字
+        /// </summary>
+        private string mKeyWord = null;
+
         #endregion Declaration - Fields
 
         #region Declaration - Properties
@@ -45,8 +55,7 @@ namespace CtParamEditor.Core.Internal.Component {
                 OnDataChanged();
             }
         }
-
-
+        
         public object this[int indexRow, string columnName] {
             get {
                 
@@ -72,12 +81,45 @@ namespace CtParamEditor.Core.Internal.Component {
         /// <summary>
         /// 是否在過濾模式
         /// </summary>
-        public bool IsFilterMode { get; set; } = false;
+        public bool IsFilterMode {
+            get => mIsFilterMode;
+            set {
+                if (mIsFilterMode != value) {
+                    mIsFilterMode = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        /// <summary>
+        /// 過濾關鍵字
+        /// </summary>
+        public string KeyWord { get => mKeyWord;
+            set {
+                if (mKeyWord != value) {
+                    mKeyWord = value;
+                    IsFilterMode = false;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
         /// <summary>
         /// 要顯示的資料
         /// </summary>
         private List<IParamColumn> Data { get { return IsFilterMode ? mFilter : mFullData; } }
+        
+        public bool IsModified {
+            get {
+                return mFullData.Any(prop => prop.ModifiedColumn != EmColumn.None);
+            }
+            set {
+                if (!value) {
+                    mFullData.ForEach(prop => prop.ModifiedColumn = EmColumn.None);
+                    OnDataChanged();
+                }
+            }
+        }
 
         #endregion Declaration - Properties
 
@@ -217,10 +259,13 @@ namespace CtParamEditor.Core.Internal.Component {
         /// 依照關鍵字過濾參數項目
         /// </summary>
         /// <param name="keyWord"></param>
-        public void Filter(string keyWord) {
-            mFilter.Clear();
-            mFilter = mFullData.FindAll(p => p.FieldContains(keyWord));            
-            IsFilterMode = true;
+        public void Filter() {
+            if (IsFilterMode) {
+                mFilter.Clear();
+            } else {
+                mFilter = mFullData.FindAll(p => p.FieldContains(KeyWord));
+            }
+            IsFilterMode = !IsFilterMode;
             OnPropertyChanged(nameof(RowCount));
         }
 

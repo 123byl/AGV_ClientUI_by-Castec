@@ -23,7 +23,7 @@ namespace CtTesting {
             Application.ThreadException += Application_ThreadException;
             /* 並非處理 UI 的錯誤 */
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-
+            
             Application.Run(new StartUp());
         }
 
