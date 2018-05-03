@@ -339,6 +339,7 @@ namespace INITesting {
             this.Name = "CtrlParamEditor";
             this.Text = "CtrlPropertiesSetting";
             this.Load += new System.EventHandler(this.CtrlParamEditor_Load);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.CtrlParamEditor_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.dgvProperties)).EndInit();
             this.cmsDGV.ResumeLayout(false);
             this.statusStrip1.ResumeLayout(false);

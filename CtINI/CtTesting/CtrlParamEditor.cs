@@ -66,21 +66,6 @@ namespace INITesting {
         #endregion Declaration - Fields
 
         #region Declaration - Properties
-
-        /// <summary>
-        /// 全域鍵盤檢測
-        /// </summary>
-        public KeyboardHook KeyboardHook { get => mKeyboardHook;
-            set {
-                if (mKeyboardHook != value && value != null) {
-                    if (mKeyboardHook != null) {
-                        mKeyboardHook.KeyDownEvent -= MKeyboardHook_KeyDownEvent;
-                    }
-                    mKeyboardHook = value;
-                    mKeyboardHook.KeyDownEvent += MKeyboardHook_KeyDownEvent;
-                }
-            }
-        }
         
         #endregion Declaration - Properties
 
@@ -101,8 +86,7 @@ namespace INITesting {
             Bindings(mEditor.ParamCollection);
 
         }
-            
-
+        
         #endregion Function - Constructors
 
         #region Function - Evnets
@@ -268,37 +252,6 @@ namespace INITesting {
         #region ToolStrip
 
         #endregion ToolStrip
-        
-        /// <summary>
-        /// 按鈕按下事件
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void MKeyboardHook_KeyDownEvent(object sender, KeyEventArgs e) {
-            if (e.Control) {
-                switch (e.KeyCode) {
-                    case Keys.Z:
-                        if (e.Shift) {
-                            Redo();
-                        } else {
-                            Undo();
-                        }
-                        break;
-                    case Keys.F:
-                        Filter();
-                        break;
-                    case Keys.L:
-                        Highlight();
-                        break;
-                    case Keys.O:
-                        OpenFile();
-                        break;
-                    case Keys.S:
-                        SaveFile();
-                        break;
-                }
-            }
-        }
         
         /// <summary>
         /// 開啟檔案
@@ -500,17 +453,51 @@ namespace INITesting {
         /// 儲存檔案
         /// </summary>
         protected void SaveFile() {
-            string path = mEditor.IniPath;
-            if (string.IsNullOrEmpty(path)) {
-                mSdlg.Filter = "Ini File|*.ini";
-                mSdlg.Title = "Select save path";
-                mSdlg.FileName = "iTS_Setting.ini";
-                if (mSdlg.ShowDialog() != DialogResult.OK) {
-                    return;
+            if (mEditor.UndoCount > 0) {
+                string path = mEditor.IniPath;
+                if (string.IsNullOrEmpty(path)) {
+                    mSdlg.Filter = "Ini File|*.ini";
+                    mSdlg.Title = "Select save path";
+                    mSdlg.FileName = "iTS_Setting.ini";
+                    if (mSdlg.ShowDialog() != DialogResult.OK || string.IsNullOrEmpty(mSdlg.FileName)) {
+                        return;
+                    }
+                    path = mSdlg.FileName;
                 }
-                path = mSdlg.FileName;
+                mEditor.SaveToINI(path);
             }
-            mEditor.SaveToINI(path);
+        }
+
+        /// <summary>
+        /// 快捷鍵偵測
+        /// </summary>
+        /// <param name="msg"></param>
+        /// <param name="keyData"></param>
+        /// <returns></returns>
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {
+            switch (keyData) {
+                case Keys.Z | Keys.Control:
+                    Undo();
+                    break;
+                case Keys.Z | Keys.Control | Keys.Shift:
+                    Redo();
+                    break;
+                case Keys.O | Keys.Control:
+                    OpenFile();
+                    break;
+                case Keys.S | Keys.Control:
+                    SaveFile();
+                    break;
+                case Keys.F | Keys.Control:
+                    Filter();
+                    break;
+                case Keys.L | Keys.Control:
+                    Highlight();
+                    break;
+                default:
+                    return base.ProcessCmdKey(ref msg, keyData);
+            }
+            return true;
         }
 
         #endregion Function - Private Methods
@@ -605,6 +592,32 @@ namespace INITesting {
         private void tstKeyWord_KeyDown(object sender, KeyEventArgs e) {
             if (e.Control) {
                 e.Handled = true;
+            }
+        }
+
+        private void CtrlParamEditor_KeyDown(object sender, KeyEventArgs e) {
+            if (e.Control) {
+                switch (e.KeyCode) {
+                    case Keys.Z:
+                        if (e.Shift) {
+                            Redo();
+                        } else {
+                            Undo();
+                        }
+                        break;
+                    case Keys.F:
+                        Filter();
+                        break;
+                    case Keys.L:
+                        Highlight();
+                        break;
+                    case Keys.O:
+                        OpenFile();
+                        break;
+                    case Keys.S:
+                        SaveFile();
+                        break;
+                }
             }
         }
     }

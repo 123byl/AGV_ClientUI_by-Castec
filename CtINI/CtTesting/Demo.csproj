@@ -7,8 +7,8 @@
     <ProjectGuid>{3D5B539E-E99C-4920-B703-D2ADC8764E27}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CtTesting</RootNamespace>
-    <AssemblyName>CtTesting</AssemblyName>
+    <RootNamespace>INITesting</RootNamespace>
+    <AssemblyName>INITesting</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

@@ -979,7 +979,6 @@ namespace VehiclePlanner {
             /*-- 資料綁定 --*/
             Bindings(rVehiclePlanner);
             Bindings(Controller);
-            (mDockContent[miParamEditor] as ParamEditor).KeyboardHook = rVehiclePlanner.KeyboardHook;
         }
 
         /// <summary>

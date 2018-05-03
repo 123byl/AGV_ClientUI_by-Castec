@@ -14,14 +14,7 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace VehiclePlanner.Module.Implement {
     public partial class ParamEditor : CtDockContainer {
-
-        private KeyboardHook mKeyboardHook = null;
-
-        public KeyboardHook KeyboardHook {
-            get => mEditor.KeyboardHook;
-            set => mEditor.KeyboardHook = value;
-        }
-
+        
         private CtrlParamEditor mEditor = null;
 
         /// <summary>
@@ -30,13 +23,26 @@ namespace VehiclePlanner.Module.Implement {
         public ParamEditor(DockState defState = DockState.Float)
             : base(defState) {
             InitializeComponent();
-            mEditor = new CtrlParamEditor();
-            mEditor.TopLevel = false;           
-            mEditor.Dock = DockStyle.Fill;
-            mEditor.FormBorderStyle = FormBorderStyle.None;
-            mEditor.Show();
+            mEditor = new CtrlParamEditor() {
+                TopLevel = false,
+                Dock = DockStyle.Fill,
+                FormBorderStyle = FormBorderStyle.None
+            };
             this.Controls.Add(mEditor);
+            mEditor.Show();
             FixedSize = new Size(718, 814);
+            this.Activated += ParamEditor_Activated;
+            this.Deactivate += ParamEditor_Deactivate;
         }
+        
+        private void ParamEditor_Deactivate(object sender, EventArgs e) {
+            Console.WriteLine("Deactivate");
+        }
+        
+
+        private void ParamEditor_Activated(object sender, EventArgs e) {
+            Console.WriteLine($"IsHidden:{this.IsHidden}");
+        }
+        
     }
 }
