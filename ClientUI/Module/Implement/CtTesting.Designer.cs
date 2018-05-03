@@ -219,6 +219,7 @@ namespace VehiclePlanner.Module.Implement {
             this.btnFind.TabIndex = 69;
             this.toolTip1.SetToolTip(this.btnFind, "Search iTS");
             this.btnFind.UseVisualStyleBackColor = true;
+            this.btnFind.Click += new System.EventHandler(this.btnFind_Click);
             // 
             // tableLayoutPanel1
             // 
@@ -285,6 +286,7 @@ namespace VehiclePlanner.Module.Implement {
             this.btnConnect.Text = "Connect AGV";
             this.btnConnect.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.btnConnect.UseVisualStyleBackColor = true;
+            this.btnConnect.Click += new System.EventHandler(this.btnConnect_Click);
             // 
             // gpbMapBuild
             // 
@@ -319,6 +321,7 @@ namespace VehiclePlanner.Module.Implement {
             this.btnGetCarStatus.Text = "Car";
             this.btnGetCarStatus.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.btnGetCarStatus.UseVisualStyleBackColor = true;
+            this.btnGetCarStatus.Click += new System.EventHandler(this.btnGetCarStatus_Click);
             // 
             // btnMotionController
             // 
@@ -332,6 +335,7 @@ namespace VehiclePlanner.Module.Implement {
             this.btnMotionController.Text = "Motion Controller";
             this.btnMotionController.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.btnMotionController.UseVisualStyleBackColor = true;
+            this.btnMotionController.Click += new System.EventHandler(this.btnMotionController_Click);
             // 
             // btnSetVelo
             // 
@@ -342,6 +346,7 @@ namespace VehiclePlanner.Module.Implement {
             this.btnSetVelo.TabIndex = 11;
             this.btnSetVelo.Text = "Set";
             this.btnSetVelo.UseVisualStyleBackColor = true;
+            this.btnSetVelo.Click += new System.EventHandler(this.btnSetVelo_Click);
             // 
             // btnScan
             // 
@@ -355,6 +360,7 @@ namespace VehiclePlanner.Module.Implement {
             this.btnScan.Text = "Scan";
             this.btnScan.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.btnScan.UseVisualStyleBackColor = true;
+            this.btnScan.Click += new System.EventHandler(this.btnScan_Click);
             // 
             // lbVelocity
             // 
@@ -391,6 +397,7 @@ namespace VehiclePlanner.Module.Implement {
             this.btnServoOnOff.TabIndex = 1;
             this.btnServoOnOff.Text = "OFF";
             this.btnServoOnOff.UseVisualStyleBackColor = false;
+            this.btnServoOnOff.Click += new System.EventHandler(this.btnServoOnOff_Click);
             // 
             // tableLayoutPanel2
             // 
