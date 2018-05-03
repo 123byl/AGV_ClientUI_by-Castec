@@ -10,7 +10,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace CtTesting {
+namespace INITesting {
     public partial class CtrlParamGenarator : Form {
         private IParamEditor mEditor = Factory.Param.Editor();
 

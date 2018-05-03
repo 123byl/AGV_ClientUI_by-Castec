@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CtTesting {
+namespace INITesting {
     internal class Factory {
         private Factory() { }
         public static CtParamEditor.Core.Public.Factory Param { get; } = new CtParamEditor.Core.Public.Factory();

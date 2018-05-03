@@ -328,6 +328,10 @@ namespace VehiclePlanner.Core {
         /// </summary>
         bool IsBypassLoadFile { get; set; }
         /// <summary>
+        /// 全域鍵盤檢測
+        /// </summary>
+        KeyboardHook KeyboardHook { get; }
+        /// <summary>
         /// 錯誤訊息事件
         /// </summary>
         event ErrorMessageEventHandler ErrorMessage;
@@ -513,6 +517,13 @@ namespace VehiclePlanner.Core {
                     OnPropertyChanged();
                 }
             }
+        }
+
+        /// <summary>
+        /// 全域鍵盤檢測
+        /// </summary>
+        public KeyboardHook KeyboardHook {
+            get => mKeyboardHook;
         }
 
         #endregion Declaration - Porperties

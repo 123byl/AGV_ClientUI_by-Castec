@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace CtTesting {
+namespace INITesting {
     static class Program {
         /// <summary>
         /// 應用程式的主要進入點。

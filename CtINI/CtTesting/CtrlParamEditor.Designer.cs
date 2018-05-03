@@ -1,7 +1,7 @@
 ﻿using CtBind;
 using System;
 
-namespace CtTesting {
+namespace INITesting {
     partial class CtrlParamEditor {
         /// <summary>
         /// Required designer variable.
@@ -278,7 +278,7 @@ namespace CtTesting {
             // tsbUndo
             // 
             this.tsbUndo.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tsbUndo.Image = global::CtTesting.Properties.Resources.Undo1;
+            this.tsbUndo.Image = global::INITesting.Properties.Resources.Undo1;
             this.tsbUndo.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbUndo.Name = "tsbUndo";
             this.tsbUndo.Size = new System.Drawing.Size(24, 24);
@@ -289,7 +289,7 @@ namespace CtTesting {
             // tsbRedo
             // 
             this.tsbRedo.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tsbRedo.Image = global::CtTesting.Properties.Resources.Redo2;
+            this.tsbRedo.Image = global::INITesting.Properties.Resources.Redo2;
             this.tsbRedo.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbRedo.Name = "tsbRedo";
             this.tsbRedo.Size = new System.Drawing.Size(24, 24);
@@ -300,7 +300,7 @@ namespace CtTesting {
             // tsbFilter
             // 
             this.tsbFilter.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tsbFilter.Image = global::CtTesting.Properties.Resources.Filter;
+            this.tsbFilter.Image = global::INITesting.Properties.Resources.Filter;
             this.tsbFilter.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbFilter.Name = "tsbFilter";
             this.tsbFilter.Size = new System.Drawing.Size(24, 24);
@@ -311,7 +311,7 @@ namespace CtTesting {
             // tsbHighlight
             // 
             this.tsbHighlight.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tsbHighlight.Image = global::CtTesting.Properties.Resources.Highlight;
+            this.tsbHighlight.Image = global::INITesting.Properties.Resources.Highlight;
             this.tsbHighlight.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbHighlight.Name = "tsbHighlight";
             this.tsbHighlight.Size = new System.Drawing.Size(24, 24);

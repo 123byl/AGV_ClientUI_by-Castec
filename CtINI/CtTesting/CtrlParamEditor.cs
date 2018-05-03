@@ -28,7 +28,7 @@ using System.Xml.Serialization;
 using System.Xml;
 using VehiclePlanner.Core;
 
-namespace CtTesting {
+namespace INITesting {
 
     /// <summary>
     /// 參數編輯器介面
@@ -100,10 +100,8 @@ namespace CtTesting {
             Bindings(mEditor);
             Bindings(mEditor.ParamCollection);
 
-            KeyboardHook = new KeyboardHook();
-            KeyboardHook.Start();
-            
         }
+            
 
         #endregion Function - Constructors
 

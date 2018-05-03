@@ -4,6 +4,7 @@ using CtLib.Forms;
 using CtLib.Library;
 using CtLib.Module.Utility;
 using CtNotifyIcon;
+using CtParamEditor.Comm;
 using Geometry;
 using GLCore;
 using GLUI;
@@ -939,7 +940,7 @@ namespace VehiclePlanner {
                 { miTesting,new CtTesting(DockState.DockLeft)},
                 { miMapGL,new AGVMapUI( DockState.Document )},
                 { miToolBox,new CtToolBox(DockState.DockRightAutoHide)},
-                { miParamEditor,new CtParamEditor(DockState.Document)}
+                { miParamEditor,new ParamEditor(DockState.Document)}
             };
             SetEvents();
 
@@ -978,6 +979,7 @@ namespace VehiclePlanner {
             /*-- 資料綁定 --*/
             Bindings(rVehiclePlanner);
             Bindings(Controller);
+            (mDockContent[miParamEditor] as ParamEditor).KeyboardHook = rVehiclePlanner.KeyboardHook;
         }
 
         /// <summary>

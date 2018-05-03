@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace CtTesting.Properties {
+namespace INITesting.Properties {
     using System;
     
     

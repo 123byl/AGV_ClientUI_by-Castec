@@ -1,5 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using CtTesting;
+using INITesting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Collections;
 using CtGenericParser;
 
-namespace CtTesting.Tests {
+namespace INITesting.Tests {
 
     [TestClass()]
     public class CtGenericTests {

@@ -1,4 +1,4 @@
-﻿namespace CtTesting {
+﻿namespace INITesting {
     partial class StartUp {
         /// <summary>
         /// 設計工具所需的變數。

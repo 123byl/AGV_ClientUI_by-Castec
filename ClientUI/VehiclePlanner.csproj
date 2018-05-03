@@ -523,6 +523,14 @@
       <Project>{bf4496a5-452d-44b2-aa68-d17fe68c45a3}</Project>
       <Name>CtDockSuit</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CtINI\CtParamEditor.Comm\CtParamEditor.Comm.csproj">
+      <Project>{4304D4B0-4172-4148-BECF-65210ED3C6C5}</Project>
+      <Name>CtParamEditor.Comm</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CtINI\CtTesting\Demo.csproj">
+      <Project>{3D5B539E-E99C-4920-B703-D2ADC8764E27}</Project>
+      <Name>Demo</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CtLib\CtLib\CtLib.csproj">
       <Project>{a9bed8b3-2f9d-42a8-90bd-9fae0522eb09}</Project>
       <Name>CtLib</Name>

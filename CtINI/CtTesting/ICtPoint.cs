@@ -1,4 +1,4 @@
-﻿namespace CtTesting {
+﻿namespace INITesting {
 
     
     

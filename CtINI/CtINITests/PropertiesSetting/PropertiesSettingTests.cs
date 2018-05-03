@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
-using CtTesting;
+using INITesting;
 using System.Collections;
 using CtParamEditor.Comm;
 

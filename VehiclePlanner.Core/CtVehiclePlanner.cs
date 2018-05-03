@@ -385,6 +385,7 @@ namespace VehiclePlanner.Core {
 
 
                     mKeyboardHook.KeyUpEvent -= mKeyboardHook_KeyUpEvent;
+                    mKeyboardHook.KeyDownEvent -= mKeyboardHook_KeyDownEvent;
                     mKeyboardHook.Stop();
                 }
 

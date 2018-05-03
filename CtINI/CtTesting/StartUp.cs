@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace CtTesting {
+namespace INITesting {
     public partial class StartUp : Form {
 
         private enum TestEnum {
