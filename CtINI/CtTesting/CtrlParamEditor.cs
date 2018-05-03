@@ -67,66 +67,21 @@ namespace CtTesting {
 
         #region Declaration - Properties
 
+        /// <summary>
+        /// 全域鍵盤檢測
+        /// </summary>
         public KeyboardHook KeyboardHook { get => mKeyboardHook;
             set {
                 if (mKeyboardHook != value && value != null) {
+                    if (mKeyboardHook != null) {
+                        mKeyboardHook.KeyDownEvent -= MKeyboardHook_KeyDownEvent;
+                    }
                     mKeyboardHook = value;
                     mKeyboardHook.KeyDownEvent += MKeyboardHook_KeyDownEvent;
-                    mKeyboardHook.KeyUpEvent += MKeyboardHook_KeyUpEvent;
-                    mKeyboardHook.KeyPressEvent += MKeyboardHook_KeyPressEvent;
                 }
             }
         }
-
-        /// <summary>
-        /// 按鈕放開事件
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void MKeyboardHook_KeyPressEvent(object sender, KeyPressEventArgs e) {
-            //Console.WriteLine("KeyPredd");
-
-        }
-
-        /// <summary>
-        /// 按鈕過程事件
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void MKeyboardHook_KeyUpEvent(object sender, KeyEventArgs e) {
-        }
-
-        /// <summary>
-        /// 按鈕按下事件
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void MKeyboardHook_KeyDownEvent(object sender, KeyEventArgs e) {
-            if (e.Control) {
-                switch (e.KeyCode) {
-                    case Keys.Z:
-                        if (e.Shift) {
-                            Redo();
-                        } else {
-                            Undo();
-                        }
-                        break;
-                    case Keys.F:
-                        Filter();
-                        break;
-                    case Keys.L:
-                        Highlight();
-                        break;
-                    case Keys.O:
-                        OpenFile();
-                        break;
-                    case Keys.S:
-                        SaveFile();
-                        break;
-                }
-            }
-        }
-
+        
         #endregion Declaration - Properties
 
         #region Function - Constructors
@@ -315,6 +270,37 @@ namespace CtTesting {
         #region ToolStrip
 
         #endregion ToolStrip
+        
+        /// <summary>
+        /// 按鈕按下事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MKeyboardHook_KeyDownEvent(object sender, KeyEventArgs e) {
+            if (e.Control) {
+                switch (e.KeyCode) {
+                    case Keys.Z:
+                        if (e.Shift) {
+                            Redo();
+                        } else {
+                            Undo();
+                        }
+                        break;
+                    case Keys.F:
+                        Filter();
+                        break;
+                    case Keys.L:
+                        Highlight();
+                        break;
+                    case Keys.O:
+                        OpenFile();
+                        break;
+                    case Keys.S:
+                        SaveFile();
+                        break;
+                }
+            }
+        }
         
         /// <summary>
         /// 開啟檔案
@@ -606,9 +592,6 @@ namespace CtTesting {
                 tsbFilter.DataBindings.ExAdd(nameof(tsbFilter.Image), source, nameof(source.IsFilterMode), (sender, e) => {
                     e.Value = (bool)e.Value ? Properties.Resources.Unfilter : Properties.Resources.Filter;
                 }, source.IsFilterMode ? Properties.Resources.Unfilter : Properties.Resources.Filter);
-                tsbFilter.DataBindings.ExAdd(nameof(tsbFilter.ToolTipText), source, nameof(source.IsFilterMode), (sender, e) => {
-                    e.Value = (bool)e.Value ? "Unfilter" : "Filter";
-                }, source.IsFilterMode ? "Unfilter" : "Filter");
                 /*-- 過濾關鍵字 --*/
                 tstKeyWord.DataBindings.ExAdd(nameof(tstKeyWord.Text), source, nameof(source.KeyWord));
             } catch (Exception ex) {

@@ -91,6 +91,7 @@ namespace VehiclePlanner {
             this.miBypassSocket = new CtBind.Bindable.ToolStripMenuItem();
             this.miLoadFile = new CtBind.Bindable.ToolStripMenuItem();
             this.miServer = new CtBind.Bindable.ToolStripMenuItem();
+            this.miParamEditor = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -192,7 +193,7 @@ namespace VehiclePlanner {
             // tslbSpring
             // 
             this.tslbSpring.Name = "tslbSpring";
-            this.tslbSpring.Size = new System.Drawing.Size(460, 23);
+            this.tslbSpring.Size = new System.Drawing.Size(499, 23);
             this.tslbSpring.Spring = true;
             this.tslbSpring.Text = "　";
             // 
@@ -287,7 +288,8 @@ namespace VehiclePlanner {
             this.miConsole,
             this.miToolBox,
             this.miMapInsert,
-            this.miMotionController});
+            this.miMotionController,
+            this.miParamEditor});
             this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
             this.viewToolStripMenuItem.Size = new System.Drawing.Size(55, 23);
             this.viewToolStripMenuItem.Text = "View";
@@ -389,6 +391,12 @@ namespace VehiclePlanner {
             this.miServer.Size = new System.Drawing.Size(143, 26);
             this.miServer.Text = "Server";
             // 
+            // miParamEditor
+            // 
+            this.miParamEditor.Name = "miParamEditor";
+            this.miParamEditor.Size = new System.Drawing.Size(208, 26);
+            this.miParamEditor.Text = "Param Editor";
+            // 
             // VehiclePlannerUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
@@ -445,5 +453,6 @@ namespace VehiclePlanner {
         private Bindable.ToolStripMenuItem miToolBox;
         private Bindable.ToolStripMenuItem miMapInsert;
         private Bindable.ToolStripMenuItem miMotionController;
+        private System.Windows.Forms.ToolStripMenuItem miParamEditor;
     }
 }

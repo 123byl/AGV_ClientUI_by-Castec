@@ -938,7 +938,8 @@ namespace VehiclePlanner {
                 { miGoalSetting,new CtGoalSetting(DockState.DockLeft)},
                 { miTesting,new CtTesting(DockState.DockLeft)},
                 { miMapGL,new AGVMapUI( DockState.Document )},
-                { miToolBox,new CtToolBox(DockState.DockRightAutoHide)}
+                { miToolBox,new CtToolBox(DockState.DockRightAutoHide)},
+                { miParamEditor,new CtParamEditor(DockState.Document)}
             };
             SetEvents();
 
