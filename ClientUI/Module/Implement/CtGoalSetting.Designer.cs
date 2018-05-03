@@ -402,6 +402,7 @@ namespace VehiclePlanner.Module.Implement {
             this.btnLoadMap.Text = "Load Map";
             this.btnLoadMap.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.btnLoadMap.UseVisualStyleBackColor = true;
+            this.btnLoadMap.Click += new System.EventHandler(this.btnLoadMap_Click);
             // 
             // btnClear
             // 
@@ -416,6 +417,7 @@ namespace VehiclePlanner.Module.Implement {
             this.btnClear.Text = "Clear Map";
             this.btnClear.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.btnClear.UseVisualStyleBackColor = true;
+            this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
             // 
             // btnGetMap
             // 
@@ -430,6 +432,7 @@ namespace VehiclePlanner.Module.Implement {
             this.btnGetMap.Text = "Get Map";
             this.btnGetMap.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.btnGetMap.UseVisualStyleBackColor = true;
+            this.btnGetMap.Click += new System.EventHandler(this.btnGetMap_Click);
             // 
             // btnSendMap
             // 
@@ -444,6 +447,7 @@ namespace VehiclePlanner.Module.Implement {
             this.btnSendMap.Text = "Send Map";
             this.btnSendMap.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.btnSendMap.UseVisualStyleBackColor = true;
+            this.btnSendMap.Click += new System.EventHandler(this.btnSendMap_Click);
             // 
             // ctGroupBox1
             // 
@@ -493,6 +497,7 @@ namespace VehiclePlanner.Module.Implement {
             this.btnPath.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.btnPath.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.btnPath.UseVisualStyleBackColor = true;
+            this.btnPath.Click += new System.EventHandler(this.btnPath_Click);
             // 
             // btnCharging
             // 
@@ -508,6 +513,7 @@ namespace VehiclePlanner.Module.Implement {
             this.btnCharging.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.btnCharging.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.btnCharging.UseVisualStyleBackColor = true;
+            this.btnCharging.Click += new System.EventHandler(this.btnCharging_Click);
             // 
             // btnRun
             // 
@@ -523,6 +529,7 @@ namespace VehiclePlanner.Module.Implement {
             this.btnRun.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.btnRun.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.btnRun.UseVisualStyleBackColor = true;
+            this.btnRun.Click += new System.EventHandler(this.btnGoGoal_Click);
             // 
             // btnRunAll
             // 
@@ -538,6 +545,7 @@ namespace VehiclePlanner.Module.Implement {
             this.btnRunAll.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.btnRunAll.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.btnRunAll.UseVisualStyleBackColor = true;
+            this.btnRunAll.Click += new System.EventHandler(this.btnRunAll_Click);
             // 
             // CtGoalSetting
             // 
