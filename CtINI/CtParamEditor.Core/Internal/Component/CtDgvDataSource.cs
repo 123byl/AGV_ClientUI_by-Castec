@@ -42,17 +42,27 @@ namespace CtParamEditor.Core.Internal.Component {
 
         #region Declaration - Properties
 
-        public IParamColumn this[int indexRow] {
+        /// <summary>
+        /// 以資料索引取得對應參數
+        /// </summary>
+        /// <param name="indexData"></param>
+        /// <returns></returns>
+        public IParam this[int indexData] {
             get {
-                if (indexRow >=0 && indexRow < RowCount) {
-                    return Data[indexRow];
+                if (indexData > 0 && indexData < mFullData.Count) {
+                    return mFullData[indexData] as IParam;
                 } else {
                     return null;
                 }
             }
-            internal set {
-                Data[indexRow] = value;
-                OnDataChanged();
+            set {
+                if (mFullData[indexData] != value && value != null) {
+                    mFullData[indexData] = value;
+                    if (IsFilterMode) {
+                        mFilter = mFullData.FindAll(p => (p as IParam).FieldContains(KeyWord));
+                    }
+                    OnDataChanged();
+                }
             }
         }
         
@@ -130,6 +140,21 @@ namespace CtParamEditor.Core.Internal.Component {
         #endregion Function - Construcotrs
 
         #region Implement - IParamCollection
+
+        /// <summary>
+        /// 以列索引取得對應參數
+        /// </summary>
+        /// <param name="indexRow"></param>
+        /// <returns></returns>
+        IParamColumn IParamCollection.this[int indexRow] {
+            get {
+                if (indexRow >= 0 && indexRow < RowCount) {
+                    return Data[indexRow];
+                } else {
+                    return null;
+                }
+            }
+        }
 
         /// <summary>
         /// 資料變更事件
@@ -365,6 +390,15 @@ namespace CtParamEditor.Core.Internal.Component {
         /// <returns></returns>
         public int IndexOf(IParamColumn prop) {
             return Data.IndexOf(prop);
+        }
+
+        /// <summary>
+        /// 回傳該筆資料的資料索引
+        /// </summary>
+        /// <param name="indexRow"></param>
+        /// <returns></returns>
+        public int IndexOfData(int indexRow) {
+            return mFullData.IndexOf(Data[indexRow]);
         }
 
         /// <summary>

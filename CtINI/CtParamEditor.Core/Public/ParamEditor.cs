@@ -237,8 +237,8 @@ namespace CtParamEditor.Core
         /// <param name="columnName"></param>
         public void Edit(string columnName) {
             /*-- 取得要編輯的資料列 --*/
-            IParam prop = DataSource[mSelectedRow] as IParam;
-
+            IParam prop = ParamCollection[mSelectedRow] as IParam;
+            
             /*-- 取得對應欄位編輯器 --*/
             BaseFieldEditor editor = GetEditor(columnName);
 
@@ -593,7 +593,7 @@ namespace CtParamEditor.Core
         /// <summary>
         /// 編輯目標列索引
         /// </summary>
-        private int mIdxRow;
+        private int mDataIdx;
 
         /// <summary>
         /// 設定值
@@ -610,16 +610,16 @@ namespace CtParamEditor.Core
         /// </summary>
         private IParam mParamClone;
 
-        public CmdEdit(ParamEditor receiver,string value,int idxRow,string columnName) : base(receiver) {
-            mParamClone = mReceiver.DataSource[idxRow].Clone() as IParam;
-            mIdxRow = idxRow;
+        public CmdEdit(ParamEditor receiver,string value,int idxRow,string columnName) : base(receiver) {            
+            mDataIdx = mReceiver.DataSource.IndexOfData(idxRow);
+            mParamClone = mReceiver.DataSource[mDataIdx].Clone() as IParam;
             mValue = value;
             mColumnName = columnName;
         }
 
         public override bool Execute() {
             /*-- 取得目標參數 --*/
-            var param = mReceiver.DataSource[mIdxRow] as IParam;
+            var param = mReceiver.DataSource[mDataIdx] as IParam;
             /*-- 寫入設定值 --*/
             bool success =  param.SetValue(mValue, mColumnName);
             return success;
@@ -627,7 +627,7 @@ namespace CtParamEditor.Core
 
         public override void Undo() {
             /*-- 將參數備份副本覆蓋回修改後的資料 --*/
-            mReceiver.DataSource[mIdxRow] = mParamClone.Clone() as IParamColumn;
+            mReceiver.DataSource[mDataIdx] = mParamClone.Clone() as IParam;
         }
 
     }

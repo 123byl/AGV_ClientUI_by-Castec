@@ -61,8 +61,6 @@ namespace INITesting {
 
         private string mHighlight = null;
 
-        private KeyboardHook mKeyboardHook = null;
-
         #endregion Declaration - Fields
 
         #region Declaration - Properties
