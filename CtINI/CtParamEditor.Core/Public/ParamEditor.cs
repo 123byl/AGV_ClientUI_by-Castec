@@ -107,7 +107,7 @@ namespace CtParamEditor.Core
         /// <summary>
         /// 參數資料
         /// </summary>
-        public CtDgvDataSource DataSource  = new CtDgvDataSource();
+        public BaseParamCollection DataSource  = new ParamCollection();
         
         /// <summary>
         /// 要顯示的選項
@@ -569,19 +569,19 @@ namespace CtParamEditor.Core
     /// </summary>
     internal class CmdRemove : BaseCommand<ParamEditor> {
         private IParamColumn rParam = null;
-        private int mIdxRow = -1;
+        private int mDataIdx = -1;
         public CmdRemove(ParamEditor receiver,int idxRow) : base(receiver) {
-            rParam = mReceiver.DataSource[idxRow];
-            mIdxRow = idxRow;
+            mDataIdx = mReceiver.DataSource.IndexOfData(idxRow);
+            rParam = mReceiver.DataSource[mDataIdx];
         }
 
         public override bool Execute() {
-            mReceiver.DataSource.Remove(mIdxRow);
+            mReceiver.DataSource.Remove(mDataIdx);
             return true;
         }
 
         public override void Undo() {
-            mReceiver.DataSource.Insert(mIdxRow, rParam);
+            mReceiver.DataSource.Insert(mDataIdx, rParam);
         }
     }
 

@@ -11,10 +11,11 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace CtParamEditor.Core.Internal.Component {
+
     /// <summary>
     /// DataGridView資料來源管理器
     /// </summary>
-    internal class CtDgvDataSource : IParamCollection {
+    internal abstract class BaseParamCollection : IParamCollection {
 
         #region Declaration - Fields
 
@@ -57,10 +58,10 @@ namespace CtParamEditor.Core.Internal.Component {
             }
             set {
                 if (mFullData[indexData] != value && value != null) {
-                    mFullData[indexData] = value;
-                    if (IsFilterMode) {
-                        mFilter = mFullData.FindAll(p => (p as IParam).FieldContains(KeyWord));
-                    }
+                    FullDataOperate(fullData => {
+                        fullData[indexData] = value;
+                        return true;
+                    });
                     OnDataChanged();
                 }
             }
@@ -135,7 +136,7 @@ namespace CtParamEditor.Core.Internal.Component {
 
         #region Function -  Constructors
 
-        internal CtDgvDataSource() { }
+        internal BaseParamCollection() { }
 
         #endregion Function - Construcotrs
 
@@ -317,13 +318,7 @@ namespace CtParamEditor.Core.Internal.Component {
         /// </summary>
         /// <param name="mIdxRow"></param>
         /// <param name="prop"></param>
-        public void Insert(int mIdxRow,IParamColumn prop = null) {
-            prop = prop ?? new CtParam(Item_ValueChanged);
-            /*-- 插入新資料 --*/
-            mFullData.Insert(mIdxRow, prop);
-            /*-- 更新要顯示的資料筆數 --*/
-            OnPropertyChanged(nameof(RowCount));
-        }
+        public abstract void Insert(int mIdxRow, IParamColumn prop = null);
 
         /// <summary>
         /// 移除第n列資料
@@ -338,14 +333,7 @@ namespace CtParamEditor.Core.Internal.Component {
         /// 移除指定資料
         /// </summary>
         /// <param name="prop"></param>
-        public void Remove(IParamColumn prop) {
-            if (mFullData.Contains(prop)) {
-                /*-- 移除資料 --*/
-                mFullData.Remove(prop);
-                /*-- 更新要顯示的資料筆數 --*/
-                OnPropertyChanged(nameof(RowCount));
-            }
-        }
+        public abstract void Remove(IParamColumn prop);
 
         /// <summary>
         /// 將所有參數定義寫入<see cref="StringBuilder"/>
@@ -430,7 +418,7 @@ namespace CtParamEditor.Core.Internal.Component {
             }
         }
 
-        private void Item_ValueChanged(object sender, string e) {            
+        protected void Item_ValueChanged(object sender, string e) {            
             OnDataChanged();
         }
 
@@ -441,8 +429,55 @@ namespace CtParamEditor.Core.Internal.Component {
             DataChanged?.Invoke(this, new EventArgs());
         }
 
+        /// <summary>
+        /// 完整資料操作
+        /// </summary>
+        /// <param name="func">完整資料操作，回傳是否更新過濾資料</param>
+        protected void FullDataOperate(Func<List<IParamColumn>,bool> func) {
+            if (func(mFullData) && IsFilterMode) {
+                mFilter = mFullData.FindAll(p => (p as IParam).FieldContains(KeyWord));
+                OnDataChanged();
+                OnPropertyChanged(nameof(RowCount));
+            }
+        }
+        
         #endregion Function - Private Methods
 
+    }
+
+    internal class ParamCollection :BaseParamCollection{
+        /// <summary>
+        /// 移除指定資料
+        /// </summary>
+        /// <param name="prop"></param>
+        public override void Remove(IParamColumn prop) {
+            FullDataOperate(fullData => {
+                bool refresh;
+                if (refresh = fullData.Contains(prop)) {
+                    /*-- 移除資料 --*/
+                    fullData.Remove(prop);
+                    /*-- 更新要顯示的資料筆數 --*/
+                    OnPropertyChanged(nameof(RowCount));
+                }
+                return refresh;
+            });
+        }
+
+        /// <summary>
+        /// 於指定索引插入新資料
+        /// </summary>
+        /// <param name="mIdxRow"></param>
+        /// <param name="prop"></param>
+        public override void Insert(int mIdxRow, IParamColumn prop = null) {
+            prop = prop ?? new CtParam(Item_ValueChanged);
+            /*-- 插入新資料 --*/
+            FullDataOperate(fullData => {
+                fullData.Insert(mIdxRow, prop);
+                return true;
+            });
+            /*-- 更新要顯示的資料筆數 --*/
+            OnPropertyChanged(nameof(RowCount));
+        }
     }
 
 }
