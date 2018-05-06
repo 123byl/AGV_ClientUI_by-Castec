@@ -27,14 +27,12 @@ namespace VehiclePlanner.Module.Implement {
         private void InitializeComponent() {
             this.pnlShow = new System.Windows.Forms.Panel();
             this.pnlHide = new System.Windows.Forms.Panel();
-            this.uiControl = new GLUI.GLUserControl();
             this.pnlShow.SuspendLayout();
             this.SuspendLayout();
             // 
             // pnlShow
             // 
             this.pnlShow.Controls.Add(this.pnlHide);
-            this.pnlShow.Controls.Add(this.uiControl);
             this.pnlShow.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlShow.Location = new System.Drawing.Point(0, 0);
             this.pnlShow.Name = "pnlShow";
@@ -49,16 +47,6 @@ namespace VehiclePlanner.Module.Implement {
             this.pnlHide.Size = new System.Drawing.Size(751, 583);
             this.pnlHide.TabIndex = 1;
             this.pnlHide.Visible = false;
-            // 
-            // uiControl
-            // 
-            this.uiControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.uiControl.Location = new System.Drawing.Point(12, 12);
-            this.uiControl.Name = "uiControl";
-            this.uiControl.Size = new System.Drawing.Size(727, 559);
-            this.uiControl.TabIndex = 1;
             // 
             // AGVMapUI
             // 
@@ -80,7 +68,6 @@ namespace VehiclePlanner.Module.Implement {
         #endregion
 
         protected System.Windows.Forms.Panel pnlShow;
-        private GLUserControl uiControl;
         private System.Windows.Forms.Panel pnlHide;
     }
 }

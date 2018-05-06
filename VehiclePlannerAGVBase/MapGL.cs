@@ -49,7 +49,8 @@ namespace VehiclePlannerAGVBase {
             ///控制項會自動Dock.Fill
             ///預設控制項位置在0,0
             ///會有一部分殘影，因此將控制項移至中心位置
-            mAGVBaseMapGL.Location = new Point(pnlShow.Width/2, pnlShow.Height /2);
+            mAGVBaseMapGL.Location = new Point(0,0);
+            mAGVBaseMapGL.Dock = DockStyle.Fill;
             pnlShow.Controls.Add(mAGVBaseMapGL);
         }
 

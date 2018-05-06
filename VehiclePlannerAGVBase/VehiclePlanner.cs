@@ -55,7 +55,6 @@ namespace VehiclePlannerAGVBase {
             IMapCtrl.GLClickEvent += IMapCtrl_GLClickEvent;
             IMapCtrl.DragTowerPairEvent += IMapCtrl_DragTowerPairEvent;
             IMapCtrl.GLMoveUp += IMapCtrl_GLMoveUp;
-
         }
         
         /// <summary>
