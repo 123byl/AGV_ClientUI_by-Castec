@@ -11,15 +11,10 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace VehiclePlanner.Module.Implement {
 
-    public partial class AGVMapUI : CtDockContainer, IMapGL {
+    public partial class AGVMapUI : CtDockContainer, IBaseMapGL {
 
         #region Declaration  - Fields
-
-        /// <summary>
-        /// 地圖中心點
-        /// </summary>
-        private IPair mMapCenter = FactoryMode.Factory.Pair();
-
+        
         #endregion Declaration  - Fields
 
         #region Declaration - Properties
@@ -35,22 +30,11 @@ namespace VehiclePlanner.Module.Implement {
             }
         }
 
-        /// <summary>
-        /// 地圖焦點
-        /// </summary>
-        public IPair MapCenter {
-            get => mMapCenter;
-            set {
-                if (mMapCenter != value) {
-                    mMapCenter = value;
-                    Ctrl.Focus(mMapCenter.X, mMapCenter.Y);
-                }
-            }
-        }
-
         #endregion Declaration - Properties
 
         #region Function - Constructors
+
+        protected AGVMapUI():base() { }
 
         /// <summary>
         /// 共用建構方法
@@ -87,12 +71,7 @@ namespace VehiclePlanner.Module.Implement {
         #endregion Function - Private Methods
 
         #region Implement - IMapGL
-
-        /// <summary>
-        /// 獲得地圖控制器控制
-        /// </summary>
-        public IScene Ctrl { get { return uiControl.BaseCtrl; } }
-
+        
         #endregion Implement - IMapGL
 
         #region Implement - IDataDisplay<ICtVehiclePlanner>
@@ -101,13 +80,13 @@ namespace VehiclePlanner.Module.Implement {
         /// 資料綁定
         /// </summary>
         /// <param name="source">資料來源</param>
-        public void Bindings(ICtVehiclePlanner source) {
+        public virtual void Bindings(ICtVehiclePlanner source) {
             if (source.DelInvoke == null) source.DelInvoke = invk => this.InvokeIfNecessary(invk);
 
-            /*-- 地圖中心點 --*/
-            this.DataBindings.Add(nameof(MapCenter), source, nameof(source.MapCenter), true, DataSourceUpdateMode.OnPropertyChanged, MapCenter);
         }
 
         #endregion Implement - IDataDisplay<ICtVehiclePlanner>
+
     }
+
 }

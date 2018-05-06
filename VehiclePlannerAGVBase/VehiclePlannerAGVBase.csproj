@@ -1,0 +1,132 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{160AC4D8-C760-4795-866A-14EDFD4418EC}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>VehiclePlannerAGVBase</RootNamespace>
+    <AssemblyName>VehiclePlannerAGVBase</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WeifenLuo.WinFormsUI.Docking, Version=2.4.0.16114, Culture=neutral, PublicKeyToken=null" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="MapGL.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MapGL.Designer.cs">
+      <DependentUpon>MapGL.cs</DependentUpon>
+    </Compile>
+    <Compile Include="VehiclePlanner.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="VehiclePlanner.Designer.cs">
+      <DependentUpon>VehiclePlanner.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="MapGL.resx">
+      <DependentUpon>MapGL.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="VehiclePlanner.resx">
+      <DependentUpon>VehiclePlanner.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\AGVBase\FactoryMode\FactoryMode.csproj">
+      <Project>{b66dd409-3bf6-488d-b887-d00a59c6396d}</Project>
+      <Name>FactoryMode</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\AGVBase\Geometry\Geometry.csproj">
+      <Project>{07E11B21-0D87-4446-8EE8-91135DCAE089}</Project>
+      <Name>Geometry</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\AGVBase\GLCore\GLCore.csproj">
+      <Project>{805B8702-0FAC-4104-8F41-5337130CA0C6}</Project>
+      <Name>GLCore</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\AGVBase\GLUI\GLUI.csproj">
+      <Project>{D2E7804D-ADE5-4C82-AE04-8F505D04711A}</Project>
+      <Name>GLUI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ClientUI\VehiclePlanner.csproj">
+      <Project>{e03a4197-ba64-4eed-a628-8de3b8b9ba9a}</Project>
+      <Name>VehiclePlanner</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CtBind\CtBind.csproj">
+      <Project>{76EF08F5-B0DE-40AD-B468-15DC8908706B}</Project>
+      <Name>CtBind</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CtDockSuit\CtDockSuit.csproj">
+      <Project>{BF4496A5-452D-44B2-AA68-D17FE68C45A3}</Project>
+      <Name>CtDockSuit</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CtLib\CtLib\CtLib.csproj">
+      <Project>{A9BED8B3-2F9D-42A8-90BD-9FAE0522EB09}</Project>
+      <Name>CtLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\VehiclePlanner.Core\VehiclePlanner.Core.csproj">
+      <Project>{03034D39-18C7-449A-95D3-B941DC4DF743}</Project>
+      <Name>VehiclePlanner.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

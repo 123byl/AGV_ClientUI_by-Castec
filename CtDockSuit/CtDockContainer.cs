@@ -108,7 +108,7 @@ namespace CtDockSuit {
             this.AutoScroll = true;
         }
 
-        private CtDockContainer() {
+        protected CtDockContainer() {
         }
 
         #endregion Function - Constructors

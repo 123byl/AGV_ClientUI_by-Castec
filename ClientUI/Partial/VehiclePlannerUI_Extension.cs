@@ -85,7 +85,7 @@ namespace VehiclePlanner.Partial.VehiclePlannerUI {
                     return lv > AccessLevel.Operator;
 
                 case nameof(AGVMapUI):
-                case nameof(IMapGL):
+                case nameof(IBaseMapGL):
                     return lv > AccessLevel.None;
 
                 default:

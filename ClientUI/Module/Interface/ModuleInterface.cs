@@ -218,15 +218,8 @@ namespace VehiclePlanner.Module.Interface {
     /// <summary>
     /// MapGL視窗公開操作方法
     /// </summary>
-    public interface IMapGL : ICtDockContainer, IDataDisplay<ICtVehiclePlanner> {
-
-        /// <summary>
-        /// 地圖中心點
-        /// </summary>
-        IPair MapCenter { get; set; }
-
-        IScene Ctrl { get; }
-
+    public interface IBaseMapGL : ICtDockContainer, IDataDisplay<ICtVehiclePlanner> {
+        
         void Show();
     }
 }

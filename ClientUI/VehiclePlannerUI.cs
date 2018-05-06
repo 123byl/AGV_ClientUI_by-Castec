@@ -105,7 +105,7 @@ namespace VehiclePlanner {
         /// <summary>
         /// MapGL當前滑鼠模式
         /// </summary>
-        private CursorMode mCursorMode = CursorMode.Select;
+        protected CursorMode mCursorMode = CursorMode.Select;
 
         /// <summary>
         /// 系統底層物件參考
@@ -130,15 +130,11 @@ namespace VehiclePlanner {
 
         #region UI
 
-        /// <summary>
-        /// 地圖插入控制器
-        /// </summary>
-        private CtDockContainer mMapInsert = new CtMapInsert();
 
         /// <summary>
         /// ICtDockContainer與MenuItem對照
         /// </summary>
-        private Dictionary<ToolStripMenuItem, CtDockContainer> mDockContent = null;
+        protected Dictionary<ToolStripMenuItem, CtDockContainer> mDockContent = new Dictionary<ToolStripMenuItem, CtDockContainer>();
 
         /// <summary>
         /// AGV移動控制器
@@ -192,9 +188,9 @@ namespace VehiclePlanner {
         /// <summary>
         /// MapGL子視窗
         /// </summary>
-        private IMapGL MapGL {
+        private IBaseMapGL MapGL {
             get {
-                return mDockContent.ContainsKey(miMapGL) ? mDockContent[miMapGL] as IMapGL : null;
+                return mDockContent.ContainsKey(miMapGL) ? mDockContent[miMapGL] as IBaseMapGL : null;
             }
         }
 
@@ -225,7 +221,7 @@ namespace VehiclePlanner {
             }
         }
 
-        private IScene IMapCtrl { get { return MapGL?.Ctrl; } }
+        protected virtual IScene IMapCtrl { get; }
 
         /// <summary>
         /// 是否可視
@@ -257,6 +253,8 @@ namespace VehiclePlanner {
         #endregion Declaration - Properties
 
         #region Functin - Constructors
+        
+        protected VehiclePlannerUI() { }
 
         public VehiclePlannerUI(ICtVehiclePlanner vehiclePlanner = null) {
             InitializeComponent();
@@ -594,7 +592,7 @@ namespace VehiclePlanner {
 
         #region IMapGL事件連結
 
-        private void IMapCtrl_GLClickEvent(object sender, GLMouseEventArgs e) {
+        protected void IMapCtrl_GLClickEvent(object sender, GLMouseEventArgs e) {
             if (mIsSetting) {
                 if (mNewPos == null) {
                     mNewPos = e.Position;
@@ -611,7 +609,7 @@ namespace VehiclePlanner {
             mGoalSetting.UpdateNowPosition(e.Position);
         }
 
-        private void IMapCtrl_DragTowerPairEvent(object sender, TowerPairEventArgs e) {
+        protected void IMapCtrl_DragTowerPairEvent(object sender, TowerPairEventArgs e) {
             mGoalSetting.ReloadSingle();
         }
 
@@ -620,7 +618,7 @@ namespace VehiclePlanner {
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void IMapCtrl_GLMoveUp(object sender, GLMouseEventArgs e) {
+        protected void IMapCtrl_GLMoveUp(object sender, GLMouseEventArgs e) {
             switch (mCursorMode) {
                 case CursorMode.Goal:
                 case CursorMode.Power:
@@ -658,50 +656,7 @@ namespace VehiclePlanner {
         /// 工具箱切換工具事件
         /// </summary>
         /// <param name="mode"></param>
-        private void ToolBox_SwitchCursor(CursorMode mode) {
-            mCursorMode = mode;
-            switch (mode) {
-                case CursorMode.Drag:
-                    IMapCtrl.SetDragMode();
-                    break;
-
-                case CursorMode.Goal:
-                    IMapCtrl.SetAddMode(FactoryMode.Factory.Goal($"Goal{Database.GoalGM.Count}"));
-                    break;
-
-                case CursorMode.Power:
-                    IMapCtrl.SetAddMode(FactoryMode.Factory.Power($"Power{Database.PowerGM.Count}"));
-                    break;
-
-                case CursorMode.Select:
-                    IMapCtrl.SetSelectMode();
-                    break;
-
-                case CursorMode.Pen:
-                    IMapCtrl.SetPenMode();
-                    break;
-
-                case CursorMode.Eraser:
-                    IMapCtrl.SetEraserMode(500);
-                    break;
-
-                case CursorMode.Insert:
-                    OpenFileDialog old = new OpenFileDialog() {
-                        Filter = ".Map|*.map"
-                    };
-                    if (old.ShowDialog() == DialogResult.OK) {
-                        IMapCtrl.SetInsertMapMode(old.FileName, mMapInsert as IMouseInsertPanel);
-                    }
-                    break;
-
-                case CursorMode.ForbiddenArea:
-                    IMapCtrl.SetAddMode(FactoryMode.Factory.ForbiddenArea("ForbiddenArea"));
-                    break;
-
-                default:
-                    throw new ArgumentException($"未定義{mode}模式");
-            }
-        }
+        protected virtual void ToolBox_SwitchCursor(CursorMode mode) { }
 
         #endregion ToolBox
 
@@ -874,7 +829,7 @@ namespace VehiclePlanner {
         /// <summary>
         /// 設定事件連結
         /// </summary>
-        private void SetEvents() {
+        protected virtual void SetEvents() {
 
             #region IGoalSetting 事件連結
 
@@ -896,10 +851,7 @@ namespace VehiclePlanner {
 
             #region IMapGL 事件連結
 
-            IMapCtrl.GLClickEvent += IMapCtrl_GLClickEvent;
-            IMapCtrl.DragTowerPairEvent += IMapCtrl_DragTowerPairEvent;
-            IMapCtrl.GLMoveUp += IMapCtrl_GLMoveUp;
-
+            
             #endregion IMapGL 事件連結
 
             #region ITesting 事件連結
@@ -928,20 +880,22 @@ namespace VehiclePlanner {
             (mDockContent[miToolBox] as CtToolBox).SwitchCursor += ToolBox_SwitchCursor;
         }
 
+        protected virtual void AddMapGL() {
+
+        }
+
         /// <summary>
         /// 載入ICtDockContainer物件
         /// </summary>
-        private void LoadICtDockContainer() {
-            if (mDockContent != null) return;
+        protected virtual void LoadICtDockContainer() {
             /*-- 載入DockContent --*/
-            mDockContent = new Dictionary<ToolStripMenuItem, CtDockContainer>() {
-                { miConsole,new CtConsole(DockState.DockBottomAutoHide)},
-                { miGoalSetting,new CtGoalSetting(DockState.DockLeft)},
-                { miTesting,new CtTesting(DockState.DockLeft)},
-                { miMapGL,new AGVMapUI( DockState.Document )},
-                { miToolBox,new CtToolBox(DockState.DockRightAutoHide)},
-                { miParamEditor,new ParamEditor(DockState.Document)}
-            };
+            
+            AddMapGL();
+            mDockContent.Add(miConsole, new CtConsole(DockState.DockBottomAutoHide));
+            mDockContent.Add(miGoalSetting, new CtGoalSetting(DockState.DockLeft));
+            mDockContent.Add(miTesting, new CtTesting(DockState.DockLeft));
+            mDockContent.Add(miToolBox, new CtToolBox(DockState.DockRightAutoHide));
+            mDockContent.Add(miParamEditor,new ParamEditor(DockState.Document));
             SetEvents();
 
             /*-- 計算每個固定停靠區域所需的顯示大小 --*/
@@ -975,7 +929,6 @@ namespace VehiclePlanner {
                 /*-- 委派工具列點擊事件 --*/
                 item.Click += MenuDock_Click;
             }
-            mMapInsert.AssignmentDockPanel(dockPanel);
             /*-- 資料綁定 --*/
             Bindings(rVehiclePlanner);
             Bindings(Controller);

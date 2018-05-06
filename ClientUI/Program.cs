@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using VehiclePlanner.Core;
+using VehiclePlanner.Module.Implement;
 
 namespace VehiclePlanner {
 
@@ -23,8 +24,8 @@ namespace VehiclePlanner {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new VehiclePlannerUI(FactoryMode.Factory.CtVehiclePlanner()));
-            //Application.Run(new Test());
+            //Application.Run(new VehiclePlannerUI(FactoryMode.Factory.CtVehiclePlanner()));
+            Application.Run(new CtGoalSetting());
         }
 
         /// <summary>非 UI 執行緒錯誤的處理方法</summary>

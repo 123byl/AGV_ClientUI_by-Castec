@@ -422,13 +422,13 @@ namespace VehiclePlanner {
         }
 
         #endregion
-        private WeifenLuo.WinFormsUI.Docking.DockPanel dockPanel;
+        protected WeifenLuo.WinFormsUI.Docking.DockPanel dockPanel;
         private System.Windows.Forms.StatusStrip statusStrip1;
         protected Bindable.ToolStripStatusLabel tslbBattery;
         protected System.Windows.Forms.ToolStripProgressBar tsprgBattery;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private Bindable.ToolStripMenuItem viewToolStripMenuItem;
-        private Bindable.ToolStripMenuItem miMapGL;
+        protected Bindable.ToolStripMenuItem miMapGL;
         private Bindable.ToolStripMenuItem miTesting;
         private Bindable.ToolStripMenuItem miGoalSetting;
         private Bindable.ToolStripMenuItem miConsole;

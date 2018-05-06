@@ -79,7 +79,7 @@ namespace VehiclePlanner.Module.Implement {
 
         #endregion
 
-        private System.Windows.Forms.Panel pnlShow;
+        protected System.Windows.Forms.Panel pnlShow;
         private GLUserControl uiControl;
         private System.Windows.Forms.Panel pnlHide;
     }
