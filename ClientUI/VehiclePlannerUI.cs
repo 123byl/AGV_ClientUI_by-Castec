@@ -794,9 +794,20 @@ namespace VehiclePlanner {
 
             (mDockContent[miToolBox] as CtToolBox).SwitchCursor += ToolBox_SwitchCursor;
         }
+        
+        protected virtual CtConsole GetConsole(DockState dockState) {
+            return new CtConsole(dockState);
+        }
 
-        protected virtual void AddMapGL() {
+        protected virtual CtTesting GetTesting(DockState dockState) {
+            return new CtTesting(dockState);
+        }
 
+        protected virtual BaseMapGL GetMapGL(DockState dockState) {
+            return new BaseMapGL(dockState);
+        }
+        protected virtual CtGoalSetting GetGoalSetting(DockState dockState) {
+            return new CtGoalSetting(dockState);
         }
 
         /// <summary>
@@ -804,11 +815,11 @@ namespace VehiclePlanner {
         /// </summary>
         protected virtual void LoadICtDockContainer() {
             /*-- 載入DockContent --*/
-            
-            AddMapGL();
-            mDockContent.Add(miConsole, new CtConsole(DockState.DockBottomAutoHide));
-            mDockContent.Add(miGoalSetting, new CtGoalSetting(DockState.DockLeft));
-            mDockContent.Add(miTesting, new CtTesting(DockState.DockLeft));
+
+            mDockContent.Add(miMapGL, GetMapGL(DockState.Document));
+            mDockContent.Add(miConsole, GetConsole(DockState.DockBottomAutoHide));
+            mDockContent.Add(miGoalSetting, GetGoalSetting(DockState.DockLeft));
+            mDockContent.Add(miTesting, GetTesting(DockState.DockLeft));
             mDockContent.Add(miToolBox, new CtToolBox(DockState.DockRightAutoHide));
             mDockContent.Add(miParamEditor,new ParamEditor(DockState.Document));
             SetEvents();

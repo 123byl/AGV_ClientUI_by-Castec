@@ -47,6 +47,12 @@
     <Reference Include="WeifenLuo.WinFormsUI.Docking, Version=2.4.0.16114, Culture=neutral, PublicKeyToken=null" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GolaSetting.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GolaSetting.Designer.cs">
+      <DependentUpon>GolaSetting.cs</DependentUpon>
+    </Compile>
     <Compile Include="MapGL.cs">
       <SubType>Form</SubType>
     </Compile>

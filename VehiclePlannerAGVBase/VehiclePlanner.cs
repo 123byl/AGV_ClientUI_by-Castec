@@ -17,6 +17,7 @@ using VehiclePlanner.Module.Interface;
 using VehiclePlanner.Partial.VehiclePlannerUI;
 using WeifenLuo.WinFormsUI.Docking;
 using static VehiclePlanner.Partial.VehiclePlannerUI.Events.GoalSettingEvents;
+using VehiclePlanner.Module.Implement;
 
 namespace VehiclePlannerAGVBase {
 
@@ -65,8 +66,8 @@ namespace VehiclePlannerAGVBase {
 
         #region Funciton - Private Methods
 
-        protected override void AddMapGL() {
-            mDockContent.Add(miMapGL, new MapGL(DockState.Document));
+        protected override BaseMapGL GetMapGL(DockState dockState) {
+            return new MapGL(dockState);
         }
 
         protected override void SetEvents() {
