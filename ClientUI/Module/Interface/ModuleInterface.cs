@@ -153,21 +153,12 @@ namespace VehiclePlanner.Module.Interface {
         /// 目標點個數
         /// </summary>
         int GoalCount { get; }
-
-        /// <summary>
-        /// 設定真實座標
-        /// </summary>
-        void UpdateNowPosition(IPair realPos);
-
+        
         /// <summary>
         /// 設定表單選擇項目
         /// </summary>
         void SetSelectItem(uint id);
 
-        /// <summary>
-        /// 重新載入標示物
-        /// </summary>
-        void ReloadSingle();
     }
 
     /// <summary>

@@ -307,7 +307,7 @@ namespace VehiclePlanner {
         private void rVehiclePlanner_VehiclePlannerEvent(object sender, VehiclePlannerEventArgs e) {
             switch (e.Events) {
                 case VehiclePlannerEvents.MarkerChanged:
-                    mGoalSetting.ReloadSingle();
+                    MarkerChanged();
                     break;
 
                 case VehiclePlannerEvents.Dispose:
@@ -806,8 +806,8 @@ namespace VehiclePlanner {
         protected virtual BaseMapGL GetMapGL(DockState dockState) {
             return new BaseMapGL(dockState);
         }
-        protected virtual CtGoalSetting GetGoalSetting(DockState dockState) {
-            return new CtGoalSetting(dockState);
+        protected virtual BaseGoalSetting GetGoalSetting(DockState dockState) {
+            return new BaseGoalSetting(dockState);
         }
 
         /// <summary>
@@ -921,6 +921,10 @@ namespace VehiclePlanner {
             mConsole.AddMsg(msg);
         }
 
+        protected virtual void MarkerChanged() {
+
+        }
+
         #endregion Function - Private Methods
 
         #region Implement - IDataDisplay
@@ -954,8 +958,8 @@ namespace VehiclePlanner {
                 e.Value = (e.Value as UserData).Authority<CtTesting>();
             }, source.UserData.Authority<CtTesting>());
             miGoalSetting.DataBindings.ExAdd(nameof(miGoalSetting.Enabled), source, dataMember, (sender, e) => {
-                e.Value = (e.Value as UserData).Authority<CtGoalSetting>();
-            }, source.UserData.Authority<CtGoalSetting>());
+                e.Value = (e.Value as UserData).Authority<BaseGoalSetting>();
+            }, source.UserData.Authority<BaseGoalSetting>());
             miMapGL.DataBindings.ExAdd(nameof(miMapGL.Enabled), source, dataMember, (sender, e) => {
                 e.Value = (e.Value as UserData).Authority<BaseMapGL>();
             }, source.UserData.Authority<BaseMapGL>());

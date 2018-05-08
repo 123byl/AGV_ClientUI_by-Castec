@@ -1,5 +1,5 @@
 ﻿namespace VehiclePlannerAGVBase {
-    partial class GolaSetting {
+    partial class GoalSetting {
         /// <summary>
         /// Required designer variable.
         /// </summary>

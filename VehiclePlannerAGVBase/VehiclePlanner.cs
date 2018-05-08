@@ -70,6 +70,10 @@ namespace VehiclePlannerAGVBase {
             return new MapGL(dockState);
         }
 
+        protected override BaseGoalSetting GetGoalSetting(DockState dockState) {
+            return new GoalSetting(dockState);
+        }
+
         protected override void SetEvents() {
             base.SetEvents();
 
@@ -86,8 +90,12 @@ namespace VehiclePlannerAGVBase {
             mMapInsert.AssignmentDockPanel(dockPanel);
         }
 
+        protected override void MarkerChanged() {
+            mGoalSetting.ReloadSingle();
+        }
+
         #endregion Funciton - Private Methods
-        
+
         #region Function - Events
 
 
@@ -220,5 +228,16 @@ namespace VehiclePlannerAGVBase {
         /// 按照順序移動全部
         /// </summary>
         event DelRunLoop RunLoopEvent;
+
+        /// <summary>
+        /// 設定真實座標
+        /// </summary>
+        void UpdateNowPosition(IPair realPos);
+
+        /// <summary>
+        /// 重新載入標示物
+        /// </summary>
+        void ReloadSingle();
+
     }
 }

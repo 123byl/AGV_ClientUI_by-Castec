@@ -1,7 +1,7 @@
 ﻿using VehiclePlanner.Partial.VehiclePlannerUI;
 
 namespace VehiclePlanner.Module.Implement {
-    partial class CtGoalSetting {
+    partial class BaseGoalSetting {
         /// <summary>
         /// Required designer variable.
         /// </summary>
@@ -25,7 +25,7 @@ namespace VehiclePlanner.Module.Implement {
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CtGoalSetting));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BaseGoalSetting));
             this.btnSaveGoal = new System.Windows.Forms.Button();
             this.cmbGoalList = new System.Windows.Forms.ComboBox();
             this.label14 = new System.Windows.Forms.Label();
@@ -368,7 +368,6 @@ namespace VehiclePlanner.Module.Implement {
             this.grbMap.TabIndex = 64;
             this.grbMap.TabStop = false;
             this.grbMap.Text = "Map";
-            this.grbMap.Enter += new System.EventHandler(this.grbMap_Enter);
             // 
             // tableLayoutPanel1
             // 
@@ -586,14 +585,14 @@ namespace VehiclePlanner.Module.Implement {
         #endregion
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.TextBox txtAddPtheta;
-        private System.Windows.Forms.TextBox txtAddPy;
-        private System.Windows.Forms.TextBox txtAddPx;
+        protected System.Windows.Forms.TextBox txtAddPy;
+        protected System.Windows.Forms.TextBox txtAddPx;
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.Label label16;
-        private System.Windows.Forms.DataGridView dgvGoalPoint;
+        protected System.Windows.Forms.DataGridView dgvGoalPoint;
         private System.Windows.Forms.Button btnDeleteAll;
         private System.Windows.Forms.Button btnDelete;
-        private System.Windows.Forms.ComboBox cmbGoalList;
+        protected System.Windows.Forms.ComboBox cmbGoalList;
         private System.Windows.Forms.Button btnSaveGoal;
         private System.Windows.Forms.Button btnCurrPos;
         private System.Windows.Forms.DataGridViewCheckBoxColumn cSelect;
