@@ -78,7 +78,7 @@ namespace VehiclePlanner.Partial.VehiclePlannerUI {
                     return true;
 
                 case nameof(CtGoalSetting):
-                case nameof(IGoalSetting):
+                case nameof(IBaseGoalSetting):
                     return lv > AccessLevel.None;
 
                 case nameof(CtToolBox):

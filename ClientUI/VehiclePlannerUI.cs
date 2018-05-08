@@ -5,9 +5,6 @@ using CtLib.Library;
 using CtLib.Module.Utility;
 using CtNotifyIcon;
 using CtParamEditor.Comm;
-using Geometry;
-using GLCore;
-using GLUI;
 using SerialCommunicationData;
 using System;
 using System.Collections.Generic;
@@ -100,7 +97,7 @@ namespace VehiclePlanner {
         /// <summary>
         /// 是否正在設定Car Position
         /// </summary>
-        private bool mIsSetting = false;
+        protected bool mIsSetting = false;
 
         /// <summary>
         /// MapGL當前滑鼠模式
@@ -110,12 +107,7 @@ namespace VehiclePlanner {
         /// <summary>
         /// 系統底層物件參考
         /// </summary>
-        private ICtVehiclePlanner rVehiclePlanner = null;
-
-        /// <summary>
-        /// Car Position 設定位置
-        /// </summary>
-        private IPair mNewPos = null;
+        protected ICtVehiclePlanner rVehiclePlanner = null;
 
         private IntPtr mHandle = IntPtr.Zero;
 
@@ -215,14 +207,12 @@ namespace VehiclePlanner {
         /// <summary>
         /// Goal點設定子視窗
         /// </summary>
-        private IGoalSetting mGoalSetting {
+        private IBaseGoalSetting mGoalSetting {
             get {
-                return mDockContent.ContainsKey(miGoalSetting) ? mDockContent[miGoalSetting] as IGoalSetting : null;
+                return mDockContent.ContainsKey(miGoalSetting) ? mDockContent[miGoalSetting] as IBaseGoalSetting : null;
             }
         }
-
-        protected virtual IScene IMapCtrl { get; }
-
+        
         /// <summary>
         /// 是否可視
         /// </summary>
@@ -254,11 +244,13 @@ namespace VehiclePlanner {
 
         #region Functin - Constructors
         
-        protected VehiclePlannerUI() { }
-
-        public VehiclePlannerUI(ICtVehiclePlanner vehiclePlanner = null) {
+        protected VehiclePlannerUI() {
             InitializeComponent();
 
+        }
+
+        public VehiclePlannerUI(ICtVehiclePlanner vehiclePlanner = null):this() {
+            
             mHandle = this.Handle;
             /*-- 系統底層實例取得 --*/
             rVehiclePlanner = vehiclePlanner ?? FactoryMode.Factory.CtVehiclePlanner();
@@ -590,66 +582,6 @@ namespace VehiclePlanner {
 
         #endregion ITest
 
-        #region IMapGL事件連結
-
-        protected void IMapCtrl_GLClickEvent(object sender, GLMouseEventArgs e) {
-            if (mIsSetting) {
-                if (mNewPos == null) {
-                    mNewPos = e.Position;
-                } else {
-                    OnConsoleMessage($"NewPos{mNewPos.ToString()}");
-                    Task.Run(() => {
-                        rVehiclePlanner.Controller.SetPosition(e.Position, mNewPos);
-                        mNewPos = null;
-                        mIsSetting = false;
-                    });
-                }
-            }
-            //顯示滑鼠點擊的座標
-            mGoalSetting.UpdateNowPosition(e.Position);
-        }
-
-        protected void IMapCtrl_DragTowerPairEvent(object sender, TowerPairEventArgs e) {
-            mGoalSetting.ReloadSingle();
-        }
-
-        /// <summary>
-        /// MapGL滑鼠放開事件處理
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        protected void IMapCtrl_GLMoveUp(object sender, GLMouseEventArgs e) {
-            switch (mCursorMode) {
-                case CursorMode.Goal:
-                case CursorMode.Power:
-                    mGoalSetting.ReloadSingle();
-                    mCursorMode = CursorMode.Select;
-                    break;
-            }
-        }
-
-        #endregion IMapGL事件連結
-
-        #region IGoalSetting 事件連結
-
-        private void IGoalSetting_RunLoopEvent(IEnumerable<IGoal> goal) {
-            //int goalCount = goal?.Count() ?? -1;
-            //if (goalCount > 0) {
-            //    mSimilarityFlow.CheckFlag("Run all", () => {
-            //        OnConsoleMessage("[AGV Start Moving...]");
-            //        foreach (var item in goal) {
-            //            OnConsoleMessage("[AGV Move To] - {0}", item.ToString());
-            //            OnConsoleMessage("[AGV Arrived] - {0}", item.ToString());
-            //        }
-            //        OnConsoleMessage("[AGV Move Finished]");
-            //    });
-            //}else {
-            //    CtMsgBox.Show(mHandle,"No target","尚未選取Goal點，無法進行Run all",MsgBoxBtn.OK,MsgBoxStyle.Information);
-            //}
-        }
-
-        #endregion IGoalSetting 事件連結
-
         #region ToolBox
 
         /// <summary>
@@ -675,21 +607,7 @@ namespace VehiclePlanner {
                 DockContentVisible(kvp.Key, kvp.Value.Authority(usrData));
             }
         }
-
-        /// <summary>
-        /// 檢查Goal是否合法
-        /// </summary>
-        /// <param name="goal"></param>
-        /// <param name="idxGoal"></param>
-        /// <param name="act"></param>
-        private void CheckGoal(IGoal goal, int idxGoal, Action act) {
-            if (goal != null && idxGoal >= 0) {
-                act?.Invoke();
-            } else {
-                CtMsgBox.Show(mHandle, "No target", "尚未選擇目標Goal點", MsgBoxBtn.OK, MsgBoxStyle.Information);
-            }
-        }
-
+        
         /// <summary>
         /// 顯示iTS手動移動控制面板
         /// </summary>
@@ -840,7 +758,6 @@ namespace VehiclePlanner {
             mGoalSetting.LoadMapEvent += ITest_LoadMap;
             mGoalSetting.LoadMapFromAGVEvent += rVehiclePlanner.Controller.GetMap;
             mGoalSetting.RunGoalEvent += rVehiclePlanner.Controller.DoRunningByGoalName;
-            mGoalSetting.RunLoopEvent += IGoalSetting_RunLoopEvent;
             mGoalSetting.SaveGoalEvent += rVehiclePlanner.SaveMap;
             mGoalSetting.SendMapToAGVEvent += ITest_SendMap;
             mGoalSetting.GetGoalNames += rVehiclePlanner.Controller.GetGoalNames;
@@ -991,7 +908,7 @@ namespace VehiclePlanner {
         /// 顯示Console訊息
         /// </summary>
         /// <param name="msg"></param>
-        private void OnConsoleMessage(string msg) {
+        protected void OnConsoleMessage(string msg) {
             mConsole.AddMsg(msg);
         }
 

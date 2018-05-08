@@ -18,7 +18,7 @@ namespace VehiclePlanner.Module.Implement {
     /// <summary>
     /// Goal點設定介面
     /// </summary>
-    public partial class CtGoalSetting : CtDockContainer, IGoalSetting {
+    public partial class CtGoalSetting : CtDockContainer, IBaseGoalSetting {
 
         #region Declaration - Fields
 

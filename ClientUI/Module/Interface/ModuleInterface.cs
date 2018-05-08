@@ -93,7 +93,7 @@ namespace VehiclePlanner.Module.Interface {
     /// <summary>
     /// GoalSetting 視窗公開操作方法
     /// </summary>
-    public interface IGoalSetting : ICtDockContainer, IDataDisplay<ICtVehiclePlanner> {
+    public interface IBaseGoalSetting : ICtDockContainer, IDataDisplay<ICtVehiclePlanner> {
 
         /// <summary>
         /// 加入 Goal 點
@@ -129,11 +129,6 @@ namespace VehiclePlanner.Module.Interface {
         /// 移動
         /// </summary>
         event DelRunGoal RunGoalEvent;
-
-        /// <summary>
-        /// 按照順序移動全部
-        /// </summary>
-        event DelRunLoop RunLoopEvent;
 
         /// <summary>
         /// 儲存

@@ -16,35 +16,54 @@ using VehiclePlanner.Forms;
 using VehiclePlanner.Module.Interface;
 using VehiclePlanner.Partial.VehiclePlannerUI;
 using WeifenLuo.WinFormsUI.Docking;
+using static VehiclePlanner.Partial.VehiclePlannerUI.Events.GoalSettingEvents;
 
 namespace VehiclePlannerAGVBase {
 
     public partial class VehiclePlanner : VehiclePlannerUI {
-        
+
+        #region Declaration - Fields
+
+        /// <summary>
+        /// Car Position 設定位置
+        /// </summary>
+        private IPair mNewPos = null;
+
         /// <summary>
         /// 地圖插入控制器
         /// </summary>
         private CtDockContainer mMapInsert = new CtMapInsert();
 
+        #endregion Declaration - Fields
+        
+        #region Declaration - Properties
+
         /// <summary>
         /// MapGL子視窗
         /// </summary>
-        private IMapGL MapGL {
-            get {
-                return mDockContent.ContainsKey(miMapGL) ? mDockContent[miMapGL] as IMapGL : null;
-            }
-        }
+        private IMapGL MapGL 
+            => mDockContent.ContainsKey(miMapGL) ? mDockContent[miMapGL] as IMapGL : null;
+            
+        private IGoalSetting mGoalSetting 
+            => mDockContent.ContainsKey(miGoalSetting) ? mDockContent[miGoalSetting] as IGoalSetting : null;
 
-        protected override IScene IMapCtrl {
+        protected  IScene IMapCtrl {
             get {
                 return MapGL?.Ctrl;
             }
         }
 
+        #endregion Declaration - Properties
+
+        #region Funciton - Constructors
 
         public VehiclePlanner():base(null) {
             InitializeComponent();
         }
+
+        #endregion Funciton - Constructors
+
+        #region Funciton - Private Methods
 
         protected override void AddMapGL() {
             mDockContent.Add(miMapGL, new MapGL(DockState.Document));
@@ -52,11 +71,87 @@ namespace VehiclePlannerAGVBase {
 
         protected override void SetEvents() {
             base.SetEvents();
+
+            mGoalSetting.RunLoopEvent += IGoalSetting_RunLoopEvent;
+
             IMapCtrl.GLClickEvent += IMapCtrl_GLClickEvent;
             IMapCtrl.DragTowerPairEvent += IMapCtrl_DragTowerPairEvent;
             IMapCtrl.GLMoveUp += IMapCtrl_GLMoveUp;
         }
+
+
+        protected override void LoadICtDockContainer() {
+            base.LoadICtDockContainer();
+            mMapInsert.AssignmentDockPanel(dockPanel);
+        }
+
+        #endregion Funciton - Private Methods
         
+        #region Function - Events
+
+
+        #region IMapGL事件連結
+
+        protected void IMapCtrl_GLClickEvent(object sender, GLMouseEventArgs e) {
+            if (mIsSetting) {
+                if (mNewPos == null) {
+                    mNewPos = e.Position;
+                } else {
+                    OnConsoleMessage($"NewPos{mNewPos.ToString()}");
+                    Task.Run(() => {
+                        rVehiclePlanner.Controller.SetPosition(e.Position, mNewPos);
+                        mNewPos = null;
+                        mIsSetting = false;
+                    });
+                }
+            }
+            //顯示滑鼠點擊的座標
+            mGoalSetting.UpdateNowPosition(e.Position);
+        }
+
+        protected void IMapCtrl_DragTowerPairEvent(object sender, TowerPairEventArgs e) {
+            mGoalSetting.ReloadSingle();
+        }
+
+        /// <summary>
+        /// MapGL滑鼠放開事件處理
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        protected void IMapCtrl_GLMoveUp(object sender, GLMouseEventArgs e) {
+            switch (mCursorMode) {
+                case CursorMode.Goal:
+                case CursorMode.Power:
+                    mGoalSetting.ReloadSingle();
+                    mCursorMode = CursorMode.Select;
+                    break;
+            }
+        }
+
+        #endregion IMapGL事件連結
+
+
+        #region IGoalSetting 事件連結
+
+        private void IGoalSetting_RunLoopEvent(IEnumerable<IGoal> goal) {
+            //int goalCount = goal?.Count() ?? -1;
+            //if (goalCount > 0) {
+            //    mSimilarityFlow.CheckFlag("Run all", () => {
+            //        OnConsoleMessage("[AGV Start Moving...]");
+            //        foreach (var item in goal) {
+            //            OnConsoleMessage("[AGV Move To] - {0}", item.ToString());
+            //            OnConsoleMessage("[AGV Arrived] - {0}", item.ToString());
+            //        }
+            //        OnConsoleMessage("[AGV Move Finished]");
+            //    });
+            //}else {
+            //    CtMsgBox.Show(mHandle,"No target","尚未選取Goal點，無法進行Run all",MsgBoxBtn.OK,MsgBoxStyle.Information);
+            //}
+        }
+
+        #endregion IGoalSetting 事件連結
+
+
         /// <summary>
         /// 工具箱切換工具事件
         /// </summary>
@@ -106,11 +201,7 @@ namespace VehiclePlannerAGVBase {
             }
         }
 
-        protected override void LoadICtDockContainer() {
-            base.LoadICtDockContainer();
-            mMapInsert.AssignmentDockPanel(dockPanel);
-        }
-
+        #endregion Function - Events
 
     }
 
@@ -121,5 +212,12 @@ namespace VehiclePlannerAGVBase {
         IPair MapCenter { get; set; }
 
         IScene Ctrl { get; }
+    }
+
+    public interface IGoalSetting : IBaseGoalSetting {
+        /// <summary>
+        /// 按照順序移動全部
+        /// </summary>
+        event DelRunLoop RunLoopEvent;
     }
 }

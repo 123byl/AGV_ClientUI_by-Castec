@@ -430,7 +430,7 @@ namespace VehiclePlanner {
         private Bindable.ToolStripMenuItem viewToolStripMenuItem;
         protected Bindable.ToolStripMenuItem miMapGL;
         private Bindable.ToolStripMenuItem miTesting;
-        private Bindable.ToolStripMenuItem miGoalSetting;
+        protected Bindable.ToolStripMenuItem miGoalSetting;
         private Bindable.ToolStripMenuItem miConsole;
         private Bindable.ToolStripMenuItem systemToolStripMenuItem;
         private Bindable.ToolStripMenuItem miLogin;
