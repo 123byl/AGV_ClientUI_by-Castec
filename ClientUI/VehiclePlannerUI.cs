@@ -116,6 +116,13 @@ namespace VehiclePlanner {
         /// </summary>
         protected string mNotifyCaption = "Vehicle planner";
 
+
+        /// <summary>
+        /// VehicleConsole模擬物件
+        /// </summary>
+        private FakeVehicleConsole mVC = null;
+
+
         #endregion Declaration - Fields
 
         #region Declaration - Members
@@ -163,15 +170,7 @@ namespace VehiclePlanner {
         private IITSController Controller { get => rVehiclePlanner.Controller as IITSController; }
 
         #endregion Tool
-
-        #region Socket
-
-        /// <summary>
-        /// VehicleConsole模擬物件
-        /// </summary>
-        private FakeVehicleConsole mVC = new FakeVehicleConsole();
-
-        #endregion Socket
+        
 
         #endregion Declaration - Members
 
@@ -246,7 +245,7 @@ namespace VehiclePlanner {
         
         protected VehiclePlannerUI() {
             InitializeComponent();
-
+            mVC = new FakeVehicleConsole(!DesignMode);
         }
 
         public VehiclePlannerUI(ICtVehiclePlanner vehiclePlanner = null):this() {

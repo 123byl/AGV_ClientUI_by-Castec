@@ -69,12 +69,6 @@
     <Reference Include="WeifenLuo.WinFormsUI.Docking, Version=2.4.0.16114, Culture=neutral, PublicKeyToken=null" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Forms\CtMapInsert.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\CtMapInsert.Designer.cs">
-      <DependentUpon>CtMapInsert.cs</DependentUpon>
-    </Compile>
     <Compile Include="Module\Implement\AGVMapUI.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -137,9 +131,6 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Forms\CtMapInsert.resx">
-      <DependentUpon>CtMapInsert.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Module\Implement\AGVMapUI.resx">
       <DependentUpon>AGVMapUI.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -482,18 +473,6 @@
     <ProjectReference Include="..\..\AGVBase\FactoryMode\FactoryMode.csproj">
       <Project>{b66dd409-3bf6-488d-b887-d00a59c6396d}</Project>
       <Name>FactoryMode</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\AGVBase\Geometry\Geometry.csproj">
-      <Project>{07e11b21-0d87-4446-8ee8-91135dcae089}</Project>
-      <Name>Geometry</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\AGVBase\GLCore\GLCore.csproj">
-      <Project>{805B8702-0FAC-4104-8F41-5337130CA0C6}</Project>
-      <Name>GLCore</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\AGVBase\GLUI\GLUI.csproj">
-      <Project>{D2E7804D-ADE5-4C82-AE04-8F505D04711A}</Project>
-      <Name>GLUI</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\AGVBase\NetExtention\NetExtention.csproj">
       <Project>{cfcc1d01-fd8d-4885-9181-7c6750395d84}</Project>

@@ -1,12 +1,18 @@
 ﻿using CtDockSuit;
 using GLCore;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
 using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using UIControl;
 using WeifenLuo.WinFormsUI.Docking;
 
-namespace VehiclePlanner.Forms {
-
+namespace VehiclePlannerAGVBase {
     public partial class CtMapInsert : CtDockContainer, IMouseInsertPanel {
 
         #region Declaration - Declaration - Fields

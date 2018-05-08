@@ -1,4 +1,5 @@
-﻿
+﻿using GLUI;
+
 namespace VehiclePlanner.Module.Implement {
     partial class BaseMapGL {
         /// <summary>

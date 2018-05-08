@@ -1,5 +1,7 @@
 ﻿using CtDockSuit;
 using CtLib.Library;
+using Geometry;
+using GLUI;
 using System;
 using System.Drawing;
 using System.Windows.Forms;

@@ -1,4 +1,4 @@
-﻿using GLCore;
+﻿
 using System.Collections.Generic;
 using VehiclePlanner.Core;
 
@@ -127,10 +127,7 @@ namespace VehiclePlanner.Partial.VehiclePlannerUI {
             /// </summary>
             public delegate void DelRunGoal(string goalName);
 
-            /// <summary>
-            /// 按照順序移動全部
-            /// </summary>
-            public delegate void DelRunLoop(IEnumerable<IGoal> goal);
+
 
             /// <summary>
             /// 儲存
@@ -141,11 +138,6 @@ namespace VehiclePlanner.Partial.VehiclePlannerUI {
             /// 上傳地圖
             /// </summary>
             public delegate void DelSendMapToAGV();
-
-            /// <summary>
-            /// 更新 Goal 點
-            /// </summary>
-            public delegate void DelUpdateGoal(IGoal newGoal);
 
             /// <summary>
             /// 取得所有Goal點名稱

@@ -483,13 +483,13 @@ namespace VehiclePlanner.Core {
 
         #region Function - Constructors
 
-        public FakeVehicleConsole() {
+        public FakeVehicleConsole(bool cnn) {
             mServer = FactoryMode.Factory.SerialServer();
             mServer = FactoryMode.Factory.SerialServer();
             mServer.ConnectedEvent += MServer_ConnectedEvent;
             mServer.StartListening((int)EPort.VehiclePlanner, 3, VehiclePlannerReceiver);
             CtThread.CreateThread(ref t_VPSender, "mTdClientSender", tsk_AutoReportToVehiclePlanner);//iTS狀態自動回報(-> VehiclePlanner)
-            mBroadcastReceiver = new BroadcastReceiver(false,mBroadcastReceiver_ReceivedData);
+            mBroadcastReceiver = new BroadcastReceiver(cnn,mBroadcastReceiver_ReceivedData);
         }
 
         #endregion Function - Constructors

@@ -44,9 +44,19 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="UIControl, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\ClientUI\Dynamic Link Libraries\UIControl.dll</HintPath>
+    </Reference>
     <Reference Include="WeifenLuo.WinFormsUI.Docking, Version=2.4.0.16114, Culture=neutral, PublicKeyToken=null" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CtMapInsert.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CtMapInsert.Designer.cs">
+      <DependentUpon>CtMapInsert.cs</DependentUpon>
+    </Compile>
     <Compile Include="GolaSetting.cs">
       <SubType>Form</SubType>
     </Compile>
