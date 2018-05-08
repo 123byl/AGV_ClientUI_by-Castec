@@ -69,19 +69,20 @@
     <Compile Include="MapGL.Designer.cs">
       <DependentUpon>MapGL.cs</DependentUpon>
     </Compile>
-    <Compile Include="VehiclePlanner.cs">
+    <Compile Include="CtVehiclePlanner_Ctrl.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="VehiclePlanner.Designer.cs">
-      <DependentUpon>VehiclePlanner.cs</DependentUpon>
+    <Compile Include="CtVehiclePlanner_Ctrl.Designer.cs">
+      <DependentUpon>CtVehiclePlanner_Ctrl.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="VehiclePlanner.cs" />
     <EmbeddedResource Include="MapGL.resx">
       <DependentUpon>MapGL.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="VehiclePlanner.resx">
-      <DependentUpon>VehiclePlanner.cs</DependentUpon>
+    <EmbeddedResource Include="CtVehiclePlanner_Ctrl.resx">
+      <DependentUpon>CtVehiclePlanner_Ctrl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

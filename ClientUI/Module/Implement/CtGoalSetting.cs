@@ -322,7 +322,7 @@ namespace VehiclePlanner.Module.Implement {
         /// 資料綁定
         /// </summary>
         /// <param name="source">資料來源</param>
-        public void Bindings(ICtVehiclePlanner source) {
+        public void Bindings(IBaseVehiclePlanner source) {
             if (source.DelInvoke == null) source.DelInvoke = invk => this.InvokeIfNecessary(invk);
         }
 

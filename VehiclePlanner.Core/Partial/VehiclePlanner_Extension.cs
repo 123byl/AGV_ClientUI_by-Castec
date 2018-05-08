@@ -25,8 +25,8 @@ namespace VehiclePlanner.Core {
         /// </summary>
         /// <param name="factory"></param>
         /// <returns></returns>
-        public static ICtVehiclePlanner CtVehiclePlanner(this IFactory factory) {
-            return new CtVehiclePlanner();
+        public static IBaseVehiclePlanner CtVehiclePlanner(this IFactory factory) {
+            return new BaseVehiclePlanner();
         }
         
     }

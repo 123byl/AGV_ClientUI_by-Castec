@@ -13,7 +13,8 @@ namespace VehiclePlannerAGVBase {
         static void Main() {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new VehiclePlanner());
+            IVehiclePlanner mVehiclePlanner = new VehiclePlanner();
+            Application.Run(new CtVehiclePlanner_Ctrl(mVehiclePlanner));
         }
     }
 }

@@ -1,56 +1,225 @@
-﻿using CtDockSuit;
+﻿using CtLib.Library;
 using Geometry;
 using GLCore;
-using GLUI;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Forms;
-using VehiclePlanner;
-using VehiclePlanner.Forms;
-using VehiclePlanner.Module.Interface;
-using VehiclePlanner.Partial.VehiclePlannerUI;
-using WeifenLuo.WinFormsUI.Docking;
-using static VehiclePlanner.Partial.VehiclePlannerUI.Events.GoalSettingEvents;
-using VehiclePlanner.Module.Implement;
+using VehiclePlanner.Core;
 
 namespace VehiclePlannerAGVBase {
-
-    public partial class VehiclePlanner : VehiclePlannerUI {
+    public class VehiclePlanner :BaseVehiclePlanner,IVehiclePlanner {
 
         #region Declaration - Fields
 
         /// <summary>
-        /// Car Position 設定位置
+        /// MapGL相關操作
         /// </summary>
-        private IPair mNewPos = null;
-
-        /// <summary>
-        /// 地圖插入控制器
-        /// </summary>
-        private CtDockContainer mMapInsert = new CtMapInsert();
+        private MapGLController mMapGL = MapGLController.GetInstance();
 
         #endregion Declaration - Fields
-        
-        #region Declaration - Properties
+
+        #region Funciton - Public Methods
 
         /// <summary>
-        /// MapGL子視窗
+        /// 系統初始化
         /// </summary>
-        private IMapGL MapGL 
-            => mDockContent.ContainsKey(miMapGL) ? mDockContent[miMapGL] as IMapGL : null;
-            
-        private IGoalSetting mGoalSetting 
-            => mDockContent.ContainsKey(miGoalSetting) ? mDockContent[miGoalSetting] as IGoalSetting : null;
+        public override void Initial() {
+            mMapGL.Initial();
+            base.Initial();
+        }
 
-        protected  IScene IMapCtrl {
+        /// <summary>
+        /// 清除地圖
+        /// </summary>
+        public override void ClearMap() {
+            try {
+                mMapGL.ClearAll();
+                OnVehiclePlanner(VehiclePlannerEvents.MarkerChanged);
+            } catch (Exception ex) {
+                OnConsoleMessage(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// 載入檔案
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="fileName"></param>
+        public override void LoadFile(FileType type, string fileName) {
+            try {
+                bool isLoaded = false;
+                switch (type) {
+                    case FileType.Ori:
+                        isLoaded = LoadOri(fileName);
+                        if (isLoaded) {
+                            mMapGL.ClearLaser();
+                        }
+                        break;
+                    case FileType.Map:
+                        isLoaded = LoadMap(fileName);
+                        break;
+                    default:
+                        throw new ArgumentException($"無法載入未定義的檔案類型{type}");
+                }
+                if (isLoaded) {
+                    SetBalloonTip($"Load { type}", $"\'{fileName}\' is loaded");
+                    if (mITS.IsConnected && type == FileType.Map) {
+                        mITS.SendAndSetMap(fileName);
+                    }
+                } else {
+                    OnErrorMessage("File data is wrong, can not read");
+                }
+            } catch (Exception ex) {
+                OnErrorMessage(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// 刪除指定標記物
+        /// </summary>
+        /// <param name="markers"></param>
+        public void DeleteMarker(IEnumerable<uint> markers) {
+            foreach (var id in markers) {
+                if (mMapGL.ContainGoal(id)) {
+                    mMapGL.RemoveGoal(id);
+                } else if (mMapGL.ContainPower(id)) {
+                    mMapGL.RemovePower(id);
+                }
+            }
+            OnVehiclePlanner(VehiclePlannerEvents.MarkerChanged);
+        }
+
+        /// <summary>
+        /// 清除標記物
+        /// </summary>
+        public void ClearMarker() {
+            OnConsoleMessage("[Clear Goal]");
+            mMapGL.ClearGoal();
+            OnConsoleMessage("[Clear Power]");
+            mMapGL.ClearPower();
+            OnVehiclePlanner(VehiclePlannerEvents.MarkerChanged);
+        }
+
+        /// <summary>
+        /// 新增當前位置為Goal點
+        /// </summary>
+        public override void AddCurrentAsGoal() {
+            /*-- 取得當前位置 --*/
+            var currentPosition = mMapGL.Location;
+            /*-- 建構Goal點 --*/
+            var goal = MapGLController.NewGoal(currentPosition);
+            /*-- 分配ID --*/
+            var goalID = MapGLController.GenerateID();
+            /*-- 將Goal點資料加入Goal點管理集合 --*/
+            mMapGL.AddGoal(goalID, goal);
+            /*-- 重新載入Goal點資訊 --*/
+            OnVehiclePlanner(VehiclePlannerEvents.MarkerChanged);
+        }
+
+        #endregion Funciotn - Public Methods
+
+        /// <summary>
+        /// 載入Map檔
+        /// </summary>
+        /// <param name="mapPath">Map檔路徑</param>
+        protected override bool LoadMap(string mapPath) {
+            bool isLoaded = true;
+            mCurMapPath = mapPath;
+            string path = CtFile.GetFileName(mapPath);
+            if (mBypassLoadFile) {
+                /*-- 空跑1秒模擬載入Map檔 --*/
+                SpinWait.SpinUntil(() => false, 1000);
+            } else {
+                //#region - Retrive information from .map file -
+                /*-- 地圖清空 --*/
+                OnVehiclePlanner(VehiclePlannerEvents.NewMap);
+                /*-- 載入Map並取得Map中心點 --*/
+                var center = mMapGL.LoadMap(mCurMapPath)?.Center();
+                if (center != null) {
+                    MapCenter = center;
+                    OnVehiclePlanner(VehiclePlannerEvents.MarkerChanged);
+                } else {
+                    isLoaded = false;
+                }
+            }
+            return isLoaded;
+        }
+
+        /// <summary>
+        /// 載入Ori檔
+        /// </summary>
+        /// <param name="oriPath"></param>
+        /// <returns></returns>
+        protected override bool LoadOri(string oriPath) {
+            bool isLoaded = true;
+            CurOriPath = oriPath;
+            OnVehiclePlanner(VehiclePlannerEvents.NewMap);
+            if (!mBypassLoadFile) {//無BypassLoadFile
+                /*-- 載入Map並取得Map中心點 --*/
+                IPair center = mMapGL.LoadOri(CurOriPath)?.Center();
+                if (center != null) {
+                    MapCenter = center;
+                } else {
+                    isLoaded = false;
+                }
+            } else {//Bypass LoadFile功能
+                    /*-- 空跑一秒，模擬檔案載入 --*/
+                SpinWait.SpinUntil(() => false, 1000);
+            }
+            return isLoaded;
+        }
+
+        /// <summary>
+        /// 儲存Map檔
+        /// </summary>
+        /// <param name="path"></param>
+        protected override void SaveMap(string path) {
+            mMapGL.Save(path);
+        }
+
+    }
+
+    /// <summary>
+    /// 繪圖控制
+    /// </summary>
+    internal class MapGLController {
+
+        #region Static
+
+        internal static MapGLController mInstance = null;
+
+        internal static uint GenerateID() {
+            return Database.ID.GenerateID();
+        }
+
+        internal static IGoal NewGoal(ITowardPair currentPosition) {
+            return FactoryMode.Factory.Goal(currentPosition, $"Goal{Database.GoalGM.Count}");
+        }
+
+        internal static MapGLController GetInstance() {
+            if (mInstance == null) mInstance = new MapGLController();
+            return mInstance;
+        }
+
+        #endregion Static
+
+        #region Declaration - Fields
+
+        /// <summary>
+        /// AGV ID
+        /// </summary>
+        protected uint mAGVID = 1;
+
+        #endregion Declaration - FIelds
+
+        #region Declaration - Properties
+
+        public ITowardPair Location {
             get {
-                return MapGL?.Ctrl;
+                return Database.AGVGM[mAGVID].Data;
             }
         }
 
@@ -58,198 +227,117 @@ namespace VehiclePlannerAGVBase {
 
         #region Funciton - Constructors
 
-        public VehiclePlanner():base(null) {
-            InitializeComponent();
+        private MapGLController() {
+
         }
 
         #endregion Funciton - Constructors
 
-        #region Funciton - Private Methods
+        #region Funciton - Public Methods
 
-        protected override BaseMapGL GetMapGL(DockState dockState) {
-            return new MapGL(dockState);
-        }
-
-        protected override BaseGoalSetting GetGoalSetting(DockState dockState) {
-            return new GoalSetting(dockState);
-        }
-
-        protected override void SetEvents() {
-            base.SetEvents();
-
-            //mGoalSetting.RunLoopEvent += IGoalSetting_RunLoopEvent;
-
-            IMapCtrl.GLClickEvent += IMapCtrl_GLClickEvent;
-            IMapCtrl.DragTowerPairEvent += IMapCtrl_DragTowerPairEvent;
-            IMapCtrl.GLMoveUp += IMapCtrl_GLMoveUp;
-        }
-
-
-        protected override void LoadICtDockContainer() {
-            base.LoadICtDockContainer();
-            mMapInsert.AssignmentDockPanel(dockPanel);
-        }
-
-        protected override void MarkerChanged() {
-            mGoalSetting.ReloadSingle();
-        }
-
-        #endregion Funciton - Private Methods
-
-        #region Function - Events
-
-
-        #region IMapGL事件連結
-
-        protected void IMapCtrl_GLClickEvent(object sender, GLMouseEventArgs e) {
-            if (mIsSetting) {
-                if (mNewPos == null) {
-                    mNewPos = e.Position;
-                } else {
-                    OnConsoleMessage($"NewPos{mNewPos.ToString()}");
-                    Task.Run(() => {
-                        rVehiclePlanner.Controller.SetPosition(e.Position, mNewPos);
-                        mNewPos = null;
-                        mIsSetting = false;
-                    });
-                }
-            }
-            //顯示滑鼠點擊的座標
-            mGoalSetting.UpdateNowPosition(e.Position);
-        }
-
-        protected void IMapCtrl_DragTowerPairEvent(object sender, TowerPairEventArgs e) {
-            mGoalSetting.ReloadSingle();
-        }
-
-        /// <summary>
-        /// MapGL滑鼠放開事件處理
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        protected void IMapCtrl_GLMoveUp(object sender, GLMouseEventArgs e) {
-            switch (mCursorMode) {
-                case CursorMode.Goal:
-                case CursorMode.Power:
-                    mGoalSetting.ReloadSingle();
-                    mCursorMode = CursorMode.Select;
-                    break;
+        public void Initial() {
+            /*-- 載入AVG物件 --*/
+            if (!Database.AGVGM.ContainsID(mAGVID)) {
+                Database.AGVGM.Add(mAGVID, FactoryMode.Factory.AGV(0, 0, 0, "AGV"));
             }
         }
 
-        #endregion IMapGL事件連結
-
-
-        #region IGoalSetting 事件連結
-
-        private void IGoalSetting_RunLoopEvent(IEnumerable<IGoal> goal) {
-            //int goalCount = goal?.Count() ?? -1;
-            //if (goalCount > 0) {
-            //    mSimilarityFlow.CheckFlag("Run all", () => {
-            //        OnConsoleMessage("[AGV Start Moving...]");
-            //        foreach (var item in goal) {
-            //            OnConsoleMessage("[AGV Move To] - {0}", item.ToString());
-            //            OnConsoleMessage("[AGV Arrived] - {0}", item.ToString());
-            //        }
-            //        OnConsoleMessage("[AGV Move Finished]");
-            //    });
-            //}else {
-            //    CtMsgBox.Show(mHandle,"No target","尚未選取Goal點，無法進行Run all",MsgBoxBtn.OK,MsgBoxStyle.Information);
-            //}
+        public void ClearLaser() {
+            Database.AGVGM[mAGVID].LaserAPoints.DataList.Clear();
         }
 
-        #endregion IGoalSetting 事件連結
-
-
-        /// <summary>
-        /// 工具箱切換工具事件
-        /// </summary>
-        /// <param name="mode"></param>
-        protected override void ToolBox_SwitchCursor(CursorMode mode) {
-            mCursorMode = mode;
-            switch (mode) {
-                case CursorMode.Drag:
-                    IMapCtrl.SetDragMode();
-                    break;
-
-                case CursorMode.Goal:
-                    IMapCtrl.SetAddMode(FactoryMode.Factory.Goal($"Goal{Database.GoalGM.Count}"));
-                    break;
-
-                case CursorMode.Power:
-                    IMapCtrl.SetAddMode(FactoryMode.Factory.Power($"Power{Database.PowerGM.Count}"));
-                    break;
-
-                case CursorMode.Select:
-                    IMapCtrl.SetSelectMode();
-                    break;
-
-                case CursorMode.Pen:
-                    IMapCtrl.SetPenMode();
-                    break;
-
-                case CursorMode.Eraser:
-                    IMapCtrl.SetEraserMode(500);
-                    break;
-
-                case CursorMode.Insert:
-                    OpenFileDialog old = new OpenFileDialog() {
-                        Filter = ".Map|*.map"
-                    };
-                    if (old.ShowDialog() == DialogResult.OK) {
-                        IMapCtrl.SetInsertMapMode(old.FileName, mMapInsert as IMouseInsertPanel);
-                    }
-                    break;
-
-                case CursorMode.ForbiddenArea:
-                    IMapCtrl.SetAddMode(FactoryMode.Factory.ForbiddenArea("ForbiddenArea"));
-                    break;
-
-                default:
-                    throw new ArgumentException($"未定義{mode}模式");
-            }
+        public void ClearPath() {
+            Database.AGVGM[mAGVID].Path.DataList.Clear();
         }
 
-        #endregion Function - Events
+        internal void ClearAll() {
+            Database.ClearAllButAGV();
+            ClearLaser();
+            ClearPath();
+        }
+
+        internal int IndexOfGoal(uint goalID) {
+            return Database.GoalGM.IndexOf(goalID);
+        }
+
+        internal IGoal GetGoal(uint goalID) {
+            return Database.GoalGM[goalID];
+        }
+
+        internal int IndexOfPower(uint powerID) {
+            return Database.PowerGM.IndexOf(powerID);
+        }
+
+        internal IPower GetPower(uint powerID) {
+            return Database.PowerGM[powerID];
+        }
+
+        internal void Save(string curMapPath) {
+            Database.Save(curMapPath);
+        }
+
+        internal bool ContainGoal(uint id) {
+            return Database.GoalGM.ContainsID(id);
+        }
+
+        internal void RemoveGoal(uint id) {
+            Database.GoalGM.Remove(id);
+        }
+
+        internal bool ContainPower(uint id) {
+            return Database.PowerGM.ContainsID(id);
+        }
+
+        internal void RemovePower(uint id) {
+            Database.PowerGM.Remove(id);
+        }
+
+        internal void ClearGoal() {
+            Database.GoalGM.Clear();
+        }
+
+        internal void ClearPower() {
+            Database.PowerGM.Clear();
+        }
+
+        internal void AddGoal(uint goalID, IGoal goal) {
+            Database.GoalGM.Add(goalID, goal);
+        }
+
+        internal void SetLocation(ITowardPair position) {
+            Database.AGVGM[mAGVID].SetLocation(position);
+        }
+
+        internal IArea LoadOri(string curOriPath) {
+            return Database.LoadOriToDatabase(curOriPath, mAGVID);
+        }
+
+        internal IArea LoadMap(string curMapPath) {
+            return Database.LoadMapToDatabase(curMapPath);
+        }
+
+        internal void DrawLaser(IEnumerable<IPair> laser) {
+            Database.AGVGM[mAGVID]?.LaserAPoints.DataList.Replace(laser);
+        }
+
+        internal void DrawPath(IEnumerable<IPair> path) {
+            Database.AGVGM[mAGVID].Path.DataList.Replace(path);
+        }
+
+        #endregion Funciton - Public Methods
 
     }
 
-    public interface IMapGL : IBaseMapGL {
+    public interface IVehiclePlanner : IBaseVehiclePlanner {
         /// <summary>
-        /// 地圖中心點
+        /// 清除標記物
         /// </summary>
-        IPair MapCenter { get; set; }
-
-        IScene Ctrl { get; }
+        void ClearMarker();
+        /// <summary>
+        /// 刪除指定標記物
+        /// </summary>
+        /// <param name="markers"></param>
+        void DeleteMarker(IEnumerable<uint> markers);
     }
-
-    public interface IGoalSetting : IBaseGoalSetting {
-        /// <summary>
-        /// 按照順序移動全部
-        /// </summary>
-        event DelRunLoop RunLoopEvent;
-
-        /// <summary>
-        /// 設定真實座標
-        /// </summary>
-        void UpdateNowPosition(IPair realPos);
-
-        /// <summary>
-        /// 重新載入標示物
-        /// </summary>
-        void ReloadSingle();
-
-    }
-
-
-    /// <summary>
-    /// 按照順序移動全部
-    /// </summary>
-    public delegate void DelRunLoop(IEnumerable<IGoal> goal);
-
-    /// <summary>
-    /// 更新 Goal 點
-    /// </summary>
-    public delegate void DelUpdateGoal(IGoal newGoal);
 
 }

@@ -1,5 +1,5 @@
 ﻿namespace VehiclePlannerAGVBase {
-    partial class VehiclePlanner {
+    partial class CtVehiclePlanner_Ctrl {
         /// <summary>
         /// 設計工具所需的變數。
         /// </summary>

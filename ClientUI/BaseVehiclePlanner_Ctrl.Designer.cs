@@ -2,7 +2,7 @@
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace VehiclePlanner {
-    partial class VehiclePlannerUI {
+    partial class BaseVehiclePlanner_Ctrl {
         /// <summary>
         /// Required designer variable.
         /// </summary>
@@ -59,7 +59,7 @@ namespace VehiclePlanner {
             WeifenLuo.WinFormsUI.Docking.DockPanelGradient dockPanelGradient3 = new WeifenLuo.WinFormsUI.Docking.DockPanelGradient();
             WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient6 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
             WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient7 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(VehiclePlannerUI));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BaseVehiclePlanner_Ctrl));
             this.dockPanel = new WeifenLuo.WinFormsUI.Docking.DockPanel();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.tslbAccessLv = new CtBind.Bindable.ToolStripStatusLabel();

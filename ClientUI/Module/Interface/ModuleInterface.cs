@@ -10,7 +10,7 @@ namespace VehiclePlanner.Module.Interface {
     /// <summary>
     /// Console 視窗公開操作方法
     /// </summary>
-    public interface IConsole : ICtDockContainer, IDataDisplay<ICtVehiclePlanner> {
+    public interface IConsole : ICtDockContainer, IDataDisplay<IBaseVehiclePlanner> {
 
         /// <summary>
         /// 加入文字
@@ -41,7 +41,7 @@ namespace VehiclePlanner.Module.Interface {
     /// <summary>
     /// GoalSetting 視窗公開操作方法
     /// </summary>
-    public interface IBaseGoalSetting : ICtDockContainer, IDataDisplay<ICtVehiclePlanner> {
+    public interface IBaseGoalSetting : ICtDockContainer, IDataDisplay<IBaseVehiclePlanner> {
 
         /// <summary>
         /// 加入 Goal 點
@@ -152,7 +152,7 @@ namespace VehiclePlanner.Module.Interface {
     /// <summary>
     /// MapGL視窗公開操作方法
     /// </summary>
-    public interface IBaseMapGL : ICtDockContainer, IDataDisplay<ICtVehiclePlanner> {
+    public interface IBaseMapGL : ICtDockContainer, IDataDisplay<IBaseVehiclePlanner> {
         
         void Show();
     }

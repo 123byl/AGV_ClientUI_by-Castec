@@ -26,7 +26,7 @@ namespace VehiclePlanner {
     /// <summary>
     /// 客戶端介面
     /// </summary>
-    public partial class VehiclePlannerUI : Form, ICtVersion, IDataDisplay<ICtVehiclePlanner>, IDataDisplay<IITSController> {
+    public partial class BaseVehiclePlanner_Ctrl : Form, ICtVersion, IDataDisplay<IBaseVehiclePlanner>, IDataDisplay<IITSController> {
 
         #region Version - Information
 
@@ -107,7 +107,7 @@ namespace VehiclePlanner {
         /// <summary>
         /// 系統底層物件參考
         /// </summary>
-        protected ICtVehiclePlanner rVehiclePlanner = null;
+        private IBaseVehiclePlanner rVehiclePlanner = null;
 
         private IntPtr mHandle = IntPtr.Zero;
 
@@ -243,12 +243,11 @@ namespace VehiclePlanner {
 
         #region Functin - Constructors
         
-        protected VehiclePlannerUI() {
+        protected BaseVehiclePlanner_Ctrl() {
             InitializeComponent();
-            mVC = new FakeVehicleConsole(!DesignMode);
         }
 
-        public VehiclePlannerUI(ICtVehiclePlanner vehiclePlanner = null):this() {
+        public BaseVehiclePlanner_Ctrl(IBaseVehiclePlanner vehiclePlanner = null):this() {
             
             mHandle = this.Handle;
             /*-- 系統底層實例取得 --*/
@@ -256,6 +255,7 @@ namespace VehiclePlanner {
             if (rVehiclePlanner != null) {
                 /*-- 初始化 --*/
                 rVehiclePlanner.Initial();
+
                 /*-- 事件委派 --*/
                 rVehiclePlanner.PropertyChanged += rVehiclePlanner_PropertyChanged;
                 rVehiclePlanner.Controller.ConsoleMessage += rVehiclePlanner_ConsoleMessage;
@@ -270,6 +270,8 @@ namespace VehiclePlanner {
                 LoadICtDockContainer();
 
                 LoadCtNotifyIcon();
+
+                mVC = new FakeVehicleConsole(!DesignMode);
             } else {
                 this.Close();
             }
@@ -330,7 +332,7 @@ namespace VehiclePlanner {
         /// <param name="e"></param>
         private void rVehiclePlanner_PropertyChanged(object sender, PropertyChangedEventArgs e) {
             switch (e.PropertyName) {
-                case nameof(ICtVehiclePlanner.UserData):
+                case nameof(IBaseVehiclePlanner.UserData):
                     UserChanged(rVehiclePlanner.UserData);
                     break;
             }
@@ -346,6 +348,7 @@ namespace VehiclePlanner {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void ClientUI_Load(object sender, EventArgs e) {
+
         }
 
         /// <summary>
@@ -744,13 +747,11 @@ namespace VehiclePlanner {
         /// <summary>
         /// 設定事件連結
         /// </summary>
-        protected virtual void SetEvents() {
+        private void SetEvents() {
 
             #region IGoalSetting 事件連結
 
             mGoalSetting.AddCurrentGoalEvent += rVehiclePlanner.AddCurrentAsGoal;
-            mGoalSetting.ClearGoalsEvent += rVehiclePlanner.ClearMarker;
-            mGoalSetting.DeleteSingleEvent += rVehiclePlanner.DeleteMarker;
             mGoalSetting.FindPathEvent += rVehiclePlanner.Controller.FindPath;
             mGoalSetting.LoadMapEvent += ITest_LoadMap;
             mGoalSetting.LoadMapFromAGVEvent += rVehiclePlanner.Controller.GetMap;
@@ -929,11 +930,11 @@ namespace VehiclePlanner {
         #region Implement - IDataDisplay
 
         /// <summary>
-        /// <see cref="ICtVehiclePlanner"/>資料綁定
+        /// <see cref="IBaseVehiclePlanner"/>資料綁定
         /// </summary>
         /// <param name="source"></param>
-        public void Bindings(ICtVehiclePlanner source) {
-            Bindings<ICtVehiclePlanner>(source);
+        public void Bindings(IBaseVehiclePlanner source) {
+            Bindings<IBaseVehiclePlanner>(source);
 
             /*-- 是否忽略地圖檔讀寫 --*/
             miLoadFile.DataBindings.Add(nameof(miLoadFile.Checked), source, nameof(source.IsBypassLoadFile));

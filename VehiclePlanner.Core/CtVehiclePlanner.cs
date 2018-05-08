@@ -6,7 +6,6 @@ using System.ComponentModel;
 using System.Threading;
 using System.Windows.Forms;
 
-using Geometry;
 using System.Runtime.CompilerServices;
 
 namespace VehiclePlanner.Core {
@@ -14,7 +13,7 @@ namespace VehiclePlanner.Core {
     /// <summary>
     /// 系統主體
     /// </summary>
-    internal partial class CtVehiclePlanner : ICtVehiclePlanner {
+    public partial class BaseVehiclePlanner : IBaseVehiclePlanner {
 
         #region Version - Information
 
@@ -122,7 +121,7 @@ namespace VehiclePlanner.Core {
 
         #region Funciont - Constructors
 
-        public CtVehiclePlanner() {
+        public BaseVehiclePlanner() {
             
         }
 
@@ -133,29 +132,18 @@ namespace VehiclePlanner.Core {
         /// <summary>
         /// 系統初始化
         /// </summary>
-        public void Initial() {
-            /*-- 建構物件 --*/
-            
-            mMapGL.Initial();
-
+        public virtual void Initial() {            
             /*-- 開啟全域鍵盤鉤子 --*/
             mKeyboardHook.KeyDownEvent += mKeyboardHook_KeyDownEvent;
             mKeyboardHook.KeyUpEvent += mKeyboardHook_KeyUpEvent;
             mKeyboardHook.Start();
-
-
         }
         
         /// <summary>
         /// 清除地圖
         /// </summary>
-        public void ClearMap() {
-            try {
-                mMapGL.ClearAll();
-                OnVehiclePlanner(VehiclePlannerEvents.MarkerChanged);
-            } catch (Exception ex) {
-                OnConsoleMessage(ex.Message);
-            }
+        public virtual void ClearMap() {
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -163,39 +151,18 @@ namespace VehiclePlanner.Core {
         /// </summary>
         /// <param name="type"></param>
         /// <param name="fileName"></param>
-        public void LoadFile(FileType type, string fileName) {
-            try {
-                bool isLoaded = false;
-                switch (type) {
-                    case FileType.Ori:
-                        isLoaded = LoadOri(fileName);
-                        if (isLoaded) {
-                            mMapGL.ClearLaser();
-                        }
-                        break;
-                    case FileType.Map:
-                        isLoaded = LoadMap(fileName);
-                        break;
-                    default:
-                        throw new ArgumentException($"無法載入未定義的檔案類型{type}");
-                }
-                if (isLoaded) {
-                    SetBalloonTip($"Load { type}", $"\'{fileName}\' is loaded");
-                    if (mITS.IsConnected && type == FileType.Map) {
-                        mITS.SendAndSetMap(fileName);
-                    }
-                } else {
-                    OnErrorMessage("File data is wrong, can not read");
-                }
-            } catch (Exception ex) {
-                OnErrorMessage(ex.Message);
-            }
+        public virtual void LoadFile(FileType type, string fileName) {
+            throw new NotImplementedException();
+        }
+
+        protected virtual void SaveMap(string path) {
+            throw new NotImplementedException();
         }
 
         /// <summary>
         /// 將ori檔轉為map檔
         /// </summary>
-        public void SimplifyOri() {
+        public virtual void SimplifyOri() {
             try {
                 if (mBypassLoadFile) {
                     /*-- 空跑模擬SimplifyOri --*/
@@ -204,7 +171,7 @@ namespace VehiclePlanner.Core {
                 }
                 string[] tmpPath = CurOriPath.Split('.');
                 CurMapPath = tmpPath[0] + ".map";
-                mMapGL.Save(CurMapPath);
+                SaveMap(CurMapPath);
                 OnVehiclePlanner(VehiclePlannerEvents.NewMap);
             } catch (Exception ex) {
                 OnConsoleMessage(ex.Message);
@@ -214,53 +181,20 @@ namespace VehiclePlanner.Core {
         /// <summary>
         /// 儲存地圖
         /// </summary>
-        public void SaveMap() {
+        public virtual void SaveMap() {
             if (!string.IsNullOrEmpty(CurMapPath)) {
                 OnConsoleMessage("[Map is Save]");
-                mMapGL.Save(CurMapPath);
+                SaveMap(CurMapPath);
             }
         }
-
-        /// <summary>
-        /// 刪除指定標記物
-        /// </summary>
-        /// <param name="markers"></param>
-        public void DeleteMarker(IEnumerable<uint> markers) {
-            foreach (var id in markers) {
-                if (mMapGL.ContainGoal(id)) {
-                    mMapGL.RemoveGoal(id);
-                } else if (mMapGL.ContainPower(id)) {
-                    mMapGL.RemovePower(id);
-                }
-            }
-            OnVehiclePlanner(VehiclePlannerEvents.MarkerChanged);
-        }
-
-        /// <summary>
-        /// 清除標記物
-        /// </summary>
-        public void ClearMarker() {
-            OnConsoleMessage("[Clear Goal]");
-            mMapGL.ClearGoal();
-            OnConsoleMessage("[Clear Power]");
-            mMapGL.ClearPower();
-            OnVehiclePlanner(VehiclePlannerEvents.MarkerChanged);
-        }
+        
+        
 
         /// <summary>
         /// 新增當前位置為Goal點
         /// </summary>
-        public void AddCurrentAsGoal() {
-            /*-- 取得當前位置 --*/
-            var currentPosition = mMapGL.Location;
-            /*-- 建構Goal點 --*/
-            var goal = MapGLController.NewGoal(currentPosition);
-            /*-- 分配ID --*/
-            var goalID = MapGLController.GenerateID();
-            /*-- 將Goal點資料加入Goal點管理集合 --*/
-            mMapGL.AddGoal(goalID, goal);
-            /*-- 重新載入Goal點資訊 --*/
-            OnVehiclePlanner(VehiclePlannerEvents.MarkerChanged);
+        public virtual void AddCurrentAsGoal() {
+            throw new NotImplementedException();
         }
 
         #endregion Funciton - Public Mehtods
@@ -317,27 +251,8 @@ namespace VehiclePlanner.Core {
         /// 載入Map檔
         /// </summary>
         /// <param name="mapPath">Map檔路徑</param>
-        private bool LoadMap(string mapPath) {
-            bool isLoaded = true;
-            mCurMapPath = mapPath;
-            string path = CtFile.GetFileName(mapPath);
-            if (mBypassLoadFile) {
-                /*-- 空跑1秒模擬載入Map檔 --*/
-                SpinWait.SpinUntil(() => false, 1000);
-            } else {
-                //#region - Retrive information from .map file -
-                /*-- 地圖清空 --*/
-                OnVehiclePlanner(VehiclePlannerEvents.NewMap);
-                /*-- 載入Map並取得Map中心點 --*/
-                var center = mMapGL.LoadMap(mCurMapPath)?.Center();
-                if (center != null) {
-                    MapCenter = center;
-                    OnVehiclePlanner(VehiclePlannerEvents.MarkerChanged);
-                } else {
-                    isLoaded = false;
-                }
-            }
-            return isLoaded;
+        protected virtual bool LoadMap(string mapPath) {
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -345,23 +260,8 @@ namespace VehiclePlanner.Core {
         /// </summary>
         /// <param name="oriPath"></param>
         /// <returns></returns>
-        private bool LoadOri(string oriPath) {
-            bool isLoaded = true;
-            CurOriPath = oriPath;
-            OnVehiclePlanner(VehiclePlannerEvents.NewMap);
-            if (!mBypassLoadFile) {//無BypassLoadFile
-                /*-- 載入Map並取得Map中心點 --*/
-                IPair center = mMapGL.LoadOri(CurOriPath)?.Center();
-                if (center != null) {
-                    MapCenter = center;
-                } else {
-                    isLoaded = false;
-                }
-            } else {//Bypass LoadFile功能
-                    /*-- 空跑一秒，模擬檔案載入 --*/
-                SpinWait.SpinUntil(() => false, 1000);
-            }
-            return isLoaded;
+        protected virtual bool LoadOri(string oriPath) {
+            throw new NotImplementedException();
         }
 
         #endregion Funciotn - Private Methods
@@ -410,7 +310,7 @@ namespace VehiclePlanner.Core {
             // GC.SuppressFinalize(this);
         }
         #endregion
-
+        
     }
-    
+
 }

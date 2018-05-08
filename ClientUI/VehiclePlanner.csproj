@@ -87,11 +87,11 @@
     <Compile Include="Partial\VehiclePlanner_SupportClass.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="VehiclePlannerUI.cs">
+    <Compile Include="BaseVehiclePlanner_Ctrl.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="VehiclePlannerUI.Designer.cs">
-      <DependentUpon>VehiclePlannerUI.cs</DependentUpon>
+    <Compile Include="BaseVehiclePlanner_Ctrl.Designer.cs">
+      <DependentUpon>BaseVehiclePlanner_Ctrl.cs</DependentUpon>
     </Compile>
     <Compile Include="Module\Implement\CtConsole.cs">
       <SubType>Form</SubType>
@@ -138,8 +138,8 @@
     <EmbeddedResource Include="Module\Implement\CtParamEditor.resx">
       <DependentUpon>CtParamEditor.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="VehiclePlannerUI.resx">
-      <DependentUpon>VehiclePlannerUI.cs</DependentUpon>
+    <EmbeddedResource Include="BaseVehiclePlanner_Ctrl.resx">
+      <DependentUpon>BaseVehiclePlanner_Ctrl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Module\Implement\CtConsole.resx">
       <DependentUpon>CtConsole.cs</DependentUpon>

@@ -294,7 +294,7 @@ namespace VehiclePlanner.Core {
     /// <summary>
     /// 車輛規劃器
     /// </summary>
-    public interface ICtVehiclePlanner : ICtVersion ,IDisposable,IDataSource{
+    public interface IBaseVehiclePlanner : ICtVersion ,IDisposable,IDataSource{
         /// <summary>
         /// iTS控制器
         /// </summary>
@@ -349,15 +349,6 @@ namespace VehiclePlanner.Core {
         /// </summary>
         void ClearMap();
         /// <summary>
-        /// 清除標記物
-        /// </summary>
-        void ClearMarker();
-        /// <summary>
-        /// 刪除指定標記物
-        /// </summary>
-        /// <param name="markers"></param>
-        void DeleteMarker(IEnumerable<uint> markers);
-        /// <summary>
         /// 系統初始化
         /// </summary>
         void Initial();
@@ -383,7 +374,7 @@ namespace VehiclePlanner.Core {
     /// <summary>
     /// 系統定義
     /// </summary>
-    internal partial class CtVehiclePlanner {
+    public partial class BaseVehiclePlanner {
 
         #region Declaration - Fileds
         
@@ -395,7 +386,7 @@ namespace VehiclePlanner.Core {
         /// <summary>
         /// 當前Map檔路徑
         /// </summary>
-        private string mCurMapPath = string.Empty;
+        protected string mCurMapPath = string.Empty;
         
         /// <summary>
         /// 主畫面是否可視
@@ -405,7 +396,7 @@ namespace VehiclePlanner.Core {
         /// <summary>
         /// 是否Bypass LoadFile功能
         /// </summary>
-        private bool mBypassLoadFile = false;
+        protected bool mBypassLoadFile = false;
 
         /// <summary>
         /// 使用者操作權限
@@ -415,12 +406,7 @@ namespace VehiclePlanner.Core {
         ///<summary>全域鍵盤鉤子</summary>
         private KeyboardHook mKeyboardHook = new KeyboardHook();
 
-        /// <summary>
-        /// MapGL相關操作
-        /// </summary>
-        private MapGLController mMapGL = MapGLController.GetInstance();
-
-        private IITSController mITS = new ITSControllerSerial();
+        protected IITSController mITS = new ITSControllerSerial();
 
         #endregion Declaration - Fields
 
