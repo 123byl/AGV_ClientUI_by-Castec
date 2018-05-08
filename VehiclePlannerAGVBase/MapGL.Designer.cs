@@ -23,16 +23,26 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
+            this.pnlShow.SuspendLayout();
             this.SuspendLayout();
+            // 
+            // pnlShow
+            // 
+            this.pnlShow.Size = new System.Drawing.Size(632, 510);
+            // 
+            // pnlHide
+            // 
+            this.pnlHide.Size = new System.Drawing.Size(632, 510);
             // 
             // MapGL
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(632, 510);
-            this.Font = new System.Drawing.Font("新細明體", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.DockState = WeifenLuo.WinFormsUI.Docking.DockState.Hidden;
             this.Name = "MapGL";
             this.Text = "MapGL";
+            this.pnlShow.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }

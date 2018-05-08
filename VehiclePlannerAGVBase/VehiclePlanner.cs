@@ -72,7 +72,7 @@ namespace VehiclePlannerAGVBase {
         protected override void SetEvents() {
             base.SetEvents();
 
-            mGoalSetting.RunLoopEvent += IGoalSetting_RunLoopEvent;
+            //mGoalSetting.RunLoopEvent += IGoalSetting_RunLoopEvent;
 
             IMapCtrl.GLClickEvent += IMapCtrl_GLClickEvent;
             IMapCtrl.DragTowerPairEvent += IMapCtrl_DragTowerPairEvent;

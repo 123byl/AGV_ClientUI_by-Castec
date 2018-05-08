@@ -11,7 +11,7 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace VehiclePlanner.Module.Implement {
 
-    public partial class AGVMapUI : CtDockContainer, IBaseMapGL {
+    public partial class BaseMapGL : CtDockContainer, IBaseMapGL {
 
         #region Declaration  - Fields
         
@@ -34,12 +34,14 @@ namespace VehiclePlanner.Module.Implement {
 
         #region Function - Constructors
 
-        protected AGVMapUI():base() { }
+        protected BaseMapGL():base() {
+            InitializeComponent();
+        }
 
         /// <summary>
         /// 共用建構方法
         /// </summary>
-        public AGVMapUI(DockState defState = DockState.Float)
+        public BaseMapGL(DockState defState = DockState.Float)
             : base(defState) {
             InitializeComponent();
             FixedSize = new Size(718, 814);

@@ -1,7 +1,7 @@
 ﻿using GLUI;
 
 namespace VehiclePlanner.Module.Implement {
-    partial class AGVMapUI {
+    partial class BaseMapGL {
         /// <summary>
         /// Required designer variable.
         /// </summary>
@@ -41,6 +41,7 @@ namespace VehiclePlanner.Module.Implement {
             // 
             // pnlHide
             // 
+            this.pnlHide.BackColor = System.Drawing.SystemColors.Control;
             this.pnlHide.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlHide.Location = new System.Drawing.Point(0, 0);
             this.pnlHide.Name = "pnlHide";
@@ -48,7 +49,7 @@ namespace VehiclePlanner.Module.Implement {
             this.pnlHide.TabIndex = 1;
             this.pnlHide.Visible = false;
             // 
-            // AGVMapUI
+            // BaseMapGL
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -58,7 +59,8 @@ namespace VehiclePlanner.Module.Implement {
             this.Controls.Add(this.pnlShow);
             this.DockAreas = WeifenLuo.WinFormsUI.Docking.DockAreas.Document;
             this.Font = new System.Drawing.Font("新細明體", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.Name = "AGVMapUI";
+            this.Name = "BaseMapGL";
+            this.ShowHint = WeifenLuo.WinFormsUI.Docking.DockState.Unknown;
             this.Text = "iTS Map";
             this.pnlShow.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -68,6 +70,6 @@ namespace VehiclePlanner.Module.Implement {
         #endregion
 
         protected System.Windows.Forms.Panel pnlShow;
-        private System.Windows.Forms.Panel pnlHide;
+        protected System.Windows.Forms.Panel pnlHide;
     }
 }

@@ -387,9 +387,7 @@ namespace VehiclePlanner {
                 } else {
                     mDockContent[item].Visible = true;
                 }
-                //if (item.Checked != item.Checked) {
-                //    item.Checked = !item.Checked;
-                //}
+                
             }
         }
 
@@ -948,8 +946,8 @@ namespace VehiclePlanner {
                 e.Value = (e.Value as UserData).Authority<CtGoalSetting>();
             }, source.UserData.Authority<CtGoalSetting>());
             miMapGL.DataBindings.ExAdd(nameof(miMapGL.Enabled), source, dataMember, (sender, e) => {
-                e.Value = (e.Value as UserData).Authority<AGVMapUI>();
-            }, source.UserData.Authority<AGVMapUI>());
+                e.Value = (e.Value as UserData).Authority<BaseMapGL>();
+            }, source.UserData.Authority<BaseMapGL>());
             miConsole.DataBindings.ExAdd(nameof(miConsole.Enabled), source, dataMember, (sender, e) => {
                 e.Value = (e.Value as UserData).Authority<CtConsole>();
             }, source.UserData.Authority<CtConsole>());

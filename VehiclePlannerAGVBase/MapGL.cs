@@ -14,9 +14,16 @@ using WeifenLuo.WinFormsUI.Docking;
 using VehiclePlanner.Core;
 
 namespace VehiclePlannerAGVBase {
-    public partial class MapGL : AGVMapUI ,IMapGL{
-
-
+    public partial class MapGL : BaseMapGL ,IMapGL{
+        
+        /// <summary>
+        /// MapGL
+        /// </summary>
+        /// <remarks>
+        /// 本來是想在設計介面加入的
+        /// 但是在顯示/隱藏的時候會神奇的反向
+        /// 只好用程式碼加入的方式
+        /// </remarks>
         private GLUserControl mAGVBaseMapGL = new GLUserControl();
 
         /// <summary>
@@ -49,7 +56,7 @@ namespace VehiclePlannerAGVBase {
             ///控制項會自動Dock.Fill
             ///預設控制項位置在0,0
             ///會有一部分殘影，因此將控制項移至中心位置
-            mAGVBaseMapGL.Location = new Point(0,0);
+            mAGVBaseMapGL.Location = new Point(0, 0);
             mAGVBaseMapGL.Dock = DockStyle.Fill;
             pnlShow.Controls.Add(mAGVBaseMapGL);
         }
@@ -60,5 +67,6 @@ namespace VehiclePlannerAGVBase {
             this.DataBindings.Add(nameof(MapCenter), source, nameof(source.MapCenter), true, DataSourceUpdateMode.OnPropertyChanged, MapCenter);
 
         }
+        
     }
 }

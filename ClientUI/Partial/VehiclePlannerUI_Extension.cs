@@ -84,7 +84,7 @@ namespace VehiclePlanner.Partial.VehiclePlannerUI {
                 case nameof(CtToolBox):
                     return lv > AccessLevel.Operator;
 
-                case nameof(AGVMapUI):
+                case nameof(BaseMapGL):
                 case nameof(IBaseMapGL):
                     return lv > AccessLevel.None;
 
