@@ -18,6 +18,9 @@ using VehiclePlanner.Partial.VehiclePlannerUI;
 using WeifenLuo.WinFormsUI.Docking;
 using static VehiclePlanner.Partial.VehiclePlannerUI.Events.GoalSettingEvents;
 using VehiclePlanner.Module.Implement;
+using VehiclePlanner.Core;
+using SerialCommunicationData;
+using CtBind;
 
 namespace VehiclePlannerAGVBase {
 
@@ -64,9 +67,28 @@ namespace VehiclePlannerAGVBase {
             InitializeComponent();
             rVehiclePlanner = vehiclePlanner;
             SetEvents();
+            Bindings(rVehiclePlanner.Controller);
         }
 
         #endregion Funciton - Constructors
+
+        #region Function - Public Metnhods
+
+        public void Bindings(IITSController source) {
+            /*-- iTS資訊 --*/
+            string dataMember = nameof(source.Status);
+            tsprgBattery.ProgressBar.DataBindings.Add(nameof(ProgressBar.Value), source, dataMember).Format += (sender, e) => {
+                e.Value = (e.Value as IStatus).Battery;
+            };
+            tslbBattery.DataBindings.ExAdd(nameof(tslbBattery.Text), source, dataMember, (sender, e) => {
+                e.Value = $"{(e.Value as IStatus).Battery}%";
+            });
+            tslbStatus.DataBindings.ExAdd(nameof(tslbStatus.Text), source, dataMember, (sender, e) => {
+                e.Value = (e.Value as IStatus).Description.ToString();
+            });
+        }
+
+        #endregion Funciton - Public Methods
 
         #region Funciton - Private Methods
 

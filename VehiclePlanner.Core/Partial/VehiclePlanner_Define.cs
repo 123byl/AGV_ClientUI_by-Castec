@@ -125,7 +125,7 @@ namespace VehiclePlanner.Core {
     /// <summary>
     /// iTS控制器
     /// </summary>
-    public interface IITSController:IDataSource {
+    public interface IBaseITSController:IDataSource {
         /// <summary>
         /// 資料是否自動回傳中
         /// </summary>
@@ -150,10 +150,6 @@ namespace VehiclePlanner.Core {
         /// 是否可連線
         /// </summary>
         bool IsConnectable { get; }
-        /// <summary>
-        /// iTS狀態
-        /// </summary>
-        IStatus Status { get; }
         /// <summary>
         /// 車子馬達速度
         /// </summary>
@@ -246,22 +242,11 @@ namespace VehiclePlanner.Core {
         /// <returns>雷射資料(0筆雷射資料表示失敗)</returns>
         void RequestLaser();
         /// <summary>
-        /// 要求Map檔
-        /// </summary>
-        /// <param name="mapName">要求的Map檔名</param>
-        /// <returns>Map檔</returns>
-        IDocument RequestMapFile(string mapName);
-        /// <summary>
         /// 要求Map檔清單
         /// </summary>
         /// <returns>Map檔清單</returns>
         string RequestMapList();
         void SendAndSetMap(string mapPath);
-        /// <summary>
-        /// 傳送並要求載入Map
-        /// </summary>
-        /// <param name="mapPath">目標Map檔路徑</param>
-        void SetPosition(IPair oldPosition, IPair newPosition);
         /// <summary>
         /// 要求AGV設定新位置
         /// </summary>
@@ -298,7 +283,7 @@ namespace VehiclePlanner.Core {
         /// <summary>
         /// iTS控制器
         /// </summary>
-        IITSController Controller { get; set; }
+        IBaseITSController Controller { get; }
         /// <summary>
         /// 當前Map檔路徑
         /// </summary>
@@ -406,7 +391,7 @@ namespace VehiclePlanner.Core {
         ///<summary>全域鍵盤鉤子</summary>
         private KeyboardHook mKeyboardHook = new KeyboardHook();
 
-        protected IITSController mITS = new ITSControllerSerial();
+        private IBaseITSController mITS = null;
 
         #endregion Declaration - Fields
 
@@ -415,7 +400,7 @@ namespace VehiclePlanner.Core {
         /// <summary>
         /// iTS控制器
         /// </summary>
-        public IITSController Controller { get => mITS; set {
+        public IBaseITSController Controller { get => mITS;protected set {
                 if (mITS != value && value != null) {
                     mITS = value;
                 }

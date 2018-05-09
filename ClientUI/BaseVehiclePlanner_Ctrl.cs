@@ -26,7 +26,7 @@ namespace VehiclePlanner {
     /// <summary>
     /// 客戶端介面
     /// </summary>
-    public partial class BaseVehiclePlanner_Ctrl : Form, ICtVersion, IDataDisplay<IBaseVehiclePlanner>, IDataDisplay<IITSController> {
+    public partial class BaseVehiclePlanner_Ctrl : Form, ICtVersion, IDataDisplay<IBaseVehiclePlanner>, IDataDisplay<IBaseITSController> {
 
         #region Version - Information
 
@@ -167,7 +167,7 @@ namespace VehiclePlanner {
         /// <summary>
         /// iTS控制器
         /// </summary>
-        private IITSController Controller { get => rVehiclePlanner.Controller as IITSController; }
+        private IBaseITSController Controller { get => rVehiclePlanner.Controller as IBaseITSController; }
 
         #endregion Tool
         
@@ -975,26 +975,15 @@ namespace VehiclePlanner {
         }
 
         /// <summary>
-        /// <see cref="IITSController"/>資料綁定
+        /// <see cref="IBaseITSController"/>資料綁定
         /// </summary>
         /// <param name="source">資料來源</param>
-        public void Bindings(IITSController source) {
-            Bindings<IITSController>(source);
+        public void Bindings(IBaseITSController source) {
+            Bindings<IBaseITSController>(source);
             /*-- 電池最大電量 --*/
             tsprgBattery.ProgressBar.DataBindings.Add(nameof(ProgressBar.Maximum), source, nameof(source.BatteryMaximum));
             /*-- 電池最小電量 --*/
             tsprgBattery.ProgressBar.DataBindings.Add(nameof(ProgressBar.Minimum), source, nameof(source.BatteryMinimum));
-            /*-- iTS資訊 --*/
-            string dataMember = nameof(source.Status);
-            tsprgBattery.ProgressBar.DataBindings.Add(nameof(ProgressBar.Value), source, dataMember).Format += (sender, e) => {
-                e.Value = (e.Value as IStatus).Battery;
-            };
-            tslbBattery.DataBindings.ExAdd(nameof(tslbBattery.Text), source, dataMember, (sender, e) => {
-                e.Value = $"{(e.Value as IStatus).Battery}%";
-            });
-            tslbStatus.DataBindings.ExAdd(nameof(tslbStatus.Text), source, dataMember, (sender, e) => {
-                e.Value = (e.Value as IStatus).Description.ToString();
-            });
             /*-- 是否忽略Socket*/
             miBypassSocket.DataBindings.Add(nameof(miBypassSocket.Checked), source, nameof(source.IsBypassSocket));
             /*-- iTS IP --*/

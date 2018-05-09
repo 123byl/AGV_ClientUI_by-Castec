@@ -112,7 +112,7 @@ namespace VehiclePlanner.Module.Interface {
     /// <summary>
     /// Test視窗公開操作方法
     /// </summary>
-    public interface ITesting : ICtDockContainer, IDataDisplay<IITSController> {
+    public interface ITesting : ICtDockContainer, IDataDisplay<IBaseITSController> {
 
         event DelConnect Connect;
 
