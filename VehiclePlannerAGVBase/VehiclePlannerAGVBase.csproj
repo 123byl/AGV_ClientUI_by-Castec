@@ -136,6 +136,10 @@
       <Project>{2E90A64E-9A09-4950-8B65-AEDD47F8F6D4}</Project>
       <Name>SerialCommunication</Name>
     </ProjectReference>
+    <ProjectReference Include="..\BroadCast\Broadcast.csproj">
+      <Project>{10D930FD-CE9C-46FA-AA1E-FB8394BA287F}</Project>
+      <Name>Broadcast</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ClientUI\VehiclePlanner.csproj">
       <Project>{e03a4197-ba64-4eed-a628-8de3b8b9ba9a}</Project>
       <Name>VehiclePlanner</Name>

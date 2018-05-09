@@ -115,14 +115,7 @@ namespace VehiclePlanner {
         /// 系統列圖示標題
         /// </summary>
         protected string mNotifyCaption = "Vehicle planner";
-
-
-        /// <summary>
-        /// VehicleConsole模擬物件
-        /// </summary>
-        private FakeVehicleConsole mVC = null;
-
-
+        
         #endregion Declaration - Fields
 
         #region Declaration - Members
@@ -271,7 +264,6 @@ namespace VehiclePlanner {
 
                 LoadCtNotifyIcon();
 
-                mVC = new FakeVehicleConsole(!DesignMode);
             } else {
                 this.Close();
             }
@@ -999,7 +991,7 @@ namespace VehiclePlanner {
         /// </summary>
         /// <typeparam name="TSource"></typeparam>
         /// <param name="source"></param>
-        private void Bindings<TSource>(TSource source) where TSource : IDataSource {
+        protected void Bindings<TSource>(TSource source) where TSource : IDataSource {
             if (source.DelInvoke == null) source.DelInvoke = invk => this.InvokeIfNecessary(invk);
             var subDisplay = mDockContent.Where(kvp => kvp.Value is IDataDisplay<TSource>).Select(kvp => kvp.Value);
             foreach (IDataDisplay<TSource> display in subDisplay) {

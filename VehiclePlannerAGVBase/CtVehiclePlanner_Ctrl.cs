@@ -37,9 +37,14 @@ namespace VehiclePlannerAGVBase {
         /// 地圖插入控制器
         /// </summary>
         private CtDockContainer mMapInsert = new CtMapInsert();
+        
+        /// <summary>
+        /// VehicleConsole模擬物件
+        /// </summary>
+        private FakeVehicleConsole mVC = null;
 
         #endregion Declaration - Fields
-        
+
         #region Declaration - Properties
 
         /// <summary>
@@ -68,6 +73,8 @@ namespace VehiclePlannerAGVBase {
             rVehiclePlanner = vehiclePlanner;
             SetEvents();
             Bindings(rVehiclePlanner.Controller);
+
+            mVC = new FakeVehicleConsole(!DesignMode);
         }
 
         #endregion Funciton - Constructors
@@ -75,6 +82,7 @@ namespace VehiclePlannerAGVBase {
         #region Function - Public Metnhods
 
         public void Bindings(IITSController source) {
+            Bindings<IITSController>(source);
             /*-- iTS資訊 --*/
             string dataMember = nameof(source.Status);
             tsprgBattery.ProgressBar.DataBindings.Add(nameof(ProgressBar.Value), source, dataMember).Format += (sender, e) => {

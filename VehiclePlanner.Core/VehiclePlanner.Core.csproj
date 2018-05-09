@@ -57,21 +57,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\AGVBase\AGVDefine\AGVDefine.csproj">
-      <Project>{51e35835-6673-443b-8926-9ad3117dbce2}</Project>
-      <Name>AGVDefine</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\AGVBase\FactoryMode\FactoryMode.csproj">
       <Project>{b66dd409-3bf6-488d-b887-d00a59c6396d}</Project>
       <Name>FactoryMode</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\AGVBase\Geometry\Geometry.csproj">
-      <Project>{07e11b21-0d87-4446-8ee8-91135dcae089}</Project>
-      <Name>Geometry</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\AGVBase\GLCore\GLCore.csproj">
-      <Project>{805b8702-0fac-4104-8f41-5337130ca0c6}</Project>
-      <Name>GLCore</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\AGVBase\NetExtention\NetExtention.csproj">
       <Project>{cfcc1d01-fd8d-4885-9181-7c6750395d84}</Project>

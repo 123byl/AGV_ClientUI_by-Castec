@@ -1,9 +1,6 @@
 ﻿using BroadCast;
 using CtBind;
 using CtLib.Module.Utility;
-using Geometry;
-using SerialCommunication;
-using SerialCommunicationData;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -301,10 +298,6 @@ namespace VehiclePlanner.Core {
         /// </summary>
         bool MainVisible { get; }
         /// <summary>
-        /// 地圖中心點
-        /// </summary>
-        IPair MapCenter { get; set; }
-        /// <summary>
         /// 使用者資料
         /// </summary>
         UserData UserData { get; set; }
@@ -363,10 +356,6 @@ namespace VehiclePlanner.Core {
 
         #region Declaration - Fileds
         
-        /// <summary>
-        /// 地圖中心
-        /// </summary>
-        private IPair mMapCenter = null;
 
         /// <summary>
         /// 當前Map檔路徑
@@ -474,22 +463,7 @@ namespace VehiclePlanner.Core {
             }
 
         }
-
-        /// <summary>
-        /// 地圖中心點
-        /// </summary>
-        public IPair MapCenter {
-            get {
-                return mMapCenter;
-            }
-            set {
-                if (mMapCenter != value && value != null) {
-                    mMapCenter = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
+        
         /// <summary>
         /// 全域鍵盤檢測
         /// </summary>

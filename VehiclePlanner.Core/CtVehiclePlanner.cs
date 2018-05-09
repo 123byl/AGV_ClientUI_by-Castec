@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
 using System.Windows.Forms;
-
 using System.Runtime.CompilerServices;
 
 namespace VehiclePlanner.Core {

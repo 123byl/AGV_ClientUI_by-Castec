@@ -61,7 +61,7 @@ namespace VehiclePlannerAGVBase {
             pnlShow.Controls.Add(mAGVBaseMapGL);
         }
 
-        public override void Bindings(IBaseVehiclePlanner source) {
+        public void Bindings(IVehiclePlanner source) {
             base.Bindings(source);
             /*-- 地圖中心點 --*/
             this.DataBindings.Add(nameof(MapCenter), source, nameof(source.MapCenter), true, DataSourceUpdateMode.OnPropertyChanged, MapCenter);

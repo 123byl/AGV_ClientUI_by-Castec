@@ -3,12 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
-//using GLCore;
-//using Geometry;
-//using SerialCommunication;
-//using SerialCommunicationData;
-using AGVDefine;
 using CtLib.Library;
 using System.Net.NetworkInformation;
 using System.Text.RegularExpressions;
