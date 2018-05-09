@@ -216,7 +216,7 @@ namespace VehiclePlanner.Core {
         /// </summary>
         /// <param name="msg"></param>
         protected virtual void OnConsoleMessage(string msg) {
-            mConsoleMessage?.Invoke(msg);
+            ConsoleMessage?.Invoke(msg);
         }
 
         /// <summary>
@@ -241,7 +241,7 @@ namespace VehiclePlanner.Core {
         /// <param name="title"></param>
         /// <param name="context"></param>
         protected virtual void SetBalloonTip(string title, string context) {
-            mBalloonTip?.Invoke(title,context);
+            BalloonTip?.Invoke(title,context);
         }
 
     #endregion Raise Events

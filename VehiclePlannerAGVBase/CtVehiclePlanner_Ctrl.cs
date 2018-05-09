@@ -249,42 +249,4 @@ namespace VehiclePlannerAGVBase {
 
     }
 
-    public interface IMapGL : IBaseMapGL {
-        /// <summary>
-        /// 地圖中心點
-        /// </summary>
-        IPair MapCenter { get; set; }
-
-        IScene Ctrl { get; }
-    }
-
-    public interface IGoalSetting : IBaseGoalSetting {
-        /// <summary>
-        /// 按照順序移動全部
-        /// </summary>
-        event DelRunLoop RunLoopEvent;
-
-        /// <summary>
-        /// 設定真實座標
-        /// </summary>
-        void UpdateNowPosition(IPair realPos);
-
-        /// <summary>
-        /// 重新載入標示物
-        /// </summary>
-        void ReloadSingle();
-
-    }
-
-
-    /// <summary>
-    /// 按照順序移動全部
-    /// </summary>
-    public delegate void DelRunLoop(IEnumerable<IGoal> goal);
-
-    /// <summary>
-    /// 更新 Goal 點
-    /// </summary>
-    public delegate void DelUpdateGoal(IGoal newGoal);
-
 }

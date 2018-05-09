@@ -310,6 +310,14 @@ namespace VehiclePlanner.Core {
         /// </summary>
         KeyboardHook KeyboardHook { get; }
         /// <summary>
+        /// Console訊息事件
+        /// </summary>
+        event ConsoleMessagEventHandler ConsoleMessage;
+        /// <summary>
+        /// 氣球提示事件
+        /// </summary>
+        event BalloonTipEventHandler BalloonTip;
+        /// <summary>
         /// 錯誤訊息事件
         /// </summary>
         event ErrorMessageEventHandler ErrorMessage;
@@ -483,42 +491,16 @@ namespace VehiclePlanner.Core {
         /// 錯誤訊息事件
         /// </summary>
         public event ErrorMessageEventHandler ErrorMessage = null;
-       
+
         /// <summary>
         /// Console訊息事件
         /// </summary>
-        public event ConsoleMessagEventHandler ConsoleMessage {
-            add {
-                mConsoleMessage += value;
-                mITS.ConsoleMessage += value;
-            }
-            remove {
-                mConsoleMessage -= value;
-                mITS.ConsoleMessage -= value;
-            }
-        }
-        /// <summary>
-        /// Console訊息事件
-        /// </summary>
-        private event ConsoleMessagEventHandler mConsoleMessage = null;
+        public event ConsoleMessagEventHandler ConsoleMessage;
 
         /// <summary>
         /// 氣球提示事件
         /// </summary>
-        public event BalloonTipEventHandler BalloonTip {
-            add {
-                mBalloonTip += value;
-                mITS.BalloonTip += value;
-            }
-            remove {
-                mBalloonTip -= value;
-                mITS.BalloonTip += value;
-            }
-        }        
-        /// <summary>
-        /// 氣球提示事件
-        /// </summary>
-        private event BalloonTipEventHandler mBalloonTip = null;
+        public event BalloonTipEventHandler BalloonTip;
 
         /// <summary>
         /// VehiclePlanner事件
