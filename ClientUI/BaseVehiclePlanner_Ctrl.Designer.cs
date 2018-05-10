@@ -81,10 +81,9 @@ namespace VehiclePlanner {
             this.miTesting = new CtBind.Bindable.ToolStripMenuItem();
             this.miGoalSetting = new CtBind.Bindable.ToolStripMenuItem();
             this.miConsole = new CtBind.Bindable.ToolStripMenuItem();
-            this.miToolBox = new CtBind.Bindable.ToolStripMenuItem();
             this.miMapInsert = new CtBind.Bindable.ToolStripMenuItem();
             this.miMotionController = new CtBind.Bindable.ToolStripMenuItem();
-            this.miParamEditor = new System.Windows.Forms.ToolStripMenuItem();
+            this.miParamEditor = new Bindable.ToolStripMenuItem();
             this.miHelp = new CtBind.Bindable.ToolStripMenuItem();
             this.miAbout = new CtBind.Bindable.ToolStripMenuItem();
             this.testToolStripMenuItem = new CtBind.Bindable.ToolStripMenuItem();
@@ -286,7 +285,6 @@ namespace VehiclePlanner {
             this.miTesting,
             this.miGoalSetting,
             this.miConsole,
-            this.miToolBox,
             this.miMapInsert,
             this.miMotionController,
             this.miParamEditor});
@@ -317,12 +315,6 @@ namespace VehiclePlanner {
             this.miConsole.Name = "miConsole";
             this.miConsole.Size = new System.Drawing.Size(208, 26);
             this.miConsole.Text = "Console";
-            // 
-            // miToolBox
-            // 
-            this.miToolBox.Name = "miToolBox";
-            this.miToolBox.Size = new System.Drawing.Size(208, 26);
-            this.miToolBox.Text = "ToolBox";
             // 
             // miMapInsert
             // 
@@ -449,10 +441,9 @@ namespace VehiclePlanner {
         private Bindable.ToolStripMenuItem miLoadFile;
         private Bindable.ToolStripMenuItem miServer;
         private Bindable.ToolStripMenuItem testToolStripMenuItem;
-        private Bindable.ToolStripMenuItem miToolBox;
         private Bindable.ToolStripMenuItem miMapInsert;
         private Bindable.ToolStripMenuItem miMotionController;
-        private System.Windows.Forms.ToolStripMenuItem miParamEditor;
+        private Bindable.ToolStripMenuItem miParamEditor;
         protected System.Windows.Forms.MenuStrip menuStrip1;
     }
 }

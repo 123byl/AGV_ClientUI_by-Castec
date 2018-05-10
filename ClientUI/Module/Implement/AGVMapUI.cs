@@ -56,6 +56,10 @@ namespace VehiclePlanner.Module.Implement {
 
         #region Funciton - Public Methods
 
+        public override bool IsVisiable(AccessLevel lv) {
+            return lv > AccessLevel.None;
+        }
+        
         #endregion Funciton - Public Methods
 
         #region Function - Private Methods
@@ -71,10 +75,6 @@ namespace VehiclePlanner.Module.Implement {
 
         protected override void OnFormClosing(FormClosingEventArgs e) {
             e.Cancel = true;
-        }
-
-        protected override bool IsVisiable(AccessLevel lv) {
-            return lv > AccessLevel.None;
         }
 
         #endregion Function - Private Methods

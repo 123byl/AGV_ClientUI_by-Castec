@@ -794,12 +794,11 @@ namespace VehiclePlanner {
         /// </summary>
         protected virtual void LoadICtDockContainer() {
             /*-- 載入DockContent --*/
-
-            mDockContent.Add(miMapGL, GetMapGL(DockState.Document));
-            mDockContent.Add(miConsole, GetConsole(DockState.DockBottomAutoHide));
-            mDockContent.Add(miGoalSetting, GetGoalSetting(DockState.DockLeft));
-            mDockContent.Add(miTesting, GetTesting(DockState.DockLeft));
-            mDockContent.Add(miParamEditor,new ParamEditor(DockState.Document));
+            AddSubForm(miMapGL, GetMapGL(DockState.Document));
+            AddSubForm(miConsole, GetConsole(DockState.DockBottomAutoHide));
+            AddSubForm(miGoalSetting, GetGoalSetting(DockState.DockLeft));
+            AddSubForm(miTesting, GetTesting(DockState.DockLeft));
+            AddSubForm(miParamEditor,new ParamEditor(DockState.Document));
             SetEvents();
 
             /*-- 計算每個固定停靠區域所需的顯示大小 --*/
@@ -860,6 +859,16 @@ namespace VehiclePlanner {
                     );
                 mNotifyIcon.MenuItems = mMenuItems;
             }
+        }
+
+        /// <summary>
+        /// 新增MenuItem與子視窗的對照
+        /// </summary>
+        /// <param name="item"></param>
+        /// <param name="subForm"></param>
+        protected void AddSubForm(ToolStripMenuItem item,AuthorityDockContainer subForm) {
+            mDockContent.Add(item, subForm);
+            item.Tag = subForm;
         }
 
         #endregion Load
@@ -933,20 +942,23 @@ namespace VehiclePlanner {
                 e.Value = (e.Value as UserData).Level > AccessLevel.Operator;
             }, source.UserData.Level > AccessLevel.Operator);
             miTesting.DataBindings.ExAdd(nameof(miTesting.Enabled), source, dataMember, (sender, e) => {
-                e.Value = (e.Value as UserData).Authority<CtTesting>();
-            }, source.UserData.Authority<CtTesting>());
+                e.Value = (e.Value as UserData).Authority(miTesting);
+            }, source.UserData.Authority(miTesting));
             miGoalSetting.DataBindings.ExAdd(nameof(miGoalSetting.Enabled), source, dataMember, (sender, e) => {
-                e.Value = (e.Value as UserData).Authority<BaseGoalSetting>();
-            }, source.UserData.Authority<BaseGoalSetting>());
+                e.Value = (e.Value as UserData).Authority(miGoalSetting);
+            }, source.UserData.Authority(miGoalSetting));
             miMapGL.DataBindings.ExAdd(nameof(miMapGL.Enabled), source, dataMember, (sender, e) => {
-                e.Value = (e.Value as UserData).Authority<BaseMapGL>();
-            }, source.UserData.Authority<BaseMapGL>());
+                e.Value = (e.Value as UserData).Authority(miMapGL);
+            }, source.UserData.Authority(miMapGL));
             miConsole.DataBindings.ExAdd(nameof(miConsole.Enabled), source, dataMember, (sender, e) => {
-                e.Value = (e.Value as UserData).Authority<CtConsole>();
-            }, source.UserData.Authority<CtConsole>());
+                e.Value = (e.Value as UserData).Authority(miConsole);
+            }, source.UserData.Authority(miConsole));
             miBypass.DataBindings.ExAdd(nameof(miBypass.Visible), source, dataMember, (sender, e) => {
                 e.Value = (e.Value as UserData).Level == AccessLevel.Administrator;
             }, source.UserData.Level == AccessLevel.Administrator);
+            miParamEditor.DataBindings.ExAdd(nameof(miParamEditor.Enabled), source, dataMember, (sneder, e) => {
+                e.Value = (e.Value as UserData).Authority(miParamEditor);
+            },source.UserData.Authority(miParamEditor));
         }
 
         /// <summary>

@@ -76,13 +76,13 @@ namespace VehiclePlannerAGVBase {
 
         #endregion Funciotn - Events
 
-        #region Funciotn - Private Methods
+        #region Funciotn - Public Methods
 
-        protected override bool IsVisiable(AccessLevel lv) {
+        public override bool IsVisiable(AccessLevel lv) {
             return lv > AccessLevel.Operator;
         }
 
-        #endregion Funciton - Private Methods
+        #endregion Funciton - Public Methods
     }
     
 }

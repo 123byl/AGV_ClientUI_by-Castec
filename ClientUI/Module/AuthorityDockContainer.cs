@@ -38,7 +38,7 @@ namespace VehiclePlanner.Module {
         /// </summary>
         /// <param name="lv">使用者權限</param>
         /// <returns>是否可視</returns>
-        protected virtual bool IsVisiable(AccessLevel lv) {
+        public virtual bool IsVisiable(AccessLevel lv) {
             throw new NotImplementedException();
         }
     }

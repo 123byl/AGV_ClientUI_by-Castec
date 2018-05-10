@@ -74,7 +74,6 @@ namespace VehiclePlannerAGVBase {
         public CtVehiclePlanner_Ctrl(IVehiclePlanner vehiclePlanner):base() {
             InitializeComponent();
             rVehiclePlanner = vehiclePlanner;
-            VehiclePlannerUI_Extension.DockContainerAuthority = new AGVbaseDockAuthority();
             miToolBox = new Bindable.ToolStripMenuItem() { Text = "ToolBox" };
             miView.DropDownItems.Add(miToolBox);
 
@@ -92,12 +91,11 @@ namespace VehiclePlannerAGVBase {
         public void Bindings(IVehiclePlanner source) {
             if (source == null) return;
             Bindings<IVehiclePlanner>(source);
+            /*-- 使用者變更 --*/
             string dataMember = nameof(source.UserData);
             miToolBox.DataBindings.ExAdd(nameof(miToolBox.Enabled), source, dataMember, (sender, e) => {
-                e.Value = (e.Value as UserData).Authority<CtToolBox>();
-            },
-            source.UserData.Authority<CtToolBox>()
-            );
+                e.Value = (e.Value as UserData).Authority(miToolBox);
+            },source.UserData.Authority(miToolBox));
         }
 
         public void Bindings(IITSController source) {
@@ -139,10 +137,9 @@ namespace VehiclePlannerAGVBase {
 
             (mDockContent[miToolBox] as CtToolBox).SwitchCursor += ToolBox_SwitchCursor;
         }
-
-
+        
         protected override void LoadICtDockContainer() {
-            mDockContent.Add(miToolBox, new CtToolBox(DockState.DockRightAutoHide));
+            AddSubForm(miToolBox, new CtToolBox(DockState.DockRightAutoHide));
             base.LoadICtDockContainer();
             mMapInsert.AssignmentDockPanel(dockPanel);
         }

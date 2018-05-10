@@ -32,8 +32,7 @@ namespace VehiclePlannerAGVBase {
                 return FactoryMode.Factory.SerialClient(receiveDataEvent);
             }
         }
-
-
+        
         #region OutlookBar
 
         /// <summary>
@@ -61,45 +60,6 @@ namespace VehiclePlannerAGVBase {
 
         #endregion OutlookBar
         
-        /// <summary>
-        /// 回傳使用者權限
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="user">使用者資料</param>
-        /// <returns>是否有權限</returns>
-        public static bool Authority<T>(this UserData user) where T : ICtDockContainer {
-            return Authority(typeof(T), user);
-        }
-
-        /// <summary>
-        /// 回傳使用者權限
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="component">要使用的元件</param>
-        /// <param name="user">使用者資料</param>
-        /// <returns>是否有權限</returns>
-        public static bool Authority<T>(this T component, UserData user) where T : ICtDockContainer {
-            return Authority(component.GetType(), user);
-        }
-
-        /// <summary>
-        /// 回傳使用者權限
-        /// </summary>
-        /// <param name="type">要使用的元件類型</param>
-        /// <param name="user">使用者資料</param>
-        /// <returns>是否有權限</returns>
-        private static bool Authority(Type type, UserData user) {
-            string typeName = type.Name;
-            var lv = user.Level;
-            switch (typeName) {
-                case nameof(CtToolBox):
-                    return lv > AccessLevel.Operator;
-                    
-                default:
-                    throw new Exception($"未定義{typeName}權限");
-            }
-        }
-
     }
 
 }

@@ -49,12 +49,12 @@ namespace VehiclePlanner.Module.Implement {
 
         #endregion Funciotn - Consturctors
 
-        #region Function - Private Mehotds
+        #region Function - Public Mehotds
 
-        protected override bool IsVisiable(AccessLevel lv) {
+        public override bool IsVisiable(AccessLevel lv) {
             return lv > AccessLevel.Operator;
         }
 
-        #endregion Funciotn - Private Methods
+        #endregion Funciotn - Public Methods
     }
 }

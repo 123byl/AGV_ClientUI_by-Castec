@@ -37,13 +37,14 @@ namespace VehiclePlanner.Module.Implement {
 
         #endregion Funciton - Constructors
 
-        #region Funciotn - Privagte Methods
+        #region Funciotn - Public Methods
 
-        protected override bool IsVisiable(AccessLevel lv) {
+        public override bool IsVisiable(AccessLevel lv) {
             return true;
         }
+        
+        #endregion Funciton - Public Methods
 
-        #endregion Funciton - Private Methods
         #region Implement - IIConsole
 
         /// <summary>

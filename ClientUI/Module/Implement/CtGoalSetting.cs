@@ -313,7 +313,7 @@ namespace VehiclePlanner.Module.Implement {
             }
         }
 
-        protected override bool IsVisiable(AccessLevel lv) {
+        public override bool IsVisiable(AccessLevel lv) {
             return lv > AccessLevel.None;
         }
 

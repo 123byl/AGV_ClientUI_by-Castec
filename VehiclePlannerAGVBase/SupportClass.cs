@@ -37,30 +37,7 @@ namespace VehiclePlannerAGVBase {
         public CtTaskCompletionSource(IOrderPacket packet) : this(packet.SerialNumber, packet.Purpose) { }
 
     }
-
-    /// <summary>
-    /// 擴充子視窗權限定義
-    /// </summary>
-    public class AGVbaseDockAuthority: DockContainerAuthority {
-        
-        /// <summary>
-        /// 回傳子視窗權限定義
-        /// </summary>
-        /// <param name="typeName">子視窗類型名稱</param>
-        /// <param name="lv">使用者權限</param>
-        /// <returns></returns>
-        public override bool Authority(string typeName, AccessLevel lv) {
-            switch (typeName) {
-                case nameof(CtToolBox):
-                    return lv > AccessLevel.Operator;
-                default:
-                    return base.Authority(typeName, lv);
-
-            }
-        }
-
-    }
-
+    
     #region Fake
 
     /// <summary>
