@@ -251,22 +251,21 @@ namespace VehiclePlanner {
 
                 /*-- 事件委派 --*/
                 rVehiclePlanner.PropertyChanged += rVehiclePlanner_PropertyChanged;
-                rVehiclePlanner.Controller.ConsoleMessage += rVehiclePlanner_ConsoleMessage;
                 rVehiclePlanner.VehiclePlannerEvent += rVehiclePlanner_VehiclePlannerEvent;
                 rVehiclePlanner.ErrorMessage += rVehiclePlanner_ErrorMessage;
-                rVehiclePlanner.Controller.BalloonTip += rVehiclePlanner_BalloonTip; ;
-                /*-- 方法委派 --*/
-                rVehiclePlanner.Controller.SelectFile = SelectFile;
-                rVehiclePlanner.Controller.InputBox = InputBox;
-
+                if (rVehiclePlanner.Controller != null) {
+                    /*-- 方法委派 --*/
+                    rVehiclePlanner.Controller.BalloonTip += rVehiclePlanner_BalloonTip; ;
+                    rVehiclePlanner.Controller.ConsoleMessage += rVehiclePlanner_ConsoleMessage;
+                    rVehiclePlanner.Controller.SelectFile = SelectFile;
+                    rVehiclePlanner.Controller.InputBox = InputBox;
+                }
                 /*-- 載入ICtDockContainer物件 --*/
                 LoadICtDockContainer();
 
                 LoadCtNotifyIcon();
 
-            } else {
-                this.Close();
-            }
+            } 
         }
 
         #endregion Functin - Constructors
@@ -740,50 +739,44 @@ namespace VehiclePlanner {
         /// 設定事件連結
         /// </summary>
         private void SetEvents() {
+            if (rVehiclePlanner != null) {
+                mGoalSetting.ClearMap += rVehiclePlanner.ClearMap;
+                mGoalSetting.SaveGoalEvent += rVehiclePlanner.SaveMap;
+                mGoalSetting.AddCurrentGoalEvent += rVehiclePlanner.AddCurrentAsGoal;
 
-            #region IGoalSetting 事件連結
+                mTesting.SimplifyOri += rVehiclePlanner.SimplifyOri;
+                mTesting.ClearMap += rVehiclePlanner.ClearMap;
 
-            mGoalSetting.AddCurrentGoalEvent += rVehiclePlanner.AddCurrentAsGoal;
-            mGoalSetting.FindPathEvent += rVehiclePlanner.Controller.FindPath;
-            mGoalSetting.LoadMapEvent += ITest_LoadMap;
-            mGoalSetting.LoadMapFromAGVEvent += rVehiclePlanner.Controller.GetMap;
-            mGoalSetting.RunGoalEvent += rVehiclePlanner.Controller.DoRunningByGoalName;
-            mGoalSetting.SaveGoalEvent += rVehiclePlanner.SaveMap;
+                if (rVehiclePlanner.Controller != null) {
+                    mGoalSetting.FindPathEvent += rVehiclePlanner.Controller.FindPath;
+                    mGoalSetting.LoadMapFromAGVEvent += rVehiclePlanner.Controller.GetMap;
+                    mGoalSetting.RunGoalEvent += rVehiclePlanner.Controller.DoRunningByGoalName;
+                    mGoalSetting.GetGoalNames += rVehiclePlanner.Controller.GetGoalNames;
+                    mGoalSetting.Charging += rVehiclePlanner.Controller.DoCharging;
+                    
+                    mTesting.Find += rVehiclePlanner.Controller.FindCar;
+                    mTesting.GetOri += rVehiclePlanner.Controller.GetOri;
+                    mTesting.GetMap += rVehiclePlanner.Controller.GetMap;
+                    mTesting.GetLaser += rVehiclePlanner.Controller.RequestLaser;
+                    mTesting.CarPosConfirm += rVehiclePlanner.Controller.DoPositionComfirm;
+                    mTesting.StartScan += rVehiclePlanner.Controller.StartScan;
+                    mTesting.SetVelocity += rVehiclePlanner.Controller.SetWorkVelocity;
+                    mTesting.Connect += rVehiclePlanner.Controller.ConnectToITS;
+                    mTesting.MotorServoOn += rVehiclePlanner.Controller.SetServoMode;
+                }
+            }
+
+
             mGoalSetting.SendMapToAGVEvent += ITest_SendMap;
-            mGoalSetting.GetGoalNames += rVehiclePlanner.Controller.GetGoalNames;
-            mGoalSetting.Charging += rVehiclePlanner.Controller.DoCharging;
-            mGoalSetting.ClearMap += rVehiclePlanner.ClearMap;
-
-            #endregion IGoalSetting 事件連結
-
-            #region IMapGL 事件連結
-
+            mGoalSetting.LoadMapEvent += ITest_LoadMap;
             
-            #endregion IMapGL 事件連結
-
-            #region ITesting 事件連結
-
             mTesting.LoadMap += ITest_LoadMap;
             mTesting.LoadOri += ITest_LoadOri;
-            mTesting.GetOri += rVehiclePlanner.Controller.GetOri;
-            mTesting.GetMap += rVehiclePlanner.Controller.GetMap;
-            mTesting.GetLaser += rVehiclePlanner.Controller.RequestLaser;
             mTesting.GetCar += ITest_GetCar;
             mTesting.SendMap += ITest_SendMap;
-            mTesting.SetVelocity += rVehiclePlanner.Controller.SetWorkVelocity;
-            mTesting.Connect += rVehiclePlanner.Controller.ConnectToITS;
-            mTesting.MotorServoOn += rVehiclePlanner.Controller.SetServoMode;
-            mTesting.SimplifyOri += rVehiclePlanner.SimplifyOri;
-            mTesting.ClearMap += rVehiclePlanner.ClearMap;
             mTesting.SettingCarPos += ITest_SettingCarPos;
-            mTesting.CarPosConfirm += rVehiclePlanner.Controller.DoPositionComfirm;
-            mTesting.StartScan += rVehiclePlanner.Controller.StartScan;
             mTesting.ShowMotionController += ShowMotionController;
-            mTesting.Find += rVehiclePlanner.Controller.FindCar;
-            #endregion ITesting 事件連結
-
-
-
+            
             (mDockContent[miToolBox] as CtToolBox).SwitchCursor += ToolBox_SwitchCursor;
         }
         
@@ -971,6 +964,7 @@ namespace VehiclePlanner {
         /// </summary>
         /// <param name="source">資料來源</param>
         public void Bindings(IBaseITSController source) {
+            if (source == null) return;
             Bindings<IBaseITSController>(source);
             /*-- 電池最大電量 --*/
             tsprgBattery.ProgressBar.DataBindings.Add(nameof(ProgressBar.Maximum), source, nameof(source.BatteryMaximum));
@@ -992,6 +986,7 @@ namespace VehiclePlanner {
         /// <typeparam name="TSource"></typeparam>
         /// <param name="source"></param>
         protected void Bindings<TSource>(TSource source) where TSource : IDataSource {
+            if (source == null) return;
             if (source.DelInvoke == null) source.DelInvoke = invk => this.InvokeIfNecessary(invk);
             var subDisplay = mDockContent.Where(kvp => kvp.Value is IDataDisplay<TSource>).Select(kvp => kvp.Value);
             foreach (IDataDisplay<TSource> display in subDisplay) {

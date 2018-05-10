@@ -270,7 +270,7 @@ namespace VehiclePlanner.Core {
         /// <summary>
         /// Invoke方法委派
         /// </summary>
-        public Action<MethodInvoker> DelInvoke { get => mITS.DelInvoke; set => mITS.DelInvoke = value; }
+        public Action<MethodInvoker> DelInvoke { get => mITS?.DelInvoke; set { if (mITS != null) mITS.DelInvoke = value; } }
 
         #endregion Implement - IDataSource
 

@@ -184,8 +184,10 @@ namespace VehiclePlanner.Module.Implement {
         /// </summary>
         /// <param name="source">資料來源</param>
         public void Bindings(IBaseITSController source) {
+            if (source == null) return;
+            
             /*-- Invoke方法委派 --*/
-            if (source.DelInvoke == null) source.DelInvoke = invk => this.InvokeIfNecessary(invk);
+            if ( source.DelInvoke == null) source.DelInvoke = invk => this.InvokeIfNecessary(invk);
             /*-- 地圖掃描狀態 --*/
             string dataMember = nameof(source.IsScanning);
             btnScan.DataBindings.Add(nameof(btnScan.Text), source, dataMember).Format += (sender, e) => {
