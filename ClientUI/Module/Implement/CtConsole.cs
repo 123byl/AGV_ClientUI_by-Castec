@@ -6,13 +6,14 @@ using VehiclePlanner.Core;
 using VehiclePlanner.Module.Interface;
 using WeifenLuo.WinFormsUI.Docking;
 using static VehiclePlanner.Partial.VehiclePlannerUI.Events.ConsoleEvents;
+using CtLib.Module.Utility;
 
 namespace VehiclePlanner.Module.Implement {
 
     /// <summary>
     /// Console介面
     /// </summary>
-    public partial class CtConsole : CtDockContainer, IConsole {
+    public partial class CtConsole : AuthorityDockContainer, IConsole {
 
         #region Declaration - Fields
 
@@ -36,6 +37,13 @@ namespace VehiclePlanner.Module.Implement {
 
         #endregion Funciton - Constructors
 
+        #region Funciotn - Privagte Methods
+
+        protected override bool IsVisiable(AccessLevel lv) {
+            return true;
+        }
+
+        #endregion Funciton - Private Methods
         #region Implement - IIConsole
 
         /// <summary>

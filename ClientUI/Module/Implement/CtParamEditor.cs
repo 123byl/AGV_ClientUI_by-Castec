@@ -11,11 +11,25 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using VehiclePlanner.Core;
 using WeifenLuo.WinFormsUI.Docking;
+using CtLib.Module.Utility;
 
 namespace VehiclePlanner.Module.Implement {
-    public partial class ParamEditor : CtDockContainer {
-        
+
+    /// <summary>
+    /// 參數編輯器子視窗
+    /// </summary>
+    public partial class ParamEditor : AuthorityDockContainer {
+
+        #region Declaration - Fields
+
+        /// <summary>
+        /// 參數編輯器
+        /// </summary>
         private CtrlParamEditor mEditor = null;
+
+        #endregion Declaration - Fields
+
+        #region Funciotn - Constructors
 
         /// <summary>
         /// 共用建構方法
@@ -31,18 +45,16 @@ namespace VehiclePlanner.Module.Implement {
             this.Controls.Add(mEditor);
             mEditor.Show();
             FixedSize = new Size(718, 814);
-            this.Activated += ParamEditor_Activated;
-            this.Deactivate += ParamEditor_Deactivate;
         }
-        
-        private void ParamEditor_Deactivate(object sender, EventArgs e) {
-            Console.WriteLine("Deactivate");
-        }
-        
 
-        private void ParamEditor_Activated(object sender, EventArgs e) {
-            Console.WriteLine($"IsHidden:{this.IsHidden}");
+        #endregion Funciotn - Consturctors
+
+        #region Function - Private Mehotds
+
+        protected override bool IsVisiable(AccessLevel lv) {
+            return lv > AccessLevel.Operator;
         }
-        
+
+        #endregion Funciotn - Private Methods
     }
 }

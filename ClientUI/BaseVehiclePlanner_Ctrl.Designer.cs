@@ -76,7 +76,7 @@ namespace VehiclePlanner {
             this.miLogin = new CtBind.Bindable.ToolStripMenuItem();
             this.miUserManager = new CtBind.Bindable.ToolStripMenuItem();
             this.miExit = new CtBind.Bindable.ToolStripMenuItem();
-            this.viewToolStripMenuItem = new CtBind.Bindable.ToolStripMenuItem();
+            this.miView = new CtBind.Bindable.ToolStripMenuItem();
             this.miMapGL = new CtBind.Bindable.ToolStripMenuItem();
             this.miTesting = new CtBind.Bindable.ToolStripMenuItem();
             this.miGoalSetting = new CtBind.Bindable.ToolStripMenuItem();
@@ -84,6 +84,7 @@ namespace VehiclePlanner {
             this.miToolBox = new CtBind.Bindable.ToolStripMenuItem();
             this.miMapInsert = new CtBind.Bindable.ToolStripMenuItem();
             this.miMotionController = new CtBind.Bindable.ToolStripMenuItem();
+            this.miParamEditor = new System.Windows.Forms.ToolStripMenuItem();
             this.miHelp = new CtBind.Bindable.ToolStripMenuItem();
             this.miAbout = new CtBind.Bindable.ToolStripMenuItem();
             this.testToolStripMenuItem = new CtBind.Bindable.ToolStripMenuItem();
@@ -91,7 +92,6 @@ namespace VehiclePlanner {
             this.miBypassSocket = new CtBind.Bindable.ToolStripMenuItem();
             this.miLoadFile = new CtBind.Bindable.ToolStripMenuItem();
             this.miServer = new CtBind.Bindable.ToolStripMenuItem();
-            this.miParamEditor = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -237,7 +237,7 @@ namespace VehiclePlanner {
             this.menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.systemToolStripMenuItem,
-            this.viewToolStripMenuItem,
+            this.miView,
             this.miHelp,
             this.miBypass});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
@@ -279,9 +279,9 @@ namespace VehiclePlanner {
             this.miExit.Text = "Exit";
             this.miExit.Click += new System.EventHandler(this.miExit_Click);
             // 
-            // viewToolStripMenuItem
+            // miView
             // 
-            this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.miView.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.miMapGL,
             this.miTesting,
             this.miGoalSetting,
@@ -290,9 +290,9 @@ namespace VehiclePlanner {
             this.miMapInsert,
             this.miMotionController,
             this.miParamEditor});
-            this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
-            this.viewToolStripMenuItem.Size = new System.Drawing.Size(55, 23);
-            this.viewToolStripMenuItem.Text = "View";
+            this.miView.Name = "miView";
+            this.miView.Size = new System.Drawing.Size(55, 23);
+            this.miView.Text = "View";
             // 
             // miMapGL
             // 
@@ -337,6 +337,12 @@ namespace VehiclePlanner {
             this.miMotionController.Size = new System.Drawing.Size(208, 26);
             this.miMotionController.Text = "Motion Controller";
             this.miMotionController.Click += new System.EventHandler(this.miMotionController_Click);
+            // 
+            // miParamEditor
+            // 
+            this.miParamEditor.Name = "miParamEditor";
+            this.miParamEditor.Size = new System.Drawing.Size(208, 26);
+            this.miParamEditor.Text = "Param Editor";
             // 
             // miHelp
             // 
@@ -391,13 +397,7 @@ namespace VehiclePlanner {
             this.miServer.Size = new System.Drawing.Size(143, 26);
             this.miServer.Text = "Server";
             // 
-            // miParamEditor
-            // 
-            this.miParamEditor.Name = "miParamEditor";
-            this.miParamEditor.Size = new System.Drawing.Size(208, 26);
-            this.miParamEditor.Text = "Param Editor";
-            // 
-            // VehiclePlannerUI
+            // BaseVehiclePlanner_Ctrl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -408,7 +408,7 @@ namespace VehiclePlanner {
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.IsMdiContainer = true;
             this.MainMenuStrip = this.menuStrip1;
-            this.Name = "VehiclePlannerUI";
+            this.Name = "BaseVehiclePlanner_Ctrl";
             this.Text = "CASTEC - Vehicle planner";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ClientUI_FormClosing);
             this.Load += new System.EventHandler(this.ClientUI_Load);
@@ -426,8 +426,7 @@ namespace VehiclePlanner {
         private System.Windows.Forms.StatusStrip statusStrip1;
         protected Bindable.ToolStripStatusLabel tslbBattery;
         protected System.Windows.Forms.ToolStripProgressBar tsprgBattery;
-        private System.Windows.Forms.MenuStrip menuStrip1;
-        private Bindable.ToolStripMenuItem viewToolStripMenuItem;
+        protected Bindable.ToolStripMenuItem miView;
         protected Bindable.ToolStripMenuItem miMapGL;
         private Bindable.ToolStripMenuItem miTesting;
         protected Bindable.ToolStripMenuItem miGoalSetting;
@@ -454,5 +453,6 @@ namespace VehiclePlanner {
         private Bindable.ToolStripMenuItem miMapInsert;
         private Bindable.ToolStripMenuItem miMotionController;
         private System.Windows.Forms.ToolStripMenuItem miParamEditor;
+        protected System.Windows.Forms.MenuStrip menuStrip1;
     }
 }

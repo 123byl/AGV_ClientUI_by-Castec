@@ -15,7 +15,7 @@ using WeifenLuo.WinFormsUI.Docking;
 namespace VehiclePlannerUndoable.cs {
     public partial class VehiclePlanner : BaseVehiclePlanner_Ctrl {
 
-        public VehiclePlanner(IBaseVehiclePlanner vehiclePlanner):base(vehiclePlanner) {
+        public VehiclePlanner(IBaseVehiclePlanner vehiclePlanner):base() {
             InitializeComponent();
             //rVehiclePlanner = vehiclePlanner;
             //SetEvents();

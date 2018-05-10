@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using VehiclePlanner.Core;
 using VehiclePlanner.Forms;
+using VehiclePlanner.Module;
 using VehiclePlanner.Module.Implement;
 using VehiclePlanner.Module.Interface;
 using VehiclePlanner.Partial.VehiclePlannerUI;
@@ -126,7 +127,7 @@ namespace VehiclePlanner {
         /// <summary>
         /// ICtDockContainer與MenuItem對照
         /// </summary>
-        protected Dictionary<ToolStripMenuItem, CtDockContainer> mDockContent = new Dictionary<ToolStripMenuItem, CtDockContainer>();
+        protected Dictionary<ToolStripMenuItem, AuthorityDockContainer> mDockContent = new Dictionary<ToolStripMenuItem, AuthorityDockContainer>();
 
         /// <summary>
         /// AGV移動控制器
@@ -240,32 +241,8 @@ namespace VehiclePlanner {
             InitializeComponent();
         }
 
-        public BaseVehiclePlanner_Ctrl(IBaseVehiclePlanner vehiclePlanner = null):this() {
-            
-            mHandle = this.Handle;
-            /*-- 系統底層實例取得 --*/
-            rVehiclePlanner = vehiclePlanner ?? FactoryMode.Factory.CtVehiclePlanner();
-            if (rVehiclePlanner != null) {
-                /*-- 初始化 --*/
-                rVehiclePlanner.Initial();
-
-                /*-- 事件委派 --*/
-                rVehiclePlanner.PropertyChanged += rVehiclePlanner_PropertyChanged;
-                rVehiclePlanner.VehiclePlannerEvent += rVehiclePlanner_VehiclePlannerEvent;
-                rVehiclePlanner.ErrorMessage += rVehiclePlanner_ErrorMessage;
-                if (rVehiclePlanner.Controller != null) {
-                    /*-- 方法委派 --*/
-                    rVehiclePlanner.Controller.BalloonTip += rVehiclePlanner_BalloonTip; ;
-                    rVehiclePlanner.Controller.ConsoleMessage += rVehiclePlanner_ConsoleMessage;
-                    rVehiclePlanner.Controller.SelectFile = SelectFile;
-                    rVehiclePlanner.Controller.InputBox = InputBox;
-                }
-                /*-- 載入ICtDockContainer物件 --*/
-                LoadICtDockContainer();
-
-                LoadCtNotifyIcon();
-
-            } 
+        internal BaseVehiclePlanner_Ctrl(IBaseVehiclePlanner vehiclePlanner = null):this() {
+            Initial(vehiclePlanner);
         }
 
         #endregion Functin - Constructors
@@ -536,7 +513,7 @@ namespace VehiclePlanner {
         /// <summary>
         /// 要求VehicleConsole自動回傳資料
         /// </summary>
-        protected virtual void ITest_GetCar() {
+        protected void ITest_GetCar() {
             rVehiclePlanner.Controller.AutoReport(!rVehiclePlanner.Controller.IsAutoReport);
         }
 
@@ -595,7 +572,8 @@ namespace VehiclePlanner {
         /// <param name="usrLv"></param>
         private void UserChanged(UserData usrData) {
             foreach (var kvp in mDockContent) {
-                DockContentVisible(kvp.Key, kvp.Value.Authority(usrData));
+                AuthorityDockContainer subForm = kvp.Value;
+                subForm.AuthorityVisiable(usrData.Level);
             }
         }
         
@@ -699,18 +677,7 @@ namespace VehiclePlanner {
                 }
             }
         }
-
-        /// <summary>
-        /// 設定DockContent以及與之相關ToolStripMenuItem控制項之Visible屬性
-        /// </summary>
-        /// <param name="item">相關<see cref="ToolStripMenuItem"/>控制項</param>
-        /// <param name="visible">是否可視</param>
-        private void DockContentVisible(ToolStripMenuItem item, bool visible) {
-            if (mDockContent.ContainsKey(item)) {
-                mDockContent[item].Visible = visible;
-            }
-        }
-
+        
         #endregion DockContent
 
         #region Draw
@@ -735,10 +702,38 @@ namespace VehiclePlanner {
 
         #region Load
 
+        protected virtual void Initial(IBaseVehiclePlanner vehiclePlanner) {
+
+            mHandle = this.Handle;
+            /*-- 系統底層實例取得 --*/
+            rVehiclePlanner = vehiclePlanner ?? FactoryMode.Factory.CtVehiclePlanner();
+            if (rVehiclePlanner != null) {
+                /*-- 初始化 --*/
+                rVehiclePlanner.Initial();
+
+                /*-- 事件委派 --*/
+                rVehiclePlanner.PropertyChanged += rVehiclePlanner_PropertyChanged;
+                rVehiclePlanner.VehiclePlannerEvent += rVehiclePlanner_VehiclePlannerEvent;
+                rVehiclePlanner.ErrorMessage += rVehiclePlanner_ErrorMessage;
+                if (rVehiclePlanner.Controller != null) {
+                    /*-- 方法委派 --*/
+                    rVehiclePlanner.Controller.BalloonTip += rVehiclePlanner_BalloonTip; ;
+                    rVehiclePlanner.Controller.ConsoleMessage += rVehiclePlanner_ConsoleMessage;
+                    rVehiclePlanner.Controller.SelectFile = SelectFile;
+                    rVehiclePlanner.Controller.InputBox = InputBox;
+                }
+                /*-- 載入ICtDockContainer物件 --*/
+                LoadICtDockContainer();
+
+                LoadCtNotifyIcon();
+
+            }
+        }
+
         /// <summary>
         /// 設定事件連結
         /// </summary>
-        private void SetEvents() {
+        protected virtual void SetEvents() {
             if (rVehiclePlanner != null) {
                 mGoalSetting.ClearMap += rVehiclePlanner.ClearMap;
                 mGoalSetting.SaveGoalEvent += rVehiclePlanner.SaveMap;
@@ -777,7 +772,6 @@ namespace VehiclePlanner {
             mTesting.SettingCarPos += ITest_SettingCarPos;
             mTesting.ShowMotionController += ShowMotionController;
             
-            (mDockContent[miToolBox] as CtToolBox).SwitchCursor += ToolBox_SwitchCursor;
         }
         
         protected virtual CtConsole GetConsole(DockState dockState) {
@@ -805,7 +799,6 @@ namespace VehiclePlanner {
             mDockContent.Add(miConsole, GetConsole(DockState.DockBottomAutoHide));
             mDockContent.Add(miGoalSetting, GetGoalSetting(DockState.DockLeft));
             mDockContent.Add(miTesting, GetTesting(DockState.DockLeft));
-            mDockContent.Add(miToolBox, new CtToolBox(DockState.DockRightAutoHide));
             mDockContent.Add(miParamEditor,new ParamEditor(DockState.Document));
             SetEvents();
 
@@ -907,9 +900,9 @@ namespace VehiclePlanner {
         }
 
         protected virtual void MarkerChanged() {
-
+            throw new NotImplementedException();
         }
-
+        
         #endregion Function - Private Methods
 
         #region Implement - IDataDisplay
@@ -951,9 +944,6 @@ namespace VehiclePlanner {
             miConsole.DataBindings.ExAdd(nameof(miConsole.Enabled), source, dataMember, (sender, e) => {
                 e.Value = (e.Value as UserData).Authority<CtConsole>();
             }, source.UserData.Authority<CtConsole>());
-            miToolBox.DataBindings.ExAdd(nameof(miToolBox.Enabled), source, dataMember, (sender, e) => {
-                e.Value = (e.Value as UserData).Authority<CtToolBox>();
-            }, source.UserData.Authority<CtToolBox>());
             miBypass.DataBindings.ExAdd(nameof(miBypass.Visible), source, dataMember, (sender, e) => {
                 e.Value = (e.Value as UserData).Level == AccessLevel.Administrator;
             }, source.UserData.Level == AccessLevel.Administrator);

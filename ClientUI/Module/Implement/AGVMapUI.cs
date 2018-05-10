@@ -6,10 +6,11 @@ using System.Windows.Forms;
 using VehiclePlanner.Core;
 using VehiclePlanner.Module.Interface;
 using WeifenLuo.WinFormsUI.Docking;
+using CtLib.Module.Utility;
 
 namespace VehiclePlanner.Module.Implement {
 
-    public partial class BaseMapGL : CtDockContainer, IBaseMapGL {
+    public partial class BaseMapGL : AuthorityDockContainer, IBaseMapGL {
 
         #region Declaration  - Fields
         
@@ -30,6 +31,12 @@ namespace VehiclePlanner.Module.Implement {
 
         #endregion Declaration - Properties
 
+        #region Declaration - Events
+
+        public override event EventHandler DockStateChanged;
+
+        #endregion Declaration - Events
+
         #region Function - Constructors
 
         protected BaseMapGL():base() {
@@ -49,7 +56,9 @@ namespace VehiclePlanner.Module.Implement {
 
         #region Funciton - Public Methods
 
-        public override event EventHandler DockStateChanged;
+        #endregion Funciton - Public Methods
+
+        #region Function - Private Methods
 
         protected override void ShowWindow() {
             base.ShowWindow();
@@ -60,18 +69,18 @@ namespace VehiclePlanner.Module.Implement {
             DockState = DockState.Hidden;
         }
 
-        #endregion Funciton - Public Methods
-
-        #region Function - Private Methods
-
         protected override void OnFormClosing(FormClosingEventArgs e) {
             e.Cancel = true;
+        }
+
+        protected override bool IsVisiable(AccessLevel lv) {
+            return lv > AccessLevel.None;
         }
 
         #endregion Function - Private Methods
 
         #region Implement - IMapGL
-        
+
         #endregion Implement - IMapGL
 
         #region Implement - IDataDisplay<ICtVehiclePlanner>

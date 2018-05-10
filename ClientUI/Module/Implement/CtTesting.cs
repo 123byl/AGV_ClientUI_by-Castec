@@ -9,13 +9,14 @@ using VehiclePlanner.Core;
 using VehiclePlanner.Module.Interface;
 using VehiclePlanner.Partial.VehiclePlannerUI;
 using WeifenLuo.WinFormsUI.Docking;
+using CtLib.Module.Utility;
 
 namespace VehiclePlanner.Module.Implement {
 
     /// <summary>
     /// 測試功能介面
     /// </summary>
-    public partial class CtTesting : CtDockContainer, ITesting {
+    public partial class CtTesting : AuthorityDockContainer, ITesting {
 
         #region Declaration - Fields
 
@@ -41,6 +42,14 @@ namespace VehiclePlanner.Module.Implement {
         }
 
         #endregion Function - Construcotrs
+
+        #region Function - Private Methods
+
+        protected override bool IsVisiable(AccessLevel lv) {
+            return lv > AccessLevel.Operator;
+        }
+
+        #endregion Funciotn - Private Methods
 
         #region Implement - ITest
 

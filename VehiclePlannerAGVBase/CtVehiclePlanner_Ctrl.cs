@@ -21,6 +21,7 @@ using VehiclePlanner.Module.Implement;
 using VehiclePlanner.Core;
 using SerialCommunicationData;
 using CtBind;
+using CtLib.Module.Utility;
 
 namespace VehiclePlannerAGVBase {
 
@@ -42,6 +43,8 @@ namespace VehiclePlannerAGVBase {
         /// VehicleConsole模擬物件
         /// </summary>
         private FakeVehicleConsole mVC = null;
+
+        private Bindable.ToolStripMenuItem miToolBox = null;
 
         #endregion Declaration - Fields
 
@@ -68,10 +71,15 @@ namespace VehiclePlannerAGVBase {
 
         #region Funciton - Constructors
 
-        public CtVehiclePlanner_Ctrl(IVehiclePlanner vehiclePlanner):base(vehiclePlanner) {
+        public CtVehiclePlanner_Ctrl(IVehiclePlanner vehiclePlanner):base() {
             InitializeComponent();
             rVehiclePlanner = vehiclePlanner;
-            SetEvents();
+            VehiclePlannerUI_Extension.DockContainerAuthority = new AGVbaseDockAuthority();
+            miToolBox = new Bindable.ToolStripMenuItem() { Text = "ToolBox" };
+            miView.DropDownItems.Add(miToolBox);
+
+            Initial(vehiclePlanner);
+            Bindings(vehiclePlanner);
             Bindings(rVehiclePlanner.Controller);
 
             mVC = new FakeVehicleConsole(!DesignMode);
@@ -80,6 +88,17 @@ namespace VehiclePlannerAGVBase {
         #endregion Funciton - Constructors
 
         #region Function - Public Metnhods
+
+        public void Bindings(IVehiclePlanner source) {
+            if (source == null) return;
+            Bindings<IVehiclePlanner>(source);
+            string dataMember = nameof(source.UserData);
+            miToolBox.DataBindings.ExAdd(nameof(miToolBox.Enabled), source, dataMember, (sender, e) => {
+                e.Value = (e.Value as UserData).Authority<CtToolBox>();
+            },
+            source.UserData.Authority<CtToolBox>()
+            );
+        }
 
         public void Bindings(IITSController source) {
             Bindings<IITSController>(source);
@@ -108,8 +127,8 @@ namespace VehiclePlannerAGVBase {
             return new GoalSetting(dockState);
         }
 
-        private void SetEvents() {
-
+        protected override void SetEvents() {
+            base.SetEvents();
             mGoalSetting.ClearGoalsEvent += rVehiclePlanner.ClearMarker;
             mGoalSetting.DeleteSingleEvent += rVehiclePlanner.DeleteMarker;
             mGoalSetting.RunLoopEvent += IGoalSetting_RunLoopEvent;
@@ -117,10 +136,13 @@ namespace VehiclePlannerAGVBase {
             IMapCtrl.GLClickEvent += IMapCtrl_GLClickEvent;
             IMapCtrl.DragTowerPairEvent += IMapCtrl_DragTowerPairEvent;
             IMapCtrl.GLMoveUp += IMapCtrl_GLMoveUp;
+
+            (mDockContent[miToolBox] as CtToolBox).SwitchCursor += ToolBox_SwitchCursor;
         }
 
 
         protected override void LoadICtDockContainer() {
+            mDockContent.Add(miToolBox, new CtToolBox(DockState.DockRightAutoHide));
             base.LoadICtDockContainer();
             mMapInsert.AssignmentDockPanel(dockPanel);
         }

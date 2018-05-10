@@ -1,6 +1,10 @@
-﻿using System.ComponentModel;
+﻿using CtLib.Module.Utility;
+using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
+using VehiclePlanner.Module.Implement;
+using VehiclePlanner.Module.Interface;
 
 namespace VehiclePlanner.Partial.VehiclePlannerUI {
     
@@ -52,4 +56,41 @@ namespace VehiclePlanner.Partial.VehiclePlannerUI {
                 new Pen(this.ForeColor).Brush, 6, 0);
         }
     }
+
+
+    /// <summary>
+    /// 子視窗權限定義
+    /// </summary>
+    public class DockContainerAuthority {
+
+        /// <summary>
+        /// 回傳子視窗權限
+        /// </summary>
+        /// <param name="typeName">子視窗類型名稱</param>
+        /// <param name="lv">使用者權限</param>
+        /// <returns></returns>
+        public virtual bool Authority(string typeName, AccessLevel lv) {
+            switch (typeName) {
+                case nameof(CtTesting):
+                case nameof(ITesting):
+                    return lv > AccessLevel.Operator;
+
+                case nameof(CtConsole):
+                case nameof(IConsole):
+                    return true;
+
+                case nameof(BaseGoalSetting):
+                case nameof(IBaseGoalSetting):
+                    return lv > AccessLevel.None;
+
+                case nameof(BaseMapGL):
+                case nameof(IBaseMapGL):
+                    return lv > AccessLevel.None;
+
+                default:
+                    throw new Exception($"未定義{typeName}權限");
+            }
+        }
+    }
+
 }

@@ -12,13 +12,14 @@ using VehiclePlanner.Module.Interface;
 using VehiclePlanner.Partial.VehiclePlannerUI;
 using WeifenLuo.WinFormsUI.Docking;
 using static VehiclePlanner.Partial.VehiclePlannerUI.Events.GoalSettingEvents;
+using CtLib.Module.Utility;
 
 namespace VehiclePlanner.Module.Implement {
 
     /// <summary>
     /// Goal點設定介面
     /// </summary>
-    public partial class BaseGoalSetting : CtDockContainer, IBaseGoalSetting {
+    public partial class BaseGoalSetting : AuthorityDockContainer, IBaseGoalSetting {
 
         #region Declaration - Fields
 
@@ -280,7 +281,6 @@ namespace VehiclePlanner.Module.Implement {
         #endregion UI Event
         
         #region Fucnction - Private Methods
-
         
         /// <summary>
         /// 獲得所有被選取的 Goal 點ID
@@ -313,7 +313,10 @@ namespace VehiclePlanner.Module.Implement {
             }
         }
 
-        
+        protected override bool IsVisiable(AccessLevel lv) {
+            return lv > AccessLevel.None;
+        }
+
         #endregion Fucnction - Private Methods
 
         #region Implement - IDataDisplay<ICtVehiclePlanner>

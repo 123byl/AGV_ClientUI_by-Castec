@@ -9,37 +9,32 @@ using VehiclePlanner.Module.Interface;
 
 namespace VehiclePlanner.Partial.VehiclePlannerUI {
 
-    internal static class VehiclePlannerUI_Extension {
-
-        #region OutlookBar
+    /// <summary>
+    /// 擴充方法
+    /// </summary>
+    public static class VehiclePlannerUI_Extension {
 
         /// <summary>
-        /// 增加MapGL功能選項
+        /// 子視窗權限定義物件
         /// </summary>
-        /// <param name="category">要新增於此的容器</param>
-        /// <param name="mode">MapGL滑鼠模式</param>
-        /// <param name="img">選項圖示</param>
-        /// <returns>選項點擊發報者</returns>
-        public static IClickSender AddItem(this IOutlookCategory category, CursorMode mode, Image img = null) {
-            return category.AddItem(mode.ToString(), img, (int)mode);
+        private static DockContainerAuthority mDockAuthority = new DockContainerAuthority();
+
+        /// <summary>
+        /// 子視窗權限定義
+        /// </summary>
+        public static DockContainerAuthority DockContainerAuthority {
+            get {
+                return mDockAuthority;
+            }
+            set {
+                if (mDockAuthority != value & value != null) {
+                    mDockAuthority = value;
+                }
+            }
         }
 
         /// <summary>
-        /// 增加MapGL功能選項
-        /// </summary>
-        /// <param name="category">要新增於此的容器</param>
-        /// <param name="mode">MapGL滑鼠模式</param>
-        /// <param name="imgPath">選項圖示路徑</param>
-        /// <returns>選項點擊發報者</returns>
-        public static IClickSender AddItem(this IOutlookCategory category, CursorMode mode, string imgPath) {
-            Image img = File.Exists(imgPath) ? Image.FromFile(imgPath) : null;
-            return category.AddItem(mode, img);
-        }
-
-        #endregion OutlookBar
-
-        /// <summary>
-        /// 回傳使用者權限
+        /// 回傳子視窗使用者權限
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="user">使用者資料</param>
@@ -49,7 +44,7 @@ namespace VehiclePlanner.Partial.VehiclePlannerUI {
         }
 
         /// <summary>
-        /// 回傳使用者權限
+        /// 回傳子視窗使用者權限
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="component">要使用的元件</param>
@@ -66,31 +61,8 @@ namespace VehiclePlanner.Partial.VehiclePlannerUI {
         /// <param name="user">使用者資料</param>
         /// <returns>是否有權限</returns>
         private static bool Authority(Type type, UserData user) {
-            string typeName = type.Name;
-            var lv = user.Level;
-            switch (typeName) {
-                case nameof(CtTesting):
-                case nameof(ITesting):
-                    return lv > AccessLevel.Operator;
-
-                case nameof(CtConsole):
-                case nameof(IConsole):
-                    return true;
-
-                case nameof(BaseGoalSetting):
-                case nameof(IBaseGoalSetting):
-                    return lv > AccessLevel.None;
-
-                case nameof(CtToolBox):
-                    return lv > AccessLevel.Operator;
-
-                case nameof(BaseMapGL):
-                case nameof(IBaseMapGL):
-                    return lv > AccessLevel.None;
-
-                default:
-                    throw new Exception($"未定義{typeName}權限");
-            }
+            return  mDockAuthority.Authority(type.Name, user.Level);
         }
     }
+
 }

@@ -1,15 +1,26 @@
 ﻿using CtDockSuit;
 using CtOutLookBar.Public;
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
 using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using VehiclePlanner.Module;
 using VehiclePlanner.Partial.VehiclePlannerUI;
 using WeifenLuo.WinFormsUI.Docking;
 using static VehiclePlanner.Partial.VehiclePlannerUI.Events.GoalSettingEvents;
+using CtLib.Module.Utility;
 
-namespace VehiclePlanner.Module.Implement {
+namespace VehiclePlannerAGVBase {
 
-    public partial class CtToolBox : CtDockContainer {
+    /// <summary>
+    /// 地圖編輯工具箱子視窗
+    /// </summary>
+    public partial class CtToolBox : AuthorityDockContainer {
 
         #region Declaration - Events
 
@@ -64,5 +75,14 @@ namespace VehiclePlanner.Module.Implement {
         }
 
         #endregion Funciotn - Events
+
+        #region Funciotn - Private Methods
+
+        protected override bool IsVisiable(AccessLevel lv) {
+            return lv > AccessLevel.Operator;
+        }
+
+        #endregion Funciton - Private Methods
     }
+    
 }

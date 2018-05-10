@@ -12,10 +12,11 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using VehiclePlanner.Partial.VehiclePlannerUI;
+using CtLib.Module.Utility;
 
 namespace VehiclePlannerAGVBase {
-
-
+    
     /// <summary>
     /// 等待任務
     /// </summary>
@@ -34,6 +35,29 @@ namespace VehiclePlannerAGVBase {
             this.Purpose = purpose;
         }
         public CtTaskCompletionSource(IOrderPacket packet) : this(packet.SerialNumber, packet.Purpose) { }
+
+    }
+
+    /// <summary>
+    /// 擴充子視窗權限定義
+    /// </summary>
+    public class AGVbaseDockAuthority: DockContainerAuthority {
+        
+        /// <summary>
+        /// 回傳子視窗權限定義
+        /// </summary>
+        /// <param name="typeName">子視窗類型名稱</param>
+        /// <param name="lv">使用者權限</param>
+        /// <returns></returns>
+        public override bool Authority(string typeName, AccessLevel lv) {
+            switch (typeName) {
+                case nameof(CtToolBox):
+                    return lv > AccessLevel.Operator;
+                default:
+                    return base.Authority(typeName, lv);
+
+            }
+        }
 
     }
 

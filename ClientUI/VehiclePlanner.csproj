@@ -69,6 +69,9 @@
     <Reference Include="WeifenLuo.WinFormsUI.Docking, Version=2.4.0.16114, Culture=neutral, PublicKeyToken=null" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Module\AuthorityDockContainer.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Module\Implement\AGVMapUI.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -117,12 +120,6 @@
     <Compile Include="Module\Implement\CtTesting.Designer.cs">
       <DependentUpon>CtTesting.cs</DependentUpon>
     </Compile>
-    <Compile Include="Module\Implement\CtToolBox.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Module\Implement\CtToolBox.Designer.cs">
-      <DependentUpon>CtToolBox.cs</DependentUpon>
-    </Compile>
     <Compile Include="Forms\MapList.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -153,9 +150,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Module\Implement\CtTesting.resx">
       <DependentUpon>CtTesting.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Module\Implement\CtToolBox.resx">
-      <DependentUpon>CtToolBox.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\MapList.resx">
       <DependentUpon>MapList.cs</DependentUpon>

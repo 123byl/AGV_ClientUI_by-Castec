@@ -33,7 +33,7 @@
             this.ClientSize = new System.Drawing.Size(751, 583);
             this.DockState = WeifenLuo.WinFormsUI.Docking.DockState.Hidden;
             this.Name = "MapGL";
-            this.Text = "Form1";
+            this.Text = "MapGL";
             this.pnlShow.ResumeLayout(false);
             this.ResumeLayout(false);
 
