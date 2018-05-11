@@ -1,4 +1,5 @@
-﻿using VehiclePlanner.Partial.VehiclePlannerUI;
+﻿using CtBind;
+using VehiclePlanner.Partial.VehiclePlannerUI;
 
 namespace VehiclePlanner.Module.Implement {
     partial class BaseGoalSetting {
@@ -34,13 +35,6 @@ namespace VehiclePlanner.Module.Implement {
             this.txtAddPx = new System.Windows.Forms.TextBox();
             this.label15 = new System.Windows.Forms.Label();
             this.label16 = new System.Windows.Forms.Label();
-            this.dgvGoalPoint = new System.Windows.Forms.DataGridView();
-            this.cSelect = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.cID = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.cName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.cX = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.cY = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.cToward = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.btnDeleteAll = new System.Windows.Forms.Button();
             this.btnDelete = new System.Windows.Forms.Button();
             this.btnCurrPos = new System.Windows.Forms.Button();
@@ -48,6 +42,14 @@ namespace VehiclePlanner.Module.Implement {
             this.ctGroupBox2 = new VehiclePlanner.Partial.VehiclePlannerUI.CtGroupBox();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
+            this.panel1 = new CtBind.Inheritable.Panel();
+            this.dgvGoalPoint = new CtBind.Inheritable.DataGridView();
+            this.cSelect = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.cID = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.cName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.cX = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.cY = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.cToward = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
             this.grbMap = new VehiclePlanner.Partial.VehiclePlannerUI.CtGroupBox();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
@@ -61,10 +63,11 @@ namespace VehiclePlanner.Module.Implement {
             this.btnCharging = new System.Windows.Forms.Button();
             this.btnRun = new System.Windows.Forms.Button();
             this.btnRunAll = new System.Windows.Forms.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.dgvGoalPoint)).BeginInit();
             this.ctGroupBox2.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
             this.tableLayoutPanel4.SuspendLayout();
+            this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvGoalPoint)).BeginInit();
             this.tableLayoutPanel5.SuspendLayout();
             this.grbMap.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -163,74 +166,6 @@ namespace VehiclePlanner.Module.Implement {
             this.label16.TabIndex = 54;
             this.label16.Text = "x";
             // 
-            // dgvGoalPoint
-            // 
-            this.dgvGoalPoint.AllowUserToAddRows = false;
-            this.dgvGoalPoint.AllowUserToResizeRows = false;
-            this.dgvGoalPoint.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.ColumnHeader;
-            this.dgvGoalPoint.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvGoalPoint.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.cSelect,
-            this.cID,
-            this.cName,
-            this.cX,
-            this.cY,
-            this.cToward});
-            this.dgvGoalPoint.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dgvGoalPoint.Location = new System.Drawing.Point(4, 4);
-            this.dgvGoalPoint.Margin = new System.Windows.Forms.Padding(4);
-            this.dgvGoalPoint.Name = "dgvGoalPoint";
-            this.dgvGoalPoint.RowHeadersVisible = false;
-            this.dgvGoalPoint.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToFirstHeader;
-            this.dgvGoalPoint.RowTemplate.Height = 24;
-            this.dgvGoalPoint.Size = new System.Drawing.Size(543, 516);
-            this.dgvGoalPoint.TabIndex = 45;
-            // 
-            // cSelect
-            // 
-            this.cSelect.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.cSelect.HeaderText = "Select";
-            this.cSelect.Name = "cSelect";
-            this.cSelect.Width = 73;
-            // 
-            // cID
-            // 
-            this.cID.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.cID.HeaderText = "ID";
-            this.cID.Name = "cID";
-            this.cID.Width = 62;
-            // 
-            // cName
-            // 
-            this.cName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.cName.HeaderText = "Name";
-            this.cName.Name = "cName";
-            this.cName.Width = 98;
-            // 
-            // cX
-            // 
-            this.cX.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.cX.DataPropertyName = "double";
-            this.cX.HeaderText = "X";
-            this.cX.Name = "cX";
-            this.cX.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            // 
-            // cY
-            // 
-            this.cY.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.cY.DataPropertyName = "double";
-            this.cY.HeaderText = "Y";
-            this.cY.Name = "cY";
-            this.cY.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            // 
-            // cToward
-            // 
-            this.cToward.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.cToward.DataPropertyName = "double";
-            this.cToward.HeaderText = "Toward";
-            this.cToward.Name = "cToward";
-            this.cToward.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            // 
             // btnDeleteAll
             // 
             this.btnDeleteAll.Anchor = System.Windows.Forms.AnchorStyles.None;
@@ -309,8 +244,8 @@ namespace VehiclePlanner.Module.Implement {
             this.tableLayoutPanel3.ColumnCount = 2;
             this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 75F));
             this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.tableLayoutPanel3.Controls.Add(this.dgvGoalPoint, 0, 0);
             this.tableLayoutPanel3.Controls.Add(this.tableLayoutPanel4, 1, 0);
+            this.tableLayoutPanel3.Controls.Add(this.panel1, 0, 0);
             this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel3.Location = new System.Drawing.Point(3, 29);
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
@@ -337,6 +272,83 @@ namespace VehiclePlanner.Module.Implement {
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.tableLayoutPanel4.Size = new System.Drawing.Size(178, 518);
             this.tableLayoutPanel4.TabIndex = 70;
+            // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.dgvGoalPoint);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel1.Location = new System.Drawing.Point(3, 3);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(545, 518);
+            this.panel1.TabIndex = 71;
+            // 
+            // dgvGoalPoint
+            // 
+            this.dgvGoalPoint.AllowUserToAddRows = false;
+            this.dgvGoalPoint.AllowUserToResizeRows = false;
+            this.dgvGoalPoint.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.ColumnHeader;
+            this.dgvGoalPoint.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvGoalPoint.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.cSelect,
+            this.cID,
+            this.cName,
+            this.cX,
+            this.cY,
+            this.cToward});
+            this.dgvGoalPoint.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dgvGoalPoint.Location = new System.Drawing.Point(0, 0);
+            this.dgvGoalPoint.Margin = new System.Windows.Forms.Padding(4);
+            this.dgvGoalPoint.Name = "dgvGoalPoint";
+            this.dgvGoalPoint.RowHeadersVisible = false;
+            this.dgvGoalPoint.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToFirstHeader;
+            this.dgvGoalPoint.RowTemplate.Height = 24;
+            this.dgvGoalPoint.Size = new System.Drawing.Size(545, 518);
+            this.dgvGoalPoint.TabIndex = 46;
+            // 
+            // cSelect
+            // 
+            this.cSelect.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.cSelect.HeaderText = "Select";
+            this.cSelect.Name = "cSelect";
+            this.cSelect.Width = 73;
+            // 
+            // cID
+            // 
+            this.cID.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.cID.HeaderText = "ID";
+            this.cID.Name = "cID";
+            this.cID.Width = 62;
+            // 
+            // cName
+            // 
+            this.cName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.cName.HeaderText = "Name";
+            this.cName.Name = "cName";
+            this.cName.Width = 98;
+            // 
+            // cX
+            // 
+            this.cX.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.cX.DataPropertyName = "double";
+            this.cX.HeaderText = "X";
+            this.cX.Name = "cX";
+            this.cX.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // cY
+            // 
+            this.cY.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.cY.DataPropertyName = "double";
+            this.cY.HeaderText = "Y";
+            this.cY.Name = "cY";
+            this.cY.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // cToward
+            // 
+            this.cToward.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.cToward.DataPropertyName = "double";
+            this.cToward.HeaderText = "Toward";
+            this.cToward.Name = "cToward";
+            this.cToward.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             // 
             // tableLayoutPanel5
             // 
@@ -546,7 +558,7 @@ namespace VehiclePlanner.Module.Implement {
             this.btnRunAll.UseVisualStyleBackColor = true;
             this.btnRunAll.Click += new System.EventHandler(this.btnRunAll_Click);
             // 
-            // CtGoalSetting
+            // BaseGoalSetting
             // 
             this.AutoHidePortion = 206D;
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
@@ -566,12 +578,13 @@ namespace VehiclePlanner.Module.Implement {
             this.Font = new System.Drawing.Font("新細明體", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.Name = "CtGoalSetting";
+            this.Name = "BaseGoalSetting";
             this.Text = "GoalSetting";
-            ((System.ComponentModel.ISupportInitialize)(this.dgvGoalPoint)).EndInit();
             this.ctGroupBox2.ResumeLayout(false);
             this.tableLayoutPanel3.ResumeLayout(false);
             this.tableLayoutPanel4.ResumeLayout(false);
+            this.panel1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dgvGoalPoint)).EndInit();
             this.tableLayoutPanel5.ResumeLayout(false);
             this.grbMap.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);
@@ -589,18 +602,11 @@ namespace VehiclePlanner.Module.Implement {
         protected System.Windows.Forms.TextBox txtAddPx;
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.Label label16;
-        protected System.Windows.Forms.DataGridView dgvGoalPoint;
         private System.Windows.Forms.Button btnDeleteAll;
         private System.Windows.Forms.Button btnDelete;
         protected System.Windows.Forms.ComboBox cmbGoalList;
         private System.Windows.Forms.Button btnSaveGoal;
         private System.Windows.Forms.Button btnCurrPos;
-        private System.Windows.Forms.DataGridViewCheckBoxColumn cSelect;
-        private System.Windows.Forms.DataGridViewTextBoxColumn cID;
-        private System.Windows.Forms.DataGridViewTextBoxColumn cName;
-        private System.Windows.Forms.DataGridViewTextBoxColumn cX;
-        private System.Windows.Forms.DataGridViewTextBoxColumn cY;
-        private System.Windows.Forms.DataGridViewTextBoxColumn cToward;
         private System.Windows.Forms.Button btnGetGoalList;
         private CtGroupBox ctGroupBox2;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
@@ -618,5 +624,13 @@ namespace VehiclePlanner.Module.Implement {
         private System.Windows.Forms.Button btnCharging;
         private System.Windows.Forms.Button btnRun;
         private System.Windows.Forms.Button btnRunAll;
+        protected Inheritable.DataGridView dgvGoalPoint;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn cSelect;
+        private System.Windows.Forms.DataGridViewTextBoxColumn cID;
+        private System.Windows.Forms.DataGridViewTextBoxColumn cName;
+        private System.Windows.Forms.DataGridViewTextBoxColumn cX;
+        private System.Windows.Forms.DataGridViewTextBoxColumn cY;
+        private System.Windows.Forms.DataGridViewTextBoxColumn cToward;
+        protected Inheritable.Panel panel1;
     }
 }

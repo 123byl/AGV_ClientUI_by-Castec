@@ -9,13 +9,14 @@ using VehiclePlanner.Core;
 using VehiclePlanner.Module.Interface;
 using VehiclePlanner.Partial.VehiclePlannerUI;
 using WeifenLuo.WinFormsUI.Docking;
+using CtLib.Module.Utility;
 
 namespace VehiclePlanner.Module.Implement {
 
     /// <summary>
     /// 測試功能介面
     /// </summary>
-    public partial class BaseTesting : CtDockContainer, IBaseTesting {
+    public partial class BaseTesting : AuthorityDockContainer, ITesting {
 
         #region Declaration - Fields
 
@@ -31,9 +32,15 @@ namespace VehiclePlanner.Module.Implement {
         #region Function - Construcotrs
 
         /// <summary>
+        /// 給介面設計師使用的建構式，拿掉後繼承該類的衍生類將無法顯示介面設計
+        /// </summary>
+        protected BaseTesting():base() {
+            InitializeComponent();
+        }
+
+        /// <summary>
         /// 共用建構方法
         /// </summary>
-
         public BaseTesting(DockState defState = DockState.Float)
             : base(defState) {
             InitializeComponent();
@@ -41,6 +48,14 @@ namespace VehiclePlanner.Module.Implement {
         }
 
         #endregion Function - Construcotrs
+
+        #region Function - Public Methods
+
+        public override bool IsVisiable(AccessLevel lv) {
+            return lv > AccessLevel.Operator;
+        }
+
+        #endregion Funciotn - Public Methods
 
         #region Implement - ITest
 
@@ -183,9 +198,11 @@ namespace VehiclePlanner.Module.Implement {
         /// 資料綁定
         /// </summary>
         /// <param name="source">資料來源</param>
-        public void Bindings(IITSController source) {
+        public void Bindings(IBaseITSController source) {
+            if (source == null) return;
+            
             /*-- Invoke方法委派 --*/
-            if (source.DelInvoke == null) source.DelInvoke = invk => this.InvokeIfNecessary(invk);
+            if ( source.DelInvoke == null) source.DelInvoke = invk => this.InvokeIfNecessary(invk);
             /*-- 地圖掃描狀態 --*/
             string dataMember = nameof(source.IsScanning);
             btnScan.DataBindings.Add(nameof(btnScan.Text), source, dataMember).Format += (sender, e) => {

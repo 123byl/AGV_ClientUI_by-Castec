@@ -1,5 +1,5 @@
 ﻿namespace VehiclePlannerUndoable.cs {
-    partial class VehiclePlanner {
+    partial class CtVehiclePlanner_Ctrl {
         /// <summary>
         /// Required designer variable.
         /// </summary>

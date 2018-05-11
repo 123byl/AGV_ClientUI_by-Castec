@@ -17,10 +17,16 @@ using static VehiclePlanner.Partial.VehiclePlannerUI.Events.GoalSettingEvents;
 namespace VehiclePlannerAGVBase {
     public partial class GoalSetting :BaseGoalSetting,IGoalSetting {
 
+        #region Declaration - Events
+
         /// <summary>
         /// 按照順序移動全部
         /// </summary>
         public event DelRunLoop RunLoopEvent;
+
+        #endregion Declaration - Events
+
+        #region Funciton - Constructors
 
         /// <summary>
         /// 共用建構方法
@@ -33,6 +39,10 @@ namespace VehiclePlannerAGVBase {
             InitializeComponent();
         }
 
+        #endregion Funciotn - Constructors
+
+        #region Funciotn - Public Methods
+
         /// <summary>
         /// 更新現在位置
         /// </summary>
@@ -44,8 +54,7 @@ namespace VehiclePlannerAGVBase {
                 });
             }
         }
-
-
+        
         /// <summary>
         /// 重新載入標示物
         /// </summary>
@@ -56,6 +65,10 @@ namespace VehiclePlannerAGVBase {
                 Database.PowerGM.SaftyForLoop(LoadSingle);
             }
         }
+
+        #endregion Funciotn - Public Methods
+
+        #region Funciton - Private Methods
 
         /// <summary>
         /// 載入標示物
@@ -125,11 +138,16 @@ namespace VehiclePlannerAGVBase {
             }
         }
 
+        #endregion Function - Private Methdos
+
+        #region Function - Events
 
         protected override void btnRunAll_Click(object sender, EventArgs e) {
             lock (mKey) {
                 RunLoopEvent?.BeginInvoke(GetGoals(), null, null);
             }
         }
+
+        #endregion Funcitn - Events
     }
 }

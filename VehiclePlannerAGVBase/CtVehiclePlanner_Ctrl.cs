@@ -73,14 +73,21 @@ namespace VehiclePlannerAGVBase {
 
         public CtVehiclePlanner_Ctrl(IVehiclePlanner vehiclePlanner):base() {
             InitializeComponent();
+            /*-- 取得底層物件參考 --*/
             rVehiclePlanner = vehiclePlanner;
+
+            /*-- 由於無法在設計師模式新增ToolStripMenuItem物件，只好以程式碼方式新增 --*/
             miToolBox = new Bindable.ToolStripMenuItem() { Text = "ToolBox" };
             miView.DropDownItems.Add(miToolBox);
 
+            /*-- 系統初始化 --*/
             Initial(vehiclePlanner);
+
+            /*-- 介面資料綁定 --*/
             Bindings(vehiclePlanner);
             Bindings(rVehiclePlanner.Controller);
 
+            /*-- 模擬網路廣播接收物件 --*/
             mVC = new FakeVehicleConsole(!DesignMode);
         }
 

@@ -1,4 +1,6 @@
-﻿using System.Windows.Forms;
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+using System.Windows.Forms.Design;
 
 namespace CtBind {
 
@@ -184,4 +186,36 @@ namespace CtBind {
         }
 
     }
+
+    /// <summary>
+    /// 繼承後可編輯的控制項
+    /// </summary>
+    public class Inheritable {
+
+        [Designer(typeof(InheritableDesigner))]
+        public class DataGridView : System.Windows.Forms.DataGridView {}
+
+        [Designer(typeof(InheritableDesigner))]
+        public class TableLayoutPanel : System.Windows.Forms.TableLayoutPanel {}
+
+        [Designer(typeof(InheritableDesigner))]
+        public class Panel : System.Windows.Forms.Panel { }
+
+    }
+
+    /// <summary>
+    /// 繼承後可編輯的屬性
+    /// </summary>
+    public class InheritableDesigner : ControlDesigner {
+        protected override InheritanceAttribute InheritanceAttribute {
+            get {
+                if (base.InheritanceAttribute == InheritanceAttribute.InheritedReadOnly) {
+                    return InheritanceAttribute.Inherited;
+                } else {
+                    return base.InheritanceAttribute;
+                }
+            }
+        }
+    }
+
 }

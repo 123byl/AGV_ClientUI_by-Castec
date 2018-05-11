@@ -13,20 +13,34 @@ using VehiclePlanner.Module.Implement;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace VehiclePlannerUndoable.cs {
-    public partial class VehiclePlanner : BaseVehiclePlanner_Ctrl {
+    public partial class CtVehiclePlanner_Ctrl : BaseVehiclePlanner_Ctrl {
 
-        public VehiclePlanner(IBaseVehiclePlanner vehiclePlanner):base() {
+        private IVehiclePlanner rVehiclePlanner = null;
+
+        public CtVehiclePlanner_Ctrl(IVehiclePlanner vehiclePlanner):base() {
             InitializeComponent();
-            //rVehiclePlanner = vehiclePlanner;
-            //SetEvents();
-            //Bindings(rVehiclePlanner.Controller);
+            rVehiclePlanner = vehiclePlanner;
 
-            //mVC = new FakeVehicleConsole(!DesignMode);
+            Initial(vehiclePlanner);
+
         }
 
         protected override BaseMapGL GetMapGL(DockState dockState) {
             return new MapGL(dockState);
         }
+
+        protected override BaseGoalSetting GetGoalSetting(DockState dockState) {
+            return new GoalSetting(dockState);
+        }
+
+    }
+
+
+    public interface IVehiclePlanner : IBaseVehiclePlanner {
+
+    }
+
+    public class VehiclePlanner : BaseVehiclePlanner, IVehiclePlanner {
 
     }
 }

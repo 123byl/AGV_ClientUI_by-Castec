@@ -122,8 +122,7 @@ namespace VehiclePlanner {
         #region Declaration - Members
 
         #region UI
-
-
+        
         /// <summary>
         /// ICtDockContainer與MenuItem對照
         /// </summary>
@@ -778,8 +777,8 @@ namespace VehiclePlanner {
             return new CtConsole(dockState);
         }
 
-        protected virtual CtTesting GetTesting(DockState dockState) {
-            return new CtTesting(dockState);
+        protected virtual BaseTesting GetTesting(DockState dockState) {
+            return new BaseTesting(dockState);
         }
 
         protected virtual BaseMapGL GetMapGL(DockState dockState) {
@@ -998,4 +997,5 @@ namespace VehiclePlanner {
 
         #endregion Implement - IDataDisplay
     }
+
 }

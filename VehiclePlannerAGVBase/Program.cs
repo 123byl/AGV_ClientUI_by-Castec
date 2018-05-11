@@ -29,7 +29,7 @@ namespace VehiclePlannerAGVBase {
                 if (isNotDuplicateApplication) {
                     Application.EnableVisualStyles();
                     Application.SetCompatibleTextRenderingDefault(false);
-                    IVehiclePlanner mVehiclePlanner = new VehiclePlanner();
+                    IVehiclePlanner mVehiclePlanner = new CtVehiclePlanner();
                     Application.Run(new CtVehiclePlanner_Ctrl(mVehiclePlanner));
                 } else {
                     CtMsgBox.Show("重复开启", "程序已经在运行中", MsgBoxBtn.OK, MsgBoxStyle.Error);

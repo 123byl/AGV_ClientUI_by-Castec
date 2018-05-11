@@ -14,6 +14,9 @@ namespace VehiclePlanner.Module {
     /// </summary>
     public class AuthorityDockContainer :CtDockContainer {
 
+        /// <summary>
+        /// 給介面設計師使用的建構式，拿掉後繼承該類的衍生類將無法顯示介面設計
+        /// </summary>
         protected AuthorityDockContainer() : base() { }
 
         /// <summary>

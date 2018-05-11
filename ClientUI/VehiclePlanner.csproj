@@ -102,11 +102,11 @@
     <Compile Include="Module\Implement\CtConsole.Designer.cs">
       <DependentUpon>CtConsole.cs</DependentUpon>
     </Compile>
-    <Compile Include="Module\Implement\CtGoalSetting.cs">
+    <Compile Include="Module\Implement\BaseGoalSetting.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Module\Implement\CtGoalSetting.Designer.cs">
-      <DependentUpon>CtGoalSetting.cs</DependentUpon>
+    <Compile Include="Module\Implement\BaseGoalSetting.Designer.cs">
+      <DependentUpon>BaseGoalSetting.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\CtMotionController.cs">
       <SubType>Form</SubType>
@@ -114,11 +114,11 @@
     <Compile Include="Forms\CtMotionController.Designer.cs">
       <DependentUpon>CtMotionController.cs</DependentUpon>
     </Compile>
-    <Compile Include="Module\Implement\CtTesting.cs">
+    <Compile Include="Module\Implement\BaseTesting.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Module\Implement\CtTesting.Designer.cs">
-      <DependentUpon>CtTesting.cs</DependentUpon>
+    <Compile Include="Module\Implement\BaseTesting.Designer.cs">
+      <DependentUpon>BaseTesting.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\MapList.cs">
       <SubType>Form</SubType>
@@ -141,15 +141,15 @@
     <EmbeddedResource Include="Module\Implement\CtConsole.resx">
       <DependentUpon>CtConsole.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Module\Implement\CtGoalSetting.resx">
-      <DependentUpon>CtGoalSetting.cs</DependentUpon>
+    <EmbeddedResource Include="Module\Implement\BaseGoalSetting.resx">
+      <DependentUpon>BaseGoalSetting.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\CtMotionController.resx">
       <DependentUpon>CtMotionController.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Module\Implement\CtTesting.resx">
-      <DependentUpon>CtTesting.cs</DependentUpon>
+    <EmbeddedResource Include="Module\Implement\BaseTesting.resx">
+      <DependentUpon>BaseTesting.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\MapList.resx">
       <DependentUpon>MapList.cs</DependentUpon>

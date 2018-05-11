@@ -12,13 +12,14 @@ using VehiclePlanner.Module.Interface;
 using VehiclePlanner.Partial.VehiclePlannerUI;
 using WeifenLuo.WinFormsUI.Docking;
 using static VehiclePlanner.Partial.VehiclePlannerUI.Events.GoalSettingEvents;
+using CtLib.Module.Utility;
 
 namespace VehiclePlanner.Module.Implement {
 
     /// <summary>
     /// Goal點設定介面
     /// </summary>
-    public partial class BaseGoalSetting : CtDockContainer, IBaseGoalSetting {
+    public partial class BaseGoalSetting : AuthorityDockContainer, IBaseGoalSetting {
 
         #region Declaration - Fields
 
@@ -39,7 +40,10 @@ namespace VehiclePlanner.Module.Implement {
 
         #region Funciton - Construcotrs
 
-        protected BaseGoalSetting() {
+        /// <summary>
+        /// 給介面設計師使用的建構式，拿掉後繼承該類的衍生類將無法顯示介面設計
+        /// </summary>
+        protected BaseGoalSetting():base() {
             InitializeComponent();
         }
 
@@ -280,7 +284,6 @@ namespace VehiclePlanner.Module.Implement {
         #endregion UI Event
         
         #region Fucnction - Private Methods
-
         
         /// <summary>
         /// 獲得所有被選取的 Goal 點ID
@@ -313,7 +316,10 @@ namespace VehiclePlanner.Module.Implement {
             }
         }
 
-        
+        public override bool IsVisiable(AccessLevel lv) {
+            return lv > AccessLevel.None;
+        }
+
         #endregion Fucnction - Private Methods
 
         #region Implement - IDataDisplay<ICtVehiclePlanner>
@@ -322,7 +328,7 @@ namespace VehiclePlanner.Module.Implement {
         /// 資料綁定
         /// </summary>
         /// <param name="source">資料來源</param>
-        public void Bindings(ICtVehiclePlanner source) {
+        public void Bindings(IBaseVehiclePlanner source) {
             if (source.DelInvoke == null) source.DelInvoke = invk => this.InvokeIfNecessary(invk);
         }
 

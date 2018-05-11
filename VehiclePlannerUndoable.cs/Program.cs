@@ -14,7 +14,7 @@ namespace VehiclePlannerUndoable.cs {
         static void Main() {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new VehiclePlanner(new BaseVehiclePlanner()));
+            Application.Run(new CtVehiclePlanner_Ctrl(new VehiclePlanner()));
         }
     }
 }

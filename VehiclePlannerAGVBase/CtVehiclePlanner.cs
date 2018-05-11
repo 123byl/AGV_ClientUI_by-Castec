@@ -22,7 +22,7 @@ namespace VehiclePlannerAGVBase {
     /// <summary>
     /// 以AGVBase實作之底層
     /// </summary>
-    public class VehiclePlanner :BaseVehiclePlanner,IVehiclePlanner {
+    public class CtVehiclePlanner :BaseVehiclePlanner,IVehiclePlanner {
 
         #region Declaration - Fields
 
@@ -63,7 +63,7 @@ namespace VehiclePlannerAGVBase {
 
         #region Function - Constructors
 
-        public VehiclePlanner():base() {
+        public CtVehiclePlanner():base() {
             base.Controller = new ITSControllerSerial();
         }
 
