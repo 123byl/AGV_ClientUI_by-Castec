@@ -240,6 +240,18 @@ namespace VehiclePlanner.Core {
         /// </summary>
         public event BalloonTipEventHandler BalloonTip = null;
 
+        /// <summary>
+        /// 廣播回覆接收事件
+        /// </summary>
+        public event EventHandler<BroadcastEventArgs> ReceivedBoradcast {
+            add {
+                mBroadcast.ReceivedBoradcast += value;
+            }
+            remove {
+                mBroadcast.ReceivedBoradcast -= value;
+            }
+        }
+
         #endregion Declaration - Evnets
 
         #region Declaration - Delegates
@@ -260,7 +272,7 @@ namespace VehiclePlanner.Core {
 
         public BaseiTSController() {
             /*-- 委派廣播接收事件 --*/
-            mBroadcast.ReceivedData += mBroadcast_ReceivedData;
+            mBroadcast.ReceivedBoradcast += mBroadcast_ReceivedData;
 
             mAgvList.Columns.Add("IP");
             mAgvList.Columns.Add("Description");

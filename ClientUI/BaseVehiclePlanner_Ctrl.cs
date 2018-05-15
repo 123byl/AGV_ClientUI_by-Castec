@@ -643,6 +643,52 @@ namespace VehiclePlanner {
 
         #endregion ToolBox
 
+        #region ToolStripButton
+        
+        /// <summary>
+        /// 連線至iTS
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void tsbConnect_Click(object sender, EventArgs e) {
+            if (rVehiclePlanner.Controller.IsConnected) {
+                Task.Run(() => {
+                    rVehiclePlanner.Controller.ConnectToITS(false);
+                });
+            } else {
+                using (ConnectITS form = new ConnectITS(rVehiclePlanner.Controller)) {
+                    if (form.GetIP(out string ip)) {
+                        rVehiclePlanner.Controller.HostIP = ip;
+                        Task.Run(() => {
+                            rVehiclePlanner.Controller.ConnectToITS(true);
+                        });
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// 從iTS下載Map檔
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void tsbGetMap_Click(object sender, EventArgs e) {
+            Task.Run(() => {
+                GetMap();
+            });
+        }
+
+        /// <summary>
+        /// 上傳Map檔到iTS
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void tsbSendMap_Click(object sender, EventArgs e) {
+            ITest_SendMap();
+        }
+
+        #endregion ToolStripButton
+
         #endregion Function - Events
 
         #region Function - Private Methods
@@ -1033,6 +1079,9 @@ namespace VehiclePlanner {
             miBypassSocket.DataBindings.ExAdd(nameof(miBypassSocket.Enabled), source, nameof(source.IsConnected), (sender, e) => {
                 e.Value = !(bool)e.Value;
             });
+            tsbConnect.DataBindings.ExAdd(nameof(tsbConnect.Image), source, nameof(source.IsConnected), (sender, e) => {
+                e.Value = (bool)e.Value ? Properties.Resources.Connect : Properties.Resources.Disconnect;
+            });
         }
 
         /// <summary>
@@ -1050,6 +1099,8 @@ namespace VehiclePlanner {
         }
 
         #endregion Implement - IDataDisplay
+
+
     }
 
 }

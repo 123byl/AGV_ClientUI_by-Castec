@@ -188,7 +188,10 @@ namespace VehiclePlanner.Core {
         /// 氣球提示事件
         /// </summary>
         event BalloonTipEventHandler BalloonTip;
-
+        /// <summary>
+        /// 廣播回覆接收事件
+        /// </summary>
+        event EventHandler<BroadcastEventArgs> ReceivedBoradcast;
         /// <summary>
         /// 切換資料自動回傳
         /// </summary>

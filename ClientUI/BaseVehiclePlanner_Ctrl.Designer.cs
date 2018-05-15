@@ -92,9 +92,9 @@ namespace VehiclePlanner {
             this.miLoadFile = new CtBind.Bindable.ToolStripMenuItem();
             this.miServer = new CtBind.Bindable.ToolStripMenuItem();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.tsbConnect = new System.Windows.Forms.ToolStripButton();
-            this.tsbGetMap = new System.Windows.Forms.ToolStripButton();
-            this.tsbSendMap = new System.Windows.Forms.ToolStripButton();
+            this.tsbConnect = new CtBind.Bindable.ToolStripButton();
+            this.tsbGetMap = new CtBind.Bindable.ToolStripButton();
+            this.tsbSendMap = new CtBind.Bindable.ToolStripButton();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -416,6 +416,7 @@ namespace VehiclePlanner {
             this.tsbConnect.Size = new System.Drawing.Size(24, 24);
             this.tsbConnect.Text = "toolStripButton1";
             this.tsbConnect.ToolTipText = "Connect";
+            this.tsbConnect.Click += new System.EventHandler(this.tsbConnect_Click);
             // 
             // tsbGetMap
             // 
@@ -426,6 +427,7 @@ namespace VehiclePlanner {
             this.tsbGetMap.Size = new System.Drawing.Size(24, 24);
             this.tsbGetMap.Text = "toolStripButton2";
             this.tsbGetMap.ToolTipText = "Get Map";
+            this.tsbGetMap.Click += new System.EventHandler(this.tsbGetMap_Click);
             // 
             // tsbSendMap
             // 
@@ -436,6 +438,7 @@ namespace VehiclePlanner {
             this.tsbSendMap.Size = new System.Drawing.Size(24, 24);
             this.tsbSendMap.Text = "toolStripButton3";
             this.tsbSendMap.ToolTipText = "Send Map";
+            this.tsbSendMap.Click += new System.EventHandler(this.tsbSendMap_Click);
             // 
             // BaseVehiclePlanner_Ctrl
             // 
@@ -497,8 +500,8 @@ namespace VehiclePlanner {
         private Bindable.ToolStripMenuItem miParamEditor;
         protected System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStrip toolStrip1;
-        private System.Windows.Forms.ToolStripButton tsbConnect;
-        private System.Windows.Forms.ToolStripButton tsbGetMap;
-        private System.Windows.Forms.ToolStripButton tsbSendMap;
+        private Bindable.ToolStripButton tsbConnect;
+        private Bindable.ToolStripButton tsbGetMap;
+        private Bindable.ToolStripButton tsbSendMap;
     }
 }

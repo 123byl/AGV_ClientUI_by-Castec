@@ -152,7 +152,7 @@ namespace BroadCast {
         /// <summary>
         /// 廣播接收事件
         /// </summary>
-        public event EventHandler<BroadcastEventArgs> ReceivedData = null;
+        public event EventHandler<BroadcastEventArgs> ReceivedBoradcast = null;
 
         #endregion Evnents
 
@@ -163,7 +163,7 @@ namespace BroadCast {
         }
 
         public BroadcastReceiver(bool start,EventHandler<BroadcastEventArgs> handle):this() {
-            if (handle != null) ReceivedData += handle;
+            if (handle != null) ReceivedBoradcast += handle;
             StartReceive(start);
         }
 
@@ -191,7 +191,7 @@ namespace BroadCast {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         protected void RaiseEvent(object sender, BroadcastEventArgs e) {
-            ReceivedData?.Invoke(sender, e);
+            ReceivedBoradcast?.Invoke(sender, e);
         }
 
         /// <summary>
