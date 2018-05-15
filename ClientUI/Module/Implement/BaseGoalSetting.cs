@@ -62,64 +62,7 @@ namespace VehiclePlanner.Module.Implement {
         #endregion Funciton - Construcotrs
 
         #region Implement - IIGoalSetting
-
-        /// <summary>
-        /// 加入 Goal 點
-        /// </summary>
-        public event DelAddCurrentGoal AddCurrentGoalEvent;
-
-        /// <summary>
-        /// 清除所有目標點
-        /// </summary>
-        public event DelClearGoals ClearGoalsEvent;
-
-        /// <summary>
-        /// 刪除
-        /// </summary>
-        public event DelDeleteSingle DeleteSingleEvent;
-
-        /// <summary>
-        /// 尋找路徑
-        /// </summary>
-        public event DelFindPath FindPathEvent;
-
-        /// <summary>
-        /// 載入地圖
-        /// </summary>
-        public event DelLoadMap LoadMapEvent;
-
-        /// <summary>
-        /// 從 AGV 下載地圖
-        /// </summary>
-        public event DelLoadMapFromAGV LoadMapFromAGVEvent;
-
-        /// <summary>
-        /// 移動
-        /// </summary>
-        public event DelRunGoal RunGoalEvent;
         
-        /// <summary>
-        /// 儲存
-        /// </summary>
-        public event DelSaveGoal SaveGoalEvent;
-
-        /// <summary>
-        /// 上傳地圖
-        /// </summary>
-        public event DelSendMapToAGV SendMapToAGVEvent;
-
-        /// <summary>
-        /// 取得所有Goal點名稱
-        /// </summary>
-        public event DelGetGoalNames GetGoalNames;
-
-        /// <summary>
-        /// 充電
-        /// </summary>
-        public event DelCharging Charging;
-
-        public event Events.TestingEvents.DelClearMap ClearMap;
-
         /// <summary>
         /// 目標點個數
         /// </summary>
@@ -198,46 +141,45 @@ namespace VehiclePlanner.Module.Implement {
 
         private void btnGetGoalList_Click(object sender, EventArgs e) {
             Task.Run(() => {
-                GetGoalNames.Invoke();
+                rUI.GetGoalName();
             });
         }
 
         private void btnCurrPos_Click(object sender, EventArgs e) {
             lock (mKey) {
-                AddCurrentGoalEvent?.Invoke();
+                rUI.AddNow();
             }
         }
 
         private void btnGetMap_Click(object sender, EventArgs e) {
             lock (mKey) {
-                Task.Run(() => LoadMapFromAGVEvent?.Invoke());
+                Task.Run(() => rUI.GetMap()); 
             }
         }
 
         private void btnLoadMap_Click(object sender, EventArgs e) {
             lock (mKey) {
-                LoadMapEvent?.Invoke();
+                rUI.ITest_LoadMap();
             }
         }
 
         private void btnPath_Click(object sender, EventArgs e) {
             Task.Run(() => {
                 string goalName = cmbGoalList.InvokeIfNecessary(() => cmbGoalList.Text);
-                FindPathEvent?.Invoke(goalName);
+                rUI.FindPath(goalName);
             });
         }
 
         private void btnSendMap_Click(object sender, EventArgs e) {
             lock (mKey) {
-                SendMapToAGVEvent?.Invoke();
-            }
+                rUI.ITest_SendMap();}
         }
 
         private void btnGoGoal_Click(object sender, EventArgs e) {
             lock (mKey) {
                 Task.Run(() => {
                     string goalName = cmbGoalList.InvokeIfNecessary(() => cmbGoalList.Text);
-                    RunGoalEvent?.Invoke(goalName);
+                    rUI.Run(goalName);
                 });
             }
         }
@@ -248,19 +190,19 @@ namespace VehiclePlanner.Module.Implement {
 
         private void btnDelete_Click(object sender, EventArgs e) {
             lock (mKey) {
-                DeleteSingleEvent?.Invoke(GetSelectedSingleID());
+                rUI.Delete(GetSelectedSingleID());
             }
         }
 
         private void btnDeleteAll_Click(object sender, EventArgs e) {
             lock (mKey) {
-                ClearGoalsEvent?.Invoke();
+                rUI.Delete(GetAllGoal());
             }
         }
 
         private void btnSaveGoal_Click(object sender, EventArgs e) {
             lock (mKey) {
-                SaveGoalEvent?.Invoke();
+                rUI.SaveMap();
             }
         }
 
@@ -268,14 +210,14 @@ namespace VehiclePlanner.Module.Implement {
             lock (mKey) {
                 Task.Run(() => {
                     string powerName = cmbGoalList.InvokeIfNecessary(() => cmbGoalList.Text);
-                    Charging?.Invoke(powerName);
+                    rUI.Charging(powerName);
                 });
             }
         }
 
         private void btnClear_Click(object sender, EventArgs e) {
             lock (mKey) {
-                ClearMap?.Invoke();
+                rUI.ClearMap();
             }
         }
 
@@ -298,6 +240,23 @@ namespace VehiclePlanner.Module.Implement {
                             uint id = (uint)dgvGoalPoint[IDColumn, row].Value;
                             list.Add(id);
                         }
+                    }
+                });
+                return list;
+            }
+        }
+
+        /// <summary>
+        /// 回傳所有Goal點
+        /// </summary>
+        /// <returns></returns>
+        private List<uint> GetAllGoal() {
+            lock (mKey) {
+                var list = new List<uint>();
+                dgvGoalPoint.InvokeIfNecessary(() => {
+                    for (int row = 0; row < GoalCount; row++) {
+                        uint id = (uint)dgvGoalPoint[IDColumn, row].Value;
+                        list.Add(id);
                     }
                 });
                 return list;
@@ -335,4 +294,5 @@ namespace VehiclePlanner.Module.Implement {
         #endregion Implement - IDataDisplay<ICtVehiclePlanner>
         
     }
+
 }

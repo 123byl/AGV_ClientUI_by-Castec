@@ -42,61 +42,7 @@ namespace VehiclePlanner.Module.Interface {
     /// GoalSetting 視窗公開操作方法
     /// </summary>
     public interface IBaseGoalSetting : ICtDockContainer, IDataDisplay<IBaseVehiclePlanner> {
-
-        /// <summary>
-        /// 加入 Goal 點
-        /// </summary>
-        event DelAddCurrentGoal AddCurrentGoalEvent;
-
-        /// <summary>
-        /// 清除所有目標點
-        /// </summary>
-        event DelClearGoals ClearGoalsEvent;
-
-        /// <summary>
-        /// 刪除
-        /// </summary>
-        event DelDeleteSingle DeleteSingleEvent;
-
-        /// <summary>
-        /// 尋找路徑
-        /// </summary>
-        event DelFindPath FindPathEvent;
-
-        /// <summary>
-        /// 載入地圖
-        /// </summary>
-        event DelLoadMap LoadMapEvent;
-
-        /// <summary>
-        /// 從 AGV 下載地圖
-        /// </summary>
-        event DelLoadMapFromAGV LoadMapFromAGVEvent;
-
-        /// <summary>
-        /// 移動
-        /// </summary>
-        event DelRunGoal RunGoalEvent;
-
-        /// <summary>
-        /// 儲存
-        /// </summary>
-        event DelSaveGoal SaveGoalEvent;
-
-        /// <summary>
-        /// 上傳地圖
-        /// </summary>
-        event DelSendMapToAGV SendMapToAGVEvent;
-
-        /// <summary>
-        /// 取得所有Goal點名稱
-        /// </summary>
-        event DelGetGoalNames GetGoalNames;
-
-        event DelCharging Charging;
-
-        event DelClearMap ClearMap;
-
+        
         /// <summary>
         /// 目標點個數
         /// </summary>

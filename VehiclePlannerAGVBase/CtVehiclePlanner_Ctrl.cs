@@ -134,8 +134,6 @@ namespace VehiclePlannerAGVBase {
 
         protected override void SetEvents() {
             base.SetEvents();
-            mGoalSetting.ClearGoalsEvent += rVehiclePlanner.ClearMarker;
-            mGoalSetting.DeleteSingleEvent += rVehiclePlanner.DeleteMarker;
             mGoalSetting.RunLoopEvent += IGoalSetting_RunLoopEvent;
 
             IMapCtrl.GLClickEvent += IMapCtrl_GLClickEvent;
@@ -272,6 +270,17 @@ namespace VehiclePlannerAGVBase {
         }
 
         #endregion Function - Events
+
+        #region Function - Internal Methods
+
+        /// <summary>
+        /// 刪除指定標記物
+        /// </summary>
+        /// <param name="markers"></param>
+        internal void Delete(List<uint> id) => rVehiclePlanner.DeleteMarker(id);
+        
+
+        #endregion Finction - Internal Methods
 
     }
 

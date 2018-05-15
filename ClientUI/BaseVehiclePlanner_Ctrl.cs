@@ -591,6 +591,46 @@ namespace VehiclePlanner {
         /// <param name="cnn">連線/斷線</param>
         internal void Connect(bool cnn) => rVehiclePlanner.Controller.ConnectToITS(cnn);
 
+        /// <summary>
+        /// 顯示當前Goal點名稱清單
+        /// </summary>
+        internal void GetGoalName() =>rVehiclePlanner.Controller.GetGoalNames();
+
+        /// <summary>
+        /// 新增當前位置為Goal點
+        /// </summary>
+        internal void AddNow() => rVehiclePlanner.AddCurrentAsGoal();
+
+        /// <summary>
+        /// 搜尋至Goal點路徑(透過Goal名稱)
+        /// </summary>
+        /// <param name="goalName">Goal點名稱</param>
+        internal void FindPath(string goalName) => rVehiclePlanner.Controller.FindPath(goalName);
+
+        /// <summary>
+        /// 移至Goal(透過Goal點名稱)
+        /// </summary>
+        /// <param name="goalName">Goal點名稱</param>
+        internal void Run(string goalName) => rVehiclePlanner.Controller.DoRunningByGoalName(goalName);
+
+        /// <summary>
+        /// 刪除指定標記物
+        /// </summary>
+        /// <param name="markers"></param>
+        internal void Delete(List<uint> id) => rVehiclePlanner.DeleteMarker(id);
+
+        /// <summary>
+        /// 儲存地圖
+        /// </summary>
+        internal void SaveMap() => rVehiclePlanner.SaveMap();
+
+        /// <summary>
+        /// 到指定充電站進行充電
+        /// </summary>
+        /// <param name="powerName">充電站名稱</param>
+        /// <returns>是否開始進行充電</returns>
+        internal void Charging(string powerName) => rVehiclePlanner.Controller.DoCharging(powerName);
+
         #endregion ITest
 
         #region ToolBox
@@ -778,23 +818,12 @@ namespace VehiclePlanner {
         /// </summary>
         protected virtual void SetEvents() {
             if (rVehiclePlanner != null) {
-                mGoalSetting.ClearMap += rVehiclePlanner.ClearMap;
-                mGoalSetting.SaveGoalEvent += rVehiclePlanner.SaveMap;
-                mGoalSetting.AddCurrentGoalEvent += rVehiclePlanner.AddCurrentAsGoal;
                 
 
                 if (rVehiclePlanner.Controller != null) {
-                    mGoalSetting.FindPathEvent += rVehiclePlanner.Controller.FindPath;
-                    mGoalSetting.LoadMapFromAGVEvent += rVehiclePlanner.Controller.GetMap;
-                    mGoalSetting.RunGoalEvent += rVehiclePlanner.Controller.DoRunningByGoalName;
-                    mGoalSetting.GetGoalNames += rVehiclePlanner.Controller.GetGoalNames;
-                    mGoalSetting.Charging += rVehiclePlanner.Controller.DoCharging;
                     
                 }
             }
-
-
-            mGoalSetting.SendMapToAGVEvent += ITest_SendMap;
             
         }
         

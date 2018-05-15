@@ -196,16 +196,24 @@ namespace VehiclePlanner.Core {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// 刪除指定標記物
+        /// </summary>
+        /// <param name="markers"></param>
+        public virtual void DeleteMarker(IEnumerable<uint> markers) {
+            throw new NotImplementedException();
+        }
+
         #endregion Funciton - Public Mehtods
 
-        #region Funciton - Private Methods
+            #region Funciton - Private Methods
 
-        #region Riase Events
+            #region Riase Events
 
-        /// <summary>
-        /// 屬性變更事件發報
-        /// </summary>
-        /// <param name="propertyName"></param>
+            /// <summary>
+            /// 屬性變更事件發報
+            /// </summary>
+            /// <param name="propertyName"></param>
         protected virtual void OnPropertyChanged([CallerMemberName]string propertyName="") {
             DelInvoke?.Invoke(() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)));
         }

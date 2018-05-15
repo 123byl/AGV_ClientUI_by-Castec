@@ -28,11 +28,6 @@ namespace VehiclePlannerAGVBase {
         /// 清除標記物
         /// </summary>
         void ClearMarker();
-        /// <summary>
-        /// 刪除指定標記物
-        /// </summary>
-        /// <param name="markers"></param>
-        void DeleteMarker(IEnumerable<uint> markers);
     }
 
     /// <summary>

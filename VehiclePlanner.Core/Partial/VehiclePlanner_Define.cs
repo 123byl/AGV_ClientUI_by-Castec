@@ -205,15 +205,14 @@ namespace VehiclePlanner.Core {
         /// <returns>地圖相似度</returns>
         void DoPositionComfirm();
         /// <summary>
-        /// 移至Goal(透過Goal點索引)
+        /// 移至Goal(透過Goal點名稱)
         /// </summary>
-        /// <param name="goalIndex">Goal點索引</param>
-        /// <returns>是否成功開始移動</returns>
+        /// <param name="goalName">Goal點名稱</param>
         void DoRunningByGoalName(string goalName);
         /// <summary>
-        /// 搜尋至Goal點路徑(透過Goal索引)
+        /// 搜尋至Goal點路徑(透過Goal名稱)
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="goalName">Goal點名稱</param>
         void FindPath(string goalName);
         /// <summary>
         /// 顯示當前Goal點名稱清單
@@ -324,7 +323,6 @@ namespace VehiclePlanner.Core {
         /// VehiclePlanner事件
         /// </summary>
         event EventHandler<VehiclePlannerEventArgs> VehiclePlannerEvent;
-
         /// <summary>
         /// 新增當前位置為Goal點
         /// </summary>
@@ -351,7 +349,11 @@ namespace VehiclePlanner.Core {
         /// 將ori檔轉為map檔
         /// </summary>
         void SimplifyOri();
-
+        /// <summary>
+        /// 刪除指定標記物
+        /// </summary>
+        /// <param name="markers"></param>
+        void DeleteMarker(IEnumerable<uint> markers);
     }
 
     #endregion Declaration - Interface

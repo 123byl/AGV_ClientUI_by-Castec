@@ -129,7 +129,7 @@ namespace VehiclePlannerAGVBase {
         /// 刪除指定標記物
         /// </summary>
         /// <param name="markers"></param>
-        public void DeleteMarker(IEnumerable<uint> markers) {
+        public override void DeleteMarker(IEnumerable<uint> markers) {
             foreach (var id in markers) {
                 if (mMapGL.ContainGoal(id)) {
                     mMapGL.RemoveGoal(id);
