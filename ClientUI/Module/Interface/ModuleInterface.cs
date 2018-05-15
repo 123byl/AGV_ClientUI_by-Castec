@@ -114,39 +114,6 @@ namespace VehiclePlanner.Module.Interface {
     /// </summary>
     public interface ITesting : ICtDockContainer, IDataDisplay<IBaseITSController> {
 
-        event DelConnect Connect;
-
-        event DelGetCar GetCar;
-
-        event DelGetLaser GetLaser;
-
-        event DelGetMap GetMap;
-
-        event DelGetOri GetOri;
-
-        event DelLoadMap LoadMap;
-
-        event DelLoadOri LoadOri;
-
-        event DelMotorServoOn MotorServoOn;
-
-        event DelSendMap SendMap;
-
-        event DelSetVelocity SetVelocity;
-
-        event DelSimplifyOri SimplifyOri;
-
-        event DelClearMap ClearMap;
-
-        event DelSettingCarPos SettingCarPos;
-
-        event DelCarPosConfirm CarPosConfirm;
-
-        event DelStartScan StartScan;
-
-        event DelShowMotionController ShowMotionController;
-
-        event DelFind Find;
     }
 
     /// <summary>

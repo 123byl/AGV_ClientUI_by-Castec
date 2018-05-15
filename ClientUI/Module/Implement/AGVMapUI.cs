@@ -49,8 +49,8 @@ namespace VehiclePlanner.Module.Implement {
         /// <summary>
         /// 共用建構方法
         /// </summary>
-        public BaseMapGL(DockState defState = DockState.Float)
-            : base(defState) {
+        public BaseMapGL(BaseVehiclePlanner_Ctrl refUI, DockState defState = DockState.Float)
+            : base(refUI,defState) {
             InitializeComponent();
             FixedSize = new Size(718, 814);
         }

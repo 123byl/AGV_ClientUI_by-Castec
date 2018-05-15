@@ -57,8 +57,8 @@ namespace VehiclePlannerUndoable.cs {
         /// <summary>
         /// 共用建構方法
         /// </summary>
-        public GoalSetting(DockState defState = DockState.Float)
-            : base(defState) {
+        public GoalSetting(CtVehiclePlanner_Ctrl refUI, DockState defState = DockState.Float)
+            : base(refUI,defState) {
             InitializeComponent();
 
             /*-- 由於無法於介面設計師新增控制項，只好用程式碼新增 --*/

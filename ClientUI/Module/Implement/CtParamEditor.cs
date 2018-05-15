@@ -34,8 +34,8 @@ namespace VehiclePlanner.Module.Implement {
         /// <summary>
         /// 共用建構方法
         /// </summary>
-        public ParamEditor(DockState defState = DockState.Float)
-            : base(defState) {
+        public ParamEditor(BaseVehiclePlanner_Ctrl refUI, DockState defState = DockState.Float)
+            : base(refUI,defState) {
             InitializeComponent();
             mEditor = new CtrlParamEditor() {
                 TopLevel = false,

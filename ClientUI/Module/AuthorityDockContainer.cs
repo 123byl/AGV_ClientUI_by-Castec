@@ -15,6 +15,26 @@ namespace VehiclePlanner.Module {
     public class AuthorityDockContainer :CtDockContainer {
 
         /// <summary>
+        /// 主介面物件參考
+        /// </summary>
+        protected BaseVehiclePlanner_Ctrl rUI = null;
+
+        /// <summary>
+        /// 主介面物件參考
+        /// </summary>
+        public BaseVehiclePlanner_Ctrl RefUI {
+            get {
+                return rUI;
+            }
+            set {
+                if (value != null) {
+                    rUI = value;
+                }
+            }
+        }
+
+
+        /// <summary>
         /// 給介面設計師使用的建構式，拿掉後繼承該類的衍生類將無法顯示介面設計
         /// </summary>
         protected AuthorityDockContainer() : base() { }
@@ -22,7 +42,9 @@ namespace VehiclePlanner.Module {
         /// <summary>
         /// 具有預設DockState功能的建置方法
         /// </summary>
-        public AuthorityDockContainer(DockState defState):base(defState) {}
+        public AuthorityDockContainer(BaseVehiclePlanner_Ctrl refUI, DockState defState):base(defState) {
+            RefUI = refUI;
+        }
 
         /// <summary>
         /// 依照使用者權限進行可視度切換
@@ -44,5 +66,6 @@ namespace VehiclePlanner.Module {
         public virtual bool IsVisiable(AccessLevel lv) {
             throw new NotImplementedException();
         }
+        
     }
 }

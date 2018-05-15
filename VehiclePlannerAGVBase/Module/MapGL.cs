@@ -51,7 +51,7 @@ namespace VehiclePlannerAGVBase {
 
         protected MapGL():base() { }
 
-        public MapGL(DockState defState = DockState.Float):base(defState) {
+        public MapGL(CtVehiclePlanner_Ctrl refUI, DockState defState = DockState.Float):base(refUI,defState) {
             InitializeComponent();
             ///控制項會自動Dock.Fill
             ///預設控制項位置在0,0

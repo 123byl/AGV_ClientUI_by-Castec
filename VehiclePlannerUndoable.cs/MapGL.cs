@@ -30,7 +30,7 @@ namespace VehiclePlannerUndoable.cs {
             InitializeComponent();
 
         }
-        public MapGL(DockState defState = DockState.Float) : base(defState) {
+        public MapGL(CtVehiclePlanner_Ctrl refUI, DockState defState = DockState.Float) : base(refUI,defState) {
             InitializeComponent();
 
             // 載入設定檔

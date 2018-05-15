@@ -245,10 +245,9 @@ namespace VehiclePlanner.Core {
         string RequestMapList();
         void SendAndSetMap(string mapPath);
         /// <summary>
-        /// 要求AGV設定新位置
+        /// 啟動馬達激磁
         /// </summary>
-        /// <param name="oldPosition">舊座標</param>
-        /// <param name="newPosition">新座標</param>
+        /// <param name="servoOn">是否啟動馬達激磁</param>
         void SetServoMode(bool servoOn);
         /// <summary>
         /// 設定iTS工作移動速度

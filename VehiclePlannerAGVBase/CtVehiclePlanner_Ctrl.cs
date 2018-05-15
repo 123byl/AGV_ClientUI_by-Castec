@@ -125,11 +125,11 @@ namespace VehiclePlannerAGVBase {
         #region Funciton - Private Methods
 
         protected override BaseMapGL GetMapGL(DockState dockState) {
-            return new MapGL(dockState);
+            return new MapGL(this,dockState);
         }
 
         protected override BaseGoalSetting GetGoalSetting(DockState dockState) {
-            return new GoalSetting(dockState);
+            return new GoalSetting(this,dockState);
         }
 
         protected override void SetEvents() {
@@ -146,7 +146,7 @@ namespace VehiclePlannerAGVBase {
         }
         
         protected override void LoadICtDockContainer() {
-            AddSubForm(miToolBox, new CtToolBox(DockState.DockRightAutoHide));
+            AddSubForm(miToolBox, new CtToolBox(this,DockState.DockRightAutoHide));
             base.LoadICtDockContainer();
             mMapInsert.AssignmentDockPanel(dockPanel);
         }

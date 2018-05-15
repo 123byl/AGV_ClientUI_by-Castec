@@ -41,8 +41,8 @@ namespace VehiclePlanner.Module.Implement {
         /// <summary>
         /// 共用建構方法
         /// </summary>
-        public BaseTesting(DockState defState = DockState.Float)
-            : base(defState) {
+        public BaseTesting(BaseVehiclePlanner_Ctrl refUI, DockState defState = DockState.Float)
+            : base(refUI,defState) {
             InitializeComponent();
             FixedSize = new Size(718, 814);
         }
@@ -58,136 +58,94 @@ namespace VehiclePlanner.Module.Implement {
         #endregion Funciotn - Public Methods
 
         #region Implement - ITest
-
-        public event Events.GoalSettingEvents.DelLoadMap LoadMap;
-
-        public event Events.TestingEvents.DelLoadOri LoadOri;
-
-        public event Events.TestingEvents.DelGetOri GetOri;
-
-        public event Events.TestingEvents.DelGetMap GetMap;
-
-        public event Events.TestingEvents.DelGetLaser GetLaser;
-
-        public event Events.TestingEvents.DelGetCar GetCar;
-
-        public event Events.TestingEvents.DelSendMap SendMap;
-
-        public event Events.TestingEvents.DelSimplifyOri SimplifyOri;
-
-        public event Events.TestingEvents.DelSetVelocity SetVelocity;
-
-        public event Events.TestingEvents.DelConnect Connect;
-
-        public event Events.TestingEvents.DelMotorServoOn MotorServoOn;
-
-        public event Events.TestingEvents.DelClearMap ClearMap;
-
-        public event Events.TestingEvents.DelSettingCarPos SettingCarPos;
-
-        public event Events.TestingEvents.DelCarPosConfirm CarPosConfirm;
-
-        public event Events.TestingEvents.DelStartScan StartScan;
-
-        public event Events.TestingEvents.DelShowMotionController ShowMotionController;
-
-        public event Events.TestingEvents.DelFind Find;
-
+        
         #endregion Implement - ITest
 
         #region Function  - UI Events
 
         private void btnConnect_Click(object sender, EventArgs e) {
             Task.Run(() => {
-                if (btnConnect.Tag == null || (btnConnect.Tag is bool && !(bool)btnConnect.Tag)) {
-                    Connect.Invoke(true);
-                } else {
-                    Connect.Invoke(false);
-                }
+                bool cnn = btnConnect.Tag == null || (btnConnect.Tag is bool && !(bool)btnConnect.Tag);
+                rUI.Connect(cnn);
             });
         }
 
         private void btnLoadOri_Click(object sender, EventArgs e) {
-            LoadOri?.Invoke();
+            rUI.ITest_LoadOri();
         }
 
         private void btnGetMap_Click(object sender, EventArgs e) {
             Task.Run(() => {
-                GetMap?.Invoke();
+                rUI.GetMap();
             });
         }
 
         private void btnLoadMap_Click(object sender, EventArgs e) {
-            LoadMap?.Invoke();
+            rUI.ITest_LoadMap();
         }
 
         private void btnGetOri_Click(object sender, EventArgs e) {
-            Task.Run(() => GetOri.Invoke());
+            //Task.Run(() => GetOri.Invoke());
         }
 
         private void btnGetLaser_Click(object sender, EventArgs e) {
-            Task.Run(() => GetLaser?.Invoke());
+            Task.Run(() => rUI.GetLaser());
         }
 
         private void btnGetCarStatus_Click(object sender, EventArgs e) {
-            Task.Run(() => GetCar?.Invoke());
+            Task.Run(() => rUI.ITest_GetCar());
         }
 
         private void btnSendMap_Click(object sender, EventArgs e) {
-            //Task.Run(() => {
-            SendMap?.Invoke();
-            //});
+            rUI.ITest_SendMap();
         }
 
         private void btnSimplyOri_Click(object sender, EventArgs e) {
-            SimplifyOri?.Invoke();
+            //SimplifyOri?.Invoke();
         }
 
         private void btnSetVelo_Click(object sender, EventArgs e) {
             Task.Run(() => {
                 if (int.TryParse(txtVelocity.Text, out int velocity)) {
-                    SetVelocity?.Invoke(velocity);
+                    rUI.SetVelocity(velocity);
                 }
             });
         }
 
         private void btnClrMap_Click(object sender, EventArgs e) {
-            ClearMap?.Invoke();
+            rUI.ClearMap();
         }
 
         private void btnServoOnOff_Click(object sender, EventArgs e) {
             Task.Run(() => {
-                if (btnServoOnOff.Tag == null || (btnServoOnOff.Tag is bool && !(bool)btnServoOnOff.Tag)) {
-                    MotorServoOn.Invoke(true);
-                } else {
-                    MotorServoOn.Invoke(false);
-                }
+                bool servoOn = btnServoOnOff.Tag == null || (btnServoOnOff.Tag is bool && !(bool)btnServoOnOff.Tag);
+                rUI.MotorServoOn(servoOn);
             });
         }
 
         private void btnPosConfirm_Click(object sender, EventArgs e) {
             Task.Run(() => {
-                CarPosConfirm?.Invoke();
+                rUI.CarPosConfirm();
             });
         }
 
         private void btnSetCar_Click(object sender, EventArgs e) {
-            SettingCarPos?.Invoke();
+            rUI.ITest_SettingCarPos();
         }
 
         private void btnScan_Click(object sender, EventArgs e) {
             Task.Run(() => {
                 bool isSacn = btnScan.Tag is bool ? ((bool)btnScan.Tag) : false;
-                StartScan?.Invoke(!isSacn);
+                rUI.StartScan(!isSacn);
             });
         }
 
         private void btnMotionController_Click(object sender, EventArgs e) {
-            ShowMotionController.Invoke();
+            rUI.ShowMotionController();
         }
 
         private void btnFind_Click(object sender, EventArgs e) {
-            Find.Invoke();
+            rUI.FindCar();
         }
 
         #endregion Function  - UI Events

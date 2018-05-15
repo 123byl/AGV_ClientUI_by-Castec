@@ -29,8 +29,8 @@ namespace VehiclePlanner.Module.Implement {
         /// <summary>
         /// 共用建構方法
         /// </summary>
-        public CtConsole(DockState defState = DockState.Float)
-            : base(defState) {
+        public CtConsole(BaseVehiclePlanner_Ctrl refUI, DockState defState = DockState.Float)
+            : base(refUI,defState) {
             InitializeComponent();
             FixedSize = new Size(424, 300);
         }

@@ -53,8 +53,8 @@ namespace VehiclePlanner.Module.Implement {
         /// <param name="goalsetting">GoalSetting方法實作物件參考</param>
         /// <param name="main">主介面參考</param>
         /// <param name="defState">預設停靠方式</param>
-        public BaseGoalSetting(DockState defState = DockState.Float)
-            : base(defState) {
+        public BaseGoalSetting(BaseVehiclePlanner_Ctrl refUI, DockState defState = DockState.Float)
+            : base(refUI,defState) {
             InitializeComponent();
             FixedSize = new Size(776, 860);
         }

@@ -35,11 +35,11 @@ namespace VehiclePlannerUndoable.cs {
         }
 
         protected override BaseMapGL GetMapGL(DockState dockState) {
-            return new MapGL(dockState);
+            return new MapGL(this,dockState);
         }
 
         protected override BaseGoalSetting GetGoalSetting(DockState dockState) {
-            return new GoalSetting(dockState);
+            return new GoalSetting(this,dockState);
         }
 
     }

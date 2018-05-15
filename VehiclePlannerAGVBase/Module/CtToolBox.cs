@@ -14,6 +14,7 @@ using VehiclePlanner.Partial.VehiclePlannerUI;
 using WeifenLuo.WinFormsUI.Docking;
 using static VehiclePlanner.Partial.VehiclePlannerUI.Events.GoalSettingEvents;
 using CtLib.Module.Utility;
+using VehiclePlanner;
 
 namespace VehiclePlannerAGVBase {
 
@@ -33,8 +34,8 @@ namespace VehiclePlannerAGVBase {
         /// <summary>
         /// 共用建構方法
         /// </summary>
-        public CtToolBox(DockState defState = DockState.Float)
-            : base(defState) {
+        public CtToolBox(BaseVehiclePlanner_Ctrl refUI ,DockState defState = DockState.Float)
+            : base(refUI,defState) {
             InitializeComponent();
             FixedSize = new Size(200, 711);
             //outlookBar2.Dock = DockStyle.Fill;

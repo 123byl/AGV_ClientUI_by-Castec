@@ -488,14 +488,12 @@ namespace VehiclePlanner {
         /// <summary>
         /// 切換SetCar旗標
         /// </summary>
-        private void ITest_SettingCarPos() {
-            mIsSetting = true;
-        }
+        internal void ITest_SettingCarPos() => mIsSetting = true;
 
         /// <summary>
         /// 傳送Map檔
         /// </summary>
-        private void ITest_SendMap() {
+        internal void ITest_SendMap() {
             OpenFileDialog openMap = new OpenFileDialog() {
                 InitialDirectory = rVehiclePlanner.DefMapDir,
                 Filter = "MAP|*.map"
@@ -512,15 +510,13 @@ namespace VehiclePlanner {
         /// <summary>
         /// 要求VehicleConsole自動回傳資料
         /// </summary>
-        protected void ITest_GetCar() {
-            rVehiclePlanner.Controller.AutoReport(!rVehiclePlanner.Controller.IsAutoReport);
-        }
-
+        internal void ITest_GetCar() => rVehiclePlanner.Controller.AutoReport(!rVehiclePlanner.Controller.IsAutoReport);
+        
         /// <summary>
         /// 載入Map檔
         /// </summary>
         /// <returns></returns>
-        private void ITest_LoadMap() {
+        internal void ITest_LoadMap() {
             try {
                 LoadFile(FileType.Map);
             } catch (Exception ex) {
@@ -532,7 +528,7 @@ namespace VehiclePlanner {
         /// 載入Ori檔
         /// </summary>
         /// <returns></returns>
-        private void ITest_LoadOri() {
+        internal void ITest_LoadOri() {
             try {
                 LoadFile(FileType.Ori);
             } catch (Exception ex) {
@@ -543,9 +539,57 @@ namespace VehiclePlanner {
         /// <summary>
         /// 停止手動控制
         /// </summary>
-        private void ITest_Motion_Up() {
-            rVehiclePlanner.Controller.MotionContorl(MotionDirection.Stop);
-        }
+        internal void ITest_Motion_Up() => rVehiclePlanner.Controller.MotionContorl(MotionDirection.Stop);
+        
+        /// <summary>
+        /// 尋找可用的車子
+        /// </summary>
+        internal void FindCar() => rVehiclePlanner.Controller.FindCar();
+        
+        /// <summary>
+        /// 開始掃描地圖
+        /// </summary>
+        /// <param name="scan">是否開始掃描</param>
+        internal void StartScan(bool scan) => rVehiclePlanner.Controller.StartScan(scan);
+        
+        /// <summary>
+        /// 車子位置微調修正
+        /// </summary>
+        internal void CarPosConfirm() => rVehiclePlanner.Controller.DoPositionComfirm();
+        
+        /// <summary>
+        /// 啟動馬達激磁
+        /// </summary>
+        /// <param name="servoOn">是否啟動馬達激磁</param>
+        internal void MotorServoOn(bool servoOn) => rVehiclePlanner.Controller.SetServoMode(servoOn);
+        
+        /// <summary>
+        /// 清除地圖
+        /// </summary>
+        internal void ClearMap() => rVehiclePlanner.ClearMap();
+        
+        /// <summary>
+        /// 設定iTS工作移動速度
+        /// </summary>
+        /// <param name="velocity">移動速度</param>
+        internal void SetVelocity(int velocity) => rVehiclePlanner.Controller.SetWorkVelocity(velocity);
+        
+        /// <summary>
+        /// 要求雷射資料
+        /// </summary>
+        /// <returns>雷射資料(0筆雷射資料表示失敗)</returns>
+        internal void GetLaser()  => rVehiclePlanner.Controller.RequestLaser();
+
+        /// <summary>
+        /// 取得Map檔
+        /// </summary>
+        internal void GetMap() => rVehiclePlanner.Controller.GetMap();
+        
+        /// <summary>
+        /// 連線至iTS
+        /// </summary>
+        /// <param name="cnn">連線/斷線</param>
+        internal void Connect(bool cnn) => rVehiclePlanner.Controller.ConnectToITS(cnn);
 
         #endregion ITest
 
@@ -579,7 +623,7 @@ namespace VehiclePlanner {
         /// <summary>
         /// 顯示iTS手動移動控制面板
         /// </summary>
-        private void ShowMotionController() {
+        internal void ShowMotionController() {
             if (mMotionController == null) {
                 mMotionController = new CtMotionController();
                 mMotionController.MotionDown += rVehiclePlanner.Controller.MotionContorl;
@@ -737,9 +781,7 @@ namespace VehiclePlanner {
                 mGoalSetting.ClearMap += rVehiclePlanner.ClearMap;
                 mGoalSetting.SaveGoalEvent += rVehiclePlanner.SaveMap;
                 mGoalSetting.AddCurrentGoalEvent += rVehiclePlanner.AddCurrentAsGoal;
-
-                mTesting.SimplifyOri += rVehiclePlanner.SimplifyOri;
-                mTesting.ClearMap += rVehiclePlanner.ClearMap;
+                
 
                 if (rVehiclePlanner.Controller != null) {
                     mGoalSetting.FindPathEvent += rVehiclePlanner.Controller.FindPath;
@@ -748,44 +790,27 @@ namespace VehiclePlanner {
                     mGoalSetting.GetGoalNames += rVehiclePlanner.Controller.GetGoalNames;
                     mGoalSetting.Charging += rVehiclePlanner.Controller.DoCharging;
                     
-                    mTesting.Find += rVehiclePlanner.Controller.FindCar;
-                    mTesting.GetOri += rVehiclePlanner.Controller.GetOri;
-                    mTesting.GetMap += rVehiclePlanner.Controller.GetMap;
-                    mTesting.GetLaser += rVehiclePlanner.Controller.RequestLaser;
-                    mTesting.CarPosConfirm += rVehiclePlanner.Controller.DoPositionComfirm;
-                    mTesting.StartScan += rVehiclePlanner.Controller.StartScan;
-                    mTesting.SetVelocity += rVehiclePlanner.Controller.SetWorkVelocity;
-                    mTesting.Connect += rVehiclePlanner.Controller.ConnectToITS;
-                    mTesting.MotorServoOn += rVehiclePlanner.Controller.SetServoMode;
                 }
             }
 
 
             mGoalSetting.SendMapToAGVEvent += ITest_SendMap;
-            mGoalSetting.LoadMapEvent += ITest_LoadMap;
-            
-            mTesting.LoadMap += ITest_LoadMap;
-            mTesting.LoadOri += ITest_LoadOri;
-            mTesting.GetCar += ITest_GetCar;
-            mTesting.SendMap += ITest_SendMap;
-            mTesting.SettingCarPos += ITest_SettingCarPos;
-            mTesting.ShowMotionController += ShowMotionController;
             
         }
         
         protected virtual CtConsole GetConsole(DockState dockState) {
-            return new CtConsole(dockState);
+            return new CtConsole(this, dockState) ;
         }
 
         protected virtual BaseTesting GetTesting(DockState dockState) {
-            return new BaseTesting(dockState);
+            return new BaseTesting(this,dockState) ;
         }
 
         protected virtual BaseMapGL GetMapGL(DockState dockState) {
-            return new BaseMapGL(dockState);
+            return new BaseMapGL(this, dockState);
         }
         protected virtual BaseGoalSetting GetGoalSetting(DockState dockState) {
-            return new BaseGoalSetting(dockState);
+            return new BaseGoalSetting(this,dockState) ;
         }
 
         /// <summary>
@@ -797,7 +822,7 @@ namespace VehiclePlanner {
             AddSubForm(miConsole, GetConsole(DockState.DockBottomAutoHide));
             AddSubForm(miGoalSetting, GetGoalSetting(DockState.DockLeft));
             AddSubForm(miTesting, GetTesting(DockState.DockLeft));
-            AddSubForm(miParamEditor,new ParamEditor(DockState.Document));
+            AddSubForm(miParamEditor,new ParamEditor(this,DockState.Document));
             SetEvents();
 
             /*-- 計算每個固定停靠區域所需的顯示大小 --*/
