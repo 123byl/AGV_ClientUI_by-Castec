@@ -63,6 +63,15 @@ namespace VehiclePlanner.Module.Implement {
             this.btnCharging = new System.Windows.Forms.Button();
             this.btnRun = new System.Windows.Forms.Button();
             this.btnRunAll = new System.Windows.Forms.Button();
+            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.tsbAddNow = new System.Windows.Forms.ToolStripButton();
+            this.tsbDelete = new System.Windows.Forms.ToolStripButton();
+            this.tsbSave = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsbPath = new System.Windows.Forms.ToolStripButton();
+            this.tsbRun = new System.Windows.Forms.ToolStripButton();
+            this.tsbRunAll = new System.Windows.Forms.ToolStripButton();
+            this.tsbCharging = new System.Windows.Forms.ToolStripButton();
             this.ctGroupBox2.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
             this.tableLayoutPanel4.SuspendLayout();
@@ -73,6 +82,7 @@ namespace VehiclePlanner.Module.Implement {
             this.tableLayoutPanel1.SuspendLayout();
             this.ctGroupBox1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
+            this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnSaveGoal
@@ -558,12 +568,99 @@ namespace VehiclePlanner.Module.Implement {
             this.btnRunAll.UseVisualStyleBackColor = true;
             this.btnRunAll.Click += new System.EventHandler(this.btnRunAll_Click);
             // 
+            // toolStrip1
+            // 
+            this.toolStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsbAddNow,
+            this.tsbDelete,
+            this.tsbSave,
+            this.toolStripSeparator1,
+            this.tsbPath,
+            this.tsbRun,
+            this.tsbRunAll,
+            this.tsbCharging});
+            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
+            this.toolStrip1.Name = "toolStrip1";
+            this.toolStrip1.Size = new System.Drawing.Size(752, 27);
+            this.toolStrip1.TabIndex = 69;
+            this.toolStrip1.Text = "toolStrip1";
+            // 
+            // tsbAddNow
+            // 
+            this.tsbAddNow.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsbAddNow.Image = global::VehiclePlanner.Properties.Resources.Add;
+            this.tsbAddNow.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbAddNow.Name = "tsbAddNow";
+            this.tsbAddNow.Size = new System.Drawing.Size(24, 24);
+            this.tsbAddNow.Text = "Add now";
+            // 
+            // tsbDelete
+            // 
+            this.tsbDelete.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsbDelete.Image = global::VehiclePlanner.Properties.Resources.Delete;
+            this.tsbDelete.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbDelete.Name = "tsbDelete";
+            this.tsbDelete.Size = new System.Drawing.Size(24, 24);
+            this.tsbDelete.Text = "Delete";
+            // 
+            // tsbSave
+            // 
+            this.tsbSave.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsbSave.Image = global::VehiclePlanner.Properties.Resources.Save;
+            this.tsbSave.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbSave.Name = "tsbSave";
+            this.tsbSave.Size = new System.Drawing.Size(24, 24);
+            this.tsbSave.Text = "Save";
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 27);
+            // 
+            // tsbPath
+            // 
+            this.tsbPath.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsbPath.Image = global::VehiclePlanner.Properties.Resources.Path;
+            this.tsbPath.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbPath.Name = "tsbPath";
+            this.tsbPath.Size = new System.Drawing.Size(24, 24);
+            this.tsbPath.Text = "Path";
+            // 
+            // tsbRun
+            // 
+            this.tsbRun.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsbRun.Image = global::VehiclePlanner.Properties.Resources.play;
+            this.tsbRun.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbRun.Name = "tsbRun";
+            this.tsbRun.Size = new System.Drawing.Size(24, 24);
+            this.tsbRun.Text = "Run";
+            // 
+            // tsbRunAll
+            // 
+            this.tsbRunAll.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsbRunAll.Image = global::VehiclePlanner.Properties.Resources.Refresh_2;
+            this.tsbRunAll.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbRunAll.Name = "tsbRunAll";
+            this.tsbRunAll.Size = new System.Drawing.Size(24, 24);
+            this.tsbRunAll.Text = "RunAll";
+            // 
+            // tsbCharging
+            // 
+            this.tsbCharging.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsbCharging.Image = global::VehiclePlanner.Properties.Resources.Alert;
+            this.tsbCharging.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbCharging.Name = "tsbCharging";
+            this.tsbCharging.Size = new System.Drawing.Size(24, 24);
+            this.tsbCharging.Text = "Charging";
+            // 
             // BaseGoalSetting
             // 
             this.AutoHidePortion = 206D;
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(752, 776);
+            this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.tableLayoutPanel5);
             this.Controls.Add(this.btnGetGoalList);
             this.Controls.Add(this.cmbGoalList);
@@ -590,6 +687,8 @@ namespace VehiclePlanner.Module.Implement {
             this.tableLayoutPanel1.ResumeLayout(false);
             this.ctGroupBox1.ResumeLayout(false);
             this.tableLayoutPanel2.ResumeLayout(false);
+            this.toolStrip1.ResumeLayout(false);
+            this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -632,5 +731,14 @@ namespace VehiclePlanner.Module.Implement {
         private System.Windows.Forms.DataGridViewTextBoxColumn cY;
         private System.Windows.Forms.DataGridViewTextBoxColumn cToward;
         protected Inheritable.Panel panel1;
+        private System.Windows.Forms.ToolStrip toolStrip1;
+        private System.Windows.Forms.ToolStripButton tsbAddNow;
+        private System.Windows.Forms.ToolStripButton tsbDelete;
+        private System.Windows.Forms.ToolStripButton tsbSave;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripButton tsbPath;
+        private System.Windows.Forms.ToolStripButton tsbRun;
+        private System.Windows.Forms.ToolStripButton tsbRunAll;
+        private System.Windows.Forms.ToolStripButton tsbCharging;
     }
 }
