@@ -1,4 +1,5 @@
 ﻿using GLStyle;
+using GLUI;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -16,9 +17,15 @@ namespace VehiclePlannerUndoable.cs {
     /// <summary>
     /// 以可重做MapGL進行實作之MapGL介面
     /// </summary>
-    public partial class MapGL : BaseMapGL {
+    public partial class MapGL : BaseMapGL ,IMapGL{
 
-        private GLUI.GLUICtrl mMapGL = new GLUI.GLUICtrl();
+        private GLUICtrl mMapGL = new GLUICtrl();
+
+        /// <summary>
+        /// 地圖控制項
+        /// </summary>
+        public GLUICtrl MapControl { get => mMapGL; }
+
         protected MapGL() {
             InitializeComponent();
 

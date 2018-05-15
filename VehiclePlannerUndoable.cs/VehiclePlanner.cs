@@ -17,12 +17,21 @@ namespace VehiclePlannerUndoable.cs {
 
         private IVehiclePlanner rVehiclePlanner = null;
 
+        private IMapGL MapGL { get => mDockContent[miMapGL] as IMapGL; }
+
+        private IGoalSetting GoalSetting { get => mDockContent[miGoalSetting] as IGoalSetting; }
+
         public CtVehiclePlanner_Ctrl(IVehiclePlanner vehiclePlanner):base() {
             InitializeComponent();
             rVehiclePlanner = vehiclePlanner;
 
             Initial(vehiclePlanner);
 
+        }
+
+        protected override void Initial(IBaseVehiclePlanner vehiclePlanner) {
+            base.Initial(vehiclePlanner);
+            GoalSetting.RefMapControl =  MapGL.MapControl;
         }
 
         protected override BaseMapGL GetMapGL(DockState dockState) {

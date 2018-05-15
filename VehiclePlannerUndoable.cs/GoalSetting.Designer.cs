@@ -29,6 +29,7 @@
             // 
             // dgvGoalPoint
             // 
+            this.dgvGoalPoint.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.None;
             this.dgvGoalPoint.RowTemplate.Height = 24;
             this.dgvGoalPoint.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvGoalPoint_CellValueChanged);
             this.dgvGoalPoint.DoubleClick += new System.EventHandler(this.dgvGoalPoint_DoubleClick);
