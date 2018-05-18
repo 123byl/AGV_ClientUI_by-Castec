@@ -137,7 +137,7 @@ namespace VehiclePlanner.Core {
             get {
                 return mVelocity;
             }
-            set {
+            protected set {
                 if (mVelocity != value) {
                     mVelocity = value;
                     OnConsoleMessage($"iTS - WorkVelocity = {mVelocity}");

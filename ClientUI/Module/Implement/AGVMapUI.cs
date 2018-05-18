@@ -7,6 +7,7 @@ using VehiclePlanner.Core;
 using VehiclePlanner.Module.Interface;
 using WeifenLuo.WinFormsUI.Docking;
 using CtLib.Module.Utility;
+using System.Threading.Tasks;
 
 namespace VehiclePlanner.Module.Implement {
 
@@ -99,6 +100,45 @@ namespace VehiclePlanner.Module.Implement {
 
         #endregion Implement - IDataDisplay<ICtVehiclePlanner>
 
+        private void tsbOpenFile_Click(object sender, EventArgs e) {
+            rUI.ITest_LoadMap();
+        }
+
+        private void tsbClearMap_Click(object sender, EventArgs e) {
+            rUI.ClearMap();
+        }
+
+        private void tsbScan_Click(object sender, EventArgs e) {
+            Task.Run(() => {
+                rUI.StartScan();
+            });
+        }
+
+        private void tsbController_Click(object sender, EventArgs e) {
+            rUI.ShowMotionController();
+        }
+
+        private void tsbCar_Click(object sender, EventArgs e) {
+            Task.Run(() => {
+                rUI.ITest_GetCar();
+            });
+        }
+
+        private void tsbSetCar_Click(object sender, EventArgs e) {
+            rUI.ITest_SettingCarPos();
+        }
+
+        private void tsbConfirm_Click(object sender, EventArgs e) {
+            Task.Run(() => {
+                rUI.CarPosConfirm();
+            });
+        }
+
+        private void tsbGetLaser_Click(object sender, EventArgs e) {
+            Task.Run(() => {
+                rUI.GetLaser();
+            });
+        }
     }
 
 }

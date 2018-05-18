@@ -550,7 +550,7 @@ namespace VehiclePlanner {
         /// 開始掃描地圖
         /// </summary>
         /// <param name="scan">是否開始掃描</param>
-        internal void StartScan(bool scan) => rVehiclePlanner.Controller.StartScan(scan);
+        internal void StartScan() => rVehiclePlanner.Controller.StartScan(!rVehiclePlanner.Controller.IsScanning);
         
         /// <summary>
         /// 車子位置微調修正
@@ -711,7 +711,7 @@ namespace VehiclePlanner {
         /// </summary>
         internal void ShowMotionController() {
             if (mMotionController == null) {
-                mMotionController = new CtMotionController();
+                mMotionController = new CtMotionController(rVehiclePlanner.Controller);
                 mMotionController.MotionDown += rVehiclePlanner.Controller.MotionContorl;
                 mMotionController.MotionUp += ITest_Motion_Up;
                 miMotionController.Checked = true;

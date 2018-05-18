@@ -85,6 +85,7 @@ namespace VehiclePlanner.Module.Implement {
             this.tsbOpenFile.Size = new System.Drawing.Size(24, 24);
             this.tsbOpenFile.Text = "toolStripButton1";
             this.tsbOpenFile.ToolTipText = "OpenFile";
+            this.tsbOpenFile.Click += new System.EventHandler(this.tsbOpenFile_Click);
             // 
             // tsbClearMap
             // 
@@ -95,6 +96,7 @@ namespace VehiclePlanner.Module.Implement {
             this.tsbClearMap.Size = new System.Drawing.Size(24, 24);
             this.tsbClearMap.Text = "toolStripButton2";
             this.tsbClearMap.ToolTipText = "Clear Map";
+            this.tsbClearMap.Click += new System.EventHandler(this.tsbClearMap_Click);
             // 
             // tsbScan
             // 
@@ -104,6 +106,7 @@ namespace VehiclePlanner.Module.Implement {
             this.tsbScan.Name = "tsbScan";
             this.tsbScan.Size = new System.Drawing.Size(24, 24);
             this.tsbScan.Text = "toolStripButton3";
+            this.tsbScan.Click += new System.EventHandler(this.tsbScan_Click);
             // 
             // tsbController
             // 
@@ -114,6 +117,7 @@ namespace VehiclePlanner.Module.Implement {
             this.tsbController.Size = new System.Drawing.Size(24, 24);
             this.tsbController.Text = "toolStripButton4";
             this.tsbController.ToolTipText = "Controller";
+            this.tsbController.Click += new System.EventHandler(this.tsbController_Click);
             // 
             // tsbCar
             // 
@@ -124,6 +128,7 @@ namespace VehiclePlanner.Module.Implement {
             this.tsbCar.Size = new System.Drawing.Size(24, 24);
             this.tsbCar.Text = "toolStripButton5";
             this.tsbCar.ToolTipText = "Car";
+            this.tsbCar.Click += new System.EventHandler(this.tsbCar_Click);
             // 
             // tsbSetCar
             // 
@@ -133,6 +138,7 @@ namespace VehiclePlanner.Module.Implement {
             this.tsbSetCar.Name = "tsbSetCar";
             this.tsbSetCar.Size = new System.Drawing.Size(24, 24);
             this.tsbSetCar.Text = "Set Car";
+            this.tsbSetCar.Click += new System.EventHandler(this.tsbSetCar_Click);
             // 
             // tsbConfirm
             // 
@@ -143,6 +149,7 @@ namespace VehiclePlanner.Module.Implement {
             this.tsbConfirm.Size = new System.Drawing.Size(24, 24);
             this.tsbConfirm.Text = "toolStripButton7";
             this.tsbConfirm.ToolTipText = "Confirm";
+            this.tsbConfirm.Click += new System.EventHandler(this.tsbConfirm_Click);
             // 
             // tsbGetLaser
             // 
@@ -153,6 +160,7 @@ namespace VehiclePlanner.Module.Implement {
             this.tsbGetLaser.Size = new System.Drawing.Size(24, 24);
             this.tsbGetLaser.Text = "toolStripButton8";
             this.tsbGetLaser.ToolTipText = "Get Laser";
+            this.tsbGetLaser.Click += new System.EventHandler(this.tsbGetLaser_Click);
             // 
             // BaseMapGL
             // 

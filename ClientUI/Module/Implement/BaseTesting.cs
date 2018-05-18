@@ -135,8 +135,7 @@ namespace VehiclePlanner.Module.Implement {
 
         private void btnScan_Click(object sender, EventArgs e) {
             Task.Run(() => {
-                bool isSacn = btnScan.Tag is bool ? ((bool)btnScan.Tag) : false;
-                rUI.StartScan(!isSacn);
+                rUI.StartScan();
             });
         }
 

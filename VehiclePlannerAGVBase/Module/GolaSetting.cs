@@ -142,11 +142,11 @@ namespace VehiclePlannerAGVBase {
 
         #region Function - Events
 
-        protected override void btnRunAll_Click(object sender, EventArgs e) {
-            lock (mKey) {
-                RunLoopEvent?.BeginInvoke(GetGoals(), null, null);
-            }
-        }
+        //protected override void btnRunAll_Click(object sender, EventArgs e) {
+        //    lock (mKey) {
+        //        RunLoopEvent?.BeginInvoke(GetGoals(), null, null);
+        //    }
+        //}
 
         #endregion Funcitn - Events
     }

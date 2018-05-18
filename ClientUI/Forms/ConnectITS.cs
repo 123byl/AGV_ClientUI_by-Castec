@@ -135,6 +135,7 @@ namespace VehiclePlanner.Forms {
             string dataMember = nameof(source.IsSearchable);
             btnFind.DataBindings.Add(nameof(btnFind.Enabled), source, dataMember);
             cboHostIP.DataBindings.Add(nameof(cboHostIP.Enabled), source, dataMember);
+            btnConnect.DataBindings.Add(nameof(btnConnect.Enabled), source, dataMember);
         }
 
         #endregion Function - Private Methods

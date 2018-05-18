@@ -184,14 +184,12 @@ namespace VehiclePlanner.Module.Implement {
             }
         }
 
-        protected virtual void btnRunAll_Click(object sender, EventArgs e) {
-            
+        protected void btnRunAll_Click(object sender, EventArgs e) {
+            //GetSelectedSingleID();
         }
 
         private void btnDelete_Click(object sender, EventArgs e) {
-            lock (mKey) {
-                rUI.Delete(GetSelectedSingleID());
-            }
+            rUI.Delete(GetSelectedSingleID());
         }
 
         private void btnDeleteAll_Click(object sender, EventArgs e) {
@@ -231,19 +229,17 @@ namespace VehiclePlanner.Module.Implement {
         /// 獲得所有被選取的 Goal 點ID
         /// </summary>
         private List<uint> GetSelectedSingleID() {
-            lock (mKey) {
-                var list = new List<uint>();
-                dgvGoalPoint.InvokeIfNecessary(() => {
-                    for (int row = 0; row < GoalCount; ++row) {
-                        bool isSelected = (bool)dgvGoalPoint[SelectColumn, row].Value;
-                        if (isSelected) {
-                            uint id = (uint)dgvGoalPoint[IDColumn, row].Value;
-                            list.Add(id);
-                        }
+            var list = new List<uint>();
+            dgvGoalPoint.InvokeIfNecessary(() => {
+                for (int row = 0; row < GoalCount; ++row) {
+                    bool isSelected = (bool)dgvGoalPoint[SelectColumn, row].Value;
+                    if (isSelected) {
+                        uint id = (uint)dgvGoalPoint[IDColumn, row].Value;
+                        list.Add(id);
                     }
-                });
-                return list;
-            }
+                }
+            });
+            return list;
         }
 
         /// <summary>
@@ -292,7 +288,47 @@ namespace VehiclePlanner.Module.Implement {
         }
 
         #endregion Implement - IDataDisplay<ICtVehiclePlanner>
-        
+
+        private void tsbAddNow_Click(object sender, EventArgs e) {
+            rUI.AddNow();
+        }
+
+        private void tsbDelete_Click(object sender, EventArgs e) {
+            dgvGoalPoint.EndEdit();
+            rUI.Delete(GetSelectedSingleID());
+        }
+
+        private void tsbSave_Click(object sender, EventArgs e) {
+            rUI.SaveMap();
+        }
+
+        private void tsbPath_Click(object sender, EventArgs e) {
+            string goalName = cmbGoalList.InvokeIfNecessary(() => cmbGoalList.Text);
+            Task.Run(() => {
+                rUI.FindPath(goalName);
+            });
+        }
+
+        private void tsbRun_Click(object sender, EventArgs e) {
+            Task.Run(() => {
+                string goalName = cmbGoalList.InvokeIfNecessary(() => cmbGoalList.Text);
+                rUI.Run(goalName);
+            });
+        }
+
+        private void tsbRunAll_Click(object sender, EventArgs e) {
+            //GetSelectedSingleID();
+        }
+
+        private void tsbCharging_Click(object sender, EventArgs e) {
+            lock (mKey) {
+                Task.Run(() => {
+                    string powerName = cmbGoalList.InvokeIfNecessary(() => cmbGoalList.Text);
+                    rUI.Charging(powerName);
+                });
+            }
+        }
+
     }
 
 }

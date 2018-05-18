@@ -150,7 +150,7 @@ namespace VehiclePlanner.Core {
         /// <summary>
         /// 車子馬達速度
         /// </summary>
-        int Velocity { get; set; }
+        int Velocity { get; }
         /// <summary>
         /// 檔案選擇方法委派
         /// </summary>

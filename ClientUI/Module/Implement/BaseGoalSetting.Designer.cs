@@ -594,6 +594,7 @@ namespace VehiclePlanner.Module.Implement {
             this.tsbAddNow.Name = "tsbAddNow";
             this.tsbAddNow.Size = new System.Drawing.Size(24, 24);
             this.tsbAddNow.Text = "Add now";
+            this.tsbAddNow.Click += new System.EventHandler(this.tsbAddNow_Click);
             // 
             // tsbDelete
             // 
@@ -603,6 +604,7 @@ namespace VehiclePlanner.Module.Implement {
             this.tsbDelete.Name = "tsbDelete";
             this.tsbDelete.Size = new System.Drawing.Size(24, 24);
             this.tsbDelete.Text = "Delete";
+            this.tsbDelete.Click += new System.EventHandler(this.tsbDelete_Click);
             // 
             // tsbSave
             // 
@@ -612,6 +614,7 @@ namespace VehiclePlanner.Module.Implement {
             this.tsbSave.Name = "tsbSave";
             this.tsbSave.Size = new System.Drawing.Size(24, 24);
             this.tsbSave.Text = "Save";
+            this.tsbSave.Click += new System.EventHandler(this.tsbSave_Click);
             // 
             // toolStripSeparator1
             // 
@@ -626,6 +629,7 @@ namespace VehiclePlanner.Module.Implement {
             this.tsbPath.Name = "tsbPath";
             this.tsbPath.Size = new System.Drawing.Size(24, 24);
             this.tsbPath.Text = "Path";
+            this.tsbPath.Click += new System.EventHandler(this.tsbPath_Click);
             // 
             // tsbRun
             // 
@@ -635,6 +639,7 @@ namespace VehiclePlanner.Module.Implement {
             this.tsbRun.Name = "tsbRun";
             this.tsbRun.Size = new System.Drawing.Size(24, 24);
             this.tsbRun.Text = "Run";
+            this.tsbRun.Click += new System.EventHandler(this.tsbRun_Click);
             // 
             // tsbRunAll
             // 
@@ -644,6 +649,7 @@ namespace VehiclePlanner.Module.Implement {
             this.tsbRunAll.Name = "tsbRunAll";
             this.tsbRunAll.Size = new System.Drawing.Size(24, 24);
             this.tsbRunAll.Text = "RunAll";
+            this.tsbRunAll.Click += new System.EventHandler(this.tsbRunAll_Click);
             // 
             // tsbCharging
             // 
@@ -653,6 +659,7 @@ namespace VehiclePlanner.Module.Implement {
             this.tsbCharging.Name = "tsbCharging";
             this.tsbCharging.Size = new System.Drawing.Size(24, 24);
             this.tsbCharging.Text = "Charging";
+            this.tsbCharging.Click += new System.EventHandler(this.tsbCharging_Click);
             // 
             // BaseGoalSetting
             // 
