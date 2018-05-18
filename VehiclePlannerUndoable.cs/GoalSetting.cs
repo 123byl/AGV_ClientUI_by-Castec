@@ -63,9 +63,12 @@ namespace VehiclePlannerUndoable.cs {
 
             /*-- 由於無法於介面設計師新增控制項，只好用程式碼新增 --*/
             dgvGoalPoint.Columns.Clear();
-            this.panel1.Controls.Remove(this.dgvGoalPoint);
-            this.panel1.Controls.Add(this.cboSingleType);
-            this.panel1.Controls.Add(dgvGoalPoint);
+            this.Controls.Remove(this.dgvGoalPoint);
+            this.Controls.Add(this.cboSingleType);
+            this.Controls.Add(dgvGoalPoint);
+            this.toolStrip1.BringToFront();
+            this.cboSingleType.BringToFront();
+            this.dgvGoalPoint.BringToFront();
             Font font = new Font("微軟正黑體", 10, FontStyle.Regular);
             dgvGoalPoint.DefaultCellStyle.Font = font;
             dgvGoalPoint.ColumnHeadersDefaultCellStyle.Font = font;

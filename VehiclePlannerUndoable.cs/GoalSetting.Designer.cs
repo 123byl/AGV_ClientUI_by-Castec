@@ -37,9 +37,10 @@
             // cboSingleType
             // 
             this.cboSingleType.Dock = System.Windows.Forms.DockStyle.Top;
+            this.cboSingleType.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.cboSingleType.Location = new System.Drawing.Point(0, 0);
             this.cboSingleType.Name = "cboSingleType";
-            this.cboSingleType.Size = new System.Drawing.Size(545, 23);
+            this.cboSingleType.Size = new System.Drawing.Size(545, 33);
             this.cboSingleType.TabIndex = 47;
             // 
             // GoalSetting
