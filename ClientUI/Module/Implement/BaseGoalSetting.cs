@@ -25,6 +25,17 @@ namespace VehiclePlanner.Module.Implement {
 
         protected readonly object mKey = new object();
 
+        /// <summary>
+        /// 右鍵選單所點的列索引
+        /// </summary>
+        protected int mSelectedRowIdx = -1;
+
+        /// <summary>
+        /// 是否全選
+        /// </summary>
+        protected bool mSelectAll = false;
+        
+            
         #endregion Declaration - Fields
 
         #region Declaration - Const
@@ -318,6 +329,32 @@ namespace VehiclePlanner.Module.Implement {
             return ret;
         }
 
+        /// <summary>
+        /// 取得對應標記物索引的標記物名稱
+        /// </summary>
+        /// <param name="rowIdx"></param>
+        /// <returns></returns>
+        protected string ToSingleName(int rowIdx) {
+            string name = string.Empty;
+            this.InvokeIfNecessary(() => {
+                name = dgvGoalPoint["cName", rowIdx].Value.ToString();
+            });
+            return name;
+        }
+
+        /// <summary>
+        /// 取得對應標記物索引的標記物ID
+        /// </summary>
+        /// <param name="rowIdx"></param>
+        /// <returns></returns>
+        protected uint ToSingleID(int rowIdx) {
+            uint id = 0;
+            this.InvokeIfNecessary(() => {
+                id = (uint)dgvGoalPoint["cID", rowIdx].Value;
+            });
+            return id;
+        }
+
         #endregion Fucnction - Private Methods
 
         #region Implement - IDataDisplay<ICtVehiclePlanner>
@@ -330,9 +367,72 @@ namespace VehiclePlanner.Module.Implement {
             if (source.DelInvoke == null) source.DelInvoke = invk => this.InvokeIfNecessary(invk);
         }
 
+
         #endregion Implement - IDataDisplay<ICtVehiclePlanner>
 
-        
+        protected virtual void dgvGoalPoint_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e) {
+            switch (e.Button) {
+                case MouseButtons.Left:
+                    if (e.RowIndex == -1 && dgvGoalPoint.Columns[e.ColumnIndex].Name == "cSelect") {
+                        mSelectAll = !mSelectAll;
+                        this.InvokeIfNecessary(() => {
+                            foreach (DataGridViewRow row in dgvGoalPoint.Rows) {
+                                row.Cells["cSelect"].Value = mSelectAll;
+                                Console.WriteLine(row.Cells["cName"].Value);
+                            }
+                            dgvGoalPoint.EndEdit();
+                        });
+                    }
+                    break;
+                case MouseButtons.Right:
+                    mSelectedRowIdx = e.RowIndex;
+                    contextMenuStrip1.Show(Cursor.Position);
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// 搜尋路徑
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void miPath_Click(object sender, EventArgs e) {
+            string name = ToSingleName(mSelectedRowIdx);            
+            rUI.FindPath(name);
+        }
+
+        /// <summary>
+        /// 移動至該Goal點
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void miRun_Click(object sender, EventArgs e) {
+            string name = ToSingleName(mSelectedRowIdx);
+            rUI.Run(name);
+        }
+
+        /// <summary>
+        /// 至該充電站進行充電
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void miCharging_Click(object sender, EventArgs e) {
+            string name = ToSingleName(mSelectedRowIdx);
+            rUI.Charging(name);
+        }
+
+        /// <summary>
+        /// 刪除該Goal點
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void miDelete_Click(object sender, EventArgs e) {
+            uint id = ToSingleID(mSelectedRowIdx);
+            List<uint> ids = new List<uint>();
+            ids.Add(id);
+            rUI.Delete(ids);
+        }
+
     }
 
 }

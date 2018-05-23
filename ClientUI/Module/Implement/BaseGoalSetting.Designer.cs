@@ -26,6 +26,7 @@ namespace VehiclePlanner.Module.Implement {
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
+            this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BaseGoalSetting));
@@ -38,12 +39,6 @@ namespace VehiclePlanner.Module.Implement {
             this.label16 = new System.Windows.Forms.Label();
             this.btnGetGoalList = new System.Windows.Forms.Button();
             this.dgvGoalPoint = new CtBind.Inheritable.DataGridView();
-            this.cSelect = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.cID = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.cName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.cX = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.cY = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.cToward = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.tsbAddNow = new System.Windows.Forms.ToolStripButton();
             this.tsbDelete = new System.Windows.Forms.ToolStripButton();
@@ -53,8 +48,21 @@ namespace VehiclePlanner.Module.Implement {
             this.tsbRun = new System.Windows.Forms.ToolStripButton();
             this.tsbRunAll = new System.Windows.Forms.ToolStripButton();
             this.tsbCharging = new System.Windows.Forms.ToolStripButton();
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.miPath = new System.Windows.Forms.ToolStripMenuItem();
+            this.miRun = new System.Windows.Forms.ToolStripMenuItem();
+            this.miCharging = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.miDelete = new System.Windows.Forms.ToolStripMenuItem();
+            this.cSelect = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.cID = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.cName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.cX = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.cY = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.cToward = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dgvGoalPoint)).BeginInit();
             this.toolStrip1.SuspendLayout();
+            this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // cmbGoalList
@@ -184,51 +192,7 @@ namespace VehiclePlanner.Module.Implement {
             this.dgvGoalPoint.RowTemplate.Height = 24;
             this.dgvGoalPoint.Size = new System.Drawing.Size(752, 749);
             this.dgvGoalPoint.TabIndex = 46;
-            // 
-            // cSelect
-            // 
-            this.cSelect.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.cSelect.HeaderText = "Select";
-            this.cSelect.Name = "cSelect";
-            this.cSelect.Width = 73;
-            // 
-            // cID
-            // 
-            this.cID.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.cID.HeaderText = "ID";
-            this.cID.Name = "cID";
-            this.cID.Width = 62;
-            // 
-            // cName
-            // 
-            this.cName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.cName.HeaderText = "Name";
-            this.cName.Name = "cName";
-            this.cName.Width = 98;
-            // 
-            // cX
-            // 
-            this.cX.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.cX.DataPropertyName = "double";
-            this.cX.HeaderText = "X";
-            this.cX.Name = "cX";
-            this.cX.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            // 
-            // cY
-            // 
-            this.cY.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.cY.DataPropertyName = "double";
-            this.cY.HeaderText = "Y";
-            this.cY.Name = "cY";
-            this.cY.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            // 
-            // cToward
-            // 
-            this.cToward.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.cToward.DataPropertyName = "double";
-            this.cToward.HeaderText = "Toward";
-            this.cToward.Name = "cToward";
-            this.cToward.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.dgvGoalPoint.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgvGoalPoint_CellMouseClick);
             // 
             // toolStrip1
             // 
@@ -330,6 +294,96 @@ namespace VehiclePlanner.Module.Implement {
             this.tsbCharging.ToolTipText = "Charging(Ctrl + C)";
             this.tsbCharging.Click += new System.EventHandler(this.tsbCharging_Click);
             // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.miPath,
+            this.miRun,
+            this.miCharging,
+            this.toolStripSeparator2,
+            this.miDelete});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(145, 106);
+            // 
+            // miPath
+            // 
+            this.miPath.Name = "miPath";
+            this.miPath.Size = new System.Drawing.Size(144, 24);
+            this.miPath.Text = "Path";
+            this.miPath.Click += new System.EventHandler(this.miPath_Click);
+            // 
+            // miRun
+            // 
+            this.miRun.Name = "miRun";
+            this.miRun.Size = new System.Drawing.Size(144, 24);
+            this.miRun.Text = "Run";
+            this.miRun.Click += new System.EventHandler(this.miRun_Click);
+            // 
+            // miCharging
+            // 
+            this.miCharging.Name = "miCharging";
+            this.miCharging.Size = new System.Drawing.Size(144, 24);
+            this.miCharging.Text = "Charging";
+            this.miCharging.Click += new System.EventHandler(this.miCharging_Click);
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(141, 6);
+            // 
+            // miDelete
+            // 
+            this.miDelete.Name = "miDelete";
+            this.miDelete.Size = new System.Drawing.Size(144, 24);
+            this.miDelete.Text = "Delete";
+            this.miDelete.Click += new System.EventHandler(this.miDelete_Click);
+            // 
+            // cSelect
+            // 
+            this.cSelect.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.cSelect.HeaderText = "Select";
+            this.cSelect.Name = "cSelect";
+            this.cSelect.Width = 73;
+            // 
+            // cID
+            // 
+            this.cID.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.cID.HeaderText = "ID";
+            this.cID.Name = "cID";
+            this.cID.Width = 62;
+            // 
+            // cName
+            // 
+            this.cName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.cName.HeaderText = "Name";
+            this.cName.Name = "cName";
+            this.cName.Width = 98;
+            // 
+            // cX
+            // 
+            this.cX.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.cX.DataPropertyName = "double";
+            this.cX.HeaderText = "X";
+            this.cX.Name = "cX";
+            this.cX.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // cY
+            // 
+            this.cY.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.cY.DataPropertyName = "double";
+            this.cY.HeaderText = "Y";
+            this.cY.Name = "cY";
+            this.cY.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // cToward
+            // 
+            this.cToward.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.cToward.DataPropertyName = "double";
+            this.cToward.HeaderText = "Toward";
+            this.cToward.Name = "cToward";
+            this.cToward.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
             // BaseGoalSetting
             // 
             this.AutoHidePortion = 206D;
@@ -357,6 +411,7 @@ namespace VehiclePlanner.Module.Implement {
             ((System.ComponentModel.ISupportInitialize)(this.dgvGoalPoint)).EndInit();
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
+            this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -372,12 +427,6 @@ namespace VehiclePlanner.Module.Implement {
         protected System.Windows.Forms.ComboBox cmbGoalList;
         private System.Windows.Forms.Button btnGetGoalList;
         protected Inheritable.DataGridView dgvGoalPoint;
-        private System.Windows.Forms.DataGridViewCheckBoxColumn cSelect;
-        private System.Windows.Forms.DataGridViewTextBoxColumn cID;
-        private System.Windows.Forms.DataGridViewTextBoxColumn cName;
-        private System.Windows.Forms.DataGridViewTextBoxColumn cX;
-        private System.Windows.Forms.DataGridViewTextBoxColumn cY;
-        private System.Windows.Forms.DataGridViewTextBoxColumn cToward;
         protected System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton tsbAddNow;
         private System.Windows.Forms.ToolStripButton tsbDelete;
@@ -387,5 +436,17 @@ namespace VehiclePlanner.Module.Implement {
         private System.Windows.Forms.ToolStripButton tsbRun;
         private System.Windows.Forms.ToolStripButton tsbRunAll;
         private System.Windows.Forms.ToolStripButton tsbCharging;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem miPath;
+        private System.Windows.Forms.ToolStripMenuItem miRun;
+        private System.Windows.Forms.ToolStripMenuItem miCharging;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripMenuItem miDelete;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn cSelect;
+        private System.Windows.Forms.DataGridViewTextBoxColumn cID;
+        private System.Windows.Forms.DataGridViewTextBoxColumn cName;
+        private System.Windows.Forms.DataGridViewTextBoxColumn cX;
+        private System.Windows.Forms.DataGridViewTextBoxColumn cY;
+        private System.Windows.Forms.DataGridViewTextBoxColumn cToward;
     }
 }
