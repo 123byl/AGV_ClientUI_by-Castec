@@ -492,6 +492,9 @@ namespace INITesting {
                 case Keys.L | Keys.Control:
                     Highlight();
                     break;
+                case Keys.C:
+                    Console.WriteLine("ParamEdit");
+                    break;
                 default:
                     return base.ProcessCmdKey(ref msg, keyData);
             }

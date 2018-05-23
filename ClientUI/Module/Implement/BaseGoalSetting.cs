@@ -132,7 +132,16 @@ namespace VehiclePlanner.Module.Implement {
                 });
             }
         }
-        
+
+        /// <summary>
+        /// 回傳該權限是否具有控制權
+        /// </summary>
+        /// <param name="lv">使用者權限</param>
+        /// <returns>是否具有控制權</returns>
+        public override bool IsVisiable(AccessLevel lv) {
+            return lv > AccessLevel.None;
+        }
+
         #endregion Implement - IIGoalSetting
 
         #region UI Event
@@ -144,87 +153,82 @@ namespace VehiclePlanner.Module.Implement {
                 rUI.GetGoalName();
             });
         }
+        
+        #endregion Button
 
-        private void btnCurrPos_Click(object sender, EventArgs e) {
-            lock (mKey) {
-                rUI.AddNow();
-            }
+        #region ToolStripButton
+
+        /// <summary>
+        /// 將當前位置設為Goal點
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void tsbAddNow_Click(object sender, EventArgs e) {
+            rUI.AddNow();
         }
 
-        private void btnGetMap_Click(object sender, EventArgs e) {
-            lock (mKey) {
-                Task.Run(() => rUI.GetMap()); 
-            }
-        }
-
-        private void btnLoadMap_Click(object sender, EventArgs e) {
-            lock (mKey) {
-                rUI.ITest_LoadMap();
-            }
-        }
-
-        private void btnPath_Click(object sender, EventArgs e) {
-            Task.Run(() => {
-                string goalName = cmbGoalList.InvokeIfNecessary(() => cmbGoalList.Text);
-                rUI.FindPath(goalName);
-            });
-        }
-
-        private void btnSendMap_Click(object sender, EventArgs e) {
-            lock (mKey) {
-                rUI.ITest_SendMap();}
-        }
-
-        private void btnGoGoal_Click(object sender, EventArgs e) {
-            lock (mKey) {
-                Task.Run(() => {
-                    string goalName = cmbGoalList.InvokeIfNecessary(() => cmbGoalList.Text);
-                    rUI.Run(goalName);
-                });
-            }
-        }
-
-        protected void btnRunAll_Click(object sender, EventArgs e) {
-            //GetSelectedSingleID();
-        }
-
-        private void btnDelete_Click(object sender, EventArgs e) {
+        /// <summary>
+        /// 刪除選擇的Goal點
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void tsbDelete_Click(object sender, EventArgs e) {
+            dgvGoalPoint.EndEdit();
             rUI.Delete(GetSelectedSingleID());
         }
 
-        private void btnDeleteAll_Click(object sender, EventArgs e) {
+        /// <summary>
+        /// 將當前設定寫入Map檔
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void tsbSave_Click(object sender, EventArgs e) {
+            rUI.SaveMap();
+        }
+
+        /// <summary>
+        /// 路徑規劃
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void tsbPath_Click(object sender, EventArgs e) {
+            string goalName = cmbGoalList.InvokeIfNecessary(() => cmbGoalList.Text);
+            rUI.FindPath(goalName);
+        }
+
+        /// <summary>
+        /// 跑向指定Goal點
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void tsbRun_Click(object sender, EventArgs e) {
+            string goalName = cmbGoalList.InvokeIfNecessary(() => cmbGoalList.Text);
+            rUI.Run(goalName);
+        }
+
+        private void tsbRunAll_Click(object sender, EventArgs e) {
+            //GetSelectedSingleID();
+        }
+
+        /// <summary>
+        /// 進行充電
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void tsbCharging_Click(object sender, EventArgs e) {
             lock (mKey) {
-                rUI.Delete(GetAllGoal());
+                string powerName = cmbGoalList.InvokeIfNecessary(() => cmbGoalList.Text);
+                rUI.Charging(powerName);
             }
         }
 
-        private void btnSaveGoal_Click(object sender, EventArgs e) {
-            lock (mKey) {
-                rUI.SaveMap();
-            }
-        }
 
-        private void btnCharging_Click(object sender, EventArgs e) {
-            lock (mKey) {
-                Task.Run(() => {
-                    string powerName = cmbGoalList.InvokeIfNecessary(() => cmbGoalList.Text);
-                    rUI.Charging(powerName);
-                });
-            }
-        }
-
-        private void btnClear_Click(object sender, EventArgs e) {
-            lock (mKey) {
-                rUI.ClearMap();
-            }
-        }
-
-        #endregion Button
+        #endregion ToolStripButton
 
         #endregion UI Event
-        
+
         #region Fucnction - Private Methods
-        
+
         /// <summary>
         /// 獲得所有被選取的 Goal 點ID
         /// </summary>
@@ -271,8 +275,47 @@ namespace VehiclePlanner.Module.Implement {
             }
         }
 
-        public override bool IsVisiable(AccessLevel lv) {
-            return lv > AccessLevel.None;
+        /// <summary>
+        /// 快捷鍵
+        /// </summary>
+        /// <param name="msg"></param>
+        /// <param name="keyData"></param>
+        /// <returns></returns>
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {
+            bool ret = true;
+            switch (keyData) {
+                case Keys.N | Keys.Control:
+                    rUI.AddNow();
+                    break;
+                case Keys.D | Keys.Control:
+                    dgvGoalPoint.EndEdit();
+                    rUI.Delete(GetSelectedSingleID());
+                    break;
+                case Keys.S | Keys.Control:
+                    rUI.SaveMap();
+                    break;
+                case Keys.P | Keys.Control:
+                    //string goalName = cmbGoalList.InvokeIfNecessary(() => cmbGoalList.Text);
+                    //rUI.FindPath(goalName);
+                    Console.WriteLine("Path");
+                    break;
+                case Keys.R | Keys.Control:
+                    //rUI.Run();
+                    Console.WriteLine("Run");
+                    break;
+                case Keys.I | Keys.Control:
+                    //RunAll
+                    Console.WriteLine("RunAll");
+                    break;
+                case Keys.C | Keys.Control:
+                    //Charging
+                    Console.WriteLine("Charging");
+                    break;
+                default:
+                    ret = base.ProcessCmdKey(ref msg, keyData);
+                    break;
+            }
+            return ret;
         }
 
         #endregion Fucnction - Private Methods
@@ -289,46 +332,7 @@ namespace VehiclePlanner.Module.Implement {
 
         #endregion Implement - IDataDisplay<ICtVehiclePlanner>
 
-        private void tsbAddNow_Click(object sender, EventArgs e) {
-            rUI.AddNow();
-        }
-
-        private void tsbDelete_Click(object sender, EventArgs e) {
-            dgvGoalPoint.EndEdit();
-            rUI.Delete(GetSelectedSingleID());
-        }
-
-        private void tsbSave_Click(object sender, EventArgs e) {
-            rUI.SaveMap();
-        }
-
-        private void tsbPath_Click(object sender, EventArgs e) {
-            string goalName = cmbGoalList.InvokeIfNecessary(() => cmbGoalList.Text);
-            Task.Run(() => {
-                rUI.FindPath(goalName);
-            });
-        }
-
-        private void tsbRun_Click(object sender, EventArgs e) {
-            Task.Run(() => {
-                string goalName = cmbGoalList.InvokeIfNecessary(() => cmbGoalList.Text);
-                rUI.Run(goalName);
-            });
-        }
-
-        private void tsbRunAll_Click(object sender, EventArgs e) {
-            //GetSelectedSingleID();
-        }
-
-        private void tsbCharging_Click(object sender, EventArgs e) {
-            lock (mKey) {
-                Task.Run(() => {
-                    string powerName = cmbGoalList.InvokeIfNecessary(() => cmbGoalList.Text);
-                    rUI.Charging(powerName);
-                });
-            }
-        }
-
+        
     }
 
 }

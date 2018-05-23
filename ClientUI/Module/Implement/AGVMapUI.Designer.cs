@@ -1,4 +1,6 @@
 ﻿
+using CtBind;
+
 namespace VehiclePlanner.Module.Implement {
     partial class BaseMapGL {
         /// <summary>
@@ -27,14 +29,17 @@ namespace VehiclePlanner.Module.Implement {
             this.pnlShow = new System.Windows.Forms.Panel();
             this.pnlHide = new System.Windows.Forms.Panel();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.tsbOpenFile = new System.Windows.Forms.ToolStripButton();
-            this.tsbClearMap = new System.Windows.Forms.ToolStripButton();
-            this.tsbScan = new System.Windows.Forms.ToolStripButton();
-            this.tsbController = new System.Windows.Forms.ToolStripButton();
-            this.tsbCar = new System.Windows.Forms.ToolStripButton();
-            this.tsbSetCar = new System.Windows.Forms.ToolStripButton();
-            this.tsbConfirm = new System.Windows.Forms.ToolStripButton();
-            this.tsbGetLaser = new System.Windows.Forms.ToolStripButton();
+            this.tsbOpenFile = new Bindable.ToolStripButton();
+            this.tsbClearMap = new Bindable.ToolStripButton();
+            this.tsbConnect = new Bindable.ToolStripButton();
+            this.tsbGetMap = new Bindable.ToolStripButton();
+            this.tsbScan = new Bindable.ToolStripButton();
+            this.tsbController = new Bindable.ToolStripButton();
+            this.tsbCar = new Bindable.ToolStripButton();
+            this.tsbSetCar = new Bindable.ToolStripButton();
+            this.tsbConfirm = new Bindable.ToolStripButton();
+            this.tsbGetLaser = new Bindable.ToolStripButton();
+            this.tsbSendMap = new Bindable.ToolStripButton();
             this.pnlShow.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -64,6 +69,9 @@ namespace VehiclePlanner.Module.Implement {
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsbOpenFile,
             this.tsbClearMap,
+            this.tsbConnect,
+            this.tsbGetMap,
+            this.tsbSendMap,
             this.tsbScan,
             this.tsbController,
             this.tsbCar,
@@ -84,7 +92,7 @@ namespace VehiclePlanner.Module.Implement {
             this.tsbOpenFile.Name = "tsbOpenFile";
             this.tsbOpenFile.Size = new System.Drawing.Size(24, 24);
             this.tsbOpenFile.Text = "toolStripButton1";
-            this.tsbOpenFile.ToolTipText = "OpenFile";
+            this.tsbOpenFile.ToolTipText = "OpenFile(Ctrl + O)";
             this.tsbOpenFile.Click += new System.EventHandler(this.tsbOpenFile_Click);
             // 
             // tsbClearMap
@@ -95,8 +103,30 @@ namespace VehiclePlanner.Module.Implement {
             this.tsbClearMap.Name = "tsbClearMap";
             this.tsbClearMap.Size = new System.Drawing.Size(24, 24);
             this.tsbClearMap.Text = "toolStripButton2";
-            this.tsbClearMap.ToolTipText = "Clear Map";
+            this.tsbClearMap.ToolTipText = "Clear Map(Ctrl + E)";
             this.tsbClearMap.Click += new System.EventHandler(this.tsbClearMap_Click);
+            // 
+            // tsbConnect
+            // 
+            this.tsbConnect.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsbConnect.Image = global::VehiclePlanner.Properties.Resources.Disconnect;
+            this.tsbConnect.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbConnect.Name = "tsbConnect";
+            this.tsbConnect.Size = new System.Drawing.Size(24, 24);
+            this.tsbConnect.Text = "toolStripButton1";
+            this.tsbConnect.ToolTipText = "Connect to iTS(Ctrl + C)";
+            this.tsbConnect.Click += new System.EventHandler(this.tsbConnect_Click);
+            // 
+            // tsbGetMap
+            // 
+            this.tsbGetMap.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsbGetMap.Image = global::VehiclePlanner.Properties.Resources.Download;
+            this.tsbGetMap.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbGetMap.Name = "tsbGetMap";
+            this.tsbGetMap.Size = new System.Drawing.Size(24, 24);
+            this.tsbGetMap.Text = "toolStripButton2";
+            this.tsbGetMap.ToolTipText = "Download map(Ctrl + D)";
+            this.tsbGetMap.Click += new System.EventHandler(this.tsbGetMap_Click);
             // 
             // tsbScan
             // 
@@ -106,6 +136,7 @@ namespace VehiclePlanner.Module.Implement {
             this.tsbScan.Name = "tsbScan";
             this.tsbScan.Size = new System.Drawing.Size(24, 24);
             this.tsbScan.Text = "toolStripButton3";
+            this.tsbScan.ToolTipText = "Map Scan(Ctrl + S)";
             this.tsbScan.Click += new System.EventHandler(this.tsbScan_Click);
             // 
             // tsbController
@@ -116,7 +147,7 @@ namespace VehiclePlanner.Module.Implement {
             this.tsbController.Name = "tsbController";
             this.tsbController.Size = new System.Drawing.Size(24, 24);
             this.tsbController.Text = "toolStripButton4";
-            this.tsbController.ToolTipText = "Controller";
+            this.tsbController.ToolTipText = "Controller(Ctrl + M)";
             this.tsbController.Click += new System.EventHandler(this.tsbController_Click);
             // 
             // tsbCar
@@ -127,7 +158,7 @@ namespace VehiclePlanner.Module.Implement {
             this.tsbCar.Name = "tsbCar";
             this.tsbCar.Size = new System.Drawing.Size(24, 24);
             this.tsbCar.Text = "toolStripButton5";
-            this.tsbCar.ToolTipText = "Car";
+            this.tsbCar.ToolTipText = "Car(Ctrl + G)";
             this.tsbCar.Click += new System.EventHandler(this.tsbCar_Click);
             // 
             // tsbSetCar
@@ -138,6 +169,7 @@ namespace VehiclePlanner.Module.Implement {
             this.tsbSetCar.Name = "tsbSetCar";
             this.tsbSetCar.Size = new System.Drawing.Size(24, 24);
             this.tsbSetCar.Text = "Set Car";
+            this.tsbSetCar.ToolTipText = "Set Car(Ctrl + P)";
             this.tsbSetCar.Click += new System.EventHandler(this.tsbSetCar_Click);
             // 
             // tsbConfirm
@@ -148,7 +180,7 @@ namespace VehiclePlanner.Module.Implement {
             this.tsbConfirm.Name = "tsbConfirm";
             this.tsbConfirm.Size = new System.Drawing.Size(24, 24);
             this.tsbConfirm.Text = "toolStripButton7";
-            this.tsbConfirm.ToolTipText = "Confirm";
+            this.tsbConfirm.ToolTipText = "Confirm(Ctrl + F)";
             this.tsbConfirm.Click += new System.EventHandler(this.tsbConfirm_Click);
             // 
             // tsbGetLaser
@@ -159,8 +191,19 @@ namespace VehiclePlanner.Module.Implement {
             this.tsbGetLaser.Name = "tsbGetLaser";
             this.tsbGetLaser.Size = new System.Drawing.Size(24, 24);
             this.tsbGetLaser.Text = "toolStripButton8";
-            this.tsbGetLaser.ToolTipText = "Get Laser";
+            this.tsbGetLaser.ToolTipText = "Get Laser(Ctrl + L)";
             this.tsbGetLaser.Click += new System.EventHandler(this.tsbGetLaser_Click);
+            // 
+            // tsbSendMap
+            // 
+            this.tsbSendMap.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsbSendMap.Image = global::VehiclePlanner.Properties.Resources.Upload;
+            this.tsbSendMap.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbSendMap.Name = "tsbSendMap";
+            this.tsbSendMap.Size = new System.Drawing.Size(24, 24);
+            this.tsbSendMap.Text = "toolStripButton3";
+            this.tsbSendMap.ToolTipText = "Upload map(Ctrl + U)";
+            this.tsbSendMap.Click += new System.EventHandler(this.tsbSendMap_Click);
             // 
             // BaseMapGL
             // 
@@ -174,6 +217,7 @@ namespace VehiclePlanner.Module.Implement {
             this.DockAreas = WeifenLuo.WinFormsUI.Docking.DockAreas.Document;
             this.Font = new System.Drawing.Font("新細明體", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.Name = "BaseMapGL";
+            this.ShowHint = WeifenLuo.WinFormsUI.Docking.DockState.Unknown;
             this.Text = "iTS Map";
             this.pnlShow.ResumeLayout(false);
             this.toolStrip1.ResumeLayout(false);
@@ -188,13 +232,16 @@ namespace VehiclePlanner.Module.Implement {
         protected System.Windows.Forms.Panel pnlShow;
         protected System.Windows.Forms.Panel pnlHide;
         private System.Windows.Forms.ToolStrip toolStrip1;
-        private System.Windows.Forms.ToolStripButton tsbOpenFile;
-        private System.Windows.Forms.ToolStripButton tsbClearMap;
-        private System.Windows.Forms.ToolStripButton tsbScan;
-        private System.Windows.Forms.ToolStripButton tsbController;
-        private System.Windows.Forms.ToolStripButton tsbCar;
-        private System.Windows.Forms.ToolStripButton tsbSetCar;
-        private System.Windows.Forms.ToolStripButton tsbConfirm;
-        private System.Windows.Forms.ToolStripButton tsbGetLaser;
+        private Bindable.ToolStripButton tsbOpenFile;
+        private Bindable.ToolStripButton tsbClearMap;
+        private Bindable.ToolStripButton tsbScan;
+        private Bindable.ToolStripButton tsbController;
+        private Bindable.ToolStripButton tsbCar;
+        private Bindable.ToolStripButton tsbSetCar;
+        private Bindable.ToolStripButton tsbConfirm;
+        private Bindable.ToolStripButton tsbGetLaser;
+        private Bindable.ToolStripButton tsbConnect;
+        private Bindable.ToolStripButton tsbGetMap;
+        private Bindable.ToolStripButton tsbSendMap;
     }
 }

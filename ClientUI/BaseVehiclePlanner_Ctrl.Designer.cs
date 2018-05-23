@@ -91,13 +91,8 @@ namespace VehiclePlanner {
             this.miBypassSocket = new CtBind.Bindable.ToolStripMenuItem();
             this.miLoadFile = new CtBind.Bindable.ToolStripMenuItem();
             this.miServer = new CtBind.Bindable.ToolStripMenuItem();
-            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.tsbConnect = new CtBind.Bindable.ToolStripButton();
-            this.tsbGetMap = new CtBind.Bindable.ToolStripButton();
-            this.tsbSendMap = new CtBind.Bindable.ToolStripButton();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
-            this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // dockPanel
@@ -108,9 +103,9 @@ namespace VehiclePlanner {
             this.dockPanel.DockBackColor = System.Drawing.SystemColors.Control;
             this.dockPanel.DockLeftPortion = 0.1D;
             this.dockPanel.DockRightPortion = 0.1D;
-            this.dockPanel.Location = new System.Drawing.Point(0, 54);
+            this.dockPanel.Location = new System.Drawing.Point(0, 27);
             this.dockPanel.Name = "dockPanel";
-            this.dockPanel.Size = new System.Drawing.Size(1082, 581);
+            this.dockPanel.Size = new System.Drawing.Size(1082, 608);
             dockPanelGradient1.EndColor = System.Drawing.SystemColors.ControlLight;
             dockPanelGradient1.StartColor = System.Drawing.SystemColors.ControlLight;
             autoHideStripSkin1.DockStripGradient = dockPanelGradient1;
@@ -394,59 +389,12 @@ namespace VehiclePlanner {
             this.miServer.Size = new System.Drawing.Size(143, 26);
             this.miServer.Text = "Server";
             // 
-            // toolStrip1
-            // 
-            this.toolStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.tsbConnect,
-            this.tsbGetMap,
-            this.tsbSendMap});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 27);
-            this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(1082, 27);
-            this.toolStrip1.TabIndex = 12;
-            this.toolStrip1.Text = "toolStrip1";
-            // 
-            // tsbConnect
-            // 
-            this.tsbConnect.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tsbConnect.Image = global::VehiclePlanner.Properties.Resources.Disconnect;
-            this.tsbConnect.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbConnect.Name = "tsbConnect";
-            this.tsbConnect.Size = new System.Drawing.Size(24, 24);
-            this.tsbConnect.Text = "toolStripButton1";
-            this.tsbConnect.ToolTipText = "Connect";
-            this.tsbConnect.Click += new System.EventHandler(this.tsbConnect_Click);
-            // 
-            // tsbGetMap
-            // 
-            this.tsbGetMap.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tsbGetMap.Image = global::VehiclePlanner.Properties.Resources.Download;
-            this.tsbGetMap.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbGetMap.Name = "tsbGetMap";
-            this.tsbGetMap.Size = new System.Drawing.Size(24, 24);
-            this.tsbGetMap.Text = "toolStripButton2";
-            this.tsbGetMap.ToolTipText = "Get Map";
-            this.tsbGetMap.Click += new System.EventHandler(this.tsbGetMap_Click);
-            // 
-            // tsbSendMap
-            // 
-            this.tsbSendMap.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tsbSendMap.Image = global::VehiclePlanner.Properties.Resources.Upload;
-            this.tsbSendMap.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbSendMap.Name = "tsbSendMap";
-            this.tsbSendMap.Size = new System.Drawing.Size(24, 24);
-            this.tsbSendMap.Text = "toolStripButton3";
-            this.tsbSendMap.ToolTipText = "Send Map";
-            this.tsbSendMap.Click += new System.EventHandler(this.tsbSendMap_Click);
-            // 
             // BaseVehiclePlanner_Ctrl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1082, 663);
             this.Controls.Add(this.dockPanel);
-            this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.statusStrip1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -460,8 +408,6 @@ namespace VehiclePlanner {
             this.statusStrip1.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
-            this.toolStrip1.ResumeLayout(false);
-            this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -499,9 +445,5 @@ namespace VehiclePlanner {
         private Bindable.ToolStripMenuItem miMotionController;
         private Bindable.ToolStripMenuItem miParamEditor;
         protected System.Windows.Forms.MenuStrip menuStrip1;
-        private System.Windows.Forms.ToolStrip toolStrip1;
-        private Bindable.ToolStripButton tsbConnect;
-        private Bindable.ToolStripButton tsbGetMap;
-        private Bindable.ToolStripButton tsbSendMap;
     }
 }

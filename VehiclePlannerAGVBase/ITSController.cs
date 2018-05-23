@@ -141,10 +141,10 @@ namespace VehiclePlannerAGVBase {
         /// </summary>
         /// <param name="cnn">連線/斷線</param>
         /// <param name="hostIP">AGV IP</param>
-        public override void ConnectToITS(bool cnn) {
+        public override void ConnectToITS() {
             try {
-                if (IsConnected != cnn) {
-                    if (cnn) {//連線至VC
+                if (IsConnectable) {
+                    if (!IsConnected) {//連線至VC
                         /*-- 實例化物件 --*/
                         if (mSerialClient != null) {
                             mSerialClient.ConnectChange -= mSerialClient_OnConnectChange;

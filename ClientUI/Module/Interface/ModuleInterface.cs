@@ -65,7 +65,7 @@ namespace VehiclePlanner.Module.Interface {
     /// <summary>
     /// MapGL視窗公開操作方法
     /// </summary>
-    public interface IBaseMapGL : ICtDockContainer, IDataDisplay<IBaseVehiclePlanner> {
+    public interface IBaseMapGL : ICtDockContainer,IDataDisplay<IBaseVehiclePlanner> , IDataDisplay<IBaseITSController> {
         
         void Show();
     }

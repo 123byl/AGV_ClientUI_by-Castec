@@ -64,10 +64,7 @@ namespace VehiclePlanner.Module.Implement {
         #region Function  - UI Events
 
         private void btnConnect_Click(object sender, EventArgs e) {
-            Task.Run(() => {
-                bool cnn = btnConnect.Tag == null || (btnConnect.Tag is bool && !(bool)btnConnect.Tag);
-                rUI.Connect(cnn);
-            });
+            rUI.Connect();
         }
 
         private void btnLoadOri_Click(object sender, EventArgs e) {
@@ -75,9 +72,7 @@ namespace VehiclePlanner.Module.Implement {
         }
 
         private void btnGetMap_Click(object sender, EventArgs e) {
-            Task.Run(() => {
-                rUI.GetMap();
-            });
+            rUI.GetMap();
         }
 
         private void btnLoadMap_Click(object sender, EventArgs e) {
@@ -89,11 +84,11 @@ namespace VehiclePlanner.Module.Implement {
         }
 
         private void btnGetLaser_Click(object sender, EventArgs e) {
-            Task.Run(() => rUI.GetLaser());
+            rUI.GetLaser();
         }
 
         private void btnGetCarStatus_Click(object sender, EventArgs e) {
-            Task.Run(() => rUI.ITest_GetCar());
+            rUI.ITest_GetCar();
         }
 
         private void btnSendMap_Click(object sender, EventArgs e) {
@@ -105,11 +100,9 @@ namespace VehiclePlanner.Module.Implement {
         }
 
         private void btnSetVelo_Click(object sender, EventArgs e) {
-            Task.Run(() => {
-                if (int.TryParse(txtVelocity.Text, out int velocity)) {
-                    rUI.SetVelocity(velocity);
-                }
-            });
+            if (int.TryParse(txtVelocity.Text, out int velocity)) {
+                rUI.SetVelocity(velocity);
+            }
         }
 
         private void btnClrMap_Click(object sender, EventArgs e) {
@@ -117,16 +110,11 @@ namespace VehiclePlanner.Module.Implement {
         }
 
         private void btnServoOnOff_Click(object sender, EventArgs e) {
-            Task.Run(() => {
-                bool servoOn = btnServoOnOff.Tag == null || (btnServoOnOff.Tag is bool && !(bool)btnServoOnOff.Tag);
-                rUI.MotorServoOn(servoOn);
-            });
+            rUI.MotorServoOn();
         }
 
         private void btnPosConfirm_Click(object sender, EventArgs e) {
-            Task.Run(() => {
-                rUI.CarPosConfirm();
-            });
+            rUI.CarPosConfirm();
         }
 
         private void btnSetCar_Click(object sender, EventArgs e) {
@@ -134,9 +122,7 @@ namespace VehiclePlanner.Module.Implement {
         }
 
         private void btnScan_Click(object sender, EventArgs e) {
-            Task.Run(() => {
-                rUI.StartScan();
-            });
+            rUI.StartScan();
         }
 
         private void btnMotionController_Click(object sender, EventArgs e) {

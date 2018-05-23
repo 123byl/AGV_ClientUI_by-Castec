@@ -17,9 +17,7 @@ namespace VehiclePlanner.Forms {
     public partial class CtMotionController : Form ,IDataDisplay<IBaseITSController>{
 
         #region Declaration - Fields
-
-        private bool mMouseEnter;
-
+        
         /// <summary>
         /// 紀錄鍵盤按下的方向
         /// </summary>
@@ -30,7 +28,12 @@ namespace VehiclePlanner.Forms {
         /// <summary>
         /// 控制器參考物件
         /// </summary>
-        private IBaseITSController rController = null;
+        //private IBaseITSController rController = null;
+
+        /// <summary>
+        /// 主介面物件參考
+        /// </summary>
+        private BaseVehiclePlanner_Ctrl rUI = null;
 
         #endregion Declaration - Fields
 
@@ -50,7 +53,7 @@ namespace VehiclePlanner.Forms {
         public CtMotionController(IBaseITSController controller) {
             InitializeComponent();
 
-            rController = controller;
+            //rController = controller;
 
             /*-- 委派所有PictureBox的事件 --*/
             //RegisterEvent(this);
@@ -79,7 +82,7 @@ namespace VehiclePlanner.Forms {
         /// <param name="e"></param>
         private void TstVelocity_LostFocus(object sender, EventArgs e) {
             this.InvokeIfNecessary(() => {
-                tstVelocity.Text = rController.Velocity.ToString();
+                tstVelocity.Text = rUI.Velocity.ToString();
                 tstVelocity.ForeColor = Color.Black;
             });
         }
@@ -158,13 +161,10 @@ namespace VehiclePlanner.Forms {
             if (e.KeyCode == Keys.Enter) {
                 /*-- 輸入資料驗證 --*/
                 if (int.TryParse(tstVelocity.Text,out int velocity)) {
-                    /*-- 設定速度 --*/
-                    Task.Run(() => {
-                        rController.SetWorkVelocity(velocity);
-                    });
+                    rUI.SetVelocity(velocity);
                 } else {
                     this.InvokeIfNecessary(() => {
-                        tstVelocity.Text = rController.Velocity.ToString();
+                        tstVelocity.Text = rUI.Velocity.ToString();
                     });
                 }
             } else {
@@ -197,9 +197,8 @@ namespace VehiclePlanner.Forms {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void btnServoOnOff_Click(object sender, EventArgs e) {
-            Task.Run(() => {
-                rController.SetServoMode(!rController.IsMotorServoOn);
-            });
+            rUI.MotorServoOn();
+            
         }
 
         #endregion Function - Events

@@ -116,13 +116,13 @@ namespace VehiclePlanner {
         /// 系統列圖示標題
         /// </summary>
         protected string mNotifyCaption = "Vehicle planner";
-        
+
         #endregion Declaration - Fields
 
         #region Declaration - Members
 
         #region UI
-        
+
         /// <summary>
         /// ICtDockContainer與MenuItem對照
         /// </summary>
@@ -163,7 +163,7 @@ namespace VehiclePlanner {
         private IBaseITSController Controller { get => rVehiclePlanner.Controller as IBaseITSController; }
 
         #endregion Tool
-        
+
 
         #endregion Declaration - Members
 
@@ -204,7 +204,7 @@ namespace VehiclePlanner {
                 return mDockContent.ContainsKey(miGoalSetting) ? mDockContent[miGoalSetting] as IBaseGoalSetting : null;
             }
         }
-        
+
         /// <summary>
         /// 是否可視
         /// </summary>
@@ -232,15 +232,20 @@ namespace VehiclePlanner {
             }
         }
 
+        /// <summary>
+        /// iTS手動控制速度
+        /// </summary>
+        public int Velocity { get => Controller.Velocity; }
+        
         #endregion Declaration - Properties
 
         #region Functin - Constructors
-        
+
         protected BaseVehiclePlanner_Ctrl() {
             InitializeComponent();
         }
 
-        internal BaseVehiclePlanner_Ctrl(IBaseVehiclePlanner vehiclePlanner = null):this() {
+        internal BaseVehiclePlanner_Ctrl(IBaseVehiclePlanner vehiclePlanner = null) : this() {
             Initial(vehiclePlanner);
         }
 
@@ -356,7 +361,7 @@ namespace VehiclePlanner {
                 } else {
                     mDockContent[item].Visible = true;
                 }
-                
+
             }
         }
 
@@ -510,8 +515,8 @@ namespace VehiclePlanner {
         /// <summary>
         /// 要求VehicleConsole自動回傳資料
         /// </summary>
-        internal void ITest_GetCar() => rVehiclePlanner.Controller.AutoReport(!rVehiclePlanner.Controller.IsAutoReport);
-        
+        internal void ITest_GetCar() => Task.Run(() => rVehiclePlanner.Controller.AutoReport(!rVehiclePlanner.Controller.IsAutoReport));
+
         /// <summary>
         /// 載入Map檔
         /// </summary>
@@ -540,28 +545,28 @@ namespace VehiclePlanner {
         /// 停止手動控制
         /// </summary>
         internal void ITest_Motion_Up() => rVehiclePlanner.Controller.MotionContorl(MotionDirection.Stop);
-        
+
         /// <summary>
         /// 尋找可用的車子
         /// </summary>
         internal void FindCar() => rVehiclePlanner.Controller.FindCar();
-        
+
         /// <summary>
         /// 開始掃描地圖
         /// </summary>
         /// <param name="scan">是否開始掃描</param>
-        internal void StartScan() => rVehiclePlanner.Controller.StartScan(!rVehiclePlanner.Controller.IsScanning);
-        
+        internal void StartScan() => Task.Run(() => rVehiclePlanner.Controller.StartScan(!rVehiclePlanner.Controller.IsScanning));
+
         /// <summary>
         /// 車子位置微調修正
         /// </summary>
-        internal void CarPosConfirm() => rVehiclePlanner.Controller.DoPositionComfirm();
+        internal void CarPosConfirm() => Task.Run(() =>  rVehiclePlanner.Controller.DoPositionComfirm());
         
         /// <summary>
         /// 啟動馬達激磁
         /// </summary>
         /// <param name="servoOn">是否啟動馬達激磁</param>
-        internal void MotorServoOn(bool servoOn) => rVehiclePlanner.Controller.SetServoMode(servoOn);
+        internal void MotorServoOn() => Task.Run(() => rVehiclePlanner.Controller.SetServoMode(!rVehiclePlanner.Controller.IsMotorServoOn));
         
         /// <summary>
         /// 清除地圖
@@ -572,24 +577,39 @@ namespace VehiclePlanner {
         /// 設定iTS工作移動速度
         /// </summary>
         /// <param name="velocity">移動速度</param>
-        internal void SetVelocity(int velocity) => rVehiclePlanner.Controller.SetWorkVelocity(velocity);
+        internal void SetVelocity(int velocity) => Task.Run(()=> rVehiclePlanner.Controller.SetWorkVelocity(velocity));
         
         /// <summary>
         /// 要求雷射資料
         /// </summary>
         /// <returns>雷射資料(0筆雷射資料表示失敗)</returns>
-        internal void GetLaser()  => rVehiclePlanner.Controller.RequestLaser();
+        internal void GetLaser()  => Task.Run(() => rVehiclePlanner.Controller.RequestLaser());
 
         /// <summary>
         /// 取得Map檔
         /// </summary>
-        internal void GetMap() => rVehiclePlanner.Controller.GetMap();
-        
+        internal void GetMap() => Task.Run(()=> rVehiclePlanner.Controller.GetMap());
+
         /// <summary>
         /// 連線至iTS
         /// </summary>
         /// <param name="cnn">連線/斷線</param>
-        internal void Connect(bool cnn) => rVehiclePlanner.Controller.ConnectToITS(cnn);
+        internal void Connect() {
+            if (rVehiclePlanner.Controller.IsConnected) {
+                Task.Run(() => {
+                    rVehiclePlanner.Controller.ConnectToITS();
+                });
+            } else {
+                using (ConnectITS form = new ConnectITS(rVehiclePlanner.Controller)) {
+                    if (form.GetIP(out string ip)) {
+                        rVehiclePlanner.Controller.HostIP = ip;
+                        Task.Run(() => {
+                            rVehiclePlanner.Controller.ConnectToITS();
+                        });
+                    }
+                }
+            }
+        }
 
         /// <summary>
         /// 顯示當前Goal點名稱清單
@@ -605,13 +625,13 @@ namespace VehiclePlanner {
         /// 搜尋至Goal點路徑(透過Goal名稱)
         /// </summary>
         /// <param name="goalName">Goal點名稱</param>
-        internal void FindPath(string goalName) => rVehiclePlanner.Controller.FindPath(goalName);
+        internal void FindPath(string goalName) => Task.Run(() =>  rVehiclePlanner.Controller.FindPath(goalName));
 
         /// <summary>
         /// 移至Goal(透過Goal點名稱)
         /// </summary>
         /// <param name="goalName">Goal點名稱</param>
-        internal void Run(string goalName) => rVehiclePlanner.Controller.DoRunningByGoalName(goalName);
+        internal void Run(string goalName) => Task.Run(() => rVehiclePlanner.Controller.DoRunningByGoalName(goalName));
 
         /// <summary>
         /// 刪除指定標記物
@@ -629,7 +649,7 @@ namespace VehiclePlanner {
         /// </summary>
         /// <param name="powerName">充電站名稱</param>
         /// <returns>是否開始進行充電</returns>
-        internal void Charging(string powerName) => rVehiclePlanner.Controller.DoCharging(powerName);
+        internal void Charging(string powerName) => Task.Run(() => rVehiclePlanner.Controller.DoCharging(powerName));
 
         #endregion ITest
 
@@ -651,20 +671,7 @@ namespace VehiclePlanner {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void tsbConnect_Click(object sender, EventArgs e) {
-            if (rVehiclePlanner.Controller.IsConnected) {
-                Task.Run(() => {
-                    rVehiclePlanner.Controller.ConnectToITS(false);
-                });
-            } else {
-                using (ConnectITS form = new ConnectITS(rVehiclePlanner.Controller)) {
-                    if (form.GetIP(out string ip)) {
-                        rVehiclePlanner.Controller.HostIP = ip;
-                        Task.Run(() => {
-                            rVehiclePlanner.Controller.ConnectToITS(true);
-                        });
-                    }
-                }
-            }
+            Connect();
         }
 
         /// <summary>
@@ -673,9 +680,7 @@ namespace VehiclePlanner {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void tsbGetMap_Click(object sender, EventArgs e) {
-            Task.Run(() => {
-                GetMap();
-            });
+            GetMap();
         }
 
         /// <summary>
@@ -1027,6 +1032,26 @@ namespace VehiclePlanner {
             }
         }
 
+        /// <summary>
+        /// 快捷鍵
+        /// </summary>
+        /// <param name="msg"></param>
+        /// <param name="keyData"></param>
+        /// <returns></returns>
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {
+            bool ret = true;
+            switch (keyData) {
+                case Keys.C  :
+                    Console.WriteLine("Main");
+                    //Connect(!Controller.IsConnected);
+                    break;
+                default:
+                    ret = base.ProcessCmdKey(ref msg, keyData);
+                    break;
+            }
+            return ret;
+        }
+
         #endregion Function - Private Methods
 
         #region Implement - IDataDisplay
@@ -1084,9 +1109,6 @@ namespace VehiclePlanner {
             /*-- 連線狀態 --*/
             miBypassSocket.DataBindings.ExAdd(nameof(miBypassSocket.Enabled), source, nameof(source.IsConnected), (sender, e) => {
                 e.Value = !(bool)e.Value;
-            });
-            tsbConnect.DataBindings.ExAdd(nameof(tsbConnect.Image), source, nameof(source.IsConnected), (sender, e) => {
-                e.Value = (bool)e.Value ? Properties.Resources.Connect : Properties.Resources.Disconnect;
             });
         }
 

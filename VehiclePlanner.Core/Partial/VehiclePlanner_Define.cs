@@ -266,7 +266,7 @@ namespace VehiclePlanner.Core {
         /// 連線至iTS
         /// </summary>
         /// <param name="cnn">連線/斷線</param>
-        void ConnectToITS(bool cnn);
+        void ConnectToITS();
         /// <summary>
         /// 搜尋可用的iTS設備
         /// </summary>

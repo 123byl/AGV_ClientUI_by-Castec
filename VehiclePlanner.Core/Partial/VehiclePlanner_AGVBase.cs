@@ -433,7 +433,7 @@ namespace VehiclePlanner.Core {
         /// 連線至iTS
         /// </summary>
         /// <param name="cnn"></param>
-        public abstract void ConnectToITS(bool cnn);
+        public abstract void ConnectToITS();
 
         public void FindCar() {
             if (!mBroadcast.IsReceiving) {
