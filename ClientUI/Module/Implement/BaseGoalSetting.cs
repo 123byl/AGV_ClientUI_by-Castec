@@ -157,6 +157,38 @@ namespace VehiclePlanner.Module.Implement {
 
         #region UI Event
 
+        #region GoalList
+
+        /// <summary>
+        /// Goal點清單滑鼠點擊事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        protected virtual void dgvGoalPoint_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e) {
+            if (e.RowIndex > -1) {
+                switch (e.Button) {
+                    case MouseButtons.Left://全選功能
+                        if (e.RowIndex == -1 && dgvGoalPoint.Columns[e.ColumnIndex].Name == "cSelect") {
+                            mSelectAll = !mSelectAll;
+                            this.InvokeIfNecessary(() => {
+                                foreach (DataGridViewRow row in dgvGoalPoint.Rows) {
+                                    row.Cells["cSelect"].Value = mSelectAll;
+                                    Console.WriteLine(row.Cells["cName"].Value);
+                                }
+                                dgvGoalPoint.EndEdit();
+                            });
+                        }
+                        break;
+                    case MouseButtons.Right://右鍵選單
+                        mSelectedRowIdx = e.RowIndex;
+                        contextMenuStrip1.Show(Cursor.Position);
+                        break;
+                }
+            }
+        }
+
+        #endregion GoalList
+
         #region Button
 
         private void btnGetGoalList_Click(object sender, EventArgs e) {
@@ -235,6 +267,52 @@ namespace VehiclePlanner.Module.Implement {
 
 
         #endregion ToolStripButton
+
+        #region MenuItem
+
+        /// <summary>
+        /// 搜尋路徑
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void miPath_Click(object sender, EventArgs e) {
+            string name = ToSingleName(mSelectedRowIdx);
+            rUI.FindPath(name);
+        }
+
+        /// <summary>
+        /// 移動至該Goal點
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void miRun_Click(object sender, EventArgs e) {
+            string name = ToSingleName(mSelectedRowIdx);
+            rUI.Run(name);
+        }
+
+        /// <summary>
+        /// 至該充電站進行充電
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void miCharging_Click(object sender, EventArgs e) {
+            string name = ToSingleName(mSelectedRowIdx);
+            rUI.Charging(name);
+        }
+
+        /// <summary>
+        /// 刪除該Goal點
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void miDelete_Click(object sender, EventArgs e) {
+            uint id = ToSingleID(mSelectedRowIdx);
+            List<uint> ids = new List<uint>();
+            ids.Add(id);
+            rUI.Delete(ids);
+        }
+
+        #endregion MenuItem
 
         #endregion UI Event
 
@@ -366,73 +444,9 @@ namespace VehiclePlanner.Module.Implement {
         public void Bindings(IBaseVehiclePlanner source) {
             if (source.DelInvoke == null) source.DelInvoke = invk => this.InvokeIfNecessary(invk);
         }
-
-
+        
         #endregion Implement - IDataDisplay<ICtVehiclePlanner>
-
-        protected virtual void dgvGoalPoint_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e) {
-            switch (e.Button) {
-                case MouseButtons.Left:
-                    if (e.RowIndex == -1 && dgvGoalPoint.Columns[e.ColumnIndex].Name == "cSelect") {
-                        mSelectAll = !mSelectAll;
-                        this.InvokeIfNecessary(() => {
-                            foreach (DataGridViewRow row in dgvGoalPoint.Rows) {
-                                row.Cells["cSelect"].Value = mSelectAll;
-                                Console.WriteLine(row.Cells["cName"].Value);
-                            }
-                            dgvGoalPoint.EndEdit();
-                        });
-                    }
-                    break;
-                case MouseButtons.Right:
-                    mSelectedRowIdx = e.RowIndex;
-                    contextMenuStrip1.Show(Cursor.Position);
-                    break;
-            }
-        }
-
-        /// <summary>
-        /// 搜尋路徑
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void miPath_Click(object sender, EventArgs e) {
-            string name = ToSingleName(mSelectedRowIdx);            
-            rUI.FindPath(name);
-        }
-
-        /// <summary>
-        /// 移動至該Goal點
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void miRun_Click(object sender, EventArgs e) {
-            string name = ToSingleName(mSelectedRowIdx);
-            rUI.Run(name);
-        }
-
-        /// <summary>
-        /// 至該充電站進行充電
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void miCharging_Click(object sender, EventArgs e) {
-            string name = ToSingleName(mSelectedRowIdx);
-            rUI.Charging(name);
-        }
-
-        /// <summary>
-        /// 刪除該Goal點
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void miDelete_Click(object sender, EventArgs e) {
-            uint id = ToSingleID(mSelectedRowIdx);
-            List<uint> ids = new List<uint>();
-            ids.Add(id);
-            rUI.Delete(ids);
-        }
-
+        
     }
 
 }

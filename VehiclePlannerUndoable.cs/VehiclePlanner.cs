@@ -13,6 +13,10 @@ using VehiclePlanner.Module.Implement;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace VehiclePlannerUndoable.cs {
+
+    /// <summary>
+    /// 介面實作
+    /// </summary>
     public partial class CtVehiclePlanner_Ctrl : BaseVehiclePlanner_Ctrl {
 
         private IVehiclePlanner rVehiclePlanner = null;
@@ -44,12 +48,17 @@ namespace VehiclePlannerUndoable.cs {
 
     }
 
-
+    /// <summary>
+    /// 底層介面定義
+    /// </summary>
     public interface IVehiclePlanner : IBaseVehiclePlanner {
 
     }
 
+    /// <summary>
+    /// 底層實作
+    /// </summary>
     public class VehiclePlanner : BaseVehiclePlanner, IVehiclePlanner {
-
+        
     }
 }

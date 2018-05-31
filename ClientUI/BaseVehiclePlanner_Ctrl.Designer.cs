@@ -103,9 +103,9 @@ namespace VehiclePlanner {
             this.dockPanel.DockBackColor = System.Drawing.SystemColors.Control;
             this.dockPanel.DockLeftPortion = 0.1D;
             this.dockPanel.DockRightPortion = 0.1D;
-            this.dockPanel.Location = new System.Drawing.Point(0, 27);
+            this.dockPanel.Location = new System.Drawing.Point(0, 28);
             this.dockPanel.Name = "dockPanel";
-            this.dockPanel.Size = new System.Drawing.Size(1082, 608);
+            this.dockPanel.Size = new System.Drawing.Size(1082, 607);
             dockPanelGradient1.EndColor = System.Drawing.SystemColors.ControlLight;
             dockPanelGradient1.StartColor = System.Drawing.SystemColors.ControlLight;
             autoHideStripSkin1.DockStripGradient = dockPanelGradient1;
@@ -241,7 +241,7 @@ namespace VehiclePlanner {
             this.miBypass});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1082, 27);
+            this.menuStrip1.Size = new System.Drawing.Size(1082, 28);
             this.menuStrip1.TabIndex = 9;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -252,7 +252,7 @@ namespace VehiclePlanner {
             this.miUserManager,
             this.miExit});
             this.systemToolStripMenuItem.Name = "systemToolStripMenuItem";
-            this.systemToolStripMenuItem.Size = new System.Drawing.Size(72, 23);
+            this.systemToolStripMenuItem.Size = new System.Drawing.Size(72, 24);
             this.systemToolStripMenuItem.Text = "System";
             // 
             // miLogin
@@ -289,7 +289,7 @@ namespace VehiclePlanner {
             this.miMotionController,
             this.miParamEditor});
             this.miView.Name = "miView";
-            this.miView.Size = new System.Drawing.Size(55, 23);
+            this.miView.Size = new System.Drawing.Size(55, 24);
             this.miView.Text = "View";
             // 
             // miMapGL
@@ -342,7 +342,7 @@ namespace VehiclePlanner {
             this.miAbout,
             this.testToolStripMenuItem});
             this.miHelp.Name = "miHelp";
-            this.miHelp.Size = new System.Drawing.Size(53, 23);
+            this.miHelp.Size = new System.Drawing.Size(53, 24);
             this.miHelp.Text = "Help";
             // 
             // miAbout
@@ -365,7 +365,7 @@ namespace VehiclePlanner {
             this.miLoadFile,
             this.miServer});
             this.miBypass.Name = "miBypass";
-            this.miBypass.Size = new System.Drawing.Size(69, 23);
+            this.miBypass.Size = new System.Drawing.Size(69, 24);
             this.miBypass.Text = "Bypass";
             this.miBypass.Visible = false;
             // 
