@@ -63,9 +63,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Dynamic Link Libraries\UIControl.dll</HintPath>
     </Reference>
-    <Reference Include="UtilityLibrary">
-      <HintPath>..\..\..\..\Downloads\UtilityLibrary\UtilityLibrary.dll</HintPath>
-    </Reference>
     <Reference Include="WeifenLuo.WinFormsUI.Docking, Version=2.4.0.16114, Culture=neutral, PublicKeyToken=null" />
   </ItemGroup>
   <ItemGroup>
