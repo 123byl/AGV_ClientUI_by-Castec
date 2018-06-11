@@ -14,7 +14,7 @@ namespace VehiclePlanner.Forms {
     /// <summary>
     /// 移动控制器
     /// </summary>
-    public partial class CtMotionController : Form ,IDataDisplay<IBaseITSController>{
+    public partial class CtMotionController : Form , IDataDisplay<IBaseITSController> {
 
         #region Declaration - Fields
         
@@ -28,7 +28,7 @@ namespace VehiclePlanner.Forms {
         /// <summary>
         /// 控制器參考物件
         /// </summary>
-        //private IBaseITSController rController = null;
+        private IBaseITSController rController = null;
 
         /// <summary>
         /// 主介面物件參考
@@ -50,10 +50,10 @@ namespace VehiclePlanner.Forms {
         /// <summary>
         /// 共用建構方法
         /// </summary>
-        public CtMotionController(IBaseITSController controller) {
+        public CtMotionController(BaseVehiclePlanner_Ctrl ctrl, IBaseITSController controller) {
             InitializeComponent();
 
-            //rController = controller;
+            rUI = ctrl;
 
             /*-- 委派所有PictureBox的事件 --*/
             //RegisterEvent(this);
@@ -328,9 +328,7 @@ namespace VehiclePlanner.Forms {
                 e.Value = e.Value.ToString();
             },source.Velocity.ToString());
         }
-
-
-
+        
         #endregion Implement - IDataBind
 
     }

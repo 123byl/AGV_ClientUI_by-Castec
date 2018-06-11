@@ -180,15 +180,13 @@ namespace VehiclePlanner.Core {
         /// <summary>
         /// 儲存地圖
         /// </summary>
-        public virtual void SaveMap() {
+        public void SaveMap() {
             if (!string.IsNullOrEmpty(CurMapPath)) {
                 OnConsoleMessage("[Map is Save]");
                 SaveMap(CurMapPath);
             }
         }
         
-        
-
         /// <summary>
         /// 新增當前位置為Goal點
         /// </summary>
@@ -206,7 +204,7 @@ namespace VehiclePlanner.Core {
 
         #endregion Funciton - Public Mehtods
 
-            #region Funciton - Private Methods
+        #region Funciton - Private Methods
 
             #region Riase Events
 

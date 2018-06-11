@@ -88,8 +88,10 @@ namespace VehiclePlanner {
         ///         \ 重寫AGVMapUI的ShowWindow與HideWindow方法
         ///     1.0.0   Jay [2018/04/18]
         ///         \ 權限綁定
+        ///     1.0.1   Jay [2017/06/11]
+        ///         \ 修正移动控制无法设定速度，马达ServoOn/Off
         /// </remarks>
-        public CtVersion Version { get { return new CtVersion(1, 0, 0, "2017/04/18", "Jay Chang"); } }
+        public CtVersion Version { get { return new CtVersion(1, 0, 1, "2017/06/11", "Jay Chang"); } }
 
         #endregion Version - Information
 
@@ -716,7 +718,7 @@ namespace VehiclePlanner {
         /// </summary>
         internal void ShowMotionController() {
             if (mMotionController == null) {
-                mMotionController = new CtMotionController(rVehiclePlanner.Controller);
+                mMotionController = new CtMotionController(this, rVehiclePlanner.Controller);
                 mMotionController.MotionDown += rVehiclePlanner.Controller.MotionContorl;
                 mMotionController.MotionUp += ITest_Motion_Up;
                 miMotionController.Checked = true;

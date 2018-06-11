@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GLCore;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -59,6 +60,8 @@ namespace VehiclePlannerUndoable.cs {
     /// 底層實作
     /// </summary>
     public class VehiclePlanner : BaseVehiclePlanner, IVehiclePlanner {
-        
+        protected override void SaveMap(string path) {
+            GLCMD.CMD.SaveMap(path);
+        }
     }
 }
