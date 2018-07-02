@@ -358,6 +358,10 @@ namespace VehiclePlanner.Core {
         /// </summary>
         /// <param name="markers"></param>
         void DeleteMarker(IEnumerable<uint> markers);
+		/// <summary>
+		/// 更新資料
+		/// </summary>
+		void UpdateValue(uint ID, string colName,object value);
     }
 
     #endregion Declaration - Interface
