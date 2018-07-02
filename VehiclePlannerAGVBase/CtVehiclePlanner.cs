@@ -167,15 +167,38 @@ namespace VehiclePlannerAGVBase {
             OnVehiclePlanner(VehiclePlannerEvents.MarkerChanged);
         }
 
-        #endregion Funciotn - Public Methods
+		public override void UpdateValue(uint ID, string colName, object value)
+		{
+			IGoal Goal = mMapGL.GetGoal(ID);
+			switch (colName)
+			{
+				case "Name":
+					string Name = (string)value;
+					Goal.Name = Name;
+					break;
+				case "X":
+					int X;
+					Goal.Data.Position.X = int.TryParse((string)value, out X) ? X : Goal.Data.Position.X;
+					break;
+				case "Y":
+					int Y;
+					Goal.Data.Position.Y = int.TryParse((string)value, out Y)? Y : Goal.Data.Position.Y;
+					break;
+				case "Toward":
+					double Theta;
+					Goal.Data.Toward.Theta = double.TryParse((string)value, out Theta) ? Theta : Goal.Data.Toward.Theta;
+					break;
+			}	
+		}
+		#endregion Funciotn - Public Methods
 
-        #region Function - Protected Methods
+		#region Function - Protected Methods
 
-        /// <summary>
-        /// 載入Map檔
-        /// </summary>
-        /// <param name="mapPath">Map檔路徑</param>
-        protected override bool LoadMap(string mapPath) {
+		/// <summary>
+		/// 載入Map檔
+		/// </summary>
+		/// <param name="mapPath">Map檔路徑</param>
+		protected override bool LoadMap(string mapPath) {
             bool isLoaded = true;
             mCurMapPath = mapPath;
             string path = CtFile.GetFileName(mapPath);
@@ -229,6 +252,8 @@ namespace VehiclePlannerAGVBase {
         protected override void SaveMap(string path) {
             mMapGL.Save(path);
         }
+
+		
 
         #endregion Funciotn - Protected Methods
 

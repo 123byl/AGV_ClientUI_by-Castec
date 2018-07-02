@@ -16,182 +16,191 @@ using CtLib.Module.Utility;
 
 namespace VehiclePlanner.Module.Implement {
 
-    /// <summary>
-    /// Goal點設定介面
-    /// </summary>
-    public partial class BaseGoalSetting : AuthorityDockContainer, IBaseGoalSetting {
+	/// <summary>
+	/// Goal點設定介面
+	/// </summary>
+	public partial class BaseGoalSetting : AuthorityDockContainer, IBaseGoalSetting {
 
-        #region Declaration - Fields
+		#region Declaration - Fields
 
-        protected readonly object mKey = new object();
+		protected readonly object mKey = new object();
 
-        /// <summary>
-        /// 右鍵選單所點的列索引
-        /// </summary>
-        protected int mSelectedRowIdx = -1;
+		/// <summary>
+		/// 右鍵選單所點的列索引
+		/// </summary>
+		protected int mSelectedRowIdx = -1;
 
-        /// <summary>
-        /// 是否全選
-        /// </summary>
-        protected bool mSelectAll = false;
-        
-            
-        #endregion Declaration - Fields
+		/// <summary>
+		/// 是否全選
+		/// </summary>
+		protected bool mSelectAll = false;
 
-        #region Declaration - Const
 
-        protected const int IDColumn = 1;
-        protected const int NameColumn = 2;
-        protected const int SelectColumn = 0;
-        protected const int TowardColumn = 5;
-        protected const int XColumn = 3;
-        protected const int YColumn = 4;
+		#endregion Declaration - Fields
 
-        #endregion Declaration - Const
+		#region Declaration - Const
 
-        #region Funciton - Construcotrs
+		protected const int IDColumn = 1;
+		protected const int NameColumn = 2;
+		protected const int SelectColumn = 0;
+		protected const int TowardColumn = 5;
+		protected const int XColumn = 3;
+		protected const int YColumn = 4;
 
-        /// <summary>
-        /// 給介面設計師使用的建構式，拿掉後繼承該類的衍生類將無法顯示介面設計
-        /// </summary>
-        protected BaseGoalSetting():base() {
-            InitializeComponent();
-        }
+		#endregion Declaration - Const
 
-        /// <summary>
-        /// 共用建構方法
-        /// </summary>
-        /// <param name="goalsetting">GoalSetting方法實作物件參考</param>
-        /// <param name="main">主介面參考</param>
-        /// <param name="defState">預設停靠方式</param>
-        public BaseGoalSetting(BaseVehiclePlanner_Ctrl refUI, DockState defState = DockState.Float)
-            : base(refUI,defState) {
-            InitializeComponent();
-            FixedSize = new Size(776, 860);
-        }
+		#region Funciton - Construcotrs
 
-        #endregion Funciton - Construcotrs
+		/// <summary>
+		/// 給介面設計師使用的建構式，拿掉後繼承該類的衍生類將無法顯示介面設計
+		/// </summary>
+		protected BaseGoalSetting() : base() {
+			InitializeComponent();
+			dgvGoalPoint.CellValueChanged += dgvGoalPoint_CellValueChanged;
 
-        #region Implement - IIGoalSetting
-        
-        /// <summary>
-        /// 目標點個數
-        /// </summary>
-        public int GoalCount {
-            get {
-                lock (mKey) {
-                    return dgvGoalPoint.Rows.Count;
-                }
-            }
-        }
+		}
 
-        /// <summary>
-        /// 移除所有 Goal 點
-        /// </summary>
-        public void ClearGoal() {
-            lock (mKey) {
-                dgvGoalPoint.InvokeIfNecessary(() => dgvGoalPoint.Rows.Clear());
-                cmbGoalList.InvokeIfNecessary(() => {
-                    cmbGoalList.Items.Clear();
-                    cmbGoalList.SelectedIndex = ListBox.NoMatches;
-                });
-            }
-        }
+		/// <summary>
+		/// 共用建構方法
+		/// </summary>
+		/// <param name="goalsetting">GoalSetting方法實作物件參考</param>
+		/// <param name="main">主介面參考</param>
+		/// <param name="defState">預設停靠方式</param>
+		public BaseGoalSetting(BaseVehiclePlanner_Ctrl refUI, DockState defState = DockState.Float)
+			: base(refUI, defState) {
+			InitializeComponent();
+			dgvGoalPoint.CellValueChanged += dgvGoalPoint_CellValueChanged;
+			FixedSize = new Size(776, 860);
+		}
 
-        /// <summary>
-        /// 根據 ID 移除 Goal 點
-        /// </summary>
-        public void DeleteGoal(uint ID) {
-            lock (mKey) {
-                int row = FindIndexByID(ID);
-                if (row != -1) {
-                    dgvGoalPoint.InvokeIfNecessary(() => dgvGoalPoint.Rows.RemoveAt(row));
-                    cmbGoalList.InvokeIfNecessary(() => {
-                        if (cmbGoalList.SelectedIndex == row) {
-                            cmbGoalList.SelectedIndex = ListBox.NoMatches;
-                        }
-                        cmbGoalList.Items.RemoveAt(row);
-                    });
-                }
-            }
-        }
+		#endregion Funciton - Construcotrs
 
-        /// <summary>
-        /// 根據 ID 移除 Goal 點
-        /// </summary>
-        public void DeleteGoals(IEnumerable<uint> ID) {
-            lock (mKey) {
-                foreach (var id in ID) {
-                    DeleteGoal(id);
-                }
-            }
-        }
-        
-        /// <summary>
-        /// 設定表單選擇項目
-        /// </summary>
-        public void SetSelectItem(uint id) {
-            lock (mKey) {
-                dgvGoalPoint.InvokeIfNecessary(() => {
-                    for (int row = 0; row < dgvGoalPoint.RowCount; row++) {
-                        if ((uint)dgvGoalPoint[IDColumn, row].Value == id) {
-                            dgvGoalPoint.Rows[row].Selected = true;
-                        } else {
-                            dgvGoalPoint.Rows[row].Selected = false;
-                        }
-                    }
-                });
-            }
-        }
+		#region Implement - IIGoalSetting
 
-        /// <summary>
-        /// 回傳該權限是否具有控制權
-        /// </summary>
-        /// <param name="lv">使用者權限</param>
-        /// <returns>是否具有控制權</returns>
-        public override bool IsVisiable(AccessLevel lv) {
-            return lv > AccessLevel.None;
-        }
+		/// <summary>
+		/// 目標點個數
+		/// </summary>
+		public int GoalCount {
+			get {
+				lock (mKey) {
+					return dgvGoalPoint.Rows.Count;
+				}
+			}
+		}
 
-        #endregion Implement - IIGoalSetting
+		/// <summary>
+		/// 移除所有 Goal 點
+		/// </summary>
+		public void ClearGoal() {
+			lock (mKey) {
+				dgvGoalPoint.InvokeIfNecessary(() => dgvGoalPoint.Rows.Clear());
+				cmbGoalList.InvokeIfNecessary(() => {
+					cmbGoalList.Items.Clear();
+					cmbGoalList.SelectedIndex = ListBox.NoMatches;
+				});
+			}
+		}
 
-        #region UI Event
+		/// <summary>
+		/// 根據 ID 移除 Goal 點
+		/// </summary>
+		public void DeleteGoal(uint ID) {
+			lock (mKey) {
+				int row = FindIndexByID(ID);
+				if (row != -1) {
+					dgvGoalPoint.InvokeIfNecessary(() => dgvGoalPoint.Rows.RemoveAt(row));
+					cmbGoalList.InvokeIfNecessary(() => {
+						if (cmbGoalList.SelectedIndex == row) {
+							cmbGoalList.SelectedIndex = ListBox.NoMatches;
+						}
+						cmbGoalList.Items.RemoveAt(row);
+					});
+				}
+			}
+		}
 
-        #region GoalList
+		/// <summary>
+		/// 根據 ID 移除 Goal 點
+		/// </summary>
+		public void DeleteGoals(IEnumerable<uint> ID) {
+			lock (mKey) {
+				foreach (var id in ID) {
+					DeleteGoal(id);
+				}
+			}
+		}
 
-        /// <summary>
-        /// Goal點清單滑鼠點擊事件
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        protected virtual void dgvGoalPoint_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e) {
-            if (e.RowIndex > -1) {
-                switch (e.Button) {
-                    case MouseButtons.Left://全選功能
-                        if (e.RowIndex == -1 && dgvGoalPoint.Columns[e.ColumnIndex].Name == "cSelect") {
-                            mSelectAll = !mSelectAll;
-                            this.InvokeIfNecessary(() => {
-                                foreach (DataGridViewRow row in dgvGoalPoint.Rows) {
-                                    row.Cells["cSelect"].Value = mSelectAll;
-                                    Console.WriteLine(row.Cells["cName"].Value);
-                                }
-                                dgvGoalPoint.EndEdit();
-                            });
-                        }
-                        break;
-                    case MouseButtons.Right://右鍵選單
-                        mSelectedRowIdx = e.RowIndex;
-                        contextMenuStrip1.Show(Cursor.Position);
-                        break;
-                }
-            }
-        }
+		/// <summary>
+		/// 設定表單選擇項目
+		/// </summary>
+		public void SetSelectItem(uint id) {
+			lock (mKey) {
+				dgvGoalPoint.InvokeIfNecessary(() => {
+					for (int row = 0; row < dgvGoalPoint.RowCount; row++) {
+						if ((uint)dgvGoalPoint[IDColumn, row].Value == id) {
+							dgvGoalPoint.Rows[row].Selected = true;
+						} else {
+							dgvGoalPoint.Rows[row].Selected = false;
+						}
+					}
+				});
+			}
+		}
 
-        #endregion GoalList
+		/// <summary>
+		/// 回傳該權限是否具有控制權
+		/// </summary>
+		/// <param name="lv">使用者權限</param>
+		/// <returns>是否具有控制權</returns>
+		public override bool IsVisiable(AccessLevel lv) {
+			return lv > AccessLevel.None;
+		}
 
-        #region Button
+		#endregion Implement - IIGoalSetting
 
-        private void btnGetGoalList_Click(object sender, EventArgs e) {
+		#region UI Event
+
+		#region GoalList
+
+		/// <summary>
+		/// Goal點清單滑鼠點擊事件
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		protected virtual void dgvGoalPoint_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e) {
+			if (e.RowIndex > -1) {
+				switch (e.Button) {
+					case MouseButtons.Left://全選功能
+						if (e.RowIndex == -1 && dgvGoalPoint.Columns[e.ColumnIndex].Name == "cSelect") {
+							mSelectAll = !mSelectAll;
+							this.InvokeIfNecessary(() => {
+								foreach (DataGridViewRow row in dgvGoalPoint.Rows) {
+									row.Cells["cSelect"].Value = mSelectAll;
+									Console.WriteLine(row.Cells["cName"].Value);
+								}
+								dgvGoalPoint.EndEdit();
+							});
+						}
+						break;
+					case MouseButtons.Right://右鍵選單
+						mSelectedRowIdx = e.RowIndex;
+						contextMenuStrip1.Show(Cursor.Position);
+						break;
+				}
+			}
+		}
+		protected virtual void dgvGoalPoint_CellValueChanged(object sender, DataGridViewCellEventArgs e) {
+			Console.WriteLine("Test");
+			uint ID = (uint) dgvGoalPoint.Rows[e.RowIndex].Cells[1].Value;
+			var colName = dgvGoalPoint.Columns[e.ColumnIndex].HeaderText;
+			var value = dgvGoalPoint.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
+			rUI.UpdateValue(ID,colName,value );
+		}
+		#endregion GoalList
+
+		#region Button
+
+		private void btnGetGoalList_Click(object sender, EventArgs e) {
             Task.Run(() => {
                 rUI.GetGoalName();
             });

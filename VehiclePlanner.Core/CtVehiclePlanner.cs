@@ -202,17 +202,20 @@ namespace VehiclePlanner.Core {
             throw new NotImplementedException();
         }
 
-        #endregion Funciton - Public Mehtods
+		public virtual void UpdateValue(uint ID,string colName, object value){
+			throw new NotImplementedException();
+		}
+		#endregion Funciton - Public Mehtods
 
-        #region Funciton - Private Methods
+		#region Funciton - Private Methods
 
-            #region Riase Events
+		#region Riase Events
 
-            /// <summary>
-            /// 屬性變更事件發報
-            /// </summary>
-            /// <param name="propertyName"></param>
-        protected virtual void OnPropertyChanged([CallerMemberName]string propertyName="") {
+		/// <summary>
+		/// 屬性變更事件發報
+		/// </summary>
+		/// <param name="propertyName"></param>
+		protected virtual void OnPropertyChanged([CallerMemberName]string propertyName="") {
             DelInvoke?.Invoke(() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)));
         }
         
@@ -314,8 +317,9 @@ namespace VehiclePlanner.Core {
             // TODO: 如果上方的完成項已被覆寫，即取消下行的註解狀態。
             // GC.SuppressFinalize(this);
         }
-        #endregion
-        
-    }
+
+		#endregion
+
+	}
 
 }
