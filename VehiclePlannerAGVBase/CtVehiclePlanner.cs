@@ -166,29 +166,42 @@ namespace VehiclePlannerAGVBase {
             /*-- 重新載入Goal點資訊 --*/
             OnVehiclePlanner(VehiclePlannerEvents.MarkerChanged);
         }
-
+		/// <summary>
+		/// 更新地圖點位資料
+		/// </summary>
+		/// <param name="ID"></param>
+		/// <param name="colName">欄位名稱</param>
+		/// <param name="value">預更改的值</param>
 		public override void UpdateValue(uint ID, string colName, object value)
 		{
-			IGoal Goal = mMapGL.GetGoal(ID);
-			switch (colName)
+			ISingle<ITowardPair> single = null;
+			single = mMapGL.ContainGoal(ID) ? mMapGL.GetGoal(ID) : null;
+			if (single is null)
 			{
-				case "Name":
-					string Name = (string)value;
-					Goal.Name = Name;
-					break;
-				case "X":
-					int X;
-					Goal.Data.Position.X = int.TryParse((string)value, out X) ? X : Goal.Data.Position.X;
-					break;
-				case "Y":
-					int Y;
-					Goal.Data.Position.Y = int.TryParse((string)value, out Y)? Y : Goal.Data.Position.Y;
-					break;
-				case "Toward":
-					double Theta;
-					Goal.Data.Toward.Theta = double.TryParse((string)value, out Theta) ? Theta : Goal.Data.Toward.Theta;
-					break;
-			}	
+				single = mMapGL.ContainPower(ID) ? mMapGL.GetPower(ID) : null;
+			}
+			if (single != null)
+			{
+				switch (colName)
+				{
+					case "Name":
+						string Name = (string)value;
+						single.Name = Name;
+						break;
+					case "X":
+						int X;
+						single.Data.Position.X = int.TryParse((string)value, out X) ? X : single.Data.Position.X;
+						break;
+					case "Y":
+						int Y;
+						single.Data.Position.Y = int.TryParse((string)value, out Y) ? Y : single.Data.Position.Y;
+						break;
+					case "Toward":
+						double Theta;
+						single.Data.Toward.Theta = double.TryParse((string)value, out Theta) ? Theta : single.Data.Toward.Theta;
+						break;
+				}
+			}
 		}
 		#endregion Funciotn - Public Methods
 

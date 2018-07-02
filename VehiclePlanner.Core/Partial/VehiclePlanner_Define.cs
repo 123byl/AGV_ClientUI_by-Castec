@@ -359,7 +359,7 @@ namespace VehiclePlanner.Core {
         /// <param name="markers"></param>
         void DeleteMarker(IEnumerable<uint> markers);
 		/// <summary>
-		/// 更新資料
+		/// 更新地圖點位資料
 		/// </summary>
 		void UpdateValue(uint ID, string colName,object value);
     }

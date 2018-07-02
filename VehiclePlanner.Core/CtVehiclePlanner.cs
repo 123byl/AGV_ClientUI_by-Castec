@@ -202,6 +202,12 @@ namespace VehiclePlanner.Core {
             throw new NotImplementedException();
         }
 
+		/// <summary>
+		/// 更新地圖點位資料
+		/// </summary>
+		/// <param name="ID"></param>
+		/// <param name="colName">欄位名稱</param>
+		/// <param name="value">預更改的值</param>
 		public virtual void UpdateValue(uint ID,string colName, object value){
 			throw new NotImplementedException();
 		}
