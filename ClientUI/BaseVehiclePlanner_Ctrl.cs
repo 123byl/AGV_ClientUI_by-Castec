@@ -641,6 +641,9 @@ namespace VehiclePlanner {
         /// <param name="markers"></param>
         internal void Delete(List<uint> id) => rVehiclePlanner.DeleteMarker(id);
 
+		/// <summary>
+		/// 更新地圖點位資料
+		/// </summary>
 		internal void UpdateValue(uint ID, string colName, object value) => rVehiclePlanner.UpdateValue(ID, colName, value);
 
         /// <summary>
