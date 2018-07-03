@@ -42,7 +42,7 @@ namespace VehiclePlannerAGVBase {
         /// <summary>
         /// 以AGVBase實作之ITS控制器
         /// </summary>
-        public new IITSController Controller { get { return base.Controller as IITSController; } }
+        public new IITSController_AGVBase Controller { get { return base.Controller as IITSController_AGVBase; } }
 
         /// <summary>
         /// 地圖中心點

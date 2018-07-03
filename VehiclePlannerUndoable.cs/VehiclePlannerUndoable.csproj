@@ -52,7 +52,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommunicationAdapter.cs" />
     <Compile Include="Interface.cs" />
+    <Compile Include="ITSController.cs" />
     <Compile Include="MapGL.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -104,17 +106,29 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\VehicleManager2\AsyncSocket\AsyncSocket.csproj">
+      <Project>{96AEBCE3-FC5E-4F3F-B8F9-B4BA0BBAC2BE}</Project>
+      <Name>AsyncSocket</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\VehicleManager2\Geometry\Geometry.csproj">
+      <Project>{a617d647-1075-4bbb-9b9c-17971d56fe1e}</Project>
+      <Name>Geometry</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\VehicleManager2\GLCore\GLCore.csproj">
       <Project>{8DD11590-79E3-4D93-83DB-8B2DD19CD3F4}</Project>
       <Name>GLCore</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\VehicleManager2\GLStyle\GLStyle.csproj">
-      <Project>{67EDE669-FF71-41EC-BA78-0D167FB5D989}</Project>
-      <Name>GLStyle</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\VehicleManager2\GLUI\GLUI.csproj">
-      <Project>{390dc0bb-01d8-48b3-a7c3-84c5b3355dee}</Project>
+      <Project>{390DC0BB-01D8-48B3-A7C3-84C5B3355DEE}</Project>
       <Name>GLUI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\VehicleManager2\Serialization\Serialization.csproj">
+      <Project>{3719D19B-9168-4D0D-A761-92C583A6D07F}</Project>
+      <Name>Serialization</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BroadCast\Broadcast.csproj">
+      <Project>{10D930FD-CE9C-46FA-AA1E-FB8394BA287F}</Project>
+      <Name>Broadcast</Name>
     </ProjectReference>
     <ProjectReference Include="..\ClientUI\VehiclePlanner.csproj">
       <Project>{e03a4197-ba64-4eed-a628-8de3b8b9ba9a}</Project>

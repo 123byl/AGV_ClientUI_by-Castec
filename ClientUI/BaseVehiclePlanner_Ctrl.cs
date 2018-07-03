@@ -633,7 +633,7 @@ namespace VehiclePlanner {
         /// 移至Goal(透過Goal點名稱)
         /// </summary>
         /// <param name="goalName">Goal點名稱</param>
-        internal void Run(string goalName) => Task.Run(() => rVehiclePlanner.Controller.DoRunningByGoalName(goalName));
+        internal void Run(string goalName) => Task.Run(() => rVehiclePlanner.Controller.GoTo(goalName));
 
         /// <summary>
         /// 刪除指定標記物
@@ -651,7 +651,7 @@ namespace VehiclePlanner {
         /// </summary>
         /// <param name="powerName">充電站名稱</param>
         /// <returns>是否開始進行充電</returns>
-        internal void Charging(string powerName) => Task.Run(() => rVehiclePlanner.Controller.DoCharging(powerName));
+        internal void Charging(string powerName) => Task.Run(() => rVehiclePlanner.Controller.GoTo(powerName));
 
         #endregion ITest
 

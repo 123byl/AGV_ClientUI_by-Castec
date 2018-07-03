@@ -20,7 +20,7 @@ namespace VehiclePlanner.Core {
     /// <summary>
     /// iTS控制抽象定義
     /// </summary>
-    public abstract class BaseiTSController : IBaseITSController {
+    public abstract class BaseiTSController<TSend,TResponse> : IBaseITSController {
 
         #region Declaration - Fields
     
@@ -79,10 +79,15 @@ namespace VehiclePlanner.Core {
         /// </summary>
         private Broadcaster mBroadcast = new Broadcaster();
 
+        /// <summary>
+        /// 回應等待清單
+        /// </summary>
+        protected List<CtTaskCompletionSource<TSend,TResponse>> mCmdTsk = new List<CtTaskCompletionSource<TSend, TResponse>>();
+
         #endregion Declaration - Fields
 
         #region Declaration - Properties
-        
+
         /// <summary>
         /// Vehicle Console端IP
         /// </summary>
@@ -304,7 +309,43 @@ namespace VehiclePlanner.Core {
         /// <summary>
         /// 取得Map檔
         /// </summary>
-        public abstract void GetMap();
+        public void GetMap() {
+            bool success = false;
+            string mapName = null;
+            try
+            {
+                string mapList = RequestMapList();
+                if (!string.IsNullOrEmpty(mapList))
+                {
+                    mapName = SelectFile(mapList);
+                    if (!string.IsNullOrEmpty(mapName))
+                    {
+                        var map = RequestMapFile(mapName);
+                        if (map.Requited)
+                        {
+                            if (map.SaveAs(@"D:\Mapinfo\Client"))
+                            {
+                                success = true;
+                                OnConsoleMessage($"Planner - {map.FileName} download completed");
+                            }
+                            else
+                            {
+                                success = false;
+                                OnConsoleMessage($"Planner - {map.FileName} failed to save ");
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                OnConsoleMessage(ex.Message);
+            }
+            finally
+            {
+                OnBalloonTip("Donwload", $"{mapName}.map is downloaded {(success ? "successfully" : "failed")} ");
+            }
+        }
 
         /// <summary>
         /// 取得Ori檔
@@ -315,42 +356,143 @@ namespace VehiclePlanner.Core {
         /// 要求雷射資料
         /// </summary>
         /// <returns>雷射資料(0筆雷射資料表示失敗)</returns>
-        public abstract void RequestLaser();
+        public void RequestLaser() {
+            var laser = ImpRequestLaser();
+            try
+            {
+                if (laser.Requited)
+                {
+                    if (laser.Count > 0)
+                    {
+                        OnConsoleMessage($"iTS - Received {laser.Count} laser data");
+                        laser.DrawLaser();
+                    }
+                    else
+                    {
+                        OnConsoleMessage($"iTS - Laser data request failed");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                OnConsoleMessage(ex.Message);
+            }
+        }
 
-        public abstract void SetServoMode(bool servoOn);
+        /// <summary>
+        /// 马达激磁状态设定命令发送
+        /// </summary>
+        /// <param name="servoOn">/欲设定的马达激磁状态</param>
+        public void SetServoMode(bool servoOn) {
+            try
+            {
+                BaseBoolReturn servoMode = ImpSetServoMode(servoOn);
+                if (servoMode.Requited )
+                {
+                    OnConsoleMessage($"iTS - Is Servo{(servoMode.Value ? "On" : "Off")}");
+                    IsMotorServoOn = servoMode.Value;
+                }
+            }
+            catch (Exception ex)
+            {
+                OnConsoleMessage(ex.Message);
+            }
+        }
 
         /// <summary>
         /// 設定iTS工作移動速度
         /// </summary>
         /// <param name="velocity">移動速度</param>
         /// <returns>是否設定成功</returns>
-        public abstract void SetWorkVelocity(int velocity);
+        public void SetWorkVelocity(int velocity) {
+            var success = ImpSetWorkVelocity(velocity);
+            try
+            {
+                if (success.Requited && success.Value)
+                {
+                    Velocity = velocity;
+                }
+            }
+            catch (Exception ex)
+            {
+                OnConsoleMessage(ex.Message);
+            }
+
+        }
+
 
         /// <summary>
         /// 進行位置矯正
         /// </summary>
         /// <returns>地圖相似度</returns>
-        public abstract void DoPositionComfirm();
-
+        public void DoPositionComfirm() {
+            BaseDoPositionComfirm comfirm = ImpDoPositionComfirm();
+            try
+            {
+                if (comfirm.Requited)
+                {
+                    double similarity = comfirm.Similarity;
+                    if (similarity >= 0 && similarity <= 1)
+                    {
+                        mSimilarity = similarity;
+                        OnConsoleMessage($"iTS - The map similarity is {mSimilarity:0.0%}");
+                    }
+                    else if (mSimilarity == -1)
+                    {
+                        mSimilarity = similarity;
+                        OnConsoleMessage($"iTS - The map is now matched");
+                    }
+                    else
+                    {
+                        OnConsoleMessage($"iTS - The map similarity is 0%");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                OnConsoleMessage(ex.Message);
+            }
+        }
+        
         /// <summary>
-        /// 移至Goal(透過Goal點索引)
+        /// 移动至目标点
         /// </summary>
-        /// <param name="goalIndex">Goal點索引</param>
-        /// <returns>是否成功開始移動</returns>
-        public abstract void DoRunningByGoalName(string goalName);
-
-        /// <summary>
-        /// 到指定充電站進行充電
-        /// </summary>
-        /// <param name="powerName">充電站名稱</param>
-        /// <returns>是否開始進行充電</returns>
-        public abstract void DoCharging(string powerName);
+        /// <param name="goalName">目标点名称</param>
+        public void GoTo(string goalName)
+        {
+            try
+            {
+                BaseGoTo gotoGoal = ImpGoTo(goalName);
+                if (gotoGoal.Requited && gotoGoal.Started)
+                {
+                    OnConsoleMessage($"iTS - Start moving to {goalName}");
+                }
+                else
+                {
+                    OnConsoleMessage($"Move to {goalName} failure");
+                }
+            }
+            catch (Exception ex)
+            {
+                OnConsoleMessage(ex.Message);
+            }
+        }
 
         /// <summary>
         /// 要求Map檔清單
         /// </summary>
         /// <returns>Map檔清單</returns>
-        public abstract string RequestMapList();
+        public string RequestMapList() {
+            BaseListReturn mapList = ImpRequestMapList();
+            return mapList.Requited ? mapList.ListString : null;
+        }
+
+        /// <summary>
+        /// 要求Map檔
+        /// </summary>
+        /// <param name="mapName">要求的Map檔名</param>
+        /// <returns>Map檔</returns>
+        public abstract BaseFileReturn RequestMapFile(string mapName);
 
         ///// <summary>
         ///// 要求Map檔
@@ -368,19 +510,28 @@ namespace VehiclePlanner.Core {
         /// </summary>
         /// <param name="mapPath">目標Map檔路徑</param>
         public void SendAndSetMap(string mapPath) {
-            var success = UploadMapToAGV(mapPath);
+            BaseBoolReturn success = UploadMapToAGV(mapPath);
             string mapName = Path.GetFileName(mapPath);
-            if (success == true) {
-                OnBalloonTip("Upload", $"{mapName} is uploaded {(success == true ? "successfully" : "failed")} ");
-                OnConsoleMessage($"iTS - The {mapName} uploaded");
-                success = ChangeMap(mapName);
-                if (success == true) {
-                    OnConsoleMessage($"iTS - The {mapName} is now running");
-                } else if (success == false) {
-                    OnConsoleMessage($"iTS - The {mapName} failed to run");
+            if (success.Requited)
+            {
+                if (success.Value)
+                {
+                    OnBalloonTip("Upload", $"{mapName} is uploaded {(success.Value ? "successfully" : "failed")} ");
+                    OnConsoleMessage($"iTS - The {mapName} uploaded");
+                    success = ChangeMap(mapName);
+                    if (success.Value)
+                    {
+                        OnConsoleMessage($"iTS - The {mapName} is now running");
+                    }
+                    else
+                    {
+                        OnConsoleMessage($"iTS - The {mapName} failed to run");
+                    }
                 }
-            } else if (success == false) {
-                OnConsoleMessage($"iTS - The {mapName} upload failed");
+                else
+                {
+                    OnConsoleMessage($"iTS - The {mapName} upload failed");
+                }
             }
         }
 
@@ -396,17 +547,18 @@ namespace VehiclePlanner.Core {
         /// <param name="velocity">移動速度</param>
         public void MotionContorl(MotionDirection direction) {
             try {
-                bool? isManualMoving = null;
+                BaseBoolReturn isManualMoving = null;
                 if (direction == MotionDirection.Stop) {
                     isManualMoving = StartManualControl(false);
                 } else {
-                    if (SetManualVelocity(direction) == true) {
+                    BaseBoolReturn success = SetManualVelocity(direction);
+                    if (success.Requited && success.Value) {
                         OnConsoleMessage($"iTS - is {direction},Velocity is {mVelocity}");
                         isManualMoving = StartManualControl(true);
                     }
                 }
-                if (isManualMoving != null && isManualMoving != mIsManualMoving) {
-                    mIsManualMoving = (bool)isManualMoving;
+                if (isManualMoving.Requited && isManualMoving.Value != mIsManualMoving) {
+                    mIsManualMoving = isManualMoving.Value;
                     OnConsoleMessage($"iTS - {(mIsManualMoving ? "Start" : "Stop")} moving");
                 }
             } catch (Exception ex) {
@@ -427,13 +579,73 @@ namespace VehiclePlanner.Core {
             }
         }
 
-        public abstract void FindPath(string goalName);
+
+        public void FindPath(string goalName) {
+            try
+            {
+                var path = RequestPath(goalName);
+                if (path.Requited)
+                {
+                    if (path.Count > 0)
+                    {
+                        OnConsoleMessage($"iTS - The path to {goalName} is completion. The number of path points is {path.Count}");
+                    }
+                    else
+                    {
+                        OnConsoleMessage($"iTS - Can not plan the path to  {goalName}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                OnConsoleMessage(ex.Message);
+            }
+        }
 
         /// <summary>
         /// 連線至iTS
         /// </summary>
         /// <param name="cnn"></param>
-        public abstract void ConnectToITS();
+        public void ConnectToITS() {
+            try
+            {
+                if (IsConnectable)
+                {
+                    if (!IsConnected)
+                    {//連線至VC
+                        /*-- 實例化物件 --*/
+                        ClientInitial();
+                        /*-- IP格式驗證 --*/
+                        if (!VerifyIP(HostIP))
+                        {
+                            throw new FormatException($"{HostIP}是錯誤IP格式");
+                        }
+                        /*-- 測試IP是否存在 --*/
+                        PingStatus pingStt = PingStatus.Unknown;
+                        if ((pingStt = CtNetwork.Ping(HostIP, 500).PingState) != PingStatus.Success)
+                        {
+                            throw new PingException(pingStt.ToString());
+                        }
+                        /*-- 連線至VehicleConsole --*/
+                        ClientConnect(HostIP, 1080);
+                    }
+                    else
+                    {//斷開與VehicleConsole的連線
+                        ClientStop();
+                    }
+                }
+            }
+            catch (PingException pe)
+            {
+                OnConsoleMessage($"Ping fail:{pe.Message}");
+                OnBalloonTip("Connect failed", pe.Message);
+            }
+            catch (Exception ex)
+            {
+                OnConsoleMessage(ex.Message);
+                OnBalloonTip("Connect failed", ex.Message);
+            }
+        }
 
         public void FindCar() {
             if (!mBroadcast.IsReceiving) {
@@ -469,6 +681,172 @@ namespace VehiclePlanner.Core {
         #endregion Funciton - Public Methods
 
         #region Funciton - Private Methods
+
+        /// <summary>
+        /// 要求到指定Goal點的路徑
+        /// </summary>
+        /// <param name="goalIndex">目標Goal點索引</param>
+        /// <returns>路徑(Count為0表示規劃失敗)</returns>
+        protected BaseRequestPath RequestPath(string goalName)
+        {
+            var path = ImpRequestPath(goalName);
+            return path;
+        }
+        
+        #region Implement Methods
+
+        /// <summary>
+        /// 雷射要求命令发送
+        /// </summary>
+        /// <returns></returns>
+        protected abstract BaseRequeLaser ImpRequestLaser();
+
+        /// <summary>
+        /// 马达激磁状态设定命令发送
+        /// </summary>
+        /// <param name="servoOn">/欲设定的马达激磁状态</param>
+        /// <returns></returns>
+        protected abstract BaseBoolReturn ImpSetServoMode(bool servoOn);
+
+        /// <summary>
+        /// 設定iTS工作移動速度
+        /// </summary>
+        /// <param name="velocity">移動速度</param>
+        /// <returns>是否設定成功</returns>
+        protected abstract BaseBoolReturn ImpSetWorkVelocity(int velocity);
+
+        /// <summary>
+        /// 位置校正命令发送
+        /// </summary>
+        /// <returns>地圖相似度</returns>
+        protected abstract BaseDoPositionComfirm ImpDoPositionComfirm();
+        
+        /// <summary>
+        /// 移动至目标点
+        /// </summary>
+        /// <param name="goalName">目标点名称</param>
+        protected abstract BaseGoTo ImpGoTo(string goalName);
+
+        /// <summary>
+        /// 要求Map檔清單
+        /// </summary>
+        /// <returns>Map檔清單</returns>
+        protected abstract BaseListReturn ImpRequestMapList();
+
+        /// <summary>
+        /// 要求到指定Goal點的路徑
+        /// </summary>
+        /// <param name="goalIndex">目標Goal點索引</param>
+        /// <returns>路徑(Count為0表示規劃失敗)</returns>
+        protected abstract BaseRequestPath ImpRequestPath(string goalName);
+
+        /// <summary>
+        /// 要求Goal點清單
+        /// </summary>
+        /// <returns>Goal點清單</returns>
+        protected abstract BaseRequestGoalList ImpRequestGoalList();
+
+        #endregion Implement Methods
+
+        /// <summary>
+        /// 序列傳輸命令
+        /// </summary>
+        /// <param name="packet">序列命令</param>
+        /// <returns>是否傳輸成功</returns>
+        protected TResponse Send(TSend packet)
+        {
+            TResponse product = default(TResponse);//回應封包
+            Task tsk = null;//等待逾時執行緒
+            CtTaskCompletionSource<TSend, TResponse> tskCompSrc = null;//封包接受完成觸發源
+            /*-- 檢查封包 --*/
+            if (packet == null)
+            {
+                OnConsoleMessage("The packet is null, unable to send");
+                return default(TResponse);
+            }
+            /*--檢查連線--*/
+            if (!IsConnected)
+            {
+                OnConsoleMessage("Is not connected, unable to send");
+                return default(TResponse);
+            }
+            if (packet is TSend)
+            {
+                string cmdTitle = CmdTitle(packet);
+                /*-- 檢查是否沒有在等待回應 --*/
+                if (!mCmdTsk.Exists(v => IsWaitingCmd(v,packet)))
+                {
+                    /*-- 加入回應等待任務 --*/
+                    tskCompSrc = new CtTaskCompletionSource<TSend,TResponse>(packet);
+                    mCmdTsk.Add(tskCompSrc);
+                    /*-- 等待回應 --*/
+                    tsk = Task.Run(() => {
+                        bool isTimeout = !tskCompSrc.Task.Wait(mTimeOut);
+                        /*--從等待清單中刪除--*/
+                        mCmdTsk.Remove(tskCompSrc);
+                        if (!isTimeout)
+                        {
+                            if (tskCompSrc.Task.IsCompleted)
+                            {
+                                if (tskCompSrc.Task.Result != null)
+                                {
+                                    product = tskCompSrc.Task.Result;
+                                    OnConsoleMessage($"{cmdTitle} response is received");
+                                }
+                                else
+                                {
+                                    OnConsoleMessage($"{cmdTitle} response is null");
+                                }
+                            }
+                        }
+                        else
+                        {
+                            OnConsoleMessage($"{cmdTitle} response timeout");
+                        }
+                    });
+                }
+                else
+                {//已在等待回應
+                    OnConsoleMessage($"{cmdTitle}Waiting for the iTS to respond");
+                    return default(TResponse);
+                }
+            }
+            /*-- 發送命令 --*/
+            if (!ClientSend(packet)) tskCompSrc?.SetResult(default(TResponse));
+            /*-- 等回應接收完畢 --*/
+            tsk?.Wait();
+            return product;
+        }
+
+        /// <summary>
+        /// 传送命令
+        /// </summary>
+        /// <param name="packet">命令物件</param>
+        /// <returns>是否传送成功</returns>
+        protected abstract bool ClientSend(TSend packet);
+        
+        /// <summary>
+        /// 检测是否等待中的命令
+        /// </summary>
+        /// <param name="v">等待的命令</param>
+        /// <param name="send">要发送的命令</param>
+        /// <returns>是否等待中命令</returns>
+        protected abstract bool IsWaitingCmd(CtTaskCompletionSource<TSend, TResponse> v, TSend send);
+
+        /// <summary>
+        /// 检测是否等待中的回复
+        /// </summary>
+        /// <param name="v">等待的命令</param>
+        /// <param name="response">收到的回复</param>
+        /// <returns>是否是等待中的命令</returns>
+        protected abstract bool IsWaitingResponse(CtTaskCompletionSource<TSend, TResponse> v, TResponse response);
+
+        /// <summary>
+        /// 产生命令标题
+        /// </summary>
+        /// <param name="packet">命令物件</param>
+        /// <returns>命令标题</returns>
+        protected abstract string CmdTitle(TSend packet);
 
         /// <summary>
         /// Console訊息發報
@@ -508,41 +886,45 @@ namespace VehiclePlanner.Core {
         /// </summary>
         /// <param name="mapPath">要上傳的Map檔路徑</param>
         /// <returns>是否上傳成功</returns>
-        protected abstract bool? UploadMapToAGV(string mapPath);
+        protected abstract BaseBoolReturn UploadMapToAGV(string mapPath);
 
         /// <summary>
         /// 要求iTS載入指定的Map檔
         /// </summary>
         /// <param name="mapName">要載入的Map檔名</param>
         /// <returns>是否切換成功</returns>
-        protected abstract bool? ChangeMap(string mapName);
+        protected abstract BaseBoolReturn ChangeMap(string mapName);
 
         /// <summary>
         /// 要求Goal點清單
         /// </summary>
         /// <returns>Goal點清單</returns>
-        protected abstract string RequestGoalList();
-        
+        protected string RequestGoalList()
+        {
+            BaseListReturn goalList = ImpRequestGoalList();
+            return goalList.Requited ? goalList.ListString : null;
+        }
+
         /// <summary>
         /// 開始手動控制
         /// </summary>
         /// <param name="start">是否開始手動控制</param>
         /// <remarks>是否為手動控制狀態</remarks>
-        protected abstract bool? StartManualControl(bool start);
+        protected abstract BaseBoolReturn StartManualControl(bool start);
         
         /// <summary>
         /// 停止掃描地圖
         /// </summary>
         /// <returns>是否在掃描中</returns>
-        protected abstract bool? StopScanning();
+        protected abstract BaseBoolReturn StopScanning();
 
         /// <summary>
         /// 設定地圖檔名
         /// </summary>
         /// <remarks>是否在掃描中</remarks>
-        protected abstract bool? SetScanningOriFileName(string oriName);
+        protected abstract BaseSetScanningOriFileName SetScanningOriFileName(string oriName);
 
-        private bool? SetManualVelocity(MotionDirection direction) {
+        private BaseBoolReturn SetManualVelocity(MotionDirection direction) {
             int r = 0, l = 0, v = mVelocity;
             switch (direction) {
                 case MotionDirection.Forward:
@@ -567,15 +949,64 @@ namespace VehiclePlanner.Core {
             return SetManualVelocity(l, r);
         }
 
-        protected abstract bool? SetManualVelocity(int leftVelocity, int rightVelocity);
+        /// <summary>
+        /// 設定手動控制移動速度
+        /// </summary>
+        /// <param name="leftVelocity">左輪移動速度</param>
+        /// <param name="rightVelocity">右輪移動速度</param>
+        /// <returns></returns>
+        protected abstract BaseBoolReturn SetManualVelocity(int leftVelocity, int rightVelocity);
+
+        /// <summary>
+        /// 用户端连线初始化
+        /// </summary>
+        protected abstract void ClientInitial();
+
+        /// <summary>
+        /// 连线至伺服端
+        /// </summary>
+        /// <param name="ip">伺服端IP</param>
+        /// <param name="port">伺服端Port号</param>
+        protected abstract void ClientConnect(string ip,int port);
+
+        /// <summary>
+        /// 停止与伺服端连线
+        /// </summary>
+        protected abstract void ClientStop();
+
+        /// <summary>
+        /// 检查回应，并执行回应动作
+        /// </summary>
+        /// <param name="response">回应物件</param>
+        protected void ReceiveDataCheck(TResponse response)
+        {
+            /*-- 查詢是否有等待該封包 --*/
+            var cmdSrc = mCmdTsk.Find(v => IsWaitingResponse(v, response));
+            if (cmdSrc != null)
+            {
+                /*-- 执行一问一答动作并回传结果 --*/
+                cmdSrc.SetResult(response);
+            }
+            else
+            {
+                /*-- 直接执行动作 --*/
+                DoReceiveAction(response);
+            }
+        }
+
+        /// <summary>
+        /// 执行回应动作
+        /// </summary>
+        /// <param name="reponse"></param>
+        protected abstract void DoReceiveAction(TResponse reponse);
 
         #endregion Funciton - Private Methdos
 
         #region Implement - IDataSource
 
         /// <summary>
-            /// Invoke委派方法
-            /// </summary>
+        /// Invoke委派方法
+        /// </summary>
         protected Action<MethodInvoker> mInvoke = null;
 
         /// <summary>
@@ -695,11 +1126,11 @@ namespace VehiclePlanner.Core {
     //            }
     //        }
     //    }
-        
+
     //    #endregion Funciton - Events
 
     //    #region Funciton - Public Methods
-        
+
     //    /// <summary>
     //    /// 與指定IP iTS連線/斷線
     //    /// </summary>
@@ -743,7 +1174,7 @@ namespace VehiclePlanner.Core {
     //            }
     //        }
     //    }
-        
+
     //    /// <summary>
     //    /// 要求雷射資料
     //    /// </summary>
@@ -869,7 +1300,7 @@ namespace VehiclePlanner.Core {
     //        var mapFile = Send(FactoryMode.Factory.Order().RequestMapFile(mapName))?.ToIRequestMapFile()?.Product;
     //        return mapFile;
     //    }
-        
+
     //    #endregion Funciotn - Public Methods
 
     //    #region Funciton - Private Methods
@@ -1077,4 +1508,19 @@ namespace VehiclePlanner.Core {
 
     //}
 
+    /// <summary>
+    /// 等待任務
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public class CtTaskCompletionSource<TSend,TResponse> : TaskCompletionSource<TResponse>
+    {
+        /// <summary>
+        /// 等待的命令
+        /// </summary>
+        public TSend WaitCmd { get; }
+
+        public CtTaskCompletionSource(TSend packet) => WaitCmd = packet;
+
+    }
+    
 }

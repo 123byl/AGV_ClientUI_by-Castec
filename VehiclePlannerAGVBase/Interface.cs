@@ -19,7 +19,7 @@ namespace VehiclePlannerAGVBase {
         /// <summary>
         /// iTS控制器
         /// </summary>
-        new IITSController Controller { get; }
+        new IITSController_AGVBase Controller { get; }
         /// <summary>
         /// 地圖中心點
         /// </summary>
@@ -33,17 +33,12 @@ namespace VehiclePlannerAGVBase {
     /// <summary>
     /// 以AGVBase實作之ITS控制器介面
     /// </summary>
-    public interface IITSController : IBaseITSController {
+    public interface IITSController_AGVBase : IBaseITSController {
         /// <summary>
         /// iTS狀態
         /// </summary>
         IStatus Status { get; }
-        /// <summary>
-        /// 要求Map檔
-        /// </summary>
-        /// <param name="mapName">要求的Map檔名</param>
-        /// <returns>Map檔</returns>
-        IDocument RequestMapFile(string mapName);
+
         /// <summary>
         /// 傳送並要求載入Map
         /// </summary>

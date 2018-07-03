@@ -197,21 +197,15 @@ namespace VehiclePlanner.Core {
         /// </summary>
         void AutoReport(bool auto);
         /// <summary>
-        /// 到指定充電站進行充電
+        /// 移动至目标点
         /// </summary>
-        /// <param name="powerName">充電站名稱</param>
-        /// <returns>是否開始進行充電</returns>
-        void DoCharging(string powerName);
+        /// <param name="goalName">目标点名称</param>
+        void GoTo(string goalName);
         /// <summary>
         /// 進行位置矯正
         /// </summary>
         /// <returns>地圖相似度</returns>
         void DoPositionComfirm();
-        /// <summary>
-        /// 移至Goal(透過Goal點名稱)
-        /// </summary>
-        /// <param name="goalName">Goal點名稱</param>
-        void DoRunningByGoalName(string goalName);
         /// <summary>
         /// 搜尋至Goal點路徑(透過Goal名稱)
         /// </summary>
@@ -271,6 +265,13 @@ namespace VehiclePlanner.Core {
         /// 搜尋可用的iTS設備
         /// </summary>
         void FindCar();
+
+        /// <summary>
+        /// 要求Map檔
+        /// </summary>
+        /// <param name="mapName">要求的Map檔名</param>
+        /// <returns>Map檔</returns>
+        BaseFileReturn RequestMapFile(string mapName);
 
     }
     
