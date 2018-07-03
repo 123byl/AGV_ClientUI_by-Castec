@@ -131,7 +131,8 @@ namespace CtDockSuit {
             #endregion 以隱藏代替關閉
 
             e.Cancel = true;
-            this.Hide();
+			this.Visible = false;
+            //this.Hide();
         }
 
         #endregion Function - Events
