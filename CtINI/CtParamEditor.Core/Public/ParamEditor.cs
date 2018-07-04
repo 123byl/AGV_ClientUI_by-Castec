@@ -361,27 +361,15 @@ namespace CtParamEditor.Core
                     case nameof(IParamColumn.Default):
                         ShowOption = CmsOption.Edit;
                         IParam prop = DataSource[idxRow] as IParam;
-						if (prop != null)
-						{
-							if (string.IsNullOrEmpty(prop.Type))
-							{
-								DisableOption = CmsOption.Edit;
-							}
-							else
-							{
-								if (columnName == nameof(IParamColumn.Max) || columnName == nameof(IParamColumn.Min))
-								{
-									if (!prop.RangeDefinable)
-									{
-										DisableOption = CmsOption.Edit;
-									}
-								}
-							}
-						}
-						else
-						{
-							Console.WriteLine($"DataSouce([{idxRow}] is not exists");
-						}
+                        if (string.IsNullOrEmpty(prop.Type)) {
+                            DisableOption = CmsOption.Edit;
+                        } else {
+                            if (columnName == nameof(IParamColumn.Max) || columnName == nameof(IParamColumn.Min)) {
+                                if (!prop.RangeDefinable) {
+                                    DisableOption = CmsOption.Edit;
+                                }
+                            }
+                        }
                         break;
                     default:
                         ShowOption = CmsOption.Add | CmsOption.Delete;
