@@ -105,8 +105,8 @@ namespace VehiclePlannerAGVBase {
             },source.UserData.Authority(miToolBox));
         }
 
-        public void Bindings(IITSController source) {
-            Bindings<IITSController>(source);
+        public void Bindings(IITSController_AGVBase source) {
+            Bindings<IITSController_AGVBase>(source);
             /*-- iTS資訊 --*/
             string dataMember = nameof(source.Status);
             tsprgBattery.ProgressBar.DataBindings.Add(nameof(ProgressBar.Value), source, dataMember).Format += (sender, e) => {

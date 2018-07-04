@@ -15,7 +15,7 @@ namespace VehiclePlannerAGVBase {
     /// <summary>
     /// 序列傳輸實作iTS控制
     /// </summary>
-    internal class ITSControllerSerial : BaseiTSController, IITSController {
+    internal class ITSControllerSerial : BaseiTSController<IBasicPacket, IProductPacket>, IITSController_AGVBase {
 
         #region Declaration - Fields
 
@@ -25,12 +25,7 @@ namespace VehiclePlannerAGVBase {
         /// 序列化傳輸物件
         /// </summary>
         private ISerialClient mSerialClient = null;
-
-        /// <summary>
-        /// 回應等待清單
-        /// </summary>
-        private List<CtTaskCompletionSource<IProductPacket>> mCmdTsk = new List<CtTaskCompletionSource<IProductPacket>>();
-
+        
         /// <summary>
         /// iTS狀態
         /// </summary>
@@ -78,37 +73,13 @@ namespace VehiclePlannerAGVBase {
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void mSerialClient_ReceiveData(object sender, ReceiveDataEventArgs e) {
-            if (e.Data is IProductPacket) {
+        private void mSerialClient_ReceiveData(object sender, ReceiveDataEventArgs e)
+        {
+            if (e.Data is IProductPacket)
+            {
                 var product = e.Data as IProductPacket;
                 /*-- 查詢是否有等待該封包 --*/
-                var cmdSrc = mCmdTsk.Find(v => v.SerialNumber == product.SerialNumber);
-                if (cmdSrc != null) {
-                    cmdSrc.SetResult(product);
-                } else {
-                    switch (product.Purpose) {
-                        case EPurpose.AutoReportLaser:
-                            var laser = product.ToIAutoReportLaser().Product;
-                            if (laser != null) {
-                                DrawLaser(product.ToIAutoReportLaser().Product);
-                            } else {
-                                IsAutoReport = false;
-                                mMapGL.ClearLaser();
-                                mMapGL.ClearPath();
-                            }
-                            break;
-                        case EPurpose.AutoReportPath: {
-                                var path = product.ToIAutoReportPath().Product;
-                                if (path != null) {
-                                    DrawPath(path);
-                                }
-                                break;
-                            }
-                        case EPurpose.AutoReportStatus:
-                            Status = product.ToIAutoReportStatus()?.Product;
-                            break;
-                    }
-                }
+                ReceiveDataCheck(product);
             }
         }
 
@@ -135,180 +106,67 @@ namespace VehiclePlannerAGVBase {
         #endregion Funciton - Events
 
         #region Funciton - Public Methods
+        
+        /// <summary>
+        /// 雷射命令要求传送
+        /// </summary>
+        /// <returns></returns>
+        protected override BaseRequeLaser ImpRequestLaser() => new RequestLaser(Send(FactoryMode.Factory.Order().RequestLaser()));
 
         /// <summary>
-        /// 與指定IP iTS連線/斷線
+        /// 马达激磁状态设定命令发送
         /// </summary>
-        /// <param name="cnn">連線/斷線</param>
-        /// <param name="hostIP">AGV IP</param>
-        public override void ConnectToITS() {
-            try {
-                if (IsConnectable) {
-                    if (!IsConnected) {//連線至VC
-                        /*-- 實例化物件 --*/
-                        if (mSerialClient != null) {
-                            mSerialClient.ConnectChange -= mSerialClient_OnConnectChange;
-                            mSerialClient.Dispose();
-                        }
-                        mSerialClient = FactoryMode.Factory.SerialClient(mSerialClient_ReceiveData, mBypassSocket);
-                        mSerialClient.ConnectChange += mSerialClient_OnConnectChange;
-                        /*-- IP格式驗證 --*/
-                        if (!VerifyIP(HostIP)) {
-                            throw new FormatException($"{HostIP}是錯誤IP格式");
-                        }
-                        /*-- 測試IP是否存在 --*/
-                        PingStatus pingStt = PingStatus.Unknown;
-                        if ((pingStt = CtNetwork.Ping(HostIP, 500).PingState) != PingStatus.Success) {
-                            throw new PingException(pingStt.ToString());
-                        }
-                        /*-- 連線至VehicleConsole --*/
-                        mSerialClient.Connect(HostIP, (int)EPort.VehiclePlanner);
-                    } else {//斷開與VehicleConsole的連線
-                        mSerialClient.Stop();
-                    }
-                }
-            } catch (PingException pe) {
-                OnConsoleMessage($"Ping fail:{pe.Message}");
-                OnBalloonTip("Connect failed", pe.Message);
-            } catch (Exception ex) {
-                OnConsoleMessage(ex.Message);
-                OnBalloonTip("Connect failed", ex.Message);
-                if (mSerialClient != null) {
-                    mSerialClient.Dispose();
-                    mSerialClient = null;
-                }
-            }
-        }
-
-        /// <summary>
-        /// 要求雷射資料
-        /// </summary>
-        /// <returns>雷射資料(0筆雷射資料表示失敗)</returns>
-        public override void RequestLaser() {
-            var laser = Send(FactoryMode.Factory.Order().RequestLaser())?.ToIRequestLaser()?.Product;
-            try {
-                if (laser != null) {
-                    if (laser.Count > 0) {
-                        OnConsoleMessage($"iTS - Received {laser.Count} laser data");
-                        DrawLaser(laser);
-                    } else {
-                        OnConsoleMessage($"iTS - Laser data request failed");
-                    }
-                }
-            } catch (Exception ex) {
-                OnConsoleMessage(ex.Message);
-            }
-        }
-
-        public override void SetServoMode(bool servoOn) {
-            try {
-                var servoOnStt = Send(FactoryMode.Factory.Order().SetServoMode(servoOn))?.ToISetServoMode()?.Product;
-                if (servoOnStt != null) {
-                    OnConsoleMessage($"iTS - Is Servo{(servoOn ? "On" : "Off")}");
-                    IsMotorServoOn = (bool)servoOnStt;
-                }
-            } catch (Exception ex) {
-                OnConsoleMessage(ex.Message);
-            }
-        }
+        /// <param name="servoOn">/欲设定的马达激磁状态</param>
+        /// <returns></returns>
+        protected override BaseBoolReturn ImpSetServoMode(bool servoOn) => new SetServoMode(Send(FactoryMode.Factory.Order().SetServoMode(servoOn)));
 
         /// <summary>
         /// 設定iTS工作移動速度
         /// </summary>
         /// <param name="velocity">移動速度</param>
         /// <returns>是否設定成功</returns>
-        public override void SetWorkVelocity(int velocity) {
-            var success = Send(FactoryMode.Factory.Order().SetWorkVelocity(velocity))?.ToISetWorkVelocity()?.Product;
-            try {
-                if (success == true) {
-                    Velocity = velocity;
-                }
-            } catch (Exception ex) {
-                OnConsoleMessage(ex.Message);
-            }
-        }
+        protected override BaseBoolReturn ImpSetWorkVelocity(int velocity) => new SetWorkVelocity(Send(FactoryMode.Factory.Order().SetWorkVelocity(velocity)));
 
         /// <summary>
-        /// 進行位置矯正
+        /// 位置校正命令发送
         /// </summary>
         /// <returns>地圖相似度</returns>
-        public override void DoPositionComfirm() {
-            var similarity = Send(FactoryMode.Factory.Order().DoPositionComfirm())?.ToIDoPositionComfirm()?.Product;
-            try {
-                if (similarity != null) {
-                    if (similarity >= 0 && similarity <= 1) {
-                        mSimilarity = (double)similarity;
-                        OnConsoleMessage($"iTS - The map similarity is {mSimilarity:0.0%}");
-                    } else if (mSimilarity == -1) {
-                        mSimilarity = (double)similarity;
-                        OnConsoleMessage($"iTS - The map is now matched");
-                    } else {
-                        OnConsoleMessage($"iTS - The map similarity is 0%");
-                    }
-                }
-            } catch (Exception ex) {
-                OnConsoleMessage(ex.Message);
-            }
-        }
+        protected override BaseDoPositionComfirm ImpDoPositionComfirm() => new DoPositionComfirm(Send(FactoryMode.Factory.Order().DoPositionComfirm()));
 
         /// <summary>
-        /// 移至Goal(透過Goal點索引)
+        /// 移动至目标点
         /// </summary>
-        /// <param name="goalIndex">Goal點索引</param>
-        /// <returns>是否成功開始移動</returns>
-        public override void DoRunningByGoalName(string goalName) {
-            try {
-                var success = Send(FactoryMode.Factory.Order().DoRuningByGoalName(goalName))?.ToIDoRuningByGoalName()?.Product;
-                if (success == true) {
-                    OnConsoleMessage($"iTS - Start moving to {goalName}");
-                } else if (success == false) {
-                    OnConsoleMessage($"Move to goal failure");
-                }
-            } catch (Exception ex) {
-                OnConsoleMessage(ex.Message);
-            }
-        }
+        /// <param name="goalName">目标点名称</param>
+        protected override BaseGoTo ImpGoTo(string goalName) => new GoTo(Send(FactoryMode.Factory.Order().DoRuningByGoalName(goalName)));
 
         /// <summary>
-        /// 到指定充電站進行充電
+        /// 要求Map档清单
         /// </summary>
-        /// <param name="powerIndex">充電站索引</param>
-        /// <returns>是否開始進行充電</returns>
-        public override void DoCharging(string powerName) {
-            try {
-                var success = Send(FactoryMode.Factory.Order().DoCharging(powerName))?.ToIDoCharging()?.Product;
-                if (success == true) {
-                    OnConsoleMessage($"iTS - Begin charging at {powerName}");
-                } else if (success == false) {
-                    OnConsoleMessage("iTS - Charging failed");
-                }
-            } catch (Exception ex) {
-                OnConsoleMessage(ex.Message);
-            }
-        }
+        protected override BaseListReturn ImpRequestMapList() => new RequestMapList(Send(FactoryMode.Factory.Order().RequestMapList()));
 
         /// <summary>
-        /// 要求Map檔清單
+        /// 要求到指定Goal點的路徑
         /// </summary>
-        /// <returns>Map檔清單</returns>
-        public override string RequestMapList() {
-            var mapList = Send(FactoryMode.Factory.Order().RequestMapList())?.ToIRequestMapList()?.Product;
-            return mapList != null ? string.Join(",", mapList) : null;
-        }
+        /// <param name="goalIndex">目標Goal點索引</param>
+        /// <returns>路徑(Count為0表示規劃失敗)</returns>
+        protected override BaseRequestPath ImpRequestPath(string goalName) => new RequestPath(Send(FactoryMode.Factory.Order().RequestPath(goalName)));
+
+        /// <summary>
+        /// 要求Goal點清單
+        /// </summary>
+        /// <returns>Goal點清單</returns>
+        protected override BaseRequestGoalList ImpRequestGoalList() => new RequestGoalList(Send(FactoryMode.Factory.Order().RequestGoalList()));
 
         /// <summary>
         /// 要求Map檔
         /// </summary>
         /// <param name="mapName">要求的Map檔名</param>
         /// <returns>Map檔</returns>
-        public IDocument RequestMapFile(string mapName) {
-            var mapFile = Send(FactoryMode.Factory.Order().RequestMapFile(mapName))?.ToIRequestMapFile()?.Product;
-            return mapFile;
-        }
-
+        public override BaseFileReturn RequestMapFile(string mapName) => new RequestMapFile(Send(FactoryMode.Factory.Order().RequestMapFile(mapName)));
+        
         public override void StartScan(bool scan) {
             try {
-                bool? isScanning = null;
+                BaseBoolReturn isScanning = null;
                 if (mIsScanning != scan) {
                     if (scan) {//開始掃描
                         if (mStatus?.Description == EDescription.Idle) {
@@ -316,7 +174,7 @@ namespace VehiclePlannerAGVBase {
                             if (InputBox.Invoke(out oriName, "MAP Name", "Set Map File Name")) {
                                 isScanning = SetScanningOriFileName(oriName);
                             }
-                            if (isScanning == true) {
+                            if (isScanning.Requited && isScanning.Value) {
                                 OnConsoleMessage($"iTS - The new ori name is {oriName}.ori");
                             }
                         } else {
@@ -330,7 +188,7 @@ namespace VehiclePlannerAGVBase {
                         }
                     }
                     if (isScanning != null) {
-                        IsScanning = (bool)isScanning;
+                        IsScanning = isScanning.Value;
                     }
                 }
             } catch (Exception ex) {
@@ -351,39 +209,7 @@ namespace VehiclePlannerAGVBase {
                 OnConsoleMessage($"iTS - The position are now at {position}");
             }
         }
-
-        /// <summary>
-        /// 取得Map檔
-        /// </summary>
-        public override void GetMap() {
-            bool? success = null;
-            string mapName = null;
-            try {
-                string mapList = RequestMapList();
-                if (!string.IsNullOrEmpty(mapList)) {
-                    mapName = SelectFile(mapList);
-                    if (!string.IsNullOrEmpty(mapName)) {
-                        var map = RequestMapFile(mapName);
-                        if (map != null) {
-                            if (map.SaveAs(@"D:\Mapinfo\Client")) {
-                                success = true;
-                                OnConsoleMessage($"Planner - {map.Name} download completed");
-                            } else {
-                                success = false;
-                                OnConsoleMessage($"Planner - {map.Name} failed to save ");
-                            }
-                        }
-                    }
-                }
-            } catch (Exception ex) {
-                OnConsoleMessage(ex.Message);
-            } finally {
-                if (success != null) {
-                    OnBalloonTip("Donwload", $"{mapName}.map is downloaded {(success == true ? "successfully" : "failed")} ");
-                }
-            }
-        }
-
+        
         /// <summary>
         /// 取得Ori檔
         /// </summary>
@@ -430,82 +256,41 @@ namespace VehiclePlannerAGVBase {
                 OnConsoleMessage(ex.Message);
             }
         }
-
-        public override void FindPath(string goalName) {
-            try {
-                var path = RequestPath(goalName);
-                if (path != null) {
-                    if (path.Count > 0) {
-                        OnConsoleMessage($"iTS - The path to {goalName} is completion. The number of path points is {path.Count}");
-                    } else {
-                        OnConsoleMessage($"iTS - Can not plan the path to  {goalName}");
-                    }
-                }
-            } catch (Exception ex) {
-                OnConsoleMessage(ex.Message);
-            }
-        }
-
+        
         #endregion Funciotn - Public Methods
 
         #region Funciton - Private Methods
 
         /// <summary>
-        /// 序列傳輸命令
+        /// 产生命令标题
         /// </summary>
-        /// <param name="packet">序列命令</param>
-        /// <returns>是否傳輸成功</returns>
-        private IProductPacket Send(IBasicPacket packet) {
-            IProductPacket product = null;//回應封包
-            Task tsk = null;//等待逾時執行緒
-            CtTaskCompletionSource<IProductPacket> tskCompSrc = null;//封包接受完成觸發源
-            /*-- 檢查封包 --*/
-            if (packet == null) {
-                OnConsoleMessage("The packet is null, unable to send");
-                return null;
-            }
-            /*--檢查連線--*/
-            if (!IsConnected) {
-                OnConsoleMessage("Is not connected, unable to send");
-                return null;
-            }
-            if (packet is IOrderPacket) {
-                string cmdTitle = $"{packet.Purpose}({packet.SerialNumber}):";
-                /*-- 檢查是否沒有在等待回應 --*/
-                if (!mCmdTsk.Exists(v => v.Purpose == packet.Purpose)) {
-                    /*-- 加入回應等待任務 --*/
-                    tskCompSrc = new CtTaskCompletionSource<IProductPacket>(packet as IOrderPacket);
-                    mCmdTsk.Add(tskCompSrc);
-                    /*-- 等待回應 --*/
-                    tsk = Task.Run(() => {
-                        bool isTimeout = !tskCompSrc.Task.Wait(mTimeOut);
-                        /*--從等待清單中刪除--*/
-                        mCmdTsk.Remove(tskCompSrc);
-                        if (!isTimeout) {
-                            if (tskCompSrc.Task.IsCompleted) {
-                                if (tskCompSrc.Task.Result != null) {
-                                    product = tskCompSrc.Task.Result;
-                                    OnConsoleMessage($"{cmdTitle} response is received");
-                                } else {
-                                    OnConsoleMessage($"{cmdTitle} response is null");
-                                }
-                            }
-                        } else {
-                            OnConsoleMessage($"{cmdTitle} response timeout");
-                        }
-                    });
-                } else {//已在等待回應
-                    OnConsoleMessage($"{cmdTitle}Waiting for the iTS to respond");
-                    return null;
-                }
-            }
-            /*-- 發送命令 --*/
-            if (!mSerialClient.Send(packet)) tskCompSrc?.SetResult(null);
-            /*-- 等回應接收完畢 --*/
-            tsk?.Wait();
-            return product;
-        }
+        /// <param name="packet">命令物件</param>
+        /// <returns>命令标题</returns>
+        protected override string CmdTitle(IBasicPacket packet) =>  $"{packet.Purpose}({packet.SerialNumber}):";
 
+        /// <summary>
+        /// 检测是否等待中的命令
+        /// </summary>
+        /// <param name="v">等待的命令</param>
+        /// <param name="packet">要发送的命令</param>
+        /// <returns>是否等待中命令</returns>
+        protected override bool IsWaitingCmd(CtTaskCompletionSource<IBasicPacket, IProductPacket> v, IBasicPacket packet) => v.WaitCmd.Purpose == packet.Purpose;
+
+        /// <summary>
+        /// 检测是否等待中的回复
+        /// </summary>
+        /// <param name="v">等待的命令</param>
+        /// <param name="response">收到的回复</param>
+        /// <returns>是否是等待中的命令</returns>
+        protected override bool IsWaitingResponse(CtTaskCompletionSource<IBasicPacket, IProductPacket> v, IProductPacket response) => v.WaitCmd.Purpose == response.Purpose;
+        
+        /// <summary>
+        /// 传送命令
+        /// </summary>
+        /// <param name="packet">命令物件</param>
+        /// <returns>是否传送成功</returns>
+        protected override bool ClientSend(IBasicPacket packet) => mSerialClient.Send(packet);
+        
         /// <summary>
         /// 要求iTS狀態
         /// </summary>
@@ -539,39 +324,14 @@ namespace VehiclePlannerAGVBase {
         /// </summary>
         /// <param name="mapPath">要上傳的Map檔路徑</param>
         /// <returns>是否上傳成功</returns>
-        protected override bool? UploadMapToAGV(string mapPath) {
-            var success = Send(FactoryMode.Factory.Order().UploadMapToAGV(mapPath))?.ToIUploadMapToAGV()?.Product;
-            return success;
-        }
+        protected override BaseBoolReturn UploadMapToAGV(string mapPath) => new UploadMapToAGV(Send(FactoryMode.Factory.Order().UploadMapToAGV(mapPath))); 
 
         /// <summary>
         /// 要求iTS載入指定的Map檔
         /// </summary>
         /// <param name="mapName">要載入的Map檔名</param>
         /// <returns>是否切換成功</returns>
-        protected override bool? ChangeMap(string mapName) {
-            var success = Send(FactoryMode.Factory.Order().ChangeMap(mapName))?.ToIChangeMap()?.Product;
-            return success;
-        }
-
-        /// <summary>
-        /// 要求Goal點清單
-        /// </summary>
-        /// <returns>Goal點清單</returns>
-        protected override string RequestGoalList() {
-            var goalList = Send(FactoryMode.Factory.Order().RequestGoalList())?.ToIRequestGoalList()?.Product;
-            return goalList != null ? string.Join(",", goalList) : null;
-        }
-
-        /// <summary>
-        /// 要求到指定Goal點的路徑
-        /// </summary>
-        /// <param name="goalIndex">目標Goal點索引</param>
-        /// <returns>路徑(Count為0表示規劃失敗)</returns>
-        protected List<IPair> RequestPath(string goalName) {
-            var path = Send(FactoryMode.Factory.Order().RequestPath(goalName))?.ToIRequestPath()?.Product;
-            return path;
-        }
+        protected override BaseBoolReturn ChangeMap(string mapName) => new ChangeMap(Send(FactoryMode.Factory.Order().ChangeMap(mapName))); 
 
         /// <summary>
         /// 要求自動回報iTS狀態
@@ -617,39 +377,29 @@ namespace VehiclePlannerAGVBase {
         /// </summary>
         /// <param name="start">是否開始手動控制</param>
         /// <remarks>是否為手動控制狀態</remarks>
-        protected override bool? StartManualControl(bool start) {
-            var isManual = Send(FactoryMode.Factory.Order().StartManualControl(start))?.ToIStartManualControl()?.Product;
-            return isManual;
-        }
+        protected override BaseBoolReturn StartManualControl(bool start) => new StartManualControl(Send(FactoryMode.Factory.Order().StartManualControl(start))); 
 
         /// <summary>
         /// 設定手動控制移動速度(方向)
         /// </summary>
         /// <param name="velocity">手動移動速度</param>
         /// <returns>是否設定成功</returns>
-        protected override bool? SetManualVelocity(int leftVelocity, int rightVelocity) {
+        protected override BaseBoolReturn SetManualVelocity(int leftVelocity, int rightVelocity) {
             var velocity = FactoryMode.Factory.Pair(leftVelocity, rightVelocity);
-            var success = Send(FactoryMode.Factory.Order().SetManualVelocity(velocity))?.ToISetManualVelocity()?.Product;
-            return success;
+            return new SetManualVelocity(Send(FactoryMode.Factory.Order().SetManualVelocity(velocity)));
         }
 
         /// <summary>
         /// 停止掃描地圖
         /// </summary>
         /// <returns>是否在掃描中</returns>
-        protected override bool? StopScanning() {
-            var isScanning = Send(FactoryMode.Factory.Order().StopScanning())?.ToIStopScanning()?.Product;
-            return isScanning;
-        }
+        protected override BaseBoolReturn StopScanning() => new StopScanning(Send(FactoryMode.Factory.Order().StopScanning()));
 
         /// <summary>
         /// 設定地圖檔名
         /// </summary>
         /// <remarks>是否在掃描中</remarks>
-        protected override bool? SetScanningOriFileName(string oriName) {
-            var isScanning = Send(FactoryMode.Factory.Order().SetScanningOriFileName(oriName))?.ToISetScanningOriFileName()?.Product;
-            return isScanning;
-        }
+        protected override BaseSetScanningOriFileName SetScanningOriFileName(string oriName) => new SetScanningOriFileName(Send(FactoryMode.Factory.Order().SetScanningOriFileName(oriName)));
 
         /// <summary>
         /// 繪製雷射
@@ -667,8 +417,78 @@ namespace VehiclePlannerAGVBase {
             mMapGL.DrawPath(path);
         }
 
-        #endregion Funciotn - Private Methods
+        /// <summary>
+        /// 用户端初始化
+        /// </summary>
+        protected override void ClientInitial()
+        {
+            if (mSerialClient != null)
+            {
+                mSerialClient.ConnectChange -= mSerialClient_OnConnectChange;
+                mSerialClient.Dispose();
+            }
+            mSerialClient = FactoryMode.Factory.SerialClient(mSerialClient_ReceiveData, mBypassSocket);
+            mSerialClient.ConnectChange += mSerialClient_OnConnectChange;
+        }
+
+        /// <summary>
+        /// 连线至伺服端
+        /// </summary>
+        /// <param name="ip">伺服端IP</param>
+        /// <param name="port">伺服端埠号</param>
+        protected override void ClientConnect(string ip, int port)
+        {
+            mSerialClient.Connect(ip, port);
+        }
+
+        /// <summary>
+        /// 停止与伺服端连线
+        /// </summary>
+        protected override void ClientStop()
+        {
+            mSerialClient.Stop();
+        }
+
+        /// <summary>
+        /// 执行回应动作
+        /// </summary>
+        /// <param name="product">回应物件</param>
+        protected override void DoReceiveAction(IProductPacket product)
+        {
+            switch (product.Purpose)
+            {
+                case EPurpose.AutoReportLaser:
+                    var laser = product.ToIAutoReportLaser().Product;
+                    if (laser != null)
+                    {
+                        DrawLaser(product.ToIAutoReportLaser().Product);
+                    }
+                    else
+                    {
+                        IsAutoReport = false;
+                        mMapGL.ClearLaser();
+                        mMapGL.ClearPath();
+                    }
+                    break;
+                case EPurpose.AutoReportPath:
+                    {
+                        var path = product.ToIAutoReportPath().Product;
+                        if (path != null)
+                        {
+                            DrawPath(path);
+                        }
+                        break;
+                    }
+                case EPurpose.AutoReportStatus:
+                    Status = product.ToIAutoReportStatus()?.Product;
+                    break;
+            }
+        }
 
     }
 
+    #endregion Funciotn - Private Methods
+
 }
+
+

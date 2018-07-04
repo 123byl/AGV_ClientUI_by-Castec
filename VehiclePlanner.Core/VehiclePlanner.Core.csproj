@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CtVehiclePlanner.cs" />
+    <Compile Include="Partial\CommunicationAdapter.cs" />
     <Compile Include="Partial\VehiclePlanner_AGVBase.cs" />
     <Compile Include="Partial\VehiclePlanner_Define.cs" />
     <Compile Include="Partial\VehiclePlanner_Extension.cs" />
