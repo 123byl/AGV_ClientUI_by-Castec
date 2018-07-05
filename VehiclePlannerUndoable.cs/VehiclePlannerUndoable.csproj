@@ -33,6 +33,60 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AGVDefine">
+      <HintPath>..\..\AGVBase\AGVDefine\bin\Debug\AGVDefine.dll</HintPath>
+    </Reference>
+    <Reference Include="AsyncSocket, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\iTSLibrary\iTSLibrary\bin\Debug\AsyncSocket.dll</HintPath>
+    </Reference>
+    <Reference Include="FactoryMode, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\AGVBase\FactoryMode\bin\Debug\FactoryMode.dll</HintPath>
+    </Reference>
+    <Reference Include="Geometry, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\iTSLibrary\iTSLibrary\bin\Debug\Geometry.dll</HintPath>
+    </Reference>
+    <Reference Include="GLCore">
+      <HintPath>..\..\iTSLibrary\iTSLibrary\bin\Debug\GLCore.dll</HintPath>
+    </Reference>
+    <Reference Include="GLStyle, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\iTSLibrary\iTSLibrary\bin\Debug\GLStyle.dll</HintPath>
+    </Reference>
+    <Reference Include="GLUI">
+      <HintPath>..\..\iTSLibrary\iTSLibrary\bin\Debug\GLUI.dll</HintPath>
+    </Reference>
+    <Reference Include="IniFiles, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\iTSLibrary\iTSLibrary\bin\Debug\IniFiles.dll</HintPath>
+    </Reference>
+    <Reference Include="iTSLibrary">
+      <HintPath>..\..\iTSLibrary\iTSLibrary\bin\Debug\iTSLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="LogManager, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\iTSLibrary\iTSLibrary\bin\Debug\LogManager.dll</HintPath>
+    </Reference>
+    <Reference Include="MD5Hash, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\iTSLibrary\iTSLibrary\bin\Debug\MD5Hash.dll</HintPath>
+    </Reference>
+    <Reference Include="SerialCommunication">
+      <HintPath>..\..\AGVBase\SerialCommunication\bin\Debug\SerialCommunication.dll</HintPath>
+    </Reference>
+    <Reference Include="SerialCommunicationData">
+      <HintPath>..\..\AGVBase\SerialCommunicationData\bin\Debug\SerialCommunicationData.dll</HintPath>
+    </Reference>
+    <Reference Include="SerialData, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\iTSLibrary\iTSLibrary\bin\Debug\SerialData.dll</HintPath>
+    </Reference>
+    <Reference Include="Serialization, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\iTSLibrary\iTSLibrary\bin\Debug\Serialization.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
@@ -47,6 +101,10 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="WaitTask, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\iTSLibrary\iTSLibrary\bin\Debug\WaitTask.dll</HintPath>
+    </Reference>
     <Reference Include="WeifenLuo.WinFormsUI.Docking">
       <HintPath>..\CtDockSuit\Dynamic Link Libraries\WeifenLuo.WinFormsUI.Docking.dll</HintPath>
     </Reference>
@@ -101,31 +159,14 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="Style.ini">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\VehicleManager2\AsyncSocket\AsyncSocket.csproj">
-      <Project>{96AEBCE3-FC5E-4F3F-B8F9-B4BA0BBAC2BE}</Project>
-      <Name>AsyncSocket</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\VehicleManager2\Geometry\Geometry.csproj">
-      <Project>{a617d647-1075-4bbb-9b9c-17971d56fe1e}</Project>
-      <Name>Geometry</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\VehicleManager2\GLCore\GLCore.csproj">
-      <Project>{8DD11590-79E3-4D93-83DB-8B2DD19CD3F4}</Project>
-      <Name>GLCore</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\VehicleManager2\GLUI\GLUI.csproj">
-      <Project>{390DC0BB-01D8-48B3-A7C3-84C5B3355DEE}</Project>
-      <Name>GLUI</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\VehicleManager2\Serialization\Serialization.csproj">
-      <Project>{3719D19B-9168-4D0D-A761-92C583A6D07F}</Project>
-      <Name>Serialization</Name>
-    </ProjectReference>
     <ProjectReference Include="..\BroadCast\Broadcast.csproj">
       <Project>{10D930FD-CE9C-46FA-AA1E-FB8394BA287F}</Project>
       <Name>Broadcast</Name>

@@ -60,8 +60,18 @@ namespace VehiclePlannerUndoable.cs {
     /// 底層實作
     /// </summary>
     public class VehiclePlanner : BaseVehiclePlanner, IVehiclePlanner {
+		public VehiclePlanner() : base()
+		{
+			base.Controller = new ITSController();
+		}
+
         protected override void SaveMap(string path) {
             GLCMD.CMD.SaveMap(path);
         }
-    }
+
+		public override void LoadFile(FileType type, string fileName)
+		{
+	
+		}
+	}
 }
