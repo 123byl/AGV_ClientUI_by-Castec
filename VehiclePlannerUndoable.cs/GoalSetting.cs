@@ -1,4 +1,6 @@
 ﻿using CtBind;
+using CtLib.Library;
+using Geometry;
 using GLCore;
 using GLUI;
 using System;
@@ -111,32 +113,75 @@ namespace VehiclePlannerUndoable.cs {
                 }
             }
         }
+		protected override void dgvGoalPoint_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+		{
+			switch (cboSingleType.Text){
+				case nameof(SinglePairInfo):
+					break;
+				case nameof(SingleTowardPairInfo):
+					UpdateSingleTowardPairInfo(sender, e);
+					break;
+				case nameof(SingleLineInfo):
+					break;
+				case nameof(SingleAreaInfo):
+					break;
+				default:
+					break;
+			}
 
-        /// <summary>
-        /// 標示物參數編輯 
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void dgvGoalPoint_CellValueChanged(object sender, DataGridViewCellEventArgs e) {
-            if (sender is DataGridView dgv) {
-                if (e.RowIndex >= 0 && e.RowIndex < dgv.RowCount &&
-                    e.ColumnIndex >= 0 && e.ColumnIndex < dgv.ColumnCount) {
-                    mSingleInfo.RefreshSingle(e.ColumnIndex, e.RowIndex);
-                }
-            }
-        }
+		}
 
-        #endregion Function - Events
+		private void UpdateSingleTowardPairInfo(object sender, DataGridViewCellEventArgs e)
+		{
+			int ID = (int)dgvGoalPoint.Rows[e.RowIndex].Cells[0].Value;
+			string Name = (string)dgvGoalPoint.Rows[e.RowIndex].Cells[1].Value;
+			string Type = (string)dgvGoalPoint.Rows[e.RowIndex].Cells[2].Value;
+			double Toward = (double)dgvGoalPoint.Rows[e.RowIndex].Cells[3].Value;
+			int X = (int)dgvGoalPoint.Rows[e.RowIndex].Cells[4].Value;
+			int Y = (int)dgvGoalPoint.Rows[e.RowIndex].Cells[5].Value;
+			switch (dgvGoalPoint.Columns[e.ColumnIndex].HeaderText)
+			{
+				case "Name":
+					GLCMD.CMD.DoRename(ID, Name);
+					break;
+				case "Toward":
+					GLCMD.CMD.DoMoveToward(ID, (int)(X +1000* Math.Cos(Toward *  Math.PI/180)), (int)(Y + 1000*Math.Sin(Toward *  Math.PI/180)));
+					break;
+				case "X": 
+				case "Y":
+					GLCMD.CMD.DoMoveCenter(ID, X, Y);
+					break;
+				default:
+					break;
+			}
+		}
 
-        #region Funciotn - Private Methods
 
-        /// <summary>
-        /// 依照標示物類型替換標示物資訊物件
-        /// </summary>
-        /// <param name="singleType">標示物類型名稱</param>
-        /// <param name="dgv"></param>
-        /// <returns>標示物資訊物件</returns>
-        private ISingleInfo GetSingleInfo(string singleType, DataGridView dgv) {
+		///// <summary>
+		///// 標示物參數編輯 
+		///// </summary>
+		///// <param name="sender"></param>
+		///// <param name="e"></param>
+		// void dgvGoalPoint_CellValueChanged(object sender, DataGridViewCellEventArgs e) {
+		//    if (sender is DataGridView dgv) {
+		//        if (e.RowIndex >= 0 && e.RowIndex < dgv.RowCount &&
+		//            e.ColumnIndex >= 0 && e.ColumnIndex < dgv.ColumnCount) {
+		//            mSingleInfo.RefreshSingle(e.ColumnIndex, e.RowIndex);
+		//        }
+		//    }
+		//}
+
+		#endregion Function - Events
+
+		#region Funciotn - Private Methods
+
+		/// <summary>
+		/// 依照標示物類型替換標示物資訊物件
+		/// </summary>
+		/// <param name="singleType">標示物類型名稱</param>
+		/// <param name="dgv"></param>
+		/// <returns>標示物資訊物件</returns>
+		private ISingleInfo GetSingleInfo(string singleType, DataGridView dgv) {
             ISingleInfo singleInfo = null;
             switch (singleType) {
                 case nameof(SinglePairInfo):
@@ -156,15 +201,15 @@ namespace VehiclePlannerUndoable.cs {
             }
             return singleInfo;
         }
-        
-        #endregion Function - Private Methods
-        
-        #region Suppoer Class
 
-        /// <summary>
-        /// 標示物資訊
-        /// </summary>
-        internal interface ISingleInfo {
+		#endregion Function - Private Methods
+
+		#region Suppoer Class
+
+		/// <summary>
+		/// 標示物資訊
+		/// </summary>
+		internal interface ISingleInfo {
             /// <summary>
             /// 取得目標標示物中心座標
             /// </summary>
@@ -648,6 +693,6 @@ namespace VehiclePlannerUndoable.cs {
         private void button1_Click(object sender, EventArgs e) {
 
         }
-    }
+	}
     
 }
