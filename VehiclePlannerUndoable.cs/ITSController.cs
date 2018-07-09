@@ -1,10 +1,14 @@
-﻿using Serialization;
+﻿using Geometry;
+using Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using VehiclePlanner.Core;
+using SerialData;
+using SerialCommunicationData;
+using GLCore;
 
 namespace VehiclePlannerUndoable.cs
 {
@@ -13,8 +17,8 @@ namespace VehiclePlannerUndoable.cs
     /// </summary>
     public interface IITSController_Undoable : IBaseITSController
     {
-
-    }
+		void SetPosition(Vector2D Vector);
+	}
 
     /// <summary>
     /// ITS控制器
@@ -29,14 +33,33 @@ namespace VehiclePlannerUndoable.cs
         /// </summary>
         private SerialClient mClient = new SerialClient();
 
-        #endregion Declaration - Fields
+		/// <summary>
+		/// iTS狀態
+		/// </summary>
+		private AGVStatus mStatus = new AGVStatus();
 
-        #region Declaration - Properties
+		#endregion Declaration - Fields
 
-        /// <summary>
-        /// 是否已连线
-        /// </summary>
-        public override bool IsConnected => mClient.ConnectStatus == AsyncSocket.EConnectStatus.Connect ;
+		#region Declaration - Properties
+
+		public AGVStatus Status
+		{
+			get { return mStatus; }
+			set
+			{
+				if (value != null && mStatus != value)
+				{
+					mStatus = value;
+					
+				}
+			}
+
+		}
+
+		/// <summary>
+		/// 是否已连线
+		/// </summary>
+		public override bool IsConnected => mClient.ConnectStatus == AsyncSocket.EConnectStatus.Connect ;
 
         #endregion Declaration - Properties
 
@@ -44,8 +67,19 @@ namespace VehiclePlannerUndoable.cs
         
         public override void AutoReport(bool auto)
         {
-            throw new NotImplementedException();
-        }
+			try
+			{
+				bool isAutoReport = auto;
+				var laser = AutoReportLaser(isAutoReport);
+				var status = AutoReportStatus(isAutoReport);
+				var path = AutoReportPath(isAutoReport);
+				IsAutoReport = (laser?.Count ?? 0) > 0;
+			}
+			catch (Exception ex)
+			{
+				OnConsoleMessage(ex.Message);
+			}
+		}
         
         public override void GetOri()
         {
@@ -145,24 +179,29 @@ namespace VehiclePlannerUndoable.cs
 
         protected override BaseRequeLaser ImpRequestLaser()
         {
-            throw new NotImplementedException();
+			RequestLaser Info = Send(new RequestLaser(null)) as RequestLaser;
+			return new ConvertRequestLaser(Info);
         }
 
 
         protected override BaseDoPositionComfirm ImpDoPositionComfirm()
         {
-            throw new NotImplementedException();
+			DoPositionComfirm Info	=Send(new  DoPositionComfirm(null)) as DoPositionComfirm;
+			return new ConvertDoPositionComfirm(Info);
         }
 
         protected override BaseGoTo ImpGoTo(string goalName)
         {
-            throw new NotImplementedException();
+			GoTo Info = Send(new GoTo(goalName)) as  GoTo;
+			return new ConvertGoTo(Info);
         }
 
 
         protected override BaseRequestPath ImpRequestPath(string goalName)
         {
-            throw new NotImplementedException();
+			RequestPath Info = Send(new RequestPath(goalName)) as RequestPath;
+			return new ConvertRequestPath(Info);
+
         }
 
         protected override BaseRequestGoalList ImpRequestGoalList()
@@ -172,7 +211,8 @@ namespace VehiclePlannerUndoable.cs
 
         public override BaseFileReturn RequestMapFile(string mapName)
         {
-            throw new NotImplementedException();
+			GetMap Info = Send(new GetMap(mapName)) as GetMap;
+			return new RequestMapFile(Info);
         }
 
         protected override BaseBoolReturn ImpSetServoMode(bool servoOn)
@@ -187,51 +227,157 @@ namespace VehiclePlannerUndoable.cs
 
         protected override BaseListReturn ImpRequestMapList()
         {
-            throw new NotImplementedException();
+			RequestMapList Info = Send(new RequestMapList(null)) as RequestMapList;
+			return new ConvertRequestMapList(Info);
         }
 
         protected override BaseBoolReturn UploadMapToAGV(string mapPath)
         {
-            throw new NotImplementedException();
+			FileInfo Data = new FileInfo(mapPath);
+			UploadMapToAGV Info = Send(new UploadMapToAGV(Data)) as UploadMapToAGV;
+			return new ConvertUploadMapToAGV(Info);
         }
 
         protected override BaseBoolReturn ChangeMap(string mapName)
         {
-            throw new NotImplementedException();
+			ChangeMap Info = Send(new ChangeMap(mapName)) as ChangeMap;
+			return new ConvertChangeMap(Info);
         }
 
         protected override BaseBoolReturn StartManualControl(bool start)
         {
-            throw new NotImplementedException();
+			StartManualControl Info = Send(new StartManualControl(start)) as StartManualControl;
+			return new ConvertStartManualControl(Info);
         }
 
         protected override BaseBoolReturn StopScanning()
         {
-            throw new NotImplementedException();
+			StopScanning Info = Send(new StopScanning(null)) as StopScanning ;
+			return new ConvertStopScanning(Info);
         }
 
         protected override BaseSetScanningOriFileName SetScanningOriFileName(string oriName)
         {
-            throw new NotImplementedException();
+			SetScanningOriFileName Info = Send(new SetScanningOriFileName(oriName)) as SetScanningOriFileName;
+			return new ConvertSetScanningOriFileName(Info);
         }
 
         protected override BaseBoolReturn SetManualVelocity(int leftVelocity, int rightVelocity)
         {
-            throw new NotImplementedException();
+			SetManualVelocity Info = Send(new SetManualVelocity(new Velocity(rightVelocity, leftVelocity))) as SetManualVelocity;
+			return new ConvertSetManualVelocity(Info);
         }
 
-        #endregion Function - Private Methods
+		public override void StartScan(bool scan)
+		{
+			try
+			{
+				BaseBoolReturn isScanning = null;
+				if (mIsScanning != scan)
+				{
+					if (scan)
+					{//開始掃描
+						if (mStatus?.Description ==  EDescription.Idle )
+						{
+							string oriName = string.Empty;
+							if (InputBox.Invoke(out oriName, "MAP Name", "Set Map File Name"))
+							{
+								isScanning = SetScanningOriFileName(oriName);
+							}
+							if (isScanning.Requited && isScanning.Value)
+							{
+								OnConsoleMessage($"iTS - The new ori name is {oriName}.ori");
+							}
+						}
+						else
+						{
+							OnConsoleMessage($"The iTS is now in {mStatus?.Description}, can't start scanning");
+						}
+					}
+					else
+					{//停止掃描
+						if (true || mStatus?.Description == EDescription.Map)
+						{
+							isScanning = StopScanning();
+						}
+						else
+						{
+							OnConsoleMessage($"The iTS is now in {mStatus?.Description}, can't stop scanning");
+						}
+					}
+					if (isScanning != null)
+					{
+						IsScanning = isScanning.Value;
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				OnConsoleMessage("Error:" + ex.Message);
+			}
+		}
 
-        #region Function - Events
+		/// <summary>
+		/// 要求自動回傳雷射資料
+		/// </summary>
+		/// <param name="on"></param>
+		/// <returns></returns>
+		protected List<Point2D> AutoReportLaser (bool on)
+		{
+			AutoReportLaser Info =(AutoReportLaser) Send(new AutoReportLaser(on));
+			List <Point2D> laser = Info.Response;
+			return laser;
+		}
 
-        /// <summary>
-        /// 资料接收事件
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void MClient_ReceivedSerialDataEvent(object sender, ReceivedSerialDataEventArgs e)
+		protected AGVStatus AutoReportStatus(bool on)
+		{
+			AutoReportStatus Info = (AutoReportStatus)Send(new AutoReportStatus(on));
+			AGVStatus status = Info.Response;
+			return status;
+		}
+
+		protected List<Point2D> AutoReportPath(bool on)
+		{
+			AutoReportPath Info = (AutoReportPath)Send(new AutoReportPath(on));
+			List <Point2D> path = Info.Response;
+			return path;
+		}
+
+		/// <summary>
+		/// 要求AGV設定新位置
+		/// </summary>
+		/// <param name="oldPosition">舊座標</param>
+		/// <param name="newPosition">新座標</param>
+		public void SetPosition(Vector2D Vector)
+		{
+			SetPosition Info = Send(new SetPosition(Vector)) as SetPosition;
+			bool success = Info.Response;
+			if (success == true)
+			{
+				GLCMD.CMD.AddAGV(1, Vector.Start.X, Vector.Start.Y, Vector.Angle);
+				//OnConsoleMessage($"iTS - The position are now at {position}");
+			}
+			GLCMD.CMD.AddAGV(1, Vector.Start.X, Vector.Start.Y, Vector.Angle);
+		}
+
+		#endregion Function - Private Methods
+
+		#region Function - Events
+
+		/// <summary>
+		/// 资料接收事件
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void MClient_ReceivedSerialDataEvent(object sender, ReceivedSerialDataEventArgs e)
         {
-        }
+			if (e.Data is Serializable)
+			{
+				var product = e.Data as Serializable;
+				/*-- 查詢是否有等待該封包 --*/
+				ReceiveDataCheck(product);
+			}
+		}
 
         /// <summary>
         /// 连线状态变更事件
