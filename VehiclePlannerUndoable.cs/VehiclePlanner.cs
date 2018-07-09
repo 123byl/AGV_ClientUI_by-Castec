@@ -12,6 +12,8 @@ using VehiclePlanner;
 using VehiclePlanner.Core;
 using VehiclePlanner.Module.Implement;
 using WeifenLuo.WinFormsUI.Docking;
+using SerialData;
+using Geometry;
 
 namespace VehiclePlannerUndoable.cs
 {
@@ -21,6 +23,10 @@ namespace VehiclePlannerUndoable.cs
 	/// </summary>
 	public partial class CtVehiclePlanner_Ctrl : BaseVehiclePlanner_Ctrl
 	{
+		/// <summary>
+		/// Car Position 設定位置
+		/// </summary>
+		private Point2D mNewPos  =null;
 
 		private IVehiclePlanner rVehiclePlanner = null;
 
@@ -53,9 +59,43 @@ namespace VehiclePlannerUndoable.cs
 			return new GoalSetting(this, dockState);
 		}
 
+		protected override void SetEvents()
+		{
+			base.SetEvents();
+			MapGL.MapControl.GLClick+= MapControl_GLClick;
+		}
+
 		protected override void MarkerChanged()
 		{
 		}
+
+		protected void MapControl_GLClick(object sender, EventArgs e)
+		{
+			MouseEventArgs m = (MouseEventArgs)e; 
+			if (mIsSetting)
+			{
+				if (mNewPos == null )
+				{
+				mNewPos = ToPoint2D(MapGL.MapControl.ScreenToGL(m.X, m.Y));
+				}
+				else
+				{
+					OnConsoleMessage($"NewPos{mNewPos.ToString()}");
+					Vector2D V = new Vector2D( mNewPos ,ToPoint2D(MapGL.MapControl.ScreenToGL(m.X, m.Y)));
+					Task.Run(() => {
+						rVehiclePlanner.Controller.SetPosition(V);
+						mNewPos=null;
+						mIsSetting = false;
+					});
+				}
+			}
+		}
+
+		public Point2D ToPoint2D(IPair Point)
+		{
+			return new Point2D(Point.X, Point.Y);
+		}
+
 	}
 		//public void Bindings(IVehiclePlanner source)
 		//{
@@ -70,7 +110,7 @@ namespace VehiclePlannerUndoable.cs
 		/// </summary>
 		public interface IVehiclePlanner : IBaseVehiclePlanner
 		{
-
+		 new IITSController_Undoable Controller { get; }
 		}
 
 		/// <summary>
@@ -78,6 +118,8 @@ namespace VehiclePlannerUndoable.cs
 		/// </summary>
 		public class VehiclePlanner : BaseVehiclePlanner, IVehiclePlanner
 		{
+
+			public new IITSController_Undoable Controller { get { return base.Controller as IITSController_Undoable; } }
 			public VehiclePlanner() : base()
 			{
 				base.Controller = new ITSController();
@@ -91,6 +133,7 @@ namespace VehiclePlannerUndoable.cs
 			public override void LoadFile(FileType type, string fileName)
 			{
 				GLCMD.CMD.LoadMap(fileName);
+				mCurMapPath = fileName;
 				///測試繪圖
 				GLCMD.CMD.AddAGV(1, 0, 0, 0);
 			}
