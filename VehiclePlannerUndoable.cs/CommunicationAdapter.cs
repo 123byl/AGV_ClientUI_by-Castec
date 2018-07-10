@@ -12,21 +12,21 @@ using SerialData;
 namespace VehiclePlannerUndoable.cs
 {
 
-    public enum EmID
-    {
-        ITS = 0,
-        Laser = 1
+	public enum EmID
+	{
+		ITS = 0,
+		Laser = 1
 
-    }
+	}
 
-    public class ConvertRequestLaser : BaseRequeLaser
-    {
-        
+	public class ConvertRequestLaser : BaseRequeLaser
+	{
 
-        private List<IPair> mLaser = null;
 
-        public ConvertRequestLaser(RequestLaser response)
-        {
+		private List<IPair> mLaser = null;
+
+		public ConvertRequestLaser(RequestLaser response)
+		{
 
 			var v = response;
 			if (Requited = v != null)
@@ -41,15 +41,15 @@ namespace VehiclePlannerUndoable.cs
 
 		}
 
-        public override void DrawLaser()
-        {
-            GLCMD.CMD.SaftyEditMultiGeometry<IPair>((int)EmID.Laser, true, laser =>
-            {
-                laser.Clear();
-                laser.AddRange(mLaser);
-            });
-        }
-    }
+		public override void DrawLaser()
+		{
+			GLCMD.CMD.SaftyEditMultiGeometry<IPair>((int)EmID.Laser, true, laser =>
+			{
+				laser.Clear();
+				laser.AddRange(mLaser);
+			});
+		}
+	}
 
 
 	/// <summary>
@@ -228,6 +228,38 @@ namespace VehiclePlannerUndoable.cs
 			{
 				var v = response;
 				Started = v.Response;
+			}
+		}
+	}
+
+	/// <summary>
+	/// 要求Goal点清单
+	/// </summary>
+	public class ConvertRequestGoalList : BaseRequestGoalList
+	{
+		public ConvertRequestGoalList(RequestGoalList response)
+		{
+			var v = response;
+			if (Requited = v != null)
+			{
+				List<string> list = v.Response;
+				ListString = string.Join(",", list);
+				Count = list.Count;
+			}
+		}
+	}
+
+	/// <summary>
+	/// 马达激磁设定
+	/// </summary>
+	public class ConvertSetServoMode : BaseSetServoMode
+	{
+		public ConvertSetServoMode(SetServoMode response)
+		{
+			var v = response;
+			if (Requited = v != null)
+			{
+				Value = v.Response;
 			}
 		}
 	}
