@@ -38,6 +38,10 @@ namespace VehiclePlannerUndoable.cs
 		/// </summary>
 		private AGVStatus mStatus = new AGVStatus();
 
+		private int mPathID = -1;
+
+		private int mLaserID = -1;
+
 		#endregion Declaration - Fields
 
 		#region Declaration - Properties
@@ -50,7 +54,7 @@ namespace VehiclePlannerUndoable.cs
 				if (value != null && mStatus != value)
 				{
 					mStatus = value;
-					
+					GLCMD.CMD.AddAGV(1, mStatus.Name, mStatus.X, mStatus.Y, mStatus.Toward);
 				}
 			}
 
@@ -64,6 +68,12 @@ namespace VehiclePlannerUndoable.cs
         #endregion Declaration - Properties
 
         #region Function - Public Methods
+
+		public ITSController ()
+		{
+			mPathID = GLCMD.CMD.AddMultiStripLine("Path", null);
+			mLaserID = GLCMD.CMD.AddMultiPair("Laser", null);
+		}
         
         public override void AutoReport(bool auto)
         {
@@ -172,9 +182,31 @@ namespace VehiclePlannerUndoable.cs
         protected override string CmdTitle(Serializable packet) => $"{packet.ToString()}({packet.TxID}):";
 
 
-        protected override void DoReceiveAction(Serializable reponse)
+        protected override void DoReceiveAction(Serializable response)
         {
-            throw new NotImplementedException();
+			if (response is AGVStatus)
+			{
+				Status = response as AGVStatus;
+			}
+			else if (response is AGVPath2D)
+			{
+				var path = response as AGVPath2D;
+				GLCMD.CMD.SaftyEditMultiGeometry<IPair>(mPathID, true, (line) =>
+				{
+					line.Clear();
+					line.AddRangeIfNotNull(Point2DToPairCollection(path.Points));
+				});
+			}
+			else if (response is AGVLaser)
+			{
+				var laser = response as AGVLaser;
+				GLCMD.CMD.SaftyEditMultiGeometry<IPair>(mLaserID, true, (point) =>
+				  {
+					  point.Clear();
+					  point.AddRangeIfNotNull(Point2DToPairCollection(laser.Points));
+				  }
+				);
+			}
         }
 
         protected override BaseRequeLaser ImpRequestLaser()
@@ -206,7 +238,8 @@ namespace VehiclePlannerUndoable.cs
 
         protected override BaseRequestGoalList ImpRequestGoalList()
         {
-            throw new NotImplementedException();
+			RequestGoalList Info = Send(new RequestGoalList(null)) as RequestGoalList;
+			return new ConvertRequestGoalList(Info);
         }
 
         public override BaseFileReturn RequestMapFile(string mapName)
@@ -217,7 +250,8 @@ namespace VehiclePlannerUndoable.cs
 
         protected override BaseBoolReturn ImpSetServoMode(bool servoOn)
         {
-            throw new NotImplementedException();
+			SetServoMode Info = Send(new SetServoMode(servoOn)) as SetServoMode;
+			return new ConvertSetServoMode(Info);
         }
 
         protected override BaseBoolReturn ImpSetWorkVelocity(int velocity)
@@ -325,7 +359,7 @@ namespace VehiclePlannerUndoable.cs
 		protected List<Point2D> AutoReportLaser (bool on)
 		{
 			AutoReportLaser Info =(AutoReportLaser) Send(new AutoReportLaser(on));
-			List <Point2D> laser = Info.Response;
+			List <Point2D> laser = Info.Response.Points;
 			return laser;
 		}
 
@@ -339,7 +373,7 @@ namespace VehiclePlannerUndoable.cs
 		protected List<Point2D> AutoReportPath(bool on)
 		{
 			AutoReportPath Info = (AutoReportPath)Send(new AutoReportPath(on));
-			List <Point2D> path = Info.Response;
+			List <Point2D> path = Info.Response.Points;
 			return path;
 		}
 
@@ -358,6 +392,26 @@ namespace VehiclePlannerUndoable.cs
 				//OnConsoleMessage($"iTS - The position are now at {position}");
 			}
 			GLCMD.CMD.AddAGV(1, Vector.Start.X, Vector.Start.Y, Vector.Angle);
+		}
+
+		/// <summary>
+		/// 將 <see cref="AGVPath"/> 轉為 <see cref="IPair"/> 集合
+		/// </summary>
+		private IEnumerable<IPair> PathToPairCollection(AGVPath path)
+		{
+			for (int ii = 0; ii < path.PathX.Count; ii++)
+			{
+				yield return new Pair(path.PathX[ii], path.PathY[ii]);
+			}
+		}
+
+		private IEnumerable<IPair> Point2DToPairCollection (List<Point2D> points)
+		{
+			for(int i =0; i<points.Count;i++)
+			{
+				yield return new Pair(points[i].X,points[i].Y);
+			}
+
 		}
 
 		#endregion Function - Private Methods
@@ -386,6 +440,17 @@ namespace VehiclePlannerUndoable.cs
         /// <param name="e"></param>
         private void MClient_ConnectStatusChangedEvent(object sender, AsyncSocket.ConnectStatusChangedEventArgs e)
         {
+			switch(e.ConnectStatus)
+			{
+				case AsyncSocket.EConnectStatus.Connect:
+
+					break;
+				case AsyncSocket.EConnectStatus.Disconnect:
+					GLCMD.CMD.DeleteAGV(1);
+					GLCMD.CMD.SaftyEditMultiGeometry<IPair>(mLaserID, true, (point) =>{ point.Clear();});
+					GLCMD.CMD.SaftyEditMultiGeometry<IPair>(mPathID, true, (line) => { line.Clear(); });
+					break;
+			}
         }
         
         #endregion Function - Events
