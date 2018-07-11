@@ -17,6 +17,7 @@ namespace VehiclePlannerUndoable.cs
     /// </summary>
     public interface IITSController_Undoable : IBaseITSController
     {
+		AGVStatus  Status { get; }
 		void SetPosition(Vector2D Vector);
 	}
 
@@ -55,6 +56,7 @@ namespace VehiclePlannerUndoable.cs
 				{
 					mStatus = value;
 					GLCMD.CMD.AddAGV(1, mStatus.Name, mStatus.X, mStatus.Y, mStatus.Toward);
+					OnPropertyChanged();
 				}
 			}
 
