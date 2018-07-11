@@ -852,7 +852,9 @@ namespace VehiclePlanner {
                 /*-- 初始化 --*/
                 rVehiclePlanner.Initial();
 
-                /*-- 事件委派 --*/
+				/*-- 事件委派 --*/
+				rVehiclePlanner.BalloonTip += rVehiclePlanner_BalloonTip;
+				rVehiclePlanner.ConsoleMessage += rVehiclePlanner_ConsoleMessage;
                 rVehiclePlanner.PropertyChanged += rVehiclePlanner_PropertyChanged;
                 rVehiclePlanner.VehiclePlannerEvent += rVehiclePlanner_VehiclePlannerEvent;
                 rVehiclePlanner.ErrorMessage += rVehiclePlanner_ErrorMessage;
