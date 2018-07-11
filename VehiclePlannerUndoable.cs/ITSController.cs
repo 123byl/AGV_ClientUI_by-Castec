@@ -12,41 +12,46 @@ using GLCore;
 
 namespace VehiclePlannerUndoable.cs
 {
-    /// <summary>
-    /// 以Undoable實作之ITS控制器介面
-    /// </summary>
-    public interface IITSController_Undoable : IBaseITSController
-    {
-		AGVStatus  Status { get; }
+	/// <summary>
+	/// 以Undoable實作之ITS控制器介面
+	/// </summary>
+	public interface IITSController_Undoable : IBaseITSController
+	{
+		AGVStatus Status { get; }
 		void SetPosition(Vector2D Vector);
 	}
 
-    /// <summary>
-    /// ITS控制器
-    /// </summary>
-    public class ITSController : BaseiTSController<Serializable, Serializable>, IITSController_Undoable
-    {
+	/// <summary>
+	/// ITS控制器
+	/// </summary>
+	public class ITSController : BaseiTSController<Serializable, Serializable>, IITSController_Undoable
+	{
 
-        #region Declaration - Fields
+		#region Declaration - Fields
 
-        /// <summary>
-        /// 序列传输用户端
-        /// </summary>
-        private SerialClient mClient = new SerialClient();
-
+		/// <summary>
+		/// 序列传输用户端
+		/// </summary>
+		private SerialClient mClient = new SerialClient();
 		/// <summary>
 		/// iTS狀態
 		/// </summary>
 		private AGVStatus mStatus = new AGVStatus();
-
+		/// <summary>
+		/// Path 繪圖物件ID
+		/// </summary>
 		private int mPathID = -1;
-
+		/// <summary>
+		///  Laser繪圖物件ID
+		/// </summary>
 		private int mLaserID = -1;
 
 		#endregion Declaration - Fields
 
 		#region Declaration - Properties
-
+		/// <summary>
+		/// iTS狀態
+		/// </summary>
 		public AGVStatus Status
 		{
 			get { return mStatus; }
@@ -61,24 +66,23 @@ namespace VehiclePlannerUndoable.cs
 			}
 
 		}
-
 		/// <summary>
 		/// 是否已连线
 		/// </summary>
-		public override bool IsConnected => mClient.ConnectStatus == AsyncSocket.EConnectStatus.Connect ;
+		public override bool IsConnected => mClient.ConnectStatus == AsyncSocket.EConnectStatus.Connect;
 
-        #endregion Declaration - Properties
+		#endregion Declaration - Properties
 
-        #region Function - Public Methods
+		#region Function - Public Methods
 
-		public ITSController ()
+		public ITSController() : base()
 		{
 			mPathID = GLCMD.CMD.AddMultiStripLine("Path", null);
 			mLaserID = GLCMD.CMD.AddMultiPair("Laser", null);
 		}
-        
-        public override void AutoReport(bool auto)
-        {
+
+		public override void AutoReport(bool auto)
+		{
 			try
 			{
 				bool isAutoReport = auto;
@@ -92,100 +96,142 @@ namespace VehiclePlannerUndoable.cs
 				OnConsoleMessage(ex.Message);
 			}
 		}
-        
-        public override void GetOri()
-        {
-            throw new NotImplementedException();
-        }
-        
-        #endregion Function - Public Methods
 
-        #region Function - Private Methods
+		public override void GetOri()
+		{
+			bool? success = null;
+			string oriName = null;
+			try
+			{
+				string oriList = RequestOriList();
+				if (!string.IsNullOrEmpty(oriList))
+				{
+					oriName = SelectFile(oriList);
+					if (!string.IsNullOrEmpty(oriName))
+					{
+						var ori = RequestOriFile(oriName);
+						if (ori != null)
+						{
+							System.Windows.Forms.SaveFileDialog saveOri = new System.Windows.Forms.SaveFileDialog() { InitialDirectory = @"D:\MapInfo\Client" };
+							if (saveOri.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+							{
+								if (ori.SaveAs(saveOri.FileName))
+								{
+									success = true;
+									OnConsoleMessage($"Planner - {ori.Name} download completed");
+								}
+								else
+								{
+									success = false;
+									OnConsoleMessage($"Planner - {ori.Name} failed to save");
+								}
+							}
 
-        /// <summary>
-        /// 用户端初始化
-        /// </summary>
-        protected override void ClientInitial()
-        {
-            if (mClient != null)
-            {
-                try
-                {
-                    mClient.Dispose();
-                }
-                catch (Exception)
-                {
+						}
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				OnConsoleMessage(ex.Message);
+			}
+			finally
+			{
+				if (success != null)
+				{
+					OnBalloonTip("Donwload", $"{oriName}.ori is downloaded {(success == true ? "successfully" : "failed")} ");
+				}
+			}
+		}
 
-                }
-            }
-            mClient = new SerialClient();
-            mClient.ConnectStatusChangedEvent += MClient_ConnectStatusChangedEvent;
-            mClient.ReceivedSerialDataEvent += MClient_ReceivedSerialDataEvent;
-        }
-        
-        /// <summary>
-        /// 连线至伺服端
-        /// </summary>
-        /// <param name="ip">伺服端IP</param>
-        /// <param name="port">伺服端埠号</param>
-        protected override void ClientConnect(string ip, int port) => mClient.Connect(ip, port);
+		#endregion Function - Public Methods
 
-        /// <summary>
-        /// 停止与伺服端连线
-        /// </summary>
-        protected override void ClientStop() => mClient.Disconnect();
-        
-        
-        protected override string RequestOriList()
-        {
-            throw new NotImplementedException();
-        }
-        
-        /// <summary>
-        /// 传送命令
-        /// </summary>
-        /// <param name="packet">命令物件</param>
-        /// <returns>是否传送成功</returns>
-        protected override bool ClientSend(Serializable packet)
-        {
-            bool success = true;
-            try
-            {
-                mClient.Send(packet);
-            }
-            catch (Exception)
-            {
-                success = false;
-            }
-            return success;
-        }
+		#region Function - Private Methods
 
-        /// <summary>
-        /// 检测是否等待中的命令
-        /// </summary>
-        /// <param name="v">等待的命令</param>
-        /// <param name="packet">要发送的命令</param>
-        /// <returns>是否等待中命令</returns>
-        protected override bool IsWaitingCmd(CtTaskCompletionSource<Serializable, Serializable> v, Serializable packet) => v.WaitCmd.TxID == packet.TxID;
+		/// <summary>
+		/// 用户端初始化
+		/// </summary>
+		protected override void ClientInitial()
+		{
+			if (mClient != null)
+			{
+				try
+				{
+					mClient.Dispose();
+				}
+				catch (Exception)
+				{
 
-        /// <summary>
-        /// 检测是否等待中的回复
-        /// </summary>
-        /// <param name="v">等待的命令</param>
-        /// <param name="response">收到的回复</param>
-        /// <returns>是否是等待中的命令</returns>
-        protected override bool IsWaitingResponse(CtTaskCompletionSource<Serializable, Serializable> v, Serializable response) => v.WaitCmd.TxID == response.TxID;
+				}
+			}
+			mClient = new SerialClient();
+			mClient.ConnectStatusChangedEvent += MClient_ConnectStatusChangedEvent;
+			mClient.ReceivedSerialDataEvent += MClient_ReceivedSerialDataEvent;
+		}
 
-        /// <summary>
-        /// 产生命令标题
-        /// </summary>
-        /// <param name="packet">命令物件</param>
-        /// <returns>命令标题</returns>
-        protected override string CmdTitle(Serializable packet) => $"{packet.ToString()}({packet.TxID}):";
+		/// <summary>
+		/// 连线至伺服端
+		/// </summary>
+		/// <param name="ip">伺服端IP</param>
+		/// <param name="port">伺服端埠号</param>
+		protected override void ClientConnect(string ip, int port) => mClient.Connect(ip, port);
+
+		/// <summary>
+		/// 停止与伺服端连线
+		/// </summary>
+		protected override void ClientStop() => mClient.Disconnect();
 
 
-        protected override void DoReceiveAction(Serializable response)
-        {
+		protected override string RequestOriList()
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// 传送命令
+		/// </summary>
+		/// <param name="packet">命令物件</param>
+		/// <returns>是否传送成功</returns>
+		protected override bool ClientSend(Serializable packet)
+		{
+			bool success = true;
+			try
+			{
+				mClient.Send(packet);
+			}
+			catch (Exception)
+			{
+				success = false;
+			}
+			return success;
+		}
+
+		/// <summary>
+		/// 检测是否等待中的命令
+		/// </summary>
+		/// <param name="v">等待的命令</param>
+		/// <param name="packet">要发送的命令</param>
+		/// <returns>是否等待中命令</returns>
+		protected override bool IsWaitingCmd(CtTaskCompletionSource<Serializable, Serializable> v, Serializable packet) => v.WaitCmd.TxID == packet.TxID;
+
+		/// <summary>
+		/// 检测是否等待中的回复
+		/// </summary>
+		/// <param name="v">等待的命令</param>
+		/// <param name="response">收到的回复</param>
+		/// <returns>是否是等待中的命令</returns>
+		protected override bool IsWaitingResponse(CtTaskCompletionSource<Serializable, Serializable> v, Serializable response) => v.WaitCmd.TxID == response.TxID;
+
+		/// <summary>
+		/// 产生命令标题
+		/// </summary>
+		/// <param name="packet">命令物件</param>
+		/// <returns>命令标题</returns>
+		protected override string CmdTitle(Serializable packet) => $"{packet.ToString()}({packet.TxID}):";
+
+
+		protected override void DoReceiveAction(Serializable response)
+		{
 			if (response is AGVStatus)
 			{
 				Status = response as AGVStatus;
@@ -209,100 +255,100 @@ namespace VehiclePlannerUndoable.cs
 				  }
 				);
 			}
-        }
+		}
 
-        protected override BaseRequeLaser ImpRequestLaser()
-        {
+		protected override BaseRequeLaser ImpRequestLaser()
+		{
 			RequestLaser Info = Send(new RequestLaser(null)) as RequestLaser;
 			return new ConvertRequestLaser(Info);
-        }
+		}
 
 
-        protected override BaseDoPositionComfirm ImpDoPositionComfirm()
-        {
-			DoPositionComfirm Info	=Send(new  DoPositionComfirm(null)) as DoPositionComfirm;
+		protected override BaseDoPositionComfirm ImpDoPositionComfirm()
+		{
+			DoPositionComfirm Info = Send(new DoPositionComfirm(null)) as DoPositionComfirm;
 			return new ConvertDoPositionComfirm(Info);
-        }
+		}
 
-        protected override BaseGoTo ImpGoTo(string goalName)
-        {
-			GoTo Info = Send(new GoTo(goalName)) as  GoTo;
+		protected override BaseGoTo ImpGoTo(string goalName)
+		{
+			GoTo Info = Send(new GoTo(goalName)) as GoTo;
 			return new ConvertGoTo(Info);
-        }
+		}
 
 
-        protected override BaseRequestPath ImpRequestPath(string goalName)
-        {
+		protected override BaseRequestPath ImpRequestPath(string goalName)
+		{
 			RequestPath Info = Send(new RequestPath(goalName)) as RequestPath;
 			return new ConvertRequestPath(Info);
 
-        }
+		}
 
-        protected override BaseRequestGoalList ImpRequestGoalList()
-        {
+		protected override BaseRequestGoalList ImpRequestGoalList()
+		{
 			RequestGoalList Info = Send(new RequestGoalList(null)) as RequestGoalList;
 			return new ConvertRequestGoalList(Info);
-        }
+		}
 
-        public override BaseFileReturn RequestMapFile(string mapName)
-        {
+		public override BaseFileReturn RequestMapFile(string mapName)
+		{
 			GetMap Info = Send(new GetMap(mapName)) as GetMap;
 			return new RequestMapFile(Info);
-        }
+		}
 
-        protected override BaseBoolReturn ImpSetServoMode(bool servoOn)
-        {
+		protected override BaseBoolReturn ImpSetServoMode(bool servoOn)
+		{
 			SetServoMode Info = Send(new SetServoMode(servoOn)) as SetServoMode;
 			return new ConvertSetServoMode(Info);
-        }
+		}
 
-        protected override BaseBoolReturn ImpSetWorkVelocity(int velocity)
-        {
-            throw new NotImplementedException();
-        }
+		protected override BaseBoolReturn ImpSetWorkVelocity(int velocity)
+		{
+			throw new NotImplementedException();
+		}
 
-        protected override BaseListReturn ImpRequestMapList()
-        {
+		protected override BaseListReturn ImpRequestMapList()
+		{
 			RequestMapList Info = Send(new RequestMapList(null)) as RequestMapList;
 			return new ConvertRequestMapList(Info);
-        }
+		}
 
-        protected override BaseBoolReturn UploadMapToAGV(string mapPath)
-        {
+		protected override BaseBoolReturn UploadMapToAGV(string mapPath)
+		{
 			FileInfo Data = new FileInfo(mapPath);
 			UploadMapToAGV Info = Send(new UploadMapToAGV(Data)) as UploadMapToAGV;
 			return new ConvertUploadMapToAGV(Info);
-        }
+		}
 
-        protected override BaseBoolReturn ChangeMap(string mapName)
-        {
+		protected override BaseBoolReturn ChangeMap(string mapName)
+		{
 			ChangeMap Info = Send(new ChangeMap(mapName)) as ChangeMap;
 			return new ConvertChangeMap(Info);
-        }
+		}
 
-        protected override BaseBoolReturn StartManualControl(bool start)
-        {
+		protected override BaseBoolReturn StartManualControl(bool start)
+		{
 			StartManualControl Info = Send(new StartManualControl(start)) as StartManualControl;
 			return new ConvertStartManualControl(Info);
-        }
+		}
 
-        protected override BaseBoolReturn StopScanning()
-        {
-			StopScanning Info = Send(new StopScanning(null)) as StopScanning ;
+		protected override BaseBoolReturn StopScanning()
+		{
+			StopScanning Info = Send(new StopScanning(null)) as StopScanning;
 			return new ConvertStopScanning(Info);
-        }
+		}
 
-        protected override BaseSetScanningOriFileName SetScanningOriFileName(string oriName)
-        {
+		protected override BaseSetScanningOriFileName SetScanningOriFileName(string oriName)
+		{
 			SetScanningOriFileName Info = Send(new SetScanningOriFileName(oriName)) as SetScanningOriFileName;
 			return new ConvertSetScanningOriFileName(Info);
-        }
+		}
 
-        protected override BaseBoolReturn SetManualVelocity(int leftVelocity, int rightVelocity)
-        {
+		protected override BaseBoolReturn SetManualVelocity(int leftVelocity, int rightVelocity)
+		{
 			SetManualVelocity Info = Send(new SetManualVelocity(new Velocity(rightVelocity, leftVelocity))) as SetManualVelocity;
 			return new ConvertSetManualVelocity(Info);
-        }
+		}
 
 		public override void StartScan(bool scan)
 		{
@@ -313,7 +359,7 @@ namespace VehiclePlannerUndoable.cs
 				{
 					if (scan)
 					{//開始掃描
-						if (mStatus?.Description ==  EDescription.Idle )
+						if (mStatus?.Description == EDescription.Idle)
 						{
 							string oriName = string.Empty;
 							if (InputBox.Invoke(out oriName, "MAP Name", "Set Map File Name"))
@@ -358,10 +404,10 @@ namespace VehiclePlannerUndoable.cs
 		/// </summary>
 		/// <param name="on"></param>
 		/// <returns></returns>
-		protected List<Point2D> AutoReportLaser (bool on)
+		protected List<Point2D> AutoReportLaser(bool on)
 		{
-			AutoReportLaser Info =(AutoReportLaser) Send(new AutoReportLaser(on));
-			List <Point2D> laser = Info.Response.Points;
+			AutoReportLaser Info = (AutoReportLaser)Send(new AutoReportLaser(on));
+			List<Point2D> laser = Info.Response.Points;
 			return laser;
 		}
 
@@ -375,7 +421,7 @@ namespace VehiclePlannerUndoable.cs
 		protected List<Point2D> AutoReportPath(bool on)
 		{
 			AutoReportPath Info = (AutoReportPath)Send(new AutoReportPath(on));
-			List <Point2D> path = Info.Response.Points;
+			List<Point2D> path = Info.Response.Points;
 			return path;
 		}
 
@@ -407,13 +453,24 @@ namespace VehiclePlannerUndoable.cs
 			}
 		}
 
-		private IEnumerable<IPair> Point2DToPairCollection (List<Point2D> points)
+		private IEnumerable<IPair> Point2DToPairCollection(List<Point2D> points)
 		{
-			for(int i =0; i<points.Count;i++)
+			for (int i = 0; i < points.Count; i++)
 			{
-				yield return new Pair(points[i].X,points[i].Y);
+				yield return new Pair(points[i].X, points[i].Y);
 			}
 
+		}
+
+		/// <summary>
+		/// 取得
+		/// </summary>
+		/// <param name="oriName"></param>
+		/// <returns></returns>
+		protected FileInfo RequestOriFile(string oriName)
+		{
+			var oriFile = (Send(new GetOri(oriName)) as GetOri).Response;
+			return oriFile;
 		}
 
 		#endregion Function - Private Methods
@@ -426,7 +483,7 @@ namespace VehiclePlannerUndoable.cs
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
 		private void MClient_ReceivedSerialDataEvent(object sender, ReceivedSerialDataEventArgs e)
-        {
+		{
 			if (e.Data is Serializable)
 			{
 				var product = e.Data as Serializable;
@@ -435,27 +492,27 @@ namespace VehiclePlannerUndoable.cs
 			}
 		}
 
-        /// <summary>
-        /// 连线状态变更事件
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void MClient_ConnectStatusChangedEvent(object sender, AsyncSocket.ConnectStatusChangedEventArgs e)
-        {
-			switch(e.ConnectStatus)
+		/// <summary>
+		/// 连线状态变更事件
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void MClient_ConnectStatusChangedEvent(object sender, AsyncSocket.ConnectStatusChangedEventArgs e)
+		{
+			switch (e.ConnectStatus)
 			{
 				case AsyncSocket.EConnectStatus.Connect:
 
 					break;
 				case AsyncSocket.EConnectStatus.Disconnect:
 					GLCMD.CMD.DeleteAGV(1);
-					GLCMD.CMD.SaftyEditMultiGeometry<IPair>(mLaserID, true, (point) =>{ point.Clear();});
+					GLCMD.CMD.SaftyEditMultiGeometry<IPair>(mLaserID, true, (point) => { point.Clear(); });
 					GLCMD.CMD.SaftyEditMultiGeometry<IPair>(mPathID, true, (line) => { line.Clear(); });
 					break;
 			}
-        }
-        
-        #endregion Function - Events
+		}
 
-    }
+		#endregion Function - Events
+
+	}
 }
