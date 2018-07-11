@@ -184,7 +184,8 @@ namespace VehiclePlannerUndoable.cs
 
 		protected override string RequestOriList()
 		{
-			throw new NotImplementedException();
+			var oriList = (Send(new RequestOriList(null)) as RequestOriList).Response;
+			return oriList != null ? string.Join(",", oriList) : null;
 		}
 
 		/// <summary>
