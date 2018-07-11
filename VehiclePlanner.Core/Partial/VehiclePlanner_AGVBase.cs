@@ -323,16 +323,20 @@ namespace VehiclePlanner.Core {
                         var map = RequestMapFile(mapName);
                         if (map.Requited)
                         {
-                            if (map.SaveAs(@"D:\Mapinfo\Client"))
-                            {
-                                success = true;
-                                OnConsoleMessage($"Planner - {map.FileName} download completed");
-                            }
-                            else
-                            {
-                                success = false;
-                                OnConsoleMessage($"Planner - {map.FileName} failed to save ");
-                            }
+							SaveFileDialog saveOri = new SaveFileDialog() {  InitialDirectory = @"D:\Mapinfo\Client" };
+							if (saveOri.ShowDialog() == DialogResult.OK)
+							{
+								if (map.SaveAs(saveOri.FileName))
+								{
+									success = true;
+									OnConsoleMessage($"Planner - {map.FileName} download completed");
+								}
+								else
+								{
+									success = false;
+									OnConsoleMessage($"Planner - {map.FileName} failed to save ");
+								}
+							}
                         }
                     }
                 }
