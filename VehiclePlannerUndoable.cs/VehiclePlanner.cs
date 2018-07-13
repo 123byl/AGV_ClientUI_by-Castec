@@ -68,6 +68,7 @@ namespace VehiclePlannerUndoable.cs
 			tsprgBattery.ProgressBar.DataBindings.ExAdd(nameof(ProgressBar.Value), source, dataMember, (sender, e) => { e.Value =(int)(e.Value as AGVStatus).Battery; });
 			tslbBattery.DataBindings.ExAdd(nameof(tslbBattery.Text), source, dataMember, (sender, e) => { e.Value = $"{(e.Value as AGVStatus).Battery}%"; });
 			tslbStatus.DataBindings.ExAdd(nameof(tslbStatus.Text), source, dataMember, (sender, e) => { e.Value = (e.Value as AGVStatus).Description.ToString(); });
+			tslbConnect.DataBindings.ExAdd(nameof(tslbConnect.Image), source, nameof(source.ConnectStatus), (sender, e) => { e.Value = (bool)e.Value ? Properties.Resources.LED_L_Green : Properties.Resources.LED_L_Red; });
 		}
 		#endregion
 

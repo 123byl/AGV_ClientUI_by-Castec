@@ -22,6 +22,8 @@ namespace VehiclePlannerUndoable.cs
 
 		int LaserID { get; set; }
 		int PathID { get; set; }
+
+		bool ConnectStatus { get; set; }
 	}
 
 	/// <summary>
@@ -48,6 +50,8 @@ namespace VehiclePlannerUndoable.cs
 		///  Laser繪圖物件ID
 		/// </summary>
 		private int mLaserID = -1;
+
+		private bool mConnectStatus = false;
 
 		#endregion Declaration - Fields
 
@@ -82,6 +86,11 @@ namespace VehiclePlannerUndoable.cs
 
 		public int LaserID { get => mLaserID; set => mLaserID = value; }
 		public int PathID { get => mPathID; set => mPathID = value; }
+		public bool ConnectStatus {
+			get => mConnectStatus; set {
+				mConnectStatus = value;
+				OnPropertyChanged();
+			} }
 
 
 
@@ -519,11 +528,12 @@ namespace VehiclePlannerUndoable.cs
 			switch (e.ConnectStatus)
 			{
 				case AsyncSocket.EConnectStatus.Connect:
+					ConnectStatus = true;
 					var status = AutoReportStatus(true);
 					OnBalloonTip("Connecting", "Server IP = " + e.RemoteInfo.IP);
 					break;
 				case AsyncSocket.EConnectStatus.Disconnect:
-					var connect = IsConnected;
+					ConnectStatus = false;
 					GLCMD.CMD.DeleteAGV(1);
 					GLCMD.CMD.SaftyEditMultiGeometry<IPair>(mLaserID, true, (point) => { point.Clear(); });
 					GLCMD.CMD.SaftyEditMultiGeometry<IPair>(mPathID, true, (line) => { line.Clear(); });
