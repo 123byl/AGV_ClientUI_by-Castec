@@ -19,6 +19,9 @@ namespace VehiclePlannerUndoable.cs
 	{
 		AGVStatus Status { get; }
 		void SetPosition(Vector2D Vector);
+
+		int LaserID { get; set; }
+		int PathID { get; set; }
 	}
 
 	/// <summary>
@@ -69,7 +72,19 @@ namespace VehiclePlannerUndoable.cs
 		/// <summary>
 		/// 是否已连线
 		/// </summary>
-		public override bool IsConnected => mClient.ConnectStatus == AsyncSocket.EConnectStatus.Connect;
+		public override bool IsConnected
+		{ get
+			{
+				OnPropertyChanged();
+				return mClient.ConnectStatus == AsyncSocket.EConnectStatus.Connect;
+			}
+		}
+
+		public int LaserID { get => mLaserID; set => mLaserID = value; }
+		public int PathID { get => mPathID; set => mPathID = value; }
+
+
+
 
 		#endregion Declaration - Properties
 
@@ -87,8 +102,9 @@ namespace VehiclePlannerUndoable.cs
 			{
 				bool isAutoReport = auto;
 				var laser = AutoReportLaser(isAutoReport);
-				var status = AutoReportStatus(isAutoReport);
-				var path = AutoReportPath(isAutoReport);
+				//var status = AutoReportStatus(isAutoReport);
+				//var path = AutoReportPath(isAutoReport);
+				//IsAutoReport = (laser?.Count ?? 0) > 0;
 				IsAutoReport = (laser?.Count ?? 0) > 0;
 			}
 			catch (Exception ex)
@@ -252,7 +268,7 @@ namespace VehiclePlannerUndoable.cs
 				GLCMD.CMD.SaftyEditMultiGeometry<IPair>(mLaserID, true, (point) =>
 				  {
 					  point.Clear();
-					  point.AddRangeIfNotNull(Point2DToPairCollection(laser.Points));
+					  point.AddRange(Point2DToPairCollection(laser.Points));
 				  }
 				);
 			}
@@ -408,14 +424,14 @@ namespace VehiclePlannerUndoable.cs
 		protected List<Point2D> AutoReportLaser(bool on)
 		{
 			AutoReportLaser Info = (AutoReportLaser)Send(new AutoReportLaser(on));
-			List<Point2D> laser = Info.Response.Points;
+			List<Point2D> laser = Info?.Response.Points;
 			return laser;
 		}
 
 		protected AGVStatus AutoReportStatus(bool on)
 		{
 			AutoReportStatus Info = (AutoReportStatus)Send(new AutoReportStatus(on));
-			AGVStatus status = Info.Response;
+			AGVStatus status = Info?.Response;
 			return status;
 		}
 
@@ -503,12 +519,15 @@ namespace VehiclePlannerUndoable.cs
 			switch (e.ConnectStatus)
 			{
 				case AsyncSocket.EConnectStatus.Connect:
-
+					var status = AutoReportStatus(true);
+					OnBalloonTip("Connecting", "Server IP = " + e.RemoteInfo.IP);
 					break;
 				case AsyncSocket.EConnectStatus.Disconnect:
+					var connect = IsConnected;
 					GLCMD.CMD.DeleteAGV(1);
 					GLCMD.CMD.SaftyEditMultiGeometry<IPair>(mLaserID, true, (point) => { point.Clear(); });
 					GLCMD.CMD.SaftyEditMultiGeometry<IPair>(mPathID, true, (line) => { line.Clear(); });
+					OnBalloonTip("Disconnect", "Server IP = " + e.RemoteInfo.IP);
 					break;
 			}
 		}
