@@ -323,10 +323,13 @@ namespace VehiclePlanner.Core {
                         var map = RequestMapFile(mapName);
                         if (map.Requited)
                         {
-							SaveFileDialog saveOri = new SaveFileDialog() {  InitialDirectory = @"D:\Mapinfo\Client" };
-							if (saveOri.ShowDialog() == DialogResult.OK)
+							FolderBrowserDialog pathOri = new FolderBrowserDialog() {  SelectedPath =@"D:\" };
+							DialogResult Ans = DialogResult.None;
+							DelInvoke?.Invoke(() => Ans= pathOri.ShowDialog());
+							
+							if (Ans == DialogResult.OK)
 							{
-								if (map.SaveAs(saveOri.FileName))
+								if (map.SaveAs(pathOri.SelectedPath))
 								{
 									success = true;
 									OnConsoleMessage($"Planner - {map.FileName} download completed");
@@ -337,7 +340,7 @@ namespace VehiclePlanner.Core {
 									OnConsoleMessage($"Planner - {map.FileName} failed to save ");
 								}
 							}
-                        }
+						}
                     }
                 }
             }
@@ -631,7 +634,7 @@ namespace VehiclePlanner.Core {
                             throw new PingException(pingStt.ToString());
                         }
                         /*-- 連線至VehicleConsole --*/
-                        ClientConnect(HostIP, 1080);
+                        ClientConnect(HostIP, 8090);
                     }
                     else
                     {//斷開與VehicleConsole的連線
