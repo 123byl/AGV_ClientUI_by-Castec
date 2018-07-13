@@ -65,7 +65,7 @@ namespace VehiclePlannerUndoable.cs
 		{
 			Bindings<IITSController_Undoable>(source);
 			string dataMember = nameof(source.Status);
-			tsprgBattery.ProgressBar.DataBindings.ExAdd(nameof(ProgressBar.Value), source, dataMember, (sender, e) => { e.Value = (e.Value as AGVStatus).Battery; });
+			tsprgBattery.ProgressBar.DataBindings.ExAdd(nameof(ProgressBar.Value), source, dataMember, (sender, e) => { e.Value =(int)(e.Value as AGVStatus).Battery; });
 			tslbBattery.DataBindings.ExAdd(nameof(tslbBattery.Text), source, dataMember, (sender, e) => { e.Value = $"{(e.Value as AGVStatus).Battery}%"; });
 			tslbStatus.DataBindings.ExAdd(nameof(tslbStatus.Text), source, dataMember, (sender, e) => { e.Value = (e.Value as AGVStatus).Description.ToString(); });
 		}
@@ -177,9 +177,12 @@ namespace VehiclePlannerUndoable.cs
 				if (check)
 				{
 					GLCMD.CMD.LoadMap(fileName);
+
+					/*載入地圖會清除原始資料，重新載入Laser Path繪製*/
+					Controller.PathID = GLCMD.CMD.AddMultiStripLine("Path", null);
+					Controller.LaserID = GLCMD.CMD.AddMultiPair("Laser", null);
+
 					mCurMapPath = fileName;
-					//測試繪圖
-					//GLCMD.CMD.AddAGV(1, 0, 0, 0);
 					SetBalloonTip($"Load { type}", $"\'{fileName}\' is loaded");
 					if (Controller.IsConnected && type == FileType.Map)
 					{
