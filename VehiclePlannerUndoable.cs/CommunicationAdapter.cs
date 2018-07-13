@@ -34,7 +34,7 @@ namespace VehiclePlannerUndoable.cs
 				foreach (Point2D point in response.Response)
 				{
 					if (mLaser == null) mLaser = new List<IPair>();
-					mLaser.Add(new Pair(point.X, point.X));
+					mLaser.Add(new Pair(point.X, point.Y));
 				}
 				Count = mLaser.Count;
 			}
