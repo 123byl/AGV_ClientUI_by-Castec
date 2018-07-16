@@ -13,6 +13,7 @@ using System.Runtime.CompilerServices;
 using System.Data;
 using BroadCast;
 using System.Threading;
+using AGVDefine;
 
 namespace VehiclePlanner.Core {
 
@@ -634,7 +635,7 @@ namespace VehiclePlanner.Core {
                             throw new PingException(pingStt.ToString());
                         }
                         /*-- 連線至VehicleConsole --*/
-                        ClientConnect(HostIP, 8090);
+                        ClientConnect(HostIP,(int) EPort.VehiclePlanner);
                     }
                     else
                     {//斷開與VehicleConsole的連線

@@ -58,6 +58,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\AGVBase\AGVDefine\AGVDefine.csproj">
+      <Project>{51E35835-6673-443B-8926-9AD3117DBCE2}</Project>
+      <Name>AGVDefine</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\AGVBase\FactoryMode\FactoryMode.csproj">
       <Project>{b66dd409-3bf6-488d-b887-d00a59c6396d}</Project>
       <Name>FactoryMode</Name>
