@@ -28,7 +28,7 @@ namespace VehiclePlanner.Core {
         /// <summary>
         /// 回應等待逾時時間
         /// </summary>
-        protected int mTimeOut = 1000;
+        protected int mTimeOut = 5000;
 
         /// <summary>
         /// 地圖相似度，範圍0%～100%，超過門檻值為-100%

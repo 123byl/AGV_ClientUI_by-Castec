@@ -181,10 +181,24 @@ namespace VehiclePlanner.Core {
         /// 儲存地圖
         /// </summary>
         public void SaveMap() {
-            if (!string.IsNullOrEmpty(CurMapPath)) {
-                OnConsoleMessage("[Map is Save]");
-                SaveMap(CurMapPath);
-            }
+			if (!string.IsNullOrEmpty(CurMapPath))
+			{
+				OnConsoleMessage("[Map is Save]");
+				SaveMap(CurMapPath);
+			}
+			else
+			{
+				string iniDir = Environment.SpecialFolder.Desktop.ToString();
+				string fileName = DateTime.Now.ToString("yyyyMMdd");
+				string fileFilter = "Map files (*.map)|*.map|All files(*.*)|*.*";
+				SaveFileDialog saveFile = new SaveFileDialog() { InitialDirectory = iniDir, FileName = fileName, Filter = fileFilter };
+				DialogResult Ans = DialogResult.No;
+				DelInvoke.Invoke(() => { Ans = saveFile.ShowDialog(); });
+				if (Ans == DialogResult.OK)
+				{
+					SaveMap(saveFile.FileName);
+				}
+			}
         }
         
         /// <summary>
