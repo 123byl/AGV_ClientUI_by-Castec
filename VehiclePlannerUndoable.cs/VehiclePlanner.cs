@@ -100,6 +100,11 @@ namespace VehiclePlannerUndoable.cs
 		{
 		}
 
+		protected override void InsertMap()
+		{
+			MapGL.MapControl.JoinMap();
+		}
+
 		private Point2D ToPoint2D(IPair Point)
 		{
 			return new Point2D(Point.X, Point.Y);
