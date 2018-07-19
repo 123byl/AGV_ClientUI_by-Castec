@@ -551,6 +551,7 @@
     <Content Include="Resources\Download.png" />
     <None Include="Resources\Filter.png" />
     <None Include="Resources\Highlight.png" />
+    <None Include="Resources\Insert.png" />
     <Content Include="Resources\Laser.png" />
     <None Include="Resources\Path.png" />
     <Content Include="Resources\Radar.png" />

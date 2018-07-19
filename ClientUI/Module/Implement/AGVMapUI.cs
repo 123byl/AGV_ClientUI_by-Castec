@@ -167,11 +167,20 @@ namespace VehiclePlanner.Module.Implement {
             rUI.ITest_SendMap();
         }
 
-        #endregion Function - Events
+		/// <summary>
+		/// 地圖匯入
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void tsbInsertMap_Click(object sender, EventArgs e)
+		{
+			rUI.InsertMap();
+		}
+		#endregion Function - Events
 
-        #region Funciton - Public Methods
+		#region Funciton - Public Methods
 
-        public override bool IsVisiable(AccessLevel lv) {
+		public override bool IsVisiable(AccessLevel lv) {
             return lv > AccessLevel.None;
         }
         
@@ -281,8 +290,9 @@ namespace VehiclePlanner.Module.Implement {
             
         }
 
-        #endregion Implement - IDataDisplay<ICtVehiclePlanner>
+		#endregion Implement - IDataDisplay<ICtVehiclePlanner>
 
-    }
+
+	}
 
 }
