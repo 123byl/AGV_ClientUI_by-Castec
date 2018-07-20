@@ -213,6 +213,16 @@ namespace VehiclePlanner.Properties {
         /// <summary>
         ///   查詢類型 System.Drawing.Bitmap 的當地語系化資源。
         /// </summary>
+        internal static System.Drawing.Bitmap AutoResponse {
+            get {
+                object obj = ResourceManager.GetObject("AutoResponse", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類型 System.Drawing.Bitmap 的當地語系化資源。
+        /// </summary>
         internal static System.Drawing.Bitmap Bar_Vertial {
             get {
                 object obj = ResourceManager.GetObject("Bar_Vertial", resourceCulture);
@@ -346,6 +356,16 @@ namespace VehiclePlanner.Properties {
         internal static System.Drawing.Bitmap CASTEC_Logo_Vertical {
             get {
                 object obj = ResourceManager.GetObject("CASTEC_Logo_Vertical", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類型 System.Drawing.Bitmap 的當地語系化資源。
+        /// </summary>
+        internal static System.Drawing.Bitmap Change {
+            get {
+                object obj = ResourceManager.GetObject("Change", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -733,6 +753,16 @@ namespace VehiclePlanner.Properties {
         /// <summary>
         ///   查詢類型 System.Drawing.Bitmap 的當地語系化資源。
         /// </summary>
+        internal static System.Drawing.Bitmap Localize {
+            get {
+                object obj = ResourceManager.GetObject("Localize", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類型 System.Drawing.Bitmap 的當地語系化資源。
+        /// </summary>
         internal static System.Drawing.Bitmap Lock {
             get {
                 object obj = ResourceManager.GetObject("Lock", resourceCulture);
@@ -766,6 +796,36 @@ namespace VehiclePlanner.Properties {
         internal static System.Drawing.Bitmap Mute_2 {
             get {
                 object obj = ResourceManager.GetObject("Mute_2", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類型 System.Drawing.Bitmap 的當地語系化資源。
+        /// </summary>
+        internal static System.Drawing.Bitmap NewConfirm {
+            get {
+                object obj = ResourceManager.GetObject("NewConfirm", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類型 System.Drawing.Bitmap 的當地語系化資源。
+        /// </summary>
+        internal static System.Drawing.Bitmap NewController {
+            get {
+                object obj = ResourceManager.GetObject("NewController", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類型 System.Drawing.Bitmap 的當地語系化資源。
+        /// </summary>
+        internal static System.Drawing.Bitmap NewScan {
+            get {
+                object obj = ResourceManager.GetObject("NewScan", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

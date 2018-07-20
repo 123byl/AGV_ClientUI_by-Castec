@@ -176,6 +176,11 @@ namespace VehiclePlanner.Module.Implement {
 		{
 			rUI.InsertMap();
 		}
+
+			private void tsbChangeMap_Click(object sender, EventArgs e)
+		{
+			rUI.ChangeMap();
+		}
 		#endregion Function - Events
 
 		#region Funciton - Public Methods
@@ -290,9 +295,8 @@ namespace VehiclePlanner.Module.Implement {
             
         }
 
+
 		#endregion Implement - IDataDisplay<ICtVehiclePlanner>
-
-
 	}
 
 }

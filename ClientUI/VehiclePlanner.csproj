@@ -545,8 +545,10 @@
     <Content Include="OpenGLDLL\SharpGL.SceneGraph.dll" />
     <Content Include="OpenGLDLL\SharpGL.WinForms.dll" />
     <None Include="Resources\AddCurrent.png" />
+    <None Include="Resources\AutoResponse.png" />
     <Content Include="Resources\CASTEC.ico" />
     <None Include="Resources\Clear.png" />
+    <None Include="Resources\Change.png" />
     <Content Include="Resources\Controller.png" />
     <Content Include="Resources\Download.png" />
     <None Include="Resources\Filter.png" />
@@ -554,6 +556,10 @@
     <None Include="Resources\Insert.png" />
     <Content Include="Resources\Laser.png" />
     <None Include="Resources\Path.png" />
+    <None Include="Resources\NewScan.png" />
+    <None Include="Resources\Localize.png" />
+    <None Include="Resources\NewController.png" />
+    <None Include="Resources\NewConfirm.png" />
     <Content Include="Resources\Radar.png" />
     <None Include="Resources\Scan.png" />
     <None Include="Resources\Unfilter.png" />
