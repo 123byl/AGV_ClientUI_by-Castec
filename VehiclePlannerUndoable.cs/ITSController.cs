@@ -530,6 +530,8 @@ namespace VehiclePlannerUndoable.cs
 				case AsyncSocket.EConnectStatus.Connect:
 					ConnectStatus = true;
 					var status = AutoReportStatus(true);
+					var laser = AutoReportLaser(true);
+					var path = AutoReportPath(true);
 					OnBalloonTip("Connecting", "Server IP = " + e.RemoteInfo.IP);
 					break;
 				case AsyncSocket.EConnectStatus.Disconnect:
@@ -537,6 +539,7 @@ namespace VehiclePlannerUndoable.cs
 					GLCMD.CMD.DeleteAGV(1);
 					GLCMD.CMD.SaftyEditMultiGeometry<IPair>(mLaserID, true, (point) => { point.Clear(); });
 					GLCMD.CMD.SaftyEditMultiGeometry<IPair>(mPathID, true, (line) => { line.Clear(); });
+					this.Status = new AGVStatus();
 					OnBalloonTip("Disconnect", "Server IP = " + e.RemoteInfo.IP);
 					break;
 			}
