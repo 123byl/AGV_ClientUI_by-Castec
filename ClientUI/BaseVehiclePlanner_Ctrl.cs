@@ -592,6 +592,11 @@ namespace VehiclePlanner {
         /// </summary>
         internal void GetMap() => Task.Run(()=> rVehiclePlanner.Controller.GetMap());
 
+		/// <summary>
+		/// 變更地圖
+		/// </summary>
+		internal void ChangeMap() => Task.Run(() => rVehiclePlanner.Controller.ChangeMap()); 
+
 		protected internal virtual void InsertMap()
 		{
 			throw new NotImplementedException();

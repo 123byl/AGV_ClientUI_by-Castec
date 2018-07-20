@@ -219,6 +219,10 @@ namespace VehiclePlanner.Core {
         /// 取得Map檔
         /// </summary>
         void GetMap();
+		/// <summary>
+		/// 變更地圖
+		/// </summary>
+		void ChangeMap();
         /// <summary>
         /// 取得Ori檔
         /// </summary>
