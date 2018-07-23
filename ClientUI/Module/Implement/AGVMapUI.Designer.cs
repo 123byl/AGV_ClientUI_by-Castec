@@ -75,6 +75,7 @@ namespace VehiclePlanner.Module.Implement {
 			this.toolStrip1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.toolStrip1.AutoSize = false;
+			this.toolStrip1.BackColor = System.Drawing.SystemColors.Window;
 			this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
 			this.toolStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
 			this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -95,7 +96,7 @@ namespace VehiclePlanner.Module.Implement {
 			this.toolStrip1.Margin = new System.Windows.Forms.Padding(0, 0, 0, 1);
 			this.toolStrip1.Name = "toolStrip1";
 			this.toolStrip1.Padding = new System.Windows.Forms.Padding(0);
-			this.toolStrip1.Size = new System.Drawing.Size(751, 40);
+			this.toolStrip1.Size = new System.Drawing.Size(751, 44);
 			this.toolStrip1.TabIndex = 1;
 			this.toolStrip1.Text = "toolStrip1";
 			// 
