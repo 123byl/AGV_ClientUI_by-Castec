@@ -61,6 +61,9 @@ namespace INITesting {
 
         private string mHighlight = null;
 
+		public event EventHandler UplaodParameter;
+
+		public event EventHandler DownloadParameter;
         #endregion Declaration - Fields
 
         #region Declaration - Properties
@@ -304,20 +307,29 @@ namespace INITesting {
         private void tsbHighlight_Click(object sender, EventArgs e) {
             Highlight();
         }
+		private void tsbDownload_Click(object sender, EventArgs e)
+		{
+			DownloadParameter?.Invoke(sender, e);
+		}
 
-        #endregion Function - Events
+		private void tsbUpload_Click(object sender, EventArgs e)
+		{
+			UplaodParameter?.Invoke(sender, e);
+		}
 
-        #region  Function - Private Methods
+		#endregion Function - Events
 
-        /// <summary>
-        /// 使用者文字輸入方法委派
-        /// </summary>
-        /// <param name="result"></param>
-        /// <param name="title"></param>
-        /// <param name="describe"></param>
-        /// <param name="defValue"></param>
-        /// <returns></returns>
-        private bool InputText(out string result, string title, string describe, string defValue = "") {
+		#region  Function - Private Methods
+
+		/// <summary>
+		/// 使用者文字輸入方法委派
+		/// </summary>
+		/// <param name="result"></param>
+		/// <param name="title"></param>
+		/// <param name="describe"></param>
+		/// <param name="defValue"></param>
+		/// <returns></returns>
+		private bool InputText(out string result, string title, string describe, string defValue = "") {
             return Stat.SUCCESS == CtInput.Text(out result, title, describe, defValue);
         }
 
@@ -350,7 +362,7 @@ namespace INITesting {
         private void DeployDGV(DataGridView dgv) {
             int width = dgv.RowHeadersWidth + 3;
             foreach (DataGridViewColumn col in dgv.Columns) width += col.Width;
-            dgv.Width = width;
+            //dgv.Width = width;
             /*-- 關閉欄位名稱自動產生 --*/
             dgv.AutoGenerateColumns = false;
             /*-- 開啟虛擬填充模式 --*/
@@ -621,9 +633,9 @@ namespace INITesting {
                 }
             }
         }
-    }
+	}
 
-    internal class TestData {
+	internal class TestData {
         public object Value { get; internal set; }
     }
 

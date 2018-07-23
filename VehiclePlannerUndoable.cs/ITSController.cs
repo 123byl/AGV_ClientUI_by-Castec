@@ -24,6 +24,10 @@ namespace VehiclePlannerUndoable.cs
 		int PathID { get; set; }
 
 		bool ConnectStatus { get; set; }
+
+		void RequireIni();
+
+		void UploadIni();
 	}
 
 	/// <summary>
@@ -77,7 +81,8 @@ namespace VehiclePlannerUndoable.cs
 		/// 是否已连线
 		/// </summary>
 		public override bool IsConnected
-		{ get
+		{
+			get
 			{
 				OnPropertyChanged();
 				return mClient.ConnectStatus == AsyncSocket.EConnectStatus.Connect;
@@ -86,11 +91,14 @@ namespace VehiclePlannerUndoable.cs
 
 		public int LaserID { get => mLaserID; set => mLaserID = value; }
 		public int PathID { get => mPathID; set => mPathID = value; }
-		public bool ConnectStatus {
-			get => mConnectStatus; set {
+		public bool ConnectStatus
+		{
+			get => mConnectStatus; set
+			{
 				mConnectStatus = value;
 				OnPropertyChanged();
-			} }
+			}
+		}
 
 
 
@@ -168,6 +176,59 @@ namespace VehiclePlannerUndoable.cs
 			}
 		}
 
+		public void RequireIni()
+		{
+			BaseFileReturn Info = GetParameter();
+			bool success = Info.Requited;
+			if (success)
+			{
+				System.Windows.Forms.SaveFileDialog dialog = new System.Windows.Forms.SaveFileDialog() { InitialDirectory = Environment.SpecialFolder.Desktop.ToString() };
+				System.Windows.Forms.DialogResult result = System.Windows.Forms.DialogResult.None;
+				DelInvoke?.Invoke(() => result = dialog.ShowDialog());
+				success = Info.SaveAs(dialog.FileName);
+				if (success)
+				{
+					OnConsoleMessage($"Planner - Ini download completed");
+				}
+				else
+				{
+					OnConsoleMessage($"Planner - Ini failed to save");
+				}
+			}
+			else
+			{
+				OnConsoleMessage($"Planner - Ini failed to download");
+			}
+			OnBalloonTip("Dowload", $"Ini download {(success ? "successfully" : "failed")}");
+		}
+
+		public void UploadIni()
+		{
+			string IniDir = Environment.SpecialFolder.Desktop.ToString();
+			string filter = "Ini file(*.ini)|*.ini|All file(*.*)|*.*";
+			System.Windows.Forms.DialogResult result = System.Windows.Forms.DialogResult.None;
+			System.Windows.Forms.OpenFileDialog dialog = new System.Windows.Forms.OpenFileDialog()
+			{
+				InitialDirectory = IniDir,
+				Filter = filter
+			};
+			DelInvoke?.Invoke(() => result = dialog.ShowDialog());
+			bool success = result == System.Windows.Forms.DialogResult.OK;
+			if (success)
+			{
+				FileInfo file = new FileInfo();
+				success = file.Load(dialog.FileName);
+				if (success)
+				{
+					OnConsoleMessage($"Planner - Ini upload completed");
+				}
+				else
+				{
+					OnConsoleMessage($"Planner - Ini failed to load");
+				}
+			}
+			OnBalloonTip("Dowload", $"Ini upload {(success ? "successfully" : "failed")}");
+		}
 		#endregion Function - Public Methods
 
 		#region Function - Private Methods
@@ -448,6 +509,18 @@ namespace VehiclePlannerUndoable.cs
 			AutoReportPath Info = (AutoReportPath)Send(new AutoReportPath(on));
 			List<Point2D> path = Info.Response.Points;
 			return path;
+		}
+
+		protected BaseFileReturn GetParameter()
+		{
+			GetIni Info = Send(new GetIni(null)) as GetIni;
+			return new ConvertGetIni(Info);
+		}
+
+		protected BaseBoolReturn SetParameter(FileInfo Ini)
+		{
+			SetIni Info = Send(new SetIni(Ini)) as SetIni;
+			return new ConvertSetIni(Info);
 		}
 
 		/// <summary>
