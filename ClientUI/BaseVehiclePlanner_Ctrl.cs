@@ -602,6 +602,16 @@ namespace VehiclePlanner {
 			throw new NotImplementedException();
 		}
 
+		protected internal virtual void UploadParameter()
+		{
+			throw new NotImplementedException();
+		}
+
+		protected internal virtual void DownloadParameter()
+		{
+			throw new NotImplementedException();
+		}
+
         /// <summary>
         /// 連線至iTS
         /// </summary>
