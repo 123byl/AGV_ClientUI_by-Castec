@@ -42,16 +42,28 @@ namespace VehiclePlanner.Module.Implement {
                 Dock = DockStyle.Fill,
                 FormBorderStyle = FormBorderStyle.None
             };
+			mEditor.UplaodParameter += Editor_UplaodParameter;
+			mEditor.DownloadParameter += Editor_DownloadParameter;
             this.Controls.Add(mEditor);
             mEditor.Show();
             FixedSize = new Size(718, 814);
         }
 
-        #endregion Funciotn - Consturctors
+		private void Editor_UplaodParameter(object sender, EventArgs e)
+		{
+			RefUI.UploadParameter();
+		}
 
-        #region Function - Public Mehotds
+		private void Editor_DownloadParameter(object sender, EventArgs e)
+		{
+			RefUI.DownloadParameter();
+		}
 
-        public override bool IsVisiable(AccessLevel lv) {
+		#endregion Funciotn - Consturctors
+
+		#region Function - Public Mehotds
+
+		public override bool IsVisiable(AccessLevel lv) {
             return lv > AccessLevel.Operator;
         }
 
