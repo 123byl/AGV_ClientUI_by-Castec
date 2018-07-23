@@ -65,7 +65,7 @@ namespace VehiclePlannerUndoable.cs
 		{
 			Bindings<IITSController_Undoable>(source);
 			string dataMember = nameof(source.Status);
-			tsprgBattery.ProgressBar.DataBindings.ExAdd(nameof(ProgressBar.Value), source, dataMember, (sender, e) => { e.Value =(int)(e.Value as AGVStatus).Battery; });
+			tsprgBattery.ProgressBar.DataBindings.ExAdd(nameof(ProgressBar.Value), source, dataMember, (sender, e) => { e.Value = (int)(e.Value as AGVStatus).Battery; });
 			tslbBattery.DataBindings.ExAdd(nameof(tslbBattery.Text), source, dataMember, (sender, e) => { e.Value = $"{(e.Value as AGVStatus).Battery}%"; });
 			tslbStatus.DataBindings.ExAdd(nameof(tslbStatus.Text), source, dataMember, (sender, e) => { e.Value = (e.Value as AGVStatus).Description.ToString(); });
 			tslbConnect.DataBindings.ExAdd(nameof(tslbConnect.Image), source, nameof(source.ConnectStatus), (sender, e) => { e.Value = (bool)e.Value ? Properties.Resources.LED_L_Green : Properties.Resources.LED_L_Red; });
@@ -103,6 +103,16 @@ namespace VehiclePlannerUndoable.cs
 		protected override void InsertMap()
 		{
 			MapGL.MapControl.JoinMap();
+		}
+
+		protected override void DownloadParameter()
+		{
+			rVehiclePlanner.RequireIni();
+		}
+
+		protected override void UploadParameter()
+		{
+			rVehiclePlanner.UploadIni();
 		}
 
 		private Point2D ToPoint2D(IPair Point)
@@ -144,6 +154,15 @@ namespace VehiclePlannerUndoable.cs
 	public interface IVehiclePlanner : IBaseVehiclePlanner
 	{
 		new IITSController_Undoable Controller { get; }
+
+		/// <summary>
+		/// 取得ITS Ini
+		/// </summary>
+		void RequireIni();
+		/// <summary>
+		/// 上傳ITS Ini
+		/// </summary>
+		void UploadIni();
 	}
 
 	/// <summary>
@@ -200,7 +219,7 @@ namespace VehiclePlannerUndoable.cs
 					OnErrorMessage("File data is wrong, can not read");
 				}
 			}
-			catch(Exception ex)
+			catch (Exception ex)
 			{
 				OnErrorMessage(ex.Message);
 			}
@@ -208,6 +227,14 @@ namespace VehiclePlannerUndoable.cs
 		#endregion
 
 		#region Funtion - Public Methods
+		public void RequireIni()
+		{
+			Controller.RequireIni();
+		}
+		public void UploadIni()
+		{
+			Controller.UploadIni();
+		}
 		#endregion
 
 		#region Function - Private Methods
