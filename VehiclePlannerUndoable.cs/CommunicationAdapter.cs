@@ -263,4 +263,43 @@ namespace VehiclePlannerUndoable.cs
 			}
 		}
 	}
+
+	public class ConvertGetIni : BaseFileReturn
+	{
+		/// <summary>
+		/// 档案物件
+		/// </summary>
+		private FileInfo mDoc = null;
+
+		public ConvertGetIni(GetIni response)
+		{
+			var v = response;
+			if (Requited = v != null)
+			{
+				mDoc = v.Response;
+				FileName = mDoc.Name;
+			}
+		}
+
+		/// <summary>
+		/// 存档
+		/// </summary>
+		/// <param name="path">储存路径</param>
+		/// <returns>是否储存成功</returns>
+		public override bool SaveAs(string path) => mDoc?.SaveAs(path) ?? false;
+	}
+
+	public class ConvertSetIni : BaseBoolReturn
+	{
+		public ConvertSetIni(SetIni response)
+		{
+			var v = response;
+			if (Requited = v != null)
+			{
+				Value = v.Response;
+			}
+		}
+	}
+
+
 }
