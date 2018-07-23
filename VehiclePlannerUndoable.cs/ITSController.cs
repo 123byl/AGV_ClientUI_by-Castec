@@ -111,9 +111,8 @@ namespace VehiclePlannerUndoable.cs
 			{
 				bool isAutoReport = auto;
 				var laser = AutoReportLaser(isAutoReport);
-				//var status = AutoReportStatus(isAutoReport);
-				//var path = AutoReportPath(isAutoReport);
-				//IsAutoReport = (laser?.Count ?? 0) > 0;
+				var status = AutoReportStatus(isAutoReport);
+				var path = AutoReportPath(isAutoReport);
 				IsAutoReport = (laser?.Count ?? 0) > 0;
 			}
 			catch (Exception ex)
@@ -532,6 +531,7 @@ namespace VehiclePlannerUndoable.cs
 					var status = AutoReportStatus(true);
 					var laser = AutoReportLaser(true);
 					var path = AutoReportPath(true);
+					IsAutoReport = true;
 					OnBalloonTip("Connecting", "Server IP = " + e.RemoteInfo.IP);
 					break;
 				case AsyncSocket.EConnectStatus.Disconnect:
