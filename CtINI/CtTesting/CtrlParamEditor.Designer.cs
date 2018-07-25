@@ -27,8 +27,8 @@ namespace INITesting {
         /// </summary>
         private void InitializeComponent() {
 			this.components = new System.ComponentModel.Container();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CtrlParamEditor));
 			this.dgvProperties = new System.Windows.Forms.DataGridView();
 			this.colName = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -50,15 +50,15 @@ namespace INITesting {
 			this.tslbCount = new CtBind.Bindable.ToolStripStatusLabel();
 			this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
 			this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-			this.tstKeyWord = new CtBind.Bindable.ToolStripTextBox();
 			this.tsbOpen = new CtBind.Bindable.ToolStripButton();
 			this.tsbSave = new CtBind.Bindable.ToolStripButton();
 			this.tsbDownload = new CtBind.Bindable.ToolStripButton();
+			this.tsbUpload = new CtBind.Bindable.ToolStripButton();
 			this.tsbUndo = new CtBind.Bindable.ToolStripButton();
 			this.tsbRedo = new CtBind.Bindable.ToolStripButton();
 			this.tsbFilter = new CtBind.Bindable.ToolStripButton();
 			this.tsbHighlight = new CtBind.Bindable.ToolStripButton();
-			this.tsbUpload = new CtBind.Bindable.ToolStripButton();
+			this.tstKeyWord = new CtBind.Bindable.ToolStripTextBox();
 			((System.ComponentModel.ISupportInitialize)(this.dgvProperties)).BeginInit();
 			this.cmsDGV.SuspendLayout();
 			this.statusStrip1.SuspendLayout();
@@ -72,14 +72,14 @@ namespace INITesting {
 			this.dgvProperties.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Control;
-			dataGridViewCellStyle5.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-			dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.WindowText;
-			dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.dgvProperties.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle5;
+			dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+			dataGridViewCellStyle1.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+			dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+			dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.dgvProperties.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
 			this.dgvProperties.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
 			this.dgvProperties.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.colName,
@@ -89,13 +89,13 @@ namespace INITesting {
             this.colMax,
             this.colMin,
             this.colDefault});
-			this.dgvProperties.Location = new System.Drawing.Point(0, 46);
-			this.dgvProperties.Margin = new System.Windows.Forms.Padding(1);
+			this.dgvProperties.Location = new System.Drawing.Point(12, 46);
+			this.dgvProperties.Margin = new System.Windows.Forms.Padding(3, 1, 3, 2);
 			this.dgvProperties.Name = "dgvProperties";
-			dataGridViewCellStyle6.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-			this.dgvProperties.RowsDefaultCellStyle = dataGridViewCellStyle6;
+			dataGridViewCellStyle2.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+			this.dgvProperties.RowsDefaultCellStyle = dataGridViewCellStyle2;
 			this.dgvProperties.RowTemplate.Height = 27;
-			this.dgvProperties.Size = new System.Drawing.Size(1238, 658);
+			this.dgvProperties.Size = new System.Drawing.Size(1214, 656);
 			this.dgvProperties.TabIndex = 0;
 			// 
 			// colName
@@ -212,7 +212,7 @@ namespace INITesting {
             this.tslbCount,
             this.toolStripStatusLabel1});
 			this.statusStrip1.Location = new System.Drawing.Point(0, 706);
-			this.statusStrip1.Margin = new System.Windows.Forms.Padding(0, 1, 0, 0);
+			this.statusStrip1.Margin = new System.Windows.Forms.Padding(0, 2, 0, 0);
 			this.statusStrip1.Name = "statusStrip1";
 			this.statusStrip1.Size = new System.Drawing.Size(1238, 24);
 			this.statusStrip1.TabIndex = 22;
@@ -267,13 +267,6 @@ namespace INITesting {
 			this.toolStrip1.TabIndex = 23;
 			this.toolStrip1.Text = "toolStrip1";
 			// 
-			// tstKeyWord
-			// 
-			this.tstKeyWord.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.tstKeyWord.Name = "tstKeyWord";
-			this.tstKeyWord.Size = new System.Drawing.Size(200, 44);
-			this.tstKeyWord.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tstKeyWord_KeyDown);
-			// 
 			// tsbOpen
 			// 
 			this.tsbOpen.AutoSize = false;
@@ -308,6 +301,17 @@ namespace INITesting {
 			this.tsbDownload.Size = new System.Drawing.Size(32, 30);
 			this.tsbDownload.Text = "toolStripButton1";
 			this.tsbDownload.Click += new System.EventHandler(this.tsbDownload_Click);
+			// 
+			// tsbUpload
+			// 
+			this.tsbUpload.AutoSize = false;
+			this.tsbUpload.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.tsbUpload.Image = global::INITesting.Properties.Resources.Upload;
+			this.tsbUpload.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.tsbUpload.Name = "tsbUpload";
+			this.tsbUpload.Size = new System.Drawing.Size(40, 40);
+			this.tsbUpload.Text = "toolStripButton2";
+			this.tsbUpload.Click += new System.EventHandler(this.tsbUpload_Click);
 			// 
 			// tsbUndo
 			// 
@@ -357,16 +361,12 @@ namespace INITesting {
 			this.tsbHighlight.ToolTipText = "Highlight(Ctrl + L)";
 			this.tsbHighlight.Click += new System.EventHandler(this.tsbHighlight_Click);
 			// 
-			// tsbUpload
+			// tstKeyWord
 			// 
-			this.tsbUpload.AutoSize = false;
-			this.tsbUpload.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.tsbUpload.Image = global::INITesting.Properties.Resources.Upload;
-			this.tsbUpload.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.tsbUpload.Name = "tsbUpload";
-			this.tsbUpload.Size = new System.Drawing.Size(40, 40);
-			this.tsbUpload.Text = "toolStripButton2";
-			this.tsbUpload.Click += new System.EventHandler(this.tsbUpload_Click);
+			this.tstKeyWord.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.tstKeyWord.Name = "tstKeyWord";
+			this.tstKeyWord.Size = new System.Drawing.Size(200, 44);
+			this.tstKeyWord.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tstKeyWord_KeyDown);
 			// 
 			// CtrlParamEditor
 			// 
