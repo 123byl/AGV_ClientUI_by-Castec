@@ -121,7 +121,15 @@ namespace VehiclePlannerUndoable.cs
 				var laser = AutoReportLaser(isAutoReport);
 				var status = AutoReportStatus(isAutoReport);
 				var path = AutoReportPath(isAutoReport);
-				IsAutoReport = isAutoReport;
+				if (laser || status || path)
+				{
+					IsAutoReport = isAutoReport;
+					if (! isAutoReport)
+					{
+						GLCMD.CMD.SaftyEditMultiGeometry<IPair>(mPathID, true, (list) => { list.Clear(); } );
+						GLCMD.CMD.SaftyEditMultiGeometry<IPair>(mLaserID, true, (list) => { list.Clear(); });
+					}
+				}
 			}
 			catch (Exception ex)
 			{
