@@ -42,7 +42,7 @@ namespace CtParamEditor.Core.Internal {
     /// <remarks>
     /// 提供參數操作方法
     /// </remarks>
-    internal interface IParam : IParamColumn {
+   public interface IParam : IParamColumn {
         bool SetValue(string val, string columnName);
         /// <summary>
         /// 變數變更事件

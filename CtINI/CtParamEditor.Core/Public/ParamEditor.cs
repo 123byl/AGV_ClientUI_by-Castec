@@ -24,7 +24,7 @@ namespace CtParamEditor.Core
     /// <summary>
     /// 參數編輯器
     /// </summary>
-    internal class ParamEditor: IParamEditor {
+ public class ParamEditor: IParamEditor {
 
         #region Declaration - Fields
         
@@ -461,20 +461,20 @@ namespace CtParamEditor.Core
         /// 屬性變更事件
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
-        
-        #endregion Implement - IDataSource
 
-        #region Implement - IUndoable
+		#endregion Implement - IDataSource
 
-        /// <summary>
-        /// 命令管理器
-        /// </summary>
-        private CommandManager mCommandManager = new CommandManager();
+		#region Implement - IUndoable
 
-        /// <summary>
-        /// 可撤銷次數
-        /// </summary>
-        public int UndoLimit { get => mCommandManager.UndoLimit; set => mCommandManager.UndoLimit = value; }
+		/// <summary>
+		/// 命令管理器
+		/// </summary>
+		public CommandManager mCommandManager = new CommandManager();
+
+		/// <summary>
+		/// 可撤銷次數
+		/// </summary>
+		public int UndoLimit { get => mCommandManager.UndoLimit; set => mCommandManager.UndoLimit = value; }
 
         /// <summary>
         /// 可撤銷次數
@@ -486,10 +486,10 @@ namespace CtParamEditor.Core
         /// </summary>
         public int RedoCount => mCommandManager.RedoCount;
 
-        /// <summary>
-        /// 撤銷
-        /// </summary>
-        public void Undo() {
+		/// <summary>
+		/// 撤銷
+		/// </summary>
+		public void Undo() {
             mCommandManager.Undo();
         }
 
@@ -506,7 +506,7 @@ namespace CtParamEditor.Core
     /// <summary>
     /// 擴充命令
     /// </summary>
-    internal static class ExtensionCommand {
+    public static class ExtensionCommand {
 
         /// <summary>
         /// 編輯器物件參考
