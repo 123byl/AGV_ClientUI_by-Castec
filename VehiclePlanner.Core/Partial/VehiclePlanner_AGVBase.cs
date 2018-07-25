@@ -464,8 +464,8 @@ namespace VehiclePlanner.Core
 				BaseBoolReturn servoMode = ImpSetServoMode(servoOn);
 				if (servoMode.Requited)
 				{
-					OnConsoleMessage($"iTS - Is Servo{(servoMode.Value ? "On" : "Off")}");
-					IsMotorServoOn = servoMode.Value;
+					OnConsoleMessage($"iTS - Is Servo{(servoOn ? "On" : "Off")}");
+					IsMotorServoOn = servoOn;
 				}
 			}
 			catch (Exception ex)
