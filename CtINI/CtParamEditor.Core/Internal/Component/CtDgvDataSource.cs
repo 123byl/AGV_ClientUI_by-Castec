@@ -15,7 +15,7 @@ namespace CtParamEditor.Core.Internal.Component {
     /// <summary>
     /// DataGridView資料來源管理器
     /// </summary>
-    internal abstract class BaseParamCollection : IParamCollection {
+  public abstract class BaseParamCollection : IParamCollection {
 
         #region Declaration - Fields
 
@@ -50,7 +50,7 @@ namespace CtParamEditor.Core.Internal.Component {
         /// <returns></returns>
         public IParam this[int indexData] {
             get {
-                if (indexData > 0 && indexData < mFullData.Count) {
+                if (indexData >= 0 && indexData < mFullData.Count) {
                     return mFullData[indexData] as IParam;
                 } else {
                     return null;

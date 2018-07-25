@@ -121,7 +121,7 @@ namespace VehiclePlannerUndoable.cs
 				var laser = AutoReportLaser(isAutoReport);
 				var status = AutoReportStatus(isAutoReport);
 				var path = AutoReportPath(isAutoReport);
-				IsAutoReport = (laser?.Count ?? 0) > 0;
+				IsAutoReport = isAutoReport;
 			}
 			catch (Exception ex)
 			{
@@ -490,25 +490,25 @@ namespace VehiclePlannerUndoable.cs
 		/// </summary>
 		/// <param name="on"></param>
 		/// <returns></returns>
-		protected List<Point2D> AutoReportLaser(bool on)
+		protected bool AutoReportLaser(bool on)
 		{
 			AutoReportLaser Info = (AutoReportLaser)Send(new AutoReportLaser(on));
-			List<Point2D> laser = Info?.Response.Points;
-			return laser;
+			bool response = Info.Response;
+			return response;
 		}
 
-		protected AGVStatus AutoReportStatus(bool on)
+		protected bool AutoReportStatus(bool on)
 		{
 			AutoReportStatus Info = (AutoReportStatus)Send(new AutoReportStatus(on));
-			AGVStatus status = Info?.Response;
-			return status;
+			bool response = Info.Response;
+			return response;
 		}
 
-		protected List<Point2D> AutoReportPath(bool on)
+		protected bool AutoReportPath(bool on)
 		{
 			AutoReportPath Info = (AutoReportPath)Send(new AutoReportPath(on));
-			List<Point2D> path = Info.Response.Points;
-			return path;
+			bool response = Info.Response;
+			return response;
 		}
 
 		protected BaseFileReturn GetParameter()

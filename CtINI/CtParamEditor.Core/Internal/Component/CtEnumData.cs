@@ -32,7 +32,7 @@ namespace CtParamEditor.Core.Internal {
     /// <summary>
     /// Enum型態定義管理器
     /// </summary>
-    internal class CtEnumData {
+    public class CtEnumData {
         public Dictionary<string, Dictionary<string, string>> Data = new Dictionary<string, Dictionary<string, string>>();
         public bool ReadINI(List<IniStruct> data) {
             Data = data.
