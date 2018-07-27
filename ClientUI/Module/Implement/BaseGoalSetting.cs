@@ -73,6 +73,12 @@ namespace VehiclePlanner.Module.Implement {
 			FixedSize = new Size(776, 860);
 		}
 
+		protected virtual string GetGoalName()
+		{
+			string goalName = cmbGoalList.InvokeIfNecessary(() => cmbGoalList.Text);
+			return goalName;
+		}
+
 		#endregion Funciton - Construcotrs
 
 		#region Implement - IIGoalSetting
@@ -254,8 +260,12 @@ namespace VehiclePlanner.Module.Implement {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void tsbRun_Click(object sender, EventArgs e) {
-            string goalName = cmbGoalList.InvokeIfNecessary(() => cmbGoalList.Text);
-            rUI.Run(goalName);
+			//string goalName = cmbGoalList.InvokeIfNecessary(() => cmbGoalList.Text);
+			string goalName = GetGoalName();
+			if (!string.IsNullOrEmpty(goalName))
+			{
+				rUI.Run(goalName);
+			}
         }
 
         private void tsbRunAll_Click(object sender, EventArgs e) {
