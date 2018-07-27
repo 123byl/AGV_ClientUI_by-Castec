@@ -171,6 +171,9 @@ namespace VehiclePlannerUndoable.cs
 		/// </summary>
 		void UploadIni();
 
+		/// <summary>
+		/// 載入地圖事件
+		/// </summary>
 		event EventHandler LoadMap;
 	}
 
