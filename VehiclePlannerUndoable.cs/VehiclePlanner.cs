@@ -52,6 +52,8 @@ namespace VehiclePlannerUndoable.cs
 			Bindings(rVehiclePlanner);
 
 			Bindings(rVehiclePlanner.Controller);
+
+			rVehiclePlanner.LoadMap += rVehiclePlanner_LoadMap;
 		}
 		#endregion
 
@@ -144,6 +146,11 @@ namespace VehiclePlannerUndoable.cs
 				}
 			}
 		}
+
+		private void rVehiclePlanner_LoadMap(object sender, EventArgs e)
+		{
+			(GoalSetting as VehiclePlannerUndoable.cs.GoalSetting).LoadMap();
+		}
 		#endregion
 	}
 
@@ -163,6 +170,8 @@ namespace VehiclePlannerUndoable.cs
 		/// 上傳ITS Ini
 		/// </summary>
 		void UploadIni();
+
+		event EventHandler LoadMap;
 	}
 
 	/// <summary>
@@ -182,6 +191,9 @@ namespace VehiclePlannerUndoable.cs
 		{
 			base.Controller = new ITSController();
 		}
+
+		public event EventHandler LoadMap;
+		
 		#endregion
 
 		#region Function - Override Methods
@@ -197,6 +209,7 @@ namespace VehiclePlannerUndoable.cs
 		{
 			try
 			{
+				LoadMap?.Invoke(this, EventArgs.Empty);
 				bool check = false;
 				check = File.Exists(fileName);
 				if (check)
