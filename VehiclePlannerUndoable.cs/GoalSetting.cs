@@ -36,6 +36,8 @@ namespace VehiclePlannerUndoable.cs
 		/// </summary>
 		private ISingleInfo mSingleInfo = null;
 
+		private int mCurrentIndex = -1;
+
 		#endregion Declaration - Fields
 
 		#region Declaration - Properties
@@ -82,13 +84,30 @@ namespace VehiclePlannerUndoable.cs
 			dgvGoalPoint.DefaultCellStyle.Font = font;
 			dgvGoalPoint.ColumnHeadersDefaultCellStyle.Font = font;
 			dgvGoalPoint.BringToFront();
+			cboSingleType.Items.Add("Select Info");
 			cboSingleType.Items.Add(nameof(SinglePairInfo));
 			cboSingleType.Items.Add(nameof(SingleTowardPairInfo));
 			cboSingleType.Items.Add(nameof(SingleLineInfo));
 			cboSingleType.Items.Add(nameof(SingleAreaInfo));
+			cboSingleType.SelectedIndex = 0;
 			cboSingleType.SelectedValueChanged += cboSingleType_SelectedValueChanged;
+			dgvGoalPoint.SelectionChanged += dgvGoalPoint_SelectionChanged;
 		}
 
+		protected override string GetGoalName()
+		{
+			string goalname = null;
+			if (cboSingleType.Text == nameof(SingleTowardPairInfo) && mCurrentIndex != -1)
+			{
+				goalname = dgvGoalPoint.Rows[mCurrentIndex].Cells[nameof(SingleTowardPair.Name)].Value.ToString();
+			}
+			return goalname;
+		}
+
+		public void LoadMap()
+		{
+			cboSingleType.InvokeIfNecessary(() => cboSingleType.SelectedIndex = 0);
+		}
 		#endregion Funciton - Constructors
 
 		#region Functino - Events
@@ -170,6 +189,10 @@ namespace VehiclePlannerUndoable.cs
 			}
 		}
 
+		protected virtual void dgvGoalPoint_SelectionChanged(object sender, EventArgs e)
+		{
+			mCurrentIndex = dgvGoalPoint.InvokeIfNecessary(() => dgvGoalPoint.CurrentRow.Index);
+		}
 
 		///// <summary>
 		///// 標示物參數編輯 
@@ -211,6 +234,9 @@ namespace VehiclePlannerUndoable.cs
 					break;
 				case nameof(SingleAreaInfo):
 					singleInfo = new AreaInfo(dgv);
+					break;
+				case "Select Info":
+					dgv.DataSource = null;
 					break;
 				default:
 					throw new Exception($"未定義{singleType}類型資料");
@@ -477,7 +503,7 @@ namespace VehiclePlannerUndoable.cs
 			/// <param name="rowIndex">標示物行索引</param>
 			/// <param name="columnName">編輯的參數名稱</param>
 			/// <param name="newValue">編輯後的值</param>
-			protected override void RefreshSingle(int rowIndex, string columnName, int targetID , DataGridViewRow data)
+			protected override void RefreshSingle(int rowIndex, string columnName, int targetID, DataGridViewRow data)
 			{
 				string newValue = data.Cells[columnName].Value.ToString();
 				switch (columnName)
@@ -513,12 +539,12 @@ namespace VehiclePlannerUndoable.cs
 			/// </summary>
 			/// <param name="sTheta">指定角度</param>
 			/// <param name="rowIndex">目標標示物行索引</param>
-			protected void MoveToward(int id,int x ,int y , double angle )
+			protected void MoveToward(int id, int x, int y, double angle)
 			{
 				double theta = angle * Math.PI / 180;
-				int dx =(int) (x + 1000 * Math.Cos(theta));
+				int dx = (int)(x + 1000 * Math.Cos(theta));
 				int dy = (int)(y + 1000 * Math.Sin(theta));
-				GLCMD.CMD.DoMoveToward(id, dx,dy);
+				GLCMD.CMD.DoMoveToward(id, dx, dy);
 			}
 
 			/// <summary>
@@ -575,7 +601,7 @@ namespace VehiclePlannerUndoable.cs
 			/// <param name="rowIndex">標示物行索引</param>
 			/// <param name="columnName">編輯的參數名稱</param>
 			/// <param name="newValue">編輯後的值</param>
-			protected override void RefreshSingle(int rowIndex, string columnName,int targetID,DataGridViewRow data)
+			protected override void RefreshSingle(int rowIndex, string columnName, int targetID, DataGridViewRow data)
 			{
 				string newValue = data.Cells[columnName].Value.ToString();
 				switch (columnName)
@@ -587,7 +613,7 @@ namespace VehiclePlannerUndoable.cs
 						MoveBegin(targetID, int.Parse(newValue), int.Parse(data.Cells[nameof(ISingleLineInfo.Y0)].Value.ToString()));
 						break;
 					case nameof(ISingleLineInfo.Y0):
-						MoveBegin(targetID,int.Parse( data.Cells[nameof(ISingleLineInfo.X0)].Value.ToString()),int.Parse(newValue) );
+						MoveBegin(targetID, int.Parse(data.Cells[nameof(ISingleLineInfo.X0)].Value.ToString()), int.Parse(newValue));
 						break;
 					case nameof(ISingleLineInfo.X1):
 						MoveEnd(targetID, int.Parse(newValue), int.Parse(data.Cells[nameof(ISingleLineInfo.Y1)].Value.ToString()));
@@ -682,7 +708,7 @@ namespace VehiclePlannerUndoable.cs
 			/// <param name="rowIndex">標示物行索引</param>
 			/// <param name="columnName">編輯的參數名稱</param>
 			/// <param name="newValue">編輯後的值</param>
-			protected override void RefreshSingle(int rowIndex, string columnName,  int targetID  , DataGridViewRow data)
+			protected override void RefreshSingle(int rowIndex, string columnName, int targetID, DataGridViewRow data)
 			{
 				string newValue = data.Cells[columnName].Value.ToString();
 				switch (columnName)
@@ -745,11 +771,6 @@ namespace VehiclePlannerUndoable.cs
 		}
 
 		#endregion Suppoer Class
-
-		private void button1_Click(object sender, EventArgs e)
-		{
-
-		}
 	}
 
 }
