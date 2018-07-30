@@ -79,6 +79,11 @@ namespace VehiclePlanner.Module.Implement {
 			return goalName;
 		}
 
+		protected virtual List<string> GetGeneralGoals()
+		{
+			throw new NotImplementedException();
+		}
+
 		#endregion Funciton - Construcotrs
 
 		#region Implement - IIGoalSetting
@@ -269,15 +274,21 @@ namespace VehiclePlanner.Module.Implement {
         }
 
         private void tsbRunAll_Click(object sender, EventArgs e) {
-            //GetSelectedSingleID();
+			//GetSelectedSingleID();
+			rUI.RunLoop(GetGeneralGoals());
         }
 
-        /// <summary>
-        /// 進行充電
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void tsbCharging_Click(object sender, EventArgs e) {
+		private void tsbStop_Click(object sender, EventArgs e)
+		{
+			rUI.StopRunLoop();
+		}
+
+		/// <summary>
+		/// 進行充電
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void tsbCharging_Click(object sender, EventArgs e) {
             lock (mKey) {
                 string powerName = cmbGoalList.InvokeIfNecessary(() => cmbGoalList.Text);
                 rUI.Charging(powerName);
@@ -463,9 +474,9 @@ namespace VehiclePlanner.Module.Implement {
         public void Bindings(IBaseVehiclePlanner source) {
             if (source.DelInvoke == null) source.DelInvoke = invk => this.InvokeIfNecessary(invk);
         }
-        
-        #endregion Implement - IDataDisplay<ICtVehiclePlanner>
-        
-    }
+
+		#endregion Implement - IDataDisplay<ICtVehiclePlanner>
+
+	}
 
 }

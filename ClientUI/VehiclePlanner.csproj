@@ -560,6 +560,7 @@
     <None Include="Resources\Localize.png" />
     <None Include="Resources\NewController.png" />
     <None Include="Resources\NewConfirm.png" />
+    <None Include="Resources\NewStop.png" />
     <Content Include="Resources\Radar.png" />
     <None Include="Resources\Scan.png" />
     <None Include="Resources\Unfilter.png" />

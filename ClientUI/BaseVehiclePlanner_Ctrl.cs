@@ -597,20 +597,41 @@ namespace VehiclePlanner {
 		/// </summary>
 		internal void ChangeMap() => Task.Run(() => rVehiclePlanner.Controller.ChangeMap()); 
 
+		/// <summary>
+		/// 插入地圖
+		/// </summary>
 		protected internal virtual void InsertMap()
 		{
 			throw new NotImplementedException();
 		}
 
+		/// <summary>
+		/// 上載參數
+		/// </summary>
 		protected internal virtual void UploadParameter()
 		{
 			throw new NotImplementedException();
 		}
 
+		/// <summary>
+		/// 下載參數
+		/// </summary>
 		protected internal virtual void DownloadParameter()
 		{
 			throw new NotImplementedException();
 		}
+
+
+		protected internal virtual void RunLoop(List<string> goals)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected internal virtual void StopRunLoop()
+		{
+			throw new NotImplementedException();
+		}
+
 
         /// <summary>
         /// 連線至iTS
