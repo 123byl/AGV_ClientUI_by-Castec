@@ -868,7 +868,7 @@ namespace VehiclePlanner {
         /// 載入檔案
         /// </summary>
         /// <param name="type">載入檔案類型</param>
-        public void LoadFile(FileType type) {
+        public virtual void LoadFile(FileType type) {
             OpenFileDialog openMap = new OpenFileDialog() {
                 InitialDirectory = rVehiclePlanner.DefMapDir,
                 Filter = $"MAP|*.{type.ToString().ToLower()}"
