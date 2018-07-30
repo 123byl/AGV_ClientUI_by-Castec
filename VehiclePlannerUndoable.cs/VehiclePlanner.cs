@@ -118,7 +118,7 @@ namespace VehiclePlannerUndoable.cs
 			rVehiclePlanner.UploadIni();
 		}
 
-		 protected override void RunLoop (List<string> goals)
+		protected override void RunLoop(List<string> goals)
 		{
 			rVehiclePlanner.RunLoop(goals);
 		}
@@ -213,11 +213,20 @@ namespace VehiclePlannerUndoable.cs
 			base.Controller = new ITSController();
 		}
 
-		public new event EventHandler  LoadMap;
+		public new event EventHandler LoadMap;
 
 		#endregion
 
 		#region Function - Override Methods
+		public override void AddCurrentAsGoal()
+		{
+			var s = Controller.Status;
+			if (Controller.ConnectStatus && (s.Description == EDescription.Arrived || s.Description == EDescription.Idle))
+			{
+				GLCMD.CMD.DoAddSingleTowardPair("General", s.X, s.Y, s.Toward);
+			}
+		}
+
 		protected override void SaveMap(string path)
 		{
 			GLCMD.CMD.SaveMap(path);
@@ -273,21 +282,21 @@ namespace VehiclePlannerUndoable.cs
 		public void RunLoop(List<string> goals)
 		{
 			if (IsRunLoop) IsRunLoop = false; Thread.Sleep(100);
-			if (goals?.Count > 0)IsRunLoop = true;Task.Run(() =>
-				  {
-					  int i = 0;
-					  do
-					  {
-						  if (i >= goals.Count) i = 0;
-						  string goal = goals[i];
-						  if (Controller.Status.Description == EDescription.Idle || Controller.Status.Description == EDescription.Arrived)
-						  {
-						  Controller.GoTo(goal);
-						  i++;
-						  }
-						  Thread.Sleep(50);
-					  } while (IsRunLoop);
-				  });
+			if (goals?.Count > 0) IsRunLoop = true; Task.Run(() =>
+					{
+						int i = 0;
+						do
+						{
+							if (i >= goals.Count) i = 0;
+							string goal = goals[i];
+							if (Controller.Status.Description == EDescription.Idle || Controller.Status.Description == EDescription.Arrived)
+							{
+								Controller.GoTo(goal);
+								i++;
+							}
+							Thread.Sleep(50);
+						} while (IsRunLoop);
+					});
 		}
 
 		public void StopRunLoop()
