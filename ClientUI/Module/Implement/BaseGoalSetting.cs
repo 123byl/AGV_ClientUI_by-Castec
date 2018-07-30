@@ -351,7 +351,7 @@ namespace VehiclePlanner.Module.Implement {
         /// <summary>
         /// 獲得所有被選取的 Goal 點ID
         /// </summary>
-        private List<uint> GetSelectedSingleID() {
+        protected virtual List<uint> GetSelectedSingleID() {
             var list = new List<uint>();
             dgvGoalPoint.InvokeIfNecessary(() => {
                 for (int row = 0; row < GoalCount; ++row) {
