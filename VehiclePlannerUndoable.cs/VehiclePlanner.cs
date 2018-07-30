@@ -16,6 +16,7 @@ using SerialData;
 using Geometry;
 using CtBind;
 using System.IO;
+using System.Threading;
 
 namespace VehiclePlannerUndoable.cs
 {
@@ -117,6 +118,16 @@ namespace VehiclePlannerUndoable.cs
 			rVehiclePlanner.UploadIni();
 		}
 
+		 protected override void RunLoop (List<string> goals)
+		{
+			rVehiclePlanner.RunLoop(goals);
+		}
+
+		protected override void StopRunLoop()
+		{
+			rVehiclePlanner.StopRunLoop();
+		}
+
 		private Point2D ToPoint2D(IPair Point)
 		{
 			return new Point2D(Point.X, Point.Y);
@@ -162,6 +173,7 @@ namespace VehiclePlannerUndoable.cs
 	{
 		new IITSController_Undoable Controller { get; }
 
+		bool IsRunLoop { get; set; }
 		/// <summary>
 		/// 取得ITS Ini
 		/// </summary>
@@ -175,6 +187,10 @@ namespace VehiclePlannerUndoable.cs
 		/// 載入地圖事件
 		/// </summary>
 		event EventHandler LoadMap;
+
+		void RunLoop(List<string> goals);
+
+		void StopRunLoop();
 	}
 
 	/// <summary>
@@ -184,6 +200,8 @@ namespace VehiclePlannerUndoable.cs
 	{
 		#region Declaration - Field
 		public new IITSController_Undoable Controller { get { return base.Controller as IITSController_Undoable; } }
+
+		public bool IsRunLoop { get; set; }
 		#endregion
 
 		#region Declaration - Properties
@@ -195,8 +213,8 @@ namespace VehiclePlannerUndoable.cs
 			base.Controller = new ITSController();
 		}
 
-		public event EventHandler LoadMap;
-		
+		public new event EventHandler  LoadMap;
+
 		#endregion
 
 		#region Function - Override Methods
@@ -250,6 +268,31 @@ namespace VehiclePlannerUndoable.cs
 		public void UploadIni()
 		{
 			Controller.UploadIni();
+		}
+
+		public void RunLoop(List<string> goals)
+		{
+			if (IsRunLoop) IsRunLoop = false; Thread.Sleep(100);
+			if (goals?.Count > 0)IsRunLoop = true;Task.Run(() =>
+				  {
+					  int i = 0;
+					  do
+					  {
+						  if (i >= goals.Count) i = 0;
+						  string goal = goals[i];
+						  if (Controller.Status.Description == EDescription.Idle || Controller.Status.Description == EDescription.Arrived)
+						  {
+						  Controller.GoTo(goal);
+						  i++;
+						  }
+						  Thread.Sleep(50);
+					  } while (IsRunLoop);
+				  });
+		}
+
+		public void StopRunLoop()
+		{
+			IsRunLoop = false;
 		}
 		#endregion
 
