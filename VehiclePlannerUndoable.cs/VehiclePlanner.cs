@@ -53,8 +53,6 @@ namespace VehiclePlannerUndoable.cs
 			Bindings(rVehiclePlanner);
 
 			Bindings(rVehiclePlanner.Controller);
-
-			rVehiclePlanner.LoadMap += rVehiclePlanner_LoadMap;
 		}
 		#endregion
 
@@ -101,6 +99,21 @@ namespace VehiclePlannerUndoable.cs
 
 		protected override void MarkerChanged()
 		{
+		}
+		public override void LoadFile(FileType type)
+		{
+			OpenFileDialog openMap = new OpenFileDialog()
+			{
+				InitialDirectory = rVehiclePlanner.DefMapDir,
+				Filter = $"MAP|*.{type.ToString().ToLower()}"
+			};
+			if (openMap.ShowDialog() == DialogResult.OK)
+			{
+				Task.Run(() =>
+				{
+					(GoalSetting as GoalSetting).InvokeIfNecessaryDgv(() => rVehiclePlanner.LoadFile(type, openMap.FileName));
+				});
+			}
 		}
 
 		protected override void InsertMap()
@@ -158,10 +171,6 @@ namespace VehiclePlannerUndoable.cs
 			}
 		}
 
-		private void rVehiclePlanner_LoadMap(object sender, EventArgs e)
-		{
-			(GoalSetting as VehiclePlannerUndoable.cs.GoalSetting).LoadMap();
-		}
 		#endregion
 	}
 
@@ -183,10 +192,6 @@ namespace VehiclePlannerUndoable.cs
 		/// </summary>
 		void UploadIni();
 
-		/// <summary>
-		/// 載入地圖事件
-		/// </summary>
-		event EventHandler LoadMap;
 
 		void RunLoop(List<string> goals);
 
@@ -213,8 +218,6 @@ namespace VehiclePlannerUndoable.cs
 			base.Controller = new ITSController();
 		}
 
-		public new event EventHandler LoadMap;
-
 		#endregion
 
 		#region Function - Override Methods
@@ -224,6 +227,15 @@ namespace VehiclePlannerUndoable.cs
 			if (Controller.ConnectStatus && (s.Description == EDescription.Arrived || s.Description == EDescription.Idle))
 			{
 				GLCMD.CMD.DoAddSingleTowardPair("General", s.X, s.Y, s.Toward);
+			}
+		}
+
+		public override void DeleteMarker(IEnumerable<uint> markers)
+		{
+			if (markers != null && (markers as List<uint>).Count > 0)
+			{
+				foreach (uint index in markers)
+					GLCMD.CMD.DoDelete(Convert.ToInt32(index));
 			}
 		}
 
@@ -239,7 +251,6 @@ namespace VehiclePlannerUndoable.cs
 		{
 			try
 			{
-				LoadMap?.Invoke(this, EventArgs.Empty);
 				bool check = false;
 				check = File.Exists(fileName);
 				if (check)

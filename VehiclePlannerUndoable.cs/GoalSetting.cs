@@ -40,7 +40,6 @@ namespace VehiclePlannerUndoable.cs
 		/// 目前選取的欄位指標
 		/// </summary>
 		private int mCurrentIndex = -1;
-
 		#endregion Declaration - Fields
 
 		#region Declaration - Properties
@@ -87,13 +86,13 @@ namespace VehiclePlannerUndoable.cs
 			dgvGoalPoint.DefaultCellStyle.Font = font;
 			dgvGoalPoint.ColumnHeadersDefaultCellStyle.Font = font;
 			dgvGoalPoint.BringToFront();
-			cboSingleType.Items.Add("Select Info");
 			cboSingleType.Items.Add(nameof(SinglePairInfo));
 			cboSingleType.Items.Add(nameof(SingleTowardPairInfo));
 			cboSingleType.Items.Add(nameof(SingleLineInfo));
 			cboSingleType.Items.Add(nameof(SingleAreaInfo));
-			cboSingleType.SelectedIndex = 0;
+			cboSingleType.Text = "Please select Info";
 			cboSingleType.SelectedValueChanged += cboSingleType_SelectedValueChanged;
+			cboSingleType.TextChanged += cboSingleType_TextChanged;
 			dgvGoalPoint.SelectionChanged += dgvGoalPoint_SelectionChanged;
 		}
 
@@ -127,12 +126,21 @@ namespace VehiclePlannerUndoable.cs
 			return goals;
 		}
 
-		/// <summary>
-		/// 載入地圖時將資料連結先移除
-		/// </summary>
-		public void LoadMap()
+		protected override List<uint> GetSelectedSingleID()
 		{
-			cboSingleType.InvokeIfNecessary(() => cboSingleType.SelectedIndex = 0);
+			List<uint> list = null;
+			if (mCurrentIndex != -1)
+			{
+				list = new List<uint>();
+				list.Add(Convert.ToUInt32(dgvGoalPoint.Rows[mCurrentIndex].Cells[nameof(SingleTowardPairInfo.ID)].Value.ToString()));
+				mCurrentIndex = -1;
+			}
+			return list;
+		}
+
+		internal void InvokeIfNecessaryDgv(MethodInvoker act)
+		{
+			dgvGoalPoint.InvokeIfNecessary(act);
 		}
 		#endregion Funciton - Constructors
 
@@ -145,6 +153,16 @@ namespace VehiclePlannerUndoable.cs
 		/// <param name="e"></param>
 		private void cboSingleType_SelectedValueChanged(object sender, EventArgs e)
 		{
+			mCurrentIndex = -1;
+			if (sender is ComboBox cbo)
+			{
+				mSingleInfo = GetSingleInfo(cbo.Text, dgvGoalPoint);
+			}
+		}
+
+		private void cboSingleType_TextChanged(object sender ,EventArgs e )
+		{
+			mCurrentIndex = -1;
 			if (sender is ComboBox cbo)
 			{
 				mSingleInfo = GetSingleInfo(cbo.Text, dgvGoalPoint);
@@ -217,7 +235,10 @@ namespace VehiclePlannerUndoable.cs
 
 		protected virtual void dgvGoalPoint_SelectionChanged(object sender, EventArgs e)
 		{
-			mCurrentIndex = dgvGoalPoint.InvokeIfNecessary(() => dgvGoalPoint.CurrentRow.Index);
+			if (dgvGoalPoint.CurrentRow != null)
+			{
+				mCurrentIndex = dgvGoalPoint.InvokeIfNecessary(() => dgvGoalPoint.CurrentRow.Index);
+			}
 		}
 
 		///// <summary>
@@ -260,9 +281,6 @@ namespace VehiclePlannerUndoable.cs
 					break;
 				case nameof(SingleAreaInfo):
 					singleInfo = new AreaInfo(dgv);
-					break;
-				case "Select Info":
-					dgv.DataSource = null;
 					break;
 				default:
 					throw new Exception($"未定義{singleType}類型資料");
