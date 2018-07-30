@@ -36,6 +36,9 @@ namespace VehiclePlannerUndoable.cs
 		/// </summary>
 		private ISingleInfo mSingleInfo = null;
 
+		/// <summary>
+		/// 目前選取的欄位指標
+		/// </summary>
 		private int mCurrentIndex = -1;
 
 		#endregion Declaration - Fields
@@ -94,6 +97,10 @@ namespace VehiclePlannerUndoable.cs
 			dgvGoalPoint.SelectionChanged += dgvGoalPoint_SelectionChanged;
 		}
 
+		/// <summary>
+		/// 取得選取的Goal點名稱
+		/// </summary>
+		/// <returns></returns>
 		protected override string GetGoalName()
 		{
 			string goalname = null;
@@ -104,6 +111,25 @@ namespace VehiclePlannerUndoable.cs
 			return goalname;
 		}
 
+		/// <summary>
+		/// 取得所有General Goal
+		/// </summary>
+		/// <returns></returns>
+		protected override List<string> GetGeneralGoals()
+		{
+			List<string> goals = null;
+			if (cboSingleType.Text == nameof(SingleTowardPairInfo))
+			{
+			goals	 = (from DataGridViewRow row in dgvGoalPoint.Rows
+									  where row.Cells[nameof(SingleTowardPairInfo.StyleName)].Value.ToString() == "General"
+									  select row.Cells[nameof(SingleTowardPairInfo.Name)].Value.ToString()).ToList<string>();
+			}
+			return goals;
+		}
+
+		/// <summary>
+		/// 載入地圖時將資料連結先移除
+		/// </summary>
 		public void LoadMap()
 		{
 			cboSingleType.InvokeIfNecessary(() => cboSingleType.SelectedIndex = 0);
