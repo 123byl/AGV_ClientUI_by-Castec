@@ -942,6 +942,10 @@ namespace VehiclePlanner {
         protected virtual BaseGoalSetting GetGoalSetting(DockState dockState) {
             return new BaseGoalSetting(this,dockState) ;
         }
+		protected virtual AuthorityDockContainer GetParameterSetting(DockState dockState)
+		{
+			return new ParamEditor(this, dockState);
+		}
 
         /// <summary>
         /// 載入ICtDockContainer物件
@@ -951,7 +955,7 @@ namespace VehiclePlanner {
             AddSubForm(miMapGL, GetMapGL(DockState.Document));
             AddSubForm(miConsole, GetConsole(DockState.DockBottomAutoHide));
             AddSubForm(miGoalSetting, GetGoalSetting(DockState.DockLeft));
-            AddSubForm(miParamEditor,new ParamEditor(this,DockState.Document));
+            AddSubForm(miParamEditor,GetParameterSetting(DockState.Document));
             SetEvents();
 
             /*-- 計算每個固定停靠區域所需的顯示大小 --*/
