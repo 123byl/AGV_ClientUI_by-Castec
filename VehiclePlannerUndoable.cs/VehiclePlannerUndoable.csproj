@@ -40,6 +40,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\iTSLibrary\iTSLibrary\bin\Debug\AsyncSocket.dll</HintPath>
     </Reference>
+    <Reference Include="CtItsParameter">
+      <HintPath>..\CtItsParameter\bin\Debug\CtItsParameter.exe</HintPath>
+    </Reference>
     <Reference Include="FactoryMode, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\AGVBase\FactoryMode\bin\Debug\FactoryMode.dll</HintPath>

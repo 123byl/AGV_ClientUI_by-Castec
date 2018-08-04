@@ -17,6 +17,8 @@ using Geometry;
 using CtBind;
 using System.IO;
 using System.Threading;
+using VehiclePlanner.Module;
+using CtItsParameter;
 
 namespace VehiclePlannerUndoable.cs
 {
@@ -89,6 +91,11 @@ namespace VehiclePlannerUndoable.cs
 		protected override BaseGoalSetting GetGoalSetting(DockState dockState)
 		{
 			return new GoalSetting(this, dockState);
+		}
+
+		protected override AuthorityDockContainer GetParameterSetting(DockState dockState)
+		{
+			return new ItsParameterCtrl(this, dockState);
 		}
 
 		protected override void SetEvents()
