@@ -263,7 +263,7 @@ namespace VehiclePlanner {
         /// <param name="title"></param>
         /// <param name="context"></param>
         private void rVehiclePlanner_BalloonTip(string title, string context) {
-            SetBalloonTip(title, context);
+            OnBalloonTip(title, context);
         }
 
         /// <summary>
@@ -608,7 +608,7 @@ namespace VehiclePlanner {
 		/// <summary>
 		/// 上載參數
 		/// </summary>
-		protected internal virtual void UploadParameter()
+		public virtual void UploadParameter()
 		{
 			throw new NotImplementedException();
 		}
@@ -616,7 +616,7 @@ namespace VehiclePlanner {
 		/// <summary>
 		/// 下載參數
 		/// </summary>
-		protected internal virtual void DownloadParameter()
+		public virtual void DownloadParameter()
 		{
 			throw new NotImplementedException();
 		}
@@ -762,7 +762,7 @@ namespace VehiclePlanner {
         /// <summary>
         /// 顯示iTS手動移動控制面板
         /// </summary>
-        internal void ShowMotionController() {
+        protected internal void ShowMotionController() {
             if (mMotionController == null) {
                 mMotionController = new CtMotionController(this, rVehiclePlanner.Controller);
                 mMotionController.MotionDown += rVehiclePlanner.Controller.MotionContorl;
@@ -778,14 +778,22 @@ namespace VehiclePlanner {
             }
         }
 
-        /// <summary>
-        /// 顯示氣球提示
-        /// </summary>
-        /// <param name="title">提示標題</param>
-        /// <param name="context">提示內容</param>
-        /// <param name="icon">提示Icon</param>
-        /// <param name="tmo">顯示時間</param>
-        private void SetBalloonTip(string title, string context, ToolTipIcon icon = ToolTipIcon.Info, int tmo = 5) {
+		/// <summary>
+		/// 關閉iTS手動移動控制面板
+		/// </summary>
+		protected internal void CloseMotionController()
+		{
+			mMotionController?.Close();
+		}
+
+			/// <summary>
+			/// 顯示氣球提示
+			/// </summary>
+			/// <param name="title">提示標題</param>
+			/// <param name="context">提示內容</param>
+			/// <param name="icon">提示Icon</param>
+			/// <param name="tmo">顯示時間</param>
+			protected void OnBalloonTip(string title, string context, ToolTipIcon icon = ToolTipIcon.Info, int tmo = 5) {
             mNotifyIcon.ShowBalloonTip(title, context, tmo, icon);
         }
 
