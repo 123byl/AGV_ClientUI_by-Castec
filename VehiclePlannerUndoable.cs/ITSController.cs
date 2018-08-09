@@ -28,6 +28,10 @@ namespace VehiclePlannerUndoable.cs
 		void RequireIni();
 
 		void UploadIni();
+
+		event EventHandler ShowMotionController;
+
+		event EventHandler CloseMotionController;
 	}
 
 	/// <summary>
@@ -57,6 +61,9 @@ namespace VehiclePlannerUndoable.cs
 
 		private bool mConnectStatus = false;
 
+		public event EventHandler ShowMotionController;
+
+		public event EventHandler CloseMotionController;
 		#endregion Declaration - Fields
 
 		#region Declaration - Properties
@@ -449,7 +456,7 @@ namespace VehiclePlannerUndoable.cs
 			try
 			{
 				BaseBoolReturn isScanning = null;
-				if (mIsScanning != scan)
+				if (IsScanning != scan)
 				{
 					if (scan)
 					{//開始掃描
@@ -462,6 +469,8 @@ namespace VehiclePlannerUndoable.cs
 							}
 							if (isScanning.Requited && isScanning.Value)
 							{
+								ShowMotionController?.Invoke(this, EventArgs.Empty);
+								OnBalloonTip("Scan Map", "Start Scan Map");
 								OnConsoleMessage($"iTS - The new ori name is {oriName}.ori");
 							}
 						}
@@ -472,9 +481,13 @@ namespace VehiclePlannerUndoable.cs
 					}
 					else
 					{//停止掃描
+						
+						IsScanning = false;
 						if (true || mStatus?.Description == EDescription.Map)
 						{
 							isScanning = StopScanning();
+							CloseMotionController?.Invoke(this, EventArgs.Empty);
+							OnBalloonTip("Scan Map", "Close Scan Map");
 						}
 						else
 						{
@@ -539,13 +552,12 @@ namespace VehiclePlannerUndoable.cs
 		public void SetPosition(Vector2D Vector)
 		{
 			SetPosition Info = Send(new SetPosition(Vector)) as SetPosition;
-			bool success = Info.Response;
+			bool? success = Info?.Response;
 			if (success == true)
 			{
 				GLCMD.CMD.AddAGV(1, Vector.Start.X, Vector.Start.Y, Vector.Angle);
 				//OnConsoleMessage($"iTS - The position are now at {position}");
 			}
-			GLCMD.CMD.AddAGV(1, Vector.Start.X, Vector.Start.Y, Vector.Angle);
 		}
 
 		/// <summary>
