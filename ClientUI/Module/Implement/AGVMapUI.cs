@@ -10,162 +10,180 @@ using CtLib.Module.Utility;
 using System.Threading.Tasks;
 using CtBind;
 
-namespace VehiclePlanner.Module.Implement {
+namespace VehiclePlanner.Module.Implement
+{
 
-    /// <summary>
-    /// 地圖顯示基類
-    /// </summary>
-    public partial class BaseMapGL : AuthorityDockContainer, IBaseMapGL {
+	/// <summary>
+	/// 地圖顯示基類
+	/// </summary>
+	public partial class BaseMapGL : AuthorityDockContainer, IBaseMapGL
+	{
 
-        #region Declaration  - Fields
-        
-        #endregion Declaration  - Fields
+		#region Declaration  - Fields
 
-        #region Declaration - Properties
+		#endregion Declaration  - Fields
 
-        public override DockState DockState {
-            get {
-                return pnlHide.Visible ? DockState.Hidden : DockState.Document;
-            }
+		#region Declaration - Properties
 
-            set {
-                pnlHide.Visible = value != DockState.Document;
-                DockStateChanged?.Invoke(this, new EventArgs());
-            }
-        }
+		public override DockState DockState
+		{
+			get
+			{
+				return pnlHide.Visible ? DockState.Hidden : DockState.Document;
+			}
 
-        #endregion Declaration - Properties
+			set
+			{
+				pnlHide.Visible = value != DockState.Document;
+				DockStateChanged?.Invoke(this, new EventArgs());
+			}
+		}
 
-        #region Declaration - Events
+		#endregion Declaration - Properties
 
-        /// <summary>
-        /// 停靠狀態變更事件
-        /// </summary>
-        public override event EventHandler DockStateChanged;
-        
-        #endregion Declaration - Events
+		#region Declaration - Events
 
-        #region Function - Constructors
+		/// <summary>
+		/// 停靠狀態變更事件
+		/// </summary>
+		public override event EventHandler DockStateChanged;
 
-        /// <summary>
-        /// 給介面設計師使用的建構式，拿掉後繼承該類的衍生類將無法顯示介面設計
-        /// </summary>
-        protected BaseMapGL():base() {
-            InitializeComponent();
-        }
+		#endregion Declaration - Events
 
-        /// <summary>
-        /// 共用建構方法
-        /// </summary>
-        public BaseMapGL(BaseVehiclePlanner_Ctrl refUI, DockState defState = DockState.Float)
-            : base(refUI,defState) {
-            InitializeComponent();
-            FixedSize = new Size(718, 814);
-        }
+		#region Function - Constructors
 
-        #endregion Function - Constructors
+		/// <summary>
+		/// 給介面設計師使用的建構式，拿掉後繼承該類的衍生類將無法顯示介面設計
+		/// </summary>
+		protected BaseMapGL() : base()
+		{
+			InitializeComponent();
+		}
 
-        #region Function - Events
+		/// <summary>
+		/// 共用建構方法
+		/// </summary>
+		public BaseMapGL(BaseVehiclePlanner_Ctrl refUI, DockState defState = DockState.Float)
+			: base(refUI, defState)
+		{
+			InitializeComponent();
+			FixedSize = new Size(718, 814);
+		}
 
-        /// <summary>
-        /// 載入地圖檔
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void tsbOpenFile_Click(object sender, EventArgs e) {
-            rUI.ITest_LoadMap();
-        }
+		#endregion Function - Constructors
 
-        /// <summary>
-        /// 清除地圖
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void tsbClearMap_Click(object sender, EventArgs e) {
-            rUI.ClearMap();
-        }
+		#region Function - Events
 
-        /// <summary>
-        /// 地圖掃描
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void tsbScan_Click(object sender, EventArgs e) {
-            rUI.StartScan();
-        }
+		/// <summary>
+		/// 載入地圖檔
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void tsbOpenFile_Click(object sender, EventArgs e)
+		{
+			rUI.ITest_LoadMap();
+		}
 
-        /// <summary>
-        /// 開啟移動控制器
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void tsbController_Click(object sender, EventArgs e) {
-            rUI.ShowMotionController();
-        }
+		/// <summary>
+		/// 清除地圖
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void tsbClearMap_Click(object sender, EventArgs e)
+		{
+			rUI.ClearMap();
+		}
 
-        /// <summary>
-        /// 切換iTS狀態回傳開關
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void tsbCar_Click(object sender, EventArgs e) {
-            rUI.ITest_GetCar();
-        }
+		/// <summary>
+		/// 地圖掃描
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void tsbScan_Click(object sender, EventArgs e)
+		{
+			rUI.StartScan();
+		}
 
-        /// <summary>
-        /// 設定iTS當前位置
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void tsbSetCar_Click(object sender, EventArgs e) {
-            rUI.ITest_SettingCarPos();
-        }
+		/// <summary>
+		/// 開啟移動控制器
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void tsbController_Click(object sender, EventArgs e)
+		{
+			rUI.ShowMotionController();
+		}
 
-        /// <summary>
-        /// 微調iTS位置
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void tsbConfirm_Click(object sender, EventArgs e) {
-            rUI.CarPosConfirm();
-        }
+		/// <summary>
+		/// 切換iTS狀態回傳開關
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void tsbCar_Click(object sender, EventArgs e)
+		{
+			rUI.ITest_GetCar();
+		}
 
-        /// <summary>
-        /// 取得雷射資料，測試雷射用
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void tsbGetLaser_Click(object sender, EventArgs e) {
-            rUI.GetLaser();
-        }
+		/// <summary>
+		/// 設定iTS當前位置
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void tsbSetCar_Click(object sender, EventArgs e)
+		{
+			rUI.ITest_SettingCarPos();
+		}
+
+		/// <summary>
+		/// 微調iTS位置
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void tsbConfirm_Click(object sender, EventArgs e)
+		{
+			rUI.CarPosConfirm();
+		}
+
+		/// <summary>
+		/// 取得雷射資料，測試雷射用
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void tsbGetLaser_Click(object sender, EventArgs e)
+		{
+			rUI.GetLaser();
+		}
 
 
-        /// <summary>
-        /// 與iTS連線
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void tsbConnect_Click(object sender, EventArgs e) {
-            rUI.Connect();
-        }
+		/// <summary>
+		/// 與iTS連線
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void tsbConnect_Click(object sender, EventArgs e)
+		{
+			rUI.Connect();
+		}
 
-        /// <summary>
-        /// 取得Map檔
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void tsbGetMap_Click(object sender, EventArgs e) {
-            rUI.GetMap();
-        }
+		/// <summary>
+		/// 取得Map檔
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void tsbGetMap_Click(object sender, EventArgs e)
+		{
+			rUI.GetMap();
+		}
 
-        /// <summary>
-        /// 傳送Map檔
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void tsbSendMap_Click(object sender, EventArgs e) {
-            rUI.ITest_SendMap();
-        }
+		/// <summary>
+		/// 傳送Map檔
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void tsbSendMap_Click(object sender, EventArgs e)
+		{
+			rUI.ITest_SendMap();
+		}
 
 		/// <summary>
 		/// 地圖匯入
@@ -177,123 +195,169 @@ namespace VehiclePlanner.Module.Implement {
 			rUI.InsertMap();
 		}
 
-			private void tsbChangeMap_Click(object sender, EventArgs e)
+		private void tsbChangeMap_Click(object sender, EventArgs e)
 		{
 			rUI.ChangeMap();
+		}
+
+		private void tsbSave_Click(object sender, EventArgs e)
+		{
+			rUI.SaveMap();
 		}
 		#endregion Function - Events
 
 		#region Funciton - Public Methods
 
-		public override bool IsVisiable(AccessLevel lv) {
-            return lv > AccessLevel.None;
-        }
-        
-        #endregion Funciton - Public Methods
+		public override bool IsVisiable(AccessLevel lv)
+		{
+			return lv > AccessLevel.None;
+		}
 
-        #region Function - Private Methods
+		#endregion Funciton - Public Methods
 
-        /// <summary>
-        /// 顯示視窗
-        /// </summary>
-        protected override void ShowWindow() {
-            base.ShowWindow();
-            DockState = DockState.Document;
-        }
+		#region Function - Private Methods
 
-        /// <summary>
-        /// 隱藏視窗
-        /// </summary>
-        protected override void HideWindow() {
-            DockState = DockState.Hidden;
-        }
+		/// <summary>
+		/// 顯示視窗
+		/// </summary>
+		protected override void ShowWindow()
+		{
+			base.ShowWindow();
+			DockState = DockState.Document;
+		}
 
-        /// <summary>
-        /// 取消視窗關閉
-        /// </summary>
-        /// <param name="e"></param>
-        protected override void OnFormClosing(FormClosingEventArgs e) {
-            e.Cancel = true;
-        }
+		/// <summary>
+		/// 隱藏視窗
+		/// </summary>
+		protected override void HideWindow()
+		{
+			DockState = DockState.Hidden;
+		}
 
-        /// <summary>
-        /// 快捷鍵
-        /// </summary>
-        /// <param name="msg"></param>
-        /// <param name="keyData"></param>
-        /// <returns></returns>
-        protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {
-            bool ret = true;
-            switch (keyData) {
-                case Keys.O | Keys.Control:
-                    rUI.ITest_LoadMap();
-                    break;
-                case Keys.E | Keys.Control:
-                    rUI.ClearMap();
-                    break;
-                case Keys.C | Keys.Control:
-                    rUI.Connect();
-                    break;
-                case Keys.D | Keys.Control:
-                    rUI.GetMap();
-                    break;
-                case Keys.U | Keys.Control:
-                    rUI.ITest_SendMap();
-                    break;
-                case Keys.S | Keys.Control:
-                    rUI.SaveMap();
-                    break;
-                case Keys.M | Keys.Control:
-                    rUI.ShowMotionController();
-                    break;
-                case Keys.G | Keys.Control:
-                    rUI.ITest_GetCar();
-                    break;
-                case Keys.P | Keys.Control:
-                    rUI.ITest_SettingCarPos();
-                    break;
-                case Keys.F | Keys.Control:
-                    rUI.CarPosConfirm();
-                    break;
-                case Keys.L | Keys.Control:
-                    rUI.GetLaser();
-                    break;
-                default:
-                    ret = base.ProcessCmdKey(ref msg, keyData);
-                    break;
-            }
-            return ret;
-        }
+		/// <summary>
+		/// 取消視窗關閉
+		/// </summary>
+		/// <param name="e"></param>
+		protected override void OnFormClosing(FormClosingEventArgs e)
+		{
+			e.Cancel = true;
+		}
 
-        #endregion Function - Private Methods
+		/// <summary>
+		/// 快捷鍵
+		/// </summary>
+		/// <param name="msg"></param>
+		/// <param name="keyData"></param>
+		/// <returns></returns>
+		protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+		{
+			bool ret = true;
+			switch (keyData)
+			{
+				case Keys.O | Keys.Control:
+					rUI.ITest_LoadMap();
+					break;
+				case Keys.E | Keys.Control:
+					rUI.ClearMap();
+					break;
+				case Keys.C | Keys.Control:
+					rUI.Connect();
+					break;
+				case Keys.D | Keys.Control:
+					rUI.GetMap();
+					break;
+				case Keys.U | Keys.Control:
+					rUI.ITest_SendMap();
+					break;
+				case Keys.S | Keys.Control:
+					rUI.SaveMap();
+					break;
+				case Keys.M | Keys.Control:
+					rUI.ShowMotionController();
+					break;
+				case Keys.G | Keys.Control:
+					rUI.ITest_GetCar();
+					break;
+				case Keys.P | Keys.Control:
+					rUI.ITest_SettingCarPos();
+					break;
+				case Keys.F | Keys.Control:
+					rUI.CarPosConfirm();
+					break;
+				case Keys.L | Keys.Control:
+					rUI.GetLaser();
+					break;
+				default:
+					ret = base.ProcessCmdKey(ref msg, keyData);
+					break;
+			}
+			return ret;
+		}
 
-        #region Implement - IMapGL
+		#endregion Function - Private Methods
 
-        #endregion Implement - IMapGL
+		#region Implement - IMapGL
 
-        #region Implement - IDataDisplay<ICtVehiclePlanner>
-        
-        /// <summary>
-        /// 資料綁定
-        /// </summary>
-        /// <param name="source"></param>
-        public virtual void Bindings(IBaseITSController source) {
-            if (source.DelInvoke == null) source.DelInvoke = invk => this.InvokeIfNecessary(invk);
+		#endregion Implement - IMapGL
 
-            tsbConnect.DataBindings.ExAdd(nameof(tsbConnect.Image), source, nameof(source.IsConnected), (sender, e) => {
-                e.Value = (bool)e.Value ? Properties.Resources.Connect : Properties.Resources.Disconnect;
-            });
+		#region Implement - IDataDisplay<ICtVehiclePlanner>
 
-        }
+		/// <summary>
+		/// 資料綁定
+		/// </summary>
+		/// <param name="source"></param>
+		public virtual void Bindings(IBaseITSController source)
+		{
+			if (source.DelInvoke == null) source.DelInvoke = invk => this.InvokeIfNecessary(invk);
 
-        /// <summary>
-        /// 資料綁定
-        /// </summary>
-        /// <param name="source"></param>
-        public virtual void Bindings(IBaseVehiclePlanner source) {
-            if (source.DelInvoke == null) source.DelInvoke = invk => this.InvokeIfNecessary(invk);
-            
-        }
+			tsbConnect.DataBindings.ExAdd(nameof(tsbConnect.Image), source, nameof(source.IsConnected), (sender, e) =>
+			{
+				e.Value = (bool)e.Value ? Properties.Resources.Connect : Properties.Resources.Disconnect;
+			});
+			//tsbGetMap.DataBindings.ExAdd(nameof(tsbGetMap.Enabled), source, nameof(source.IsConnected), (sender, e) =>
+			//{
+			//	e.Value = (bool)e.Value ? true : false;
+			//});
+			//tsbSendMap.DataBindings.ExAdd(nameof(tsbSendMap.Enabled), source, nameof(source.IsConnected), (sender, e) =>
+			//{
+			//	e.Value = (bool)e.Value ? true : false;
+			//});
+			//tsbChangeMap.DataBindings.ExAdd(nameof(tsbChangeMap.Enabled), source, nameof(source.IsConnected), (sender, e) =>
+			//{
+			//	e.Value = (bool)e.Value ? true : false;
+			//});
+			//tsbScan.DataBindings.ExAdd(nameof(tsbScan.Enabled), source, nameof(source.IsConnected), (sender, e) =>
+			//{
+			//	e.Value = (bool)e.Value ? true : false;
+			//});
+			//tsbController.DataBindings.ExAdd(nameof(tsbController.Enabled), source, nameof(source.IsConnected), (sender, e) =>
+			//{
+			//	e.Value = (bool)e.Value ? true : false;
+			//});
+			//tsbAutoReport.DataBindings.ExAdd(nameof(tsbAutoReport.Enabled), source, nameof(source.IsConnected), (sender, e) =>
+			//{
+			//	e.Value = (bool)e.Value ? true : false;
+			//});
+			//tsbLocalization.DataBindings.ExAdd(nameof(tsbLocalization.Enabled), source, nameof(source.IsConnected), (sender, e) =>
+			//{
+			//	e.Value = (bool)e.Value ? true : false;
+			//});
+			//tsbConfirm.DataBindings.ExAdd(nameof(tsbConfirm.Enabled), source, nameof(source.IsConnected), (sender, e) =>
+			//{
+			//	e.Value = (bool)e.Value ? true : false;
+			//});
+
+		}
+
+		/// <summary>
+		/// 資料綁定
+		/// </summary>
+		/// <param name="source"></param>
+		public virtual void Bindings(IBaseVehiclePlanner source)
+		{
+			if (source.DelInvoke == null) source.DelInvoke = invk => this.InvokeIfNecessary(invk);
+
+		}
 
 
 		#endregion Implement - IDataDisplay<ICtVehiclePlanner>

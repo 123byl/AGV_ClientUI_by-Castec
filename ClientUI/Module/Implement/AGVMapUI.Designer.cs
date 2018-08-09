@@ -31,6 +31,7 @@ namespace VehiclePlanner.Module.Implement {
 			this.pnlHide = new System.Windows.Forms.Panel();
 			this.toolStrip1 = new System.Windows.Forms.ToolStrip();
 			this.tsbOpenFile = new CtBind.Bindable.ToolStripButton();
+			this.tsbSave = new CtBind.Bindable.ToolStripButton();
 			this.tsbClearMap = new CtBind.Bindable.ToolStripButton();
 			this.tsbConnect = new CtBind.Bindable.ToolStripButton();
 			this.tsbGetMap = new CtBind.Bindable.ToolStripButton();
@@ -38,8 +39,8 @@ namespace VehiclePlanner.Module.Implement {
 			this.tsbChangeMap = new CtBind.Bindable.ToolStripButton();
 			this.tsbScan = new CtBind.Bindable.ToolStripButton();
 			this.tsbController = new CtBind.Bindable.ToolStripButton();
-			this.tsbCar = new CtBind.Bindable.ToolStripButton();
-			this.tsbSetCar = new CtBind.Bindable.ToolStripButton();
+			this.tsbAutoReport = new CtBind.Bindable.ToolStripButton();
+			this.tsbLocalization = new CtBind.Bindable.ToolStripButton();
 			this.tsbConfirm = new CtBind.Bindable.ToolStripButton();
 			this.tsbGetLaser = new CtBind.Bindable.ToolStripButton();
 			this.tsbInsertMap = new CtBind.Bindable.ToolStripButton();
@@ -80,6 +81,7 @@ namespace VehiclePlanner.Module.Implement {
 			this.toolStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
 			this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsbOpenFile,
+            this.tsbSave,
             this.tsbClearMap,
             this.tsbConnect,
             this.tsbGetMap,
@@ -87,8 +89,8 @@ namespace VehiclePlanner.Module.Implement {
             this.tsbChangeMap,
             this.tsbScan,
             this.tsbController,
-            this.tsbCar,
-            this.tsbSetCar,
+            this.tsbAutoReport,
+            this.tsbLocalization,
             this.tsbConfirm,
             this.tsbGetLaser,
             this.tsbInsertMap});
@@ -111,6 +113,18 @@ namespace VehiclePlanner.Module.Implement {
 			this.tsbOpenFile.Text = "toolStripButton1";
 			this.tsbOpenFile.ToolTipText = "OpenFile";
 			this.tsbOpenFile.Click += new System.EventHandler(this.tsbOpenFile_Click);
+			// 
+			// tsbSave
+			// 
+			this.tsbSave.AutoSize = false;
+			this.tsbSave.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.tsbSave.Image = global::VehiclePlanner.Properties.Resources.Save;
+			this.tsbSave.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.tsbSave.Name = "tsbSave";
+			this.tsbSave.Size = new System.Drawing.Size(41, 41);
+			this.tsbSave.Text = "toolStripButton1";
+			this.tsbSave.ToolTipText = "Save";
+			this.tsbSave.Click += new System.EventHandler(this.tsbSave_Click);
 			// 
 			// tsbClearMap
 			// 
@@ -196,29 +210,29 @@ namespace VehiclePlanner.Module.Implement {
 			this.tsbController.ToolTipText = "Controller";
 			this.tsbController.Click += new System.EventHandler(this.tsbController_Click);
 			// 
-			// tsbCar
+			// tsbAutoReport
 			// 
-			this.tsbCar.AutoSize = false;
-			this.tsbCar.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.tsbCar.Image = global::VehiclePlanner.Properties.Resources.AutoResponse;
-			this.tsbCar.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.tsbCar.Name = "tsbCar";
-			this.tsbCar.Size = new System.Drawing.Size(32, 32);
-			this.tsbCar.Text = "toolStripButton5";
-			this.tsbCar.ToolTipText = "Auto Report";
-			this.tsbCar.Click += new System.EventHandler(this.tsbCar_Click);
+			this.tsbAutoReport.AutoSize = false;
+			this.tsbAutoReport.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.tsbAutoReport.Image = global::VehiclePlanner.Properties.Resources.AutoResponse;
+			this.tsbAutoReport.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.tsbAutoReport.Name = "tsbAutoReport";
+			this.tsbAutoReport.Size = new System.Drawing.Size(32, 32);
+			this.tsbAutoReport.Text = "toolStripButton5";
+			this.tsbAutoReport.ToolTipText = "Auto Report";
+			this.tsbAutoReport.Click += new System.EventHandler(this.tsbCar_Click);
 			// 
-			// tsbSetCar
+			// tsbLocalization
 			// 
-			this.tsbSetCar.AutoSize = false;
-			this.tsbSetCar.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.tsbSetCar.Image = global::VehiclePlanner.Properties.Resources.Localize;
-			this.tsbSetCar.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.tsbSetCar.Name = "tsbSetCar";
-			this.tsbSetCar.Size = new System.Drawing.Size(32, 32);
-			this.tsbSetCar.Text = "Set Car";
-			this.tsbSetCar.ToolTipText = "Localization";
-			this.tsbSetCar.Click += new System.EventHandler(this.tsbSetCar_Click);
+			this.tsbLocalization.AutoSize = false;
+			this.tsbLocalization.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.tsbLocalization.Image = global::VehiclePlanner.Properties.Resources.Localize;
+			this.tsbLocalization.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.tsbLocalization.Name = "tsbLocalization";
+			this.tsbLocalization.Size = new System.Drawing.Size(32, 32);
+			this.tsbLocalization.Text = "Set Car";
+			this.tsbLocalization.ToolTipText = "Localization";
+			this.tsbLocalization.Click += new System.EventHandler(this.tsbSetCar_Click);
 			// 
 			// tsbConfirm
 			// 
@@ -284,7 +298,7 @@ namespace VehiclePlanner.Module.Implement {
         private Bindable.ToolStripButton tsbClearMap;
         private Bindable.ToolStripButton tsbScan;
         private Bindable.ToolStripButton tsbController;
-        private Bindable.ToolStripButton tsbCar;
+        private Bindable.ToolStripButton tsbAutoReport;
         private Bindable.ToolStripButton tsbConfirm;
         private Bindable.ToolStripButton tsbGetLaser;
         private Bindable.ToolStripButton tsbConnect;
@@ -292,6 +306,7 @@ namespace VehiclePlanner.Module.Implement {
         private Bindable.ToolStripButton tsbSendMap;
 		private Bindable.ToolStripButton tsbInsertMap;
 		private Bindable.ToolStripButton tsbChangeMap;
-		protected Bindable.ToolStripButton tsbSetCar;
+		protected Bindable.ToolStripButton tsbLocalization;
+		private Bindable.ToolStripButton tsbSave;
 	}
 }
