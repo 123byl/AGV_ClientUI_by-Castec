@@ -549,6 +549,7 @@
     <Content Include="Resources\CASTEC.ico" />
     <None Include="Resources\Clear.png" />
     <None Include="Resources\Change.png" />
+    <None Include="Resources\Charge.png" />
     <Content Include="Resources\Controller.png" />
     <Content Include="Resources\Download.png" />
     <None Include="Resources\Filter.png" />
@@ -567,6 +568,7 @@
     <None Include="Resources\Unhighlight.png" />
     <None Include="Resources\Redo2.png" />
     <None Include="Resources\Undo1.png" />
+    <None Include="Resources\Route.png" />
     <Content Include="Resources\Upload.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
