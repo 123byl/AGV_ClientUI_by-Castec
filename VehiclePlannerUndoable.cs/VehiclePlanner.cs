@@ -19,6 +19,7 @@ using System.IO;
 using System.Threading;
 using VehiclePlanner.Module;
 using CtItsParameter;
+using CtLib.Library;
 
 namespace VehiclePlannerUndoable.cs
 {
@@ -55,6 +56,7 @@ namespace VehiclePlannerUndoable.cs
 			Bindings(rVehiclePlanner);
 
 			Bindings(rVehiclePlanner.Controller);
+
 		}
 		#endregion
 
@@ -80,6 +82,8 @@ namespace VehiclePlannerUndoable.cs
 		protected override void Initial(IBaseVehiclePlanner vehiclePlanner)
 		{
 			base.Initial(vehiclePlanner);
+			rVehiclePlanner.Controller.ShowMotionController += Controller_ShowMotionController;
+			rVehiclePlanner.Controller.CloseMotionController += Controller_CloseMotionController;
 			GoalSetting.RefMapControl = MapGL.MapControl;
 		}
 
@@ -128,12 +132,12 @@ namespace VehiclePlannerUndoable.cs
 			MapGL.MapControl.JoinMap();
 		}
 
-		protected override void DownloadParameter()
+		public override void DownloadParameter()
 		{
 			rVehiclePlanner.RequireIni();
 		}
 
-		protected override void UploadParameter()
+		public override void UploadParameter()
 		{
 			rVehiclePlanner.UploadIni();
 		}
@@ -162,22 +166,32 @@ namespace VehiclePlannerUndoable.cs
 			{
 				if (mNewPos == null)
 				{
+					OnBalloonTip("Localization", "Set iTS Position");
 					mNewPos = ToPoint2D(MapGL.MapControl.ScreenToGL(m.X, m.Y));
+					GLCMD.CMD.AddAGV(2, "Localization", mNewPos.X, mNewPos.Y, 0);
 				}
 				else
 				{
+					OnBalloonTip("Localization", "Set iTS Vector");
 					OnConsoleMessage($"NewPos{mNewPos.ToString()}");
 					Vector2D V = new Vector2D(mNewPos, ToPoint2D(MapGL.MapControl.ScreenToGL(m.X, m.Y)));
-					Task.Run(() =>
-					{
-						rVehiclePlanner.Controller.SetPosition(V);
-						mNewPos = null;
-						mIsSetting = false;
-					});
+					GLCMD.CMD.AddAGV(2, "Localization",V.Start.X,V.Start.Y,V.Angle);
+					rVehiclePlanner.Controller.SetPosition(V);
+					mNewPos = null;
+					mIsSetting = false;
+					//GLCMD.CMD.DeleteAGV(2);
+
 				}
 			}
 		}
-
+		private void Controller_ShowMotionController(object sender, EventArgs e)
+		{
+			this.InvokeIfNecessary(this.ShowMotionController);
+		}
+		private void Controller_CloseMotionController(object sender, EventArgs e)
+		{
+			this.InvokeIfNecessary(this.CloseMotionController);
+		}
 		#endregion
 	}
 
