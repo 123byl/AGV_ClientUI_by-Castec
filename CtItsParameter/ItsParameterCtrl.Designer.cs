@@ -41,13 +41,6 @@ namespace CtItsParameter
 			this.tsbUndo = new System.Windows.Forms.ToolStripButton();
 			this.tsbRedo = new System.Windows.Forms.ToolStripButton();
 			this.dgvParameter = new System.Windows.Forms.DataGridView();
-			this.dataGridViewRichTextBoxColumn1 = new CtExtendLib.DataGridViewRichTextBoxColumn();
-			this.dataGridViewRichTextBoxColumn2 = new CtExtendLib.DataGridViewRichTextBoxColumn();
-			this.dataGridViewRichTextBoxColumn3 = new CtExtendLib.DataGridViewRichTextBoxColumn();
-			this.dataGridViewRichTextBoxColumn4 = new CtExtendLib.DataGridViewRichTextBoxColumn();
-			this.dataGridViewRichTextBoxColumn5 = new CtExtendLib.DataGridViewRichTextBoxColumn();
-			this.dataGridViewRichTextBoxColumn6 = new CtExtendLib.DataGridViewRichTextBoxColumn();
-			this.dataGridViewRichTextBoxColumn7 = new CtExtendLib.DataGridViewRichTextBoxColumn();
 			this.colName = new CtExtendLib.DataGridViewRichTextBoxColumn();
 			this.colType = new CtExtendLib.DataGridViewRichTextBoxColumn();
 			this.colValue = new CtExtendLib.DataGridViewRichTextBoxColumn();
@@ -55,6 +48,13 @@ namespace CtItsParameter
 			this.colMin = new CtExtendLib.DataGridViewRichTextBoxColumn();
 			this.colMax = new CtExtendLib.DataGridViewRichTextBoxColumn();
 			this.colDescription = new CtExtendLib.DataGridViewRichTextBoxColumn();
+			this.dataGridViewRichTextBoxColumn1 = new CtExtendLib.DataGridViewRichTextBoxColumn();
+			this.dataGridViewRichTextBoxColumn2 = new CtExtendLib.DataGridViewRichTextBoxColumn();
+			this.dataGridViewRichTextBoxColumn3 = new CtExtendLib.DataGridViewRichTextBoxColumn();
+			this.dataGridViewRichTextBoxColumn4 = new CtExtendLib.DataGridViewRichTextBoxColumn();
+			this.dataGridViewRichTextBoxColumn5 = new CtExtendLib.DataGridViewRichTextBoxColumn();
+			this.dataGridViewRichTextBoxColumn6 = new CtExtendLib.DataGridViewRichTextBoxColumn();
+			this.dataGridViewRichTextBoxColumn7 = new CtExtendLib.DataGridViewRichTextBoxColumn();
 			this.toolStrip1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.dgvParameter)).BeginInit();
 			this.SuspendLayout();
@@ -158,6 +158,7 @@ namespace CtItsParameter
 			this.dgvParameter.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+			this.dgvParameter.BackgroundColor = System.Drawing.SystemColors.ControlLight;
 			dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
 			dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
 			dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft JhengHei UI", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
@@ -199,58 +200,6 @@ namespace CtItsParameter
 			this.dgvParameter.RowTemplate.Height = 27;
 			this.dgvParameter.Size = new System.Drawing.Size(1088, 737);
 			this.dgvParameter.TabIndex = 1;
-			// 
-			// dataGridViewRichTextBoxColumn1
-			// 
-			this.dataGridViewRichTextBoxColumn1.HeaderText = "Name";
-			this.dataGridViewRichTextBoxColumn1.Name = "dataGridViewRichTextBoxColumn1";
-			this.dataGridViewRichTextBoxColumn1.ReadOnly = true;
-			this.dataGridViewRichTextBoxColumn1.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-			this.dataGridViewRichTextBoxColumn1.Width = 250;
-			// 
-			// dataGridViewRichTextBoxColumn2
-			// 
-			this.dataGridViewRichTextBoxColumn2.HeaderText = "Type";
-			this.dataGridViewRichTextBoxColumn2.Name = "dataGridViewRichTextBoxColumn2";
-			this.dataGridViewRichTextBoxColumn2.ReadOnly = true;
-			this.dataGridViewRichTextBoxColumn2.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-			// 
-			// dataGridViewRichTextBoxColumn3
-			// 
-			this.dataGridViewRichTextBoxColumn3.HeaderText = "Value";
-			this.dataGridViewRichTextBoxColumn3.Name = "dataGridViewRichTextBoxColumn3";
-			this.dataGridViewRichTextBoxColumn3.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-			this.dataGridViewRichTextBoxColumn3.Width = 150;
-			// 
-			// dataGridViewRichTextBoxColumn4
-			// 
-			this.dataGridViewRichTextBoxColumn4.HeaderText = "Default";
-			this.dataGridViewRichTextBoxColumn4.Name = "dataGridViewRichTextBoxColumn4";
-			this.dataGridViewRichTextBoxColumn4.ReadOnly = true;
-			this.dataGridViewRichTextBoxColumn4.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-			this.dataGridViewRichTextBoxColumn4.Width = 150;
-			// 
-			// dataGridViewRichTextBoxColumn5
-			// 
-			this.dataGridViewRichTextBoxColumn5.HeaderText = "Min";
-			this.dataGridViewRichTextBoxColumn5.Name = "dataGridViewRichTextBoxColumn5";
-			this.dataGridViewRichTextBoxColumn5.ReadOnly = true;
-			this.dataGridViewRichTextBoxColumn5.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-			// 
-			// dataGridViewRichTextBoxColumn6
-			// 
-			this.dataGridViewRichTextBoxColumn6.HeaderText = "Max";
-			this.dataGridViewRichTextBoxColumn6.Name = "dataGridViewRichTextBoxColumn6";
-			this.dataGridViewRichTextBoxColumn6.ReadOnly = true;
-			this.dataGridViewRichTextBoxColumn6.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-			// 
-			// dataGridViewRichTextBoxColumn7
-			// 
-			this.dataGridViewRichTextBoxColumn7.HeaderText = "Description";
-			this.dataGridViewRichTextBoxColumn7.Name = "dataGridViewRichTextBoxColumn7";
-			this.dataGridViewRichTextBoxColumn7.ReadOnly = true;
-			this.dataGridViewRichTextBoxColumn7.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-			this.dataGridViewRichTextBoxColumn7.Width = 400;
 			// 
 			// colName
 			// 
@@ -303,6 +252,58 @@ namespace CtItsParameter
 			this.colDescription.ReadOnly = true;
 			this.colDescription.Resizable = System.Windows.Forms.DataGridViewTriState.True;
 			this.colDescription.Width = 400;
+			// 
+			// dataGridViewRichTextBoxColumn1
+			// 
+			this.dataGridViewRichTextBoxColumn1.HeaderText = "Name";
+			this.dataGridViewRichTextBoxColumn1.Name = "dataGridViewRichTextBoxColumn1";
+			this.dataGridViewRichTextBoxColumn1.ReadOnly = true;
+			this.dataGridViewRichTextBoxColumn1.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+			this.dataGridViewRichTextBoxColumn1.Width = 250;
+			// 
+			// dataGridViewRichTextBoxColumn2
+			// 
+			this.dataGridViewRichTextBoxColumn2.HeaderText = "Type";
+			this.dataGridViewRichTextBoxColumn2.Name = "dataGridViewRichTextBoxColumn2";
+			this.dataGridViewRichTextBoxColumn2.ReadOnly = true;
+			this.dataGridViewRichTextBoxColumn2.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+			// 
+			// dataGridViewRichTextBoxColumn3
+			// 
+			this.dataGridViewRichTextBoxColumn3.HeaderText = "Value";
+			this.dataGridViewRichTextBoxColumn3.Name = "dataGridViewRichTextBoxColumn3";
+			this.dataGridViewRichTextBoxColumn3.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+			this.dataGridViewRichTextBoxColumn3.Width = 150;
+			// 
+			// dataGridViewRichTextBoxColumn4
+			// 
+			this.dataGridViewRichTextBoxColumn4.HeaderText = "Default";
+			this.dataGridViewRichTextBoxColumn4.Name = "dataGridViewRichTextBoxColumn4";
+			this.dataGridViewRichTextBoxColumn4.ReadOnly = true;
+			this.dataGridViewRichTextBoxColumn4.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+			this.dataGridViewRichTextBoxColumn4.Width = 150;
+			// 
+			// dataGridViewRichTextBoxColumn5
+			// 
+			this.dataGridViewRichTextBoxColumn5.HeaderText = "Min";
+			this.dataGridViewRichTextBoxColumn5.Name = "dataGridViewRichTextBoxColumn5";
+			this.dataGridViewRichTextBoxColumn5.ReadOnly = true;
+			this.dataGridViewRichTextBoxColumn5.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+			// 
+			// dataGridViewRichTextBoxColumn6
+			// 
+			this.dataGridViewRichTextBoxColumn6.HeaderText = "Max";
+			this.dataGridViewRichTextBoxColumn6.Name = "dataGridViewRichTextBoxColumn6";
+			this.dataGridViewRichTextBoxColumn6.ReadOnly = true;
+			this.dataGridViewRichTextBoxColumn6.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+			// 
+			// dataGridViewRichTextBoxColumn7
+			// 
+			this.dataGridViewRichTextBoxColumn7.HeaderText = "Description";
+			this.dataGridViewRichTextBoxColumn7.Name = "dataGridViewRichTextBoxColumn7";
+			this.dataGridViewRichTextBoxColumn7.ReadOnly = true;
+			this.dataGridViewRichTextBoxColumn7.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+			this.dataGridViewRichTextBoxColumn7.Width = 400;
 			// 
 			// ItsParameterCtrl
 			// 
