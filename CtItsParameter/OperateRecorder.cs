@@ -13,7 +13,7 @@ namespace CtItsParameter
 		public static OperateRecorder Record { get; } = new OperateRecorder();
 		public SortedList<int, StepInfo> UndoList { get; protected set; }
 		public SortedList<int,StepInfo> RedoList { get; protected set; }
-		private int GetKey { get { var r = key;key++;return r;  } } 
+		
 
 		private OperateRecorder ()
 		{
@@ -22,9 +22,15 @@ namespace CtItsParameter
 			key = 0;
 		}
 
+		private int GetKey()
+		{
+			key += 1;
+			return key;
+		}
 		public void Add(StepInfo info)
 		{
-			UndoList.Add(GetKey,info);
+			UndoList.Add(GetKey(),info);
+			RedoList.Clear();
 		}
 		public List<StepInfo> Undo(int key)
 		{
@@ -36,7 +42,7 @@ namespace CtItsParameter
 				{
 					StepInfo info = UndoList.Values[i];
 					list.Add(info);
-					RedoList.Add(GetKey, info);
+					RedoList.Add(GetKey(), info);
 					UndoList.RemoveAt(i);
 				}
 				return list;
@@ -54,7 +60,7 @@ namespace CtItsParameter
 				{
 					StepInfo info = RedoList.Values[i];
 					list.Add(info);
-					UndoList.Add(GetKey, info);
+					UndoList.Add(GetKey(), info);
 					RedoList.RemoveAt(i);
 				}
 				return list;
@@ -78,13 +84,13 @@ namespace CtItsParameter
 
 	public class StepInfo<T> : StepInfo where T : IOperate
 	{
-		public T CurrentInfo { get; protected set; }
+		public T OldInfo { get; protected set; }
 		public T NewInfo { get; protected set; }
 
 		public StepInfo(EOperateType operate, T cur, T @new)
 		{
 			Operate = operate;
-			CurrentInfo = cur;
+			OldInfo = cur;
 			NewInfo = @new;
 		}
 	}

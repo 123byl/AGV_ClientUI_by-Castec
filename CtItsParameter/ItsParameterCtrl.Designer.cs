@@ -30,14 +30,33 @@ namespace CtItsParameter
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ItsParameterCtrl));
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
 			this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-			this.toolStripButton1 = new CtBind.Bindable.ToolStripButton();
-			this.toolStripButton4 = new CtBind.Bindable.ToolStripButton();
-			this.toolStripButton2 = new CtBind.Bindable.ToolStripButton();
-			this.toolStripButton3 = new CtBind.Bindable.ToolStripButton();
-			this.toolStripButton5 = new System.Windows.Forms.ToolStripButton();
-			this.toolStripButton6 = new System.Windows.Forms.ToolStripButton();
+			this.tsbOpenFile = new CtBind.Bindable.ToolStripButton();
+			this.tsbSaveFile = new CtBind.Bindable.ToolStripButton();
+			this.tsbDownload = new CtBind.Bindable.ToolStripButton();
+			this.tsbUpLoad = new CtBind.Bindable.ToolStripButton();
+			this.tsbUndo = new System.Windows.Forms.ToolStripButton();
+			this.tsbRedo = new System.Windows.Forms.ToolStripButton();
+			this.dgvParameter = new System.Windows.Forms.DataGridView();
+			this.dataGridViewRichTextBoxColumn1 = new CtExtendLib.DataGridViewRichTextBoxColumn();
+			this.dataGridViewRichTextBoxColumn2 = new CtExtendLib.DataGridViewRichTextBoxColumn();
+			this.dataGridViewRichTextBoxColumn3 = new CtExtendLib.DataGridViewRichTextBoxColumn();
+			this.dataGridViewRichTextBoxColumn4 = new CtExtendLib.DataGridViewRichTextBoxColumn();
+			this.dataGridViewRichTextBoxColumn5 = new CtExtendLib.DataGridViewRichTextBoxColumn();
+			this.dataGridViewRichTextBoxColumn6 = new CtExtendLib.DataGridViewRichTextBoxColumn();
+			this.dataGridViewRichTextBoxColumn7 = new CtExtendLib.DataGridViewRichTextBoxColumn();
+			this.colName = new CtExtendLib.DataGridViewRichTextBoxColumn();
+			this.colType = new CtExtendLib.DataGridViewRichTextBoxColumn();
+			this.colValue = new CtExtendLib.DataGridViewRichTextBoxColumn();
+			this.colDefault = new CtExtendLib.DataGridViewRichTextBoxColumn();
+			this.colMin = new CtExtendLib.DataGridViewRichTextBoxColumn();
+			this.colMax = new CtExtendLib.DataGridViewRichTextBoxColumn();
+			this.colDescription = new CtExtendLib.DataGridViewRichTextBoxColumn();
 			this.toolStrip1.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.dgvParameter)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// toolStrip1
@@ -48,89 +67,256 @@ namespace CtItsParameter
 			this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
 			this.toolStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
 			this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripButton1,
-            this.toolStripButton4,
-            this.toolStripButton2,
-            this.toolStripButton3,
-            this.toolStripButton5,
-            this.toolStripButton6});
+            this.tsbOpenFile,
+            this.tsbSaveFile,
+            this.tsbDownload,
+            this.tsbUpLoad,
+            this.tsbUndo,
+            this.tsbRedo});
 			this.toolStrip1.Location = new System.Drawing.Point(0, 0);
 			this.toolStrip1.Name = "toolStrip1";
-			this.toolStrip1.Size = new System.Drawing.Size(800, 44);
+			this.toolStrip1.Size = new System.Drawing.Size(1108, 44);
 			this.toolStrip1.TabIndex = 0;
 			this.toolStrip1.Text = "toolStrip1";
 			// 
-			// toolStripButton1
+			// tsbOpenFile
 			// 
-			this.toolStripButton1.AutoSize = false;
-			this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.toolStripButton1.Image = global::CtItsParameter.Properties.Resources.OpenFile;
-			this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.toolStripButton1.Name = "toolStripButton1";
-			this.toolStripButton1.Size = new System.Drawing.Size(32, 32);
-			this.toolStripButton1.Text = "toolStripButton1";
+			this.tsbOpenFile.AutoSize = false;
+			this.tsbOpenFile.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.tsbOpenFile.Image = global::CtItsParameter.Properties.Resources.OpenFile;
+			this.tsbOpenFile.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.tsbOpenFile.Name = "tsbOpenFile";
+			this.tsbOpenFile.Size = new System.Drawing.Size(32, 32);
+			this.tsbOpenFile.Text = "toolStripButton1";
+			this.tsbOpenFile.ToolTipText = "Open";
+			this.tsbOpenFile.Click += new System.EventHandler(this.tsbOpenFile_Click);
 			// 
-			// toolStripButton4
+			// tsbSaveFile
 			// 
-			this.toolStripButton4.AutoSize = false;
-			this.toolStripButton4.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.toolStripButton4.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton4.Image")));
-			this.toolStripButton4.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.toolStripButton4.Name = "toolStripButton4";
-			this.toolStripButton4.Size = new System.Drawing.Size(32, 32);
-			this.toolStripButton4.Text = "toolStripButton4";
+			this.tsbSaveFile.AutoSize = false;
+			this.tsbSaveFile.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.tsbSaveFile.Image = ((System.Drawing.Image)(resources.GetObject("tsbSaveFile.Image")));
+			this.tsbSaveFile.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.tsbSaveFile.Name = "tsbSaveFile";
+			this.tsbSaveFile.Size = new System.Drawing.Size(32, 32);
+			this.tsbSaveFile.Text = "toolStripButton4";
+			this.tsbSaveFile.ToolTipText = "Save";
+			this.tsbSaveFile.Click += new System.EventHandler(this.tsbSaveFile_Click);
 			// 
-			// toolStripButton2
+			// tsbDownload
 			// 
-			this.toolStripButton2.AutoSize = false;
-			this.toolStripButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.toolStripButton2.Image = global::CtItsParameter.Properties.Resources.Download;
-			this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.toolStripButton2.Name = "toolStripButton2";
-			this.toolStripButton2.Size = new System.Drawing.Size(32, 32);
-			this.toolStripButton2.Text = "toolStripButton2";
+			this.tsbDownload.AutoSize = false;
+			this.tsbDownload.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.tsbDownload.Image = global::CtItsParameter.Properties.Resources.Download;
+			this.tsbDownload.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.tsbDownload.Name = "tsbDownload";
+			this.tsbDownload.Size = new System.Drawing.Size(32, 32);
+			this.tsbDownload.Text = "toolStripButton2";
+			this.tsbDownload.ToolTipText = "Download";
+			this.tsbDownload.Click += new System.EventHandler(this.tsbDownload_Click);
 			// 
-			// toolStripButton3
+			// tsbUpLoad
 			// 
-			this.toolStripButton3.AutoSize = false;
-			this.toolStripButton3.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.toolStripButton3.Image = global::CtItsParameter.Properties.Resources.Upload;
-			this.toolStripButton3.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.toolStripButton3.Name = "toolStripButton3";
-			this.toolStripButton3.Size = new System.Drawing.Size(32, 32);
-			this.toolStripButton3.Text = "toolStripButton3";
+			this.tsbUpLoad.AutoSize = false;
+			this.tsbUpLoad.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.tsbUpLoad.Image = global::CtItsParameter.Properties.Resources.Upload;
+			this.tsbUpLoad.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.tsbUpLoad.Name = "tsbUpLoad";
+			this.tsbUpLoad.Size = new System.Drawing.Size(32, 32);
+			this.tsbUpLoad.Text = "toolStripButton3";
+			this.tsbUpLoad.ToolTipText = "Upload";
+			this.tsbUpLoad.Click += new System.EventHandler(this.tsbUpload_Click);
 			// 
-			// toolStripButton5
+			// tsbUndo
 			// 
-			this.toolStripButton5.AutoSize = false;
-			this.toolStripButton5.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.toolStripButton5.Image = global::CtItsParameter.Properties.Resources.Undo;
-			this.toolStripButton5.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.toolStripButton5.Name = "toolStripButton5";
-			this.toolStripButton5.Size = new System.Drawing.Size(32, 32);
-			this.toolStripButton5.Text = "toolStripButton5";
+			this.tsbUndo.AutoSize = false;
+			this.tsbUndo.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.tsbUndo.Image = global::CtItsParameter.Properties.Resources.Undo;
+			this.tsbUndo.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.tsbUndo.Name = "tsbUndo";
+			this.tsbUndo.Size = new System.Drawing.Size(32, 32);
+			this.tsbUndo.Text = "toolStripButton5";
+			this.tsbUndo.ToolTipText = "Undo";
+			this.tsbUndo.Click += new System.EventHandler(this.tsbUndo_Click);
 			// 
-			// toolStripButton6
+			// tsbRedo
 			// 
-			this.toolStripButton6.AutoSize = false;
-			this.toolStripButton6.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.toolStripButton6.Image = global::CtItsParameter.Properties.Resources.Redo;
-			this.toolStripButton6.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.toolStripButton6.Name = "toolStripButton6";
-			this.toolStripButton6.Size = new System.Drawing.Size(32, 32);
-			this.toolStripButton6.Text = "toolStripButton6";
+			this.tsbRedo.AutoSize = false;
+			this.tsbRedo.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.tsbRedo.Image = global::CtItsParameter.Properties.Resources.Redo;
+			this.tsbRedo.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.tsbRedo.Name = "tsbRedo";
+			this.tsbRedo.Size = new System.Drawing.Size(32, 32);
+			this.tsbRedo.Text = "toolStripButton6";
+			this.tsbRedo.ToolTipText = "Redo";
+			this.tsbRedo.Click += new System.EventHandler(this.tsbRedo_Click);
+			// 
+			// dgvParameter
+			// 
+			this.dgvParameter.AllowUserToAddRows = false;
+			this.dgvParameter.AllowUserToDeleteRows = false;
+			this.dgvParameter.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+			dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+			dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft JhengHei UI", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+			dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+			dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.dgvParameter.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+			this.dgvParameter.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+			this.dgvParameter.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.colName,
+            this.colType,
+            this.colValue,
+            this.colDefault,
+            this.colMin,
+            this.colMax,
+            this.colDescription});
+			dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+			dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+			dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft JhengHei UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+			dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+			dataGridViewCellStyle2.Padding = new System.Windows.Forms.Padding(1, 0, 1, 0);
+			dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+			this.dgvParameter.DefaultCellStyle = dataGridViewCellStyle2;
+			this.dgvParameter.Location = new System.Drawing.Point(10, 45);
+			this.dgvParameter.Margin = new System.Windows.Forms.Padding(1);
+			this.dgvParameter.Name = "dgvParameter";
+			dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+			dataGridViewCellStyle3.Font = new System.Drawing.Font("新細明體", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+			dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+			dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.dgvParameter.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+			this.dgvParameter.RowHeadersVisible = false;
+			this.dgvParameter.RowTemplate.Height = 27;
+			this.dgvParameter.Size = new System.Drawing.Size(1088, 737);
+			this.dgvParameter.TabIndex = 1;
+			// 
+			// dataGridViewRichTextBoxColumn1
+			// 
+			this.dataGridViewRichTextBoxColumn1.HeaderText = "Name";
+			this.dataGridViewRichTextBoxColumn1.Name = "dataGridViewRichTextBoxColumn1";
+			this.dataGridViewRichTextBoxColumn1.ReadOnly = true;
+			this.dataGridViewRichTextBoxColumn1.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+			this.dataGridViewRichTextBoxColumn1.Width = 250;
+			// 
+			// dataGridViewRichTextBoxColumn2
+			// 
+			this.dataGridViewRichTextBoxColumn2.HeaderText = "Type";
+			this.dataGridViewRichTextBoxColumn2.Name = "dataGridViewRichTextBoxColumn2";
+			this.dataGridViewRichTextBoxColumn2.ReadOnly = true;
+			this.dataGridViewRichTextBoxColumn2.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+			// 
+			// dataGridViewRichTextBoxColumn3
+			// 
+			this.dataGridViewRichTextBoxColumn3.HeaderText = "Value";
+			this.dataGridViewRichTextBoxColumn3.Name = "dataGridViewRichTextBoxColumn3";
+			this.dataGridViewRichTextBoxColumn3.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+			this.dataGridViewRichTextBoxColumn3.Width = 150;
+			// 
+			// dataGridViewRichTextBoxColumn4
+			// 
+			this.dataGridViewRichTextBoxColumn4.HeaderText = "Default";
+			this.dataGridViewRichTextBoxColumn4.Name = "dataGridViewRichTextBoxColumn4";
+			this.dataGridViewRichTextBoxColumn4.ReadOnly = true;
+			this.dataGridViewRichTextBoxColumn4.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+			this.dataGridViewRichTextBoxColumn4.Width = 150;
+			// 
+			// dataGridViewRichTextBoxColumn5
+			// 
+			this.dataGridViewRichTextBoxColumn5.HeaderText = "Min";
+			this.dataGridViewRichTextBoxColumn5.Name = "dataGridViewRichTextBoxColumn5";
+			this.dataGridViewRichTextBoxColumn5.ReadOnly = true;
+			this.dataGridViewRichTextBoxColumn5.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+			// 
+			// dataGridViewRichTextBoxColumn6
+			// 
+			this.dataGridViewRichTextBoxColumn6.HeaderText = "Max";
+			this.dataGridViewRichTextBoxColumn6.Name = "dataGridViewRichTextBoxColumn6";
+			this.dataGridViewRichTextBoxColumn6.ReadOnly = true;
+			this.dataGridViewRichTextBoxColumn6.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+			// 
+			// dataGridViewRichTextBoxColumn7
+			// 
+			this.dataGridViewRichTextBoxColumn7.HeaderText = "Description";
+			this.dataGridViewRichTextBoxColumn7.Name = "dataGridViewRichTextBoxColumn7";
+			this.dataGridViewRichTextBoxColumn7.ReadOnly = true;
+			this.dataGridViewRichTextBoxColumn7.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+			this.dataGridViewRichTextBoxColumn7.Width = 400;
+			// 
+			// colName
+			// 
+			this.colName.HeaderText = "Name";
+			this.colName.Name = "colName";
+			this.colName.ReadOnly = true;
+			this.colName.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+			this.colName.Width = 250;
+			// 
+			// colType
+			// 
+			this.colType.HeaderText = "Type";
+			this.colType.Name = "colType";
+			this.colType.ReadOnly = true;
+			this.colType.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+			// 
+			// colValue
+			// 
+			this.colValue.HeaderText = "Value";
+			this.colValue.Name = "colValue";
+			this.colValue.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+			this.colValue.Width = 150;
+			// 
+			// colDefault
+			// 
+			this.colDefault.HeaderText = "Default";
+			this.colDefault.Name = "colDefault";
+			this.colDefault.ReadOnly = true;
+			this.colDefault.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+			this.colDefault.Width = 150;
+			// 
+			// colMin
+			// 
+			this.colMin.HeaderText = "Min";
+			this.colMin.Name = "colMin";
+			this.colMin.ReadOnly = true;
+			this.colMin.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+			// 
+			// colMax
+			// 
+			this.colMax.HeaderText = "Max";
+			this.colMax.Name = "colMax";
+			this.colMax.ReadOnly = true;
+			this.colMax.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+			// 
+			// colDescription
+			// 
+			this.colDescription.HeaderText = "Description";
+			this.colDescription.Name = "colDescription";
+			this.colDescription.ReadOnly = true;
+			this.colDescription.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+			this.colDescription.Width = 400;
 			// 
 			// ItsParameterCtrl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(800, 450);
+			this.ClientSize = new System.Drawing.Size(1108, 792);
+			this.Controls.Add(this.dgvParameter);
 			this.Controls.Add(this.toolStrip1);
 			this.Font = new System.Drawing.Font("新細明體", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
 			this.Name = "ItsParameterCtrl";
-			this.Text = "Form1";
+			this.Text = "Parameter";
 			this.toolStrip1.ResumeLayout(false);
 			this.toolStrip1.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.dgvParameter)).EndInit();
 			this.ResumeLayout(false);
 
 		}
@@ -138,12 +324,27 @@ namespace CtItsParameter
 		#endregion
 
 		private System.Windows.Forms.ToolStrip toolStrip1;
-		private CtBind.Bindable.ToolStripButton toolStripButton1;
-		private CtBind.Bindable.ToolStripButton toolStripButton2;
-		private CtBind.Bindable.ToolStripButton toolStripButton3;
-		private CtBind.Bindable.ToolStripButton toolStripButton4;
-		private System.Windows.Forms.ToolStripButton toolStripButton5;
-		private System.Windows.Forms.ToolStripButton toolStripButton6;
+		private CtBind.Bindable.ToolStripButton tsbOpenFile;
+		private CtBind.Bindable.ToolStripButton tsbDownload;
+		private CtBind.Bindable.ToolStripButton tsbUpLoad;
+		private CtBind.Bindable.ToolStripButton tsbSaveFile;
+		private System.Windows.Forms.ToolStripButton tsbUndo;
+		private System.Windows.Forms.ToolStripButton tsbRedo;
+		private System.Windows.Forms.DataGridView dgvParameter;
+		private CtExtendLib.DataGridViewRichTextBoxColumn colName;
+		private CtExtendLib.DataGridViewRichTextBoxColumn colType;
+		private CtExtendLib.DataGridViewRichTextBoxColumn colValue;
+		private CtExtendLib.DataGridViewRichTextBoxColumn colDefault;
+		private CtExtendLib.DataGridViewRichTextBoxColumn colMin;
+		private CtExtendLib.DataGridViewRichTextBoxColumn colMax;
+		private CtExtendLib.DataGridViewRichTextBoxColumn colDescription;
+		private CtExtendLib.DataGridViewRichTextBoxColumn dataGridViewRichTextBoxColumn1;
+		private CtExtendLib.DataGridViewRichTextBoxColumn dataGridViewRichTextBoxColumn2;
+		private CtExtendLib.DataGridViewRichTextBoxColumn dataGridViewRichTextBoxColumn3;
+		private CtExtendLib.DataGridViewRichTextBoxColumn dataGridViewRichTextBoxColumn4;
+		private CtExtendLib.DataGridViewRichTextBoxColumn dataGridViewRichTextBoxColumn5;
+		private CtExtendLib.DataGridViewRichTextBoxColumn dataGridViewRichTextBoxColumn6;
+		private CtExtendLib.DataGridViewRichTextBoxColumn dataGridViewRichTextBoxColumn7;
 	}
 }
 

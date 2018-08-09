@@ -10,8 +10,12 @@ namespace CtItsParameter.Interface
 	{
 		bool IsModify { get; }
 	}
-	public interface IOperate<T> : IOperate
+	public interface IOperate<T,TStructure> : IOperate
 	{
 		void Edit(T newValue);
+
+		void Undo(TStructure oldValue);
+
+		void Redo(TStructure newValue);
 	}
 }

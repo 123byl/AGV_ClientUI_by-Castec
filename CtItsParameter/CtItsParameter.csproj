@@ -55,6 +55,9 @@
     <Reference Include="CtDockSuit">
       <HintPath>..\CtDockSuit\bin\Debug\CtDockSuit.dll</HintPath>
     </Reference>
+    <Reference Include="CtExtendLib">
+      <HintPath>..\CtExtendLib\bin\Debug\CtExtendLib.dll</HintPath>
+    </Reference>
     <Reference Include="CtLib, Version=1.3.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\CtLib\CtLib\bin\Debug\CtLib.exe</HintPath>

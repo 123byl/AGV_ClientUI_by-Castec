@@ -18,7 +18,7 @@ namespace CtItsParameter.Interface
 		string Description { get; }
 	}
 
-	 public	interface IParameter<T> :IParameter
+	public interface IParameter<T> : IParameter
 	{
 		/// <summary>
 		/// 參數設定值

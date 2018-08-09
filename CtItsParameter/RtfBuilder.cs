@@ -181,6 +181,20 @@ namespace CtItsParameter
 			_rtfList = new List<string>();
 			Append(text);
 		}
+		public RtfBuilder(string text, Color fontcolor)
+		{
+			_ansicpg = ansicpgN.TraditionalChinese;
+			_charset = charsetN.Big5;
+			_lang = langN.ChineseTaiwan;
+			_fontTable = new Dictionary<string, int>();
+			_fontTable.Add(_defaultFont, 0);
+			_defaultFontSize = 12;
+			_colorTable = new Dictionary<Color, int>();
+			_colorTable.Add(_defaultForeColor, 1);
+			_colorTable.Add(_defaultBackColor, 2);
+			_rtfList = new List<string>();
+			Append(text,fontcolor);
+		}
 		public RtfBuilder(string text, Font font, Color fontcolor)
 		{
 			_ansicpg = ansicpgN.TraditionalChinese;
@@ -219,6 +233,13 @@ namespace CtItsParameter
 			int fN = _fontTable[font.Name];
 			int fsN = (int)font.Size;
 			_rtfList.Add($@"\cf1\{Lang}\f{fN}\fs{fsN * 2} " + text);
+		}
+
+		public void Append(string text, Color fontcolor)
+		{
+			if (!_colorTable.ContainsKey(fontcolor)) { _colorTable.Add(fontcolor, _colorIndex); _colorIndex++; }
+			int cfN = _colorTable[fontcolor];
+			_rtfList.Add($@"\cf{cfN}\{Lang}\f0\fs{_defaultFontSize*2} " + text);
 		}
 
 		public void Append(string text, Font font, Color fontcolor)
