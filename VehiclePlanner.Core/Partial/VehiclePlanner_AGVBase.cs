@@ -598,15 +598,15 @@ namespace VehiclePlanner.Core
 				{
 					OnBalloonTip("Upload", $"{mapName} is uploaded {(success.Value ? "successfully" : "failed")} ");
 					OnConsoleMessage($"iTS - The {mapName} uploaded");
-					success = ChangeMap(mapName);
-					if (success.Value)
-					{
-						OnConsoleMessage($"iTS - The {mapName} is now running");
-					}
-					else
-					{
-						OnConsoleMessage($"iTS - The {mapName} failed to run");
-					}
+					//success = ChangeMap(mapName);
+					//if (success.Value)
+					//{
+					//	OnConsoleMessage($"iTS - The {mapName} is now running");
+					//}
+					//else
+					//{
+					//	OnConsoleMessage($"iTS - The {mapName} failed to run");
+					//}
 				}
 				else
 				{
