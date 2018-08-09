@@ -79,6 +79,11 @@ namespace VehiclePlanner.Module.Implement {
 			return goalName;
 		}
 
+		protected virtual string GetChargeName()
+		{
+			return cmbGoalList.InvokeIfNecessary(() => cmbGoalList.Text);
+		}
+
 		protected virtual List<string> GetGeneralGoals()
 		{
 			throw new NotImplementedException();
@@ -290,7 +295,7 @@ namespace VehiclePlanner.Module.Implement {
 		/// <param name="e"></param>
 		private void tsbCharging_Click(object sender, EventArgs e) {
             lock (mKey) {
-                string powerName = cmbGoalList.InvokeIfNecessary(() => cmbGoalList.Text);
+				string powerName = GetChargeName();
                 rUI.Charging(powerName);
             }
         }

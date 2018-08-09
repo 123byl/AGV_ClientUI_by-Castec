@@ -50,11 +50,11 @@ namespace VehiclePlanner.Module.Implement {
 			this.tsbDelete = new System.Windows.Forms.ToolStripButton();
 			this.tsbSave = new System.Windows.Forms.ToolStripButton();
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-			this.tsbPath = new System.Windows.Forms.ToolStripButton();
 			this.tsbRun = new System.Windows.Forms.ToolStripButton();
 			this.tsbRunAll = new System.Windows.Forms.ToolStripButton();
 			this.tsbStop = new CtBind.Bindable.ToolStripButton();
 			this.tsbCharging = new System.Windows.Forms.ToolStripButton();
+			this.tsbPath = new System.Windows.Forms.ToolStripButton();
 			this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.miPath = new System.Windows.Forms.ToolStripMenuItem();
 			this.miRun = new System.Windows.Forms.ToolStripMenuItem();
@@ -160,6 +160,7 @@ namespace VehiclePlanner.Module.Implement {
 			this.dgvGoalPoint.AllowUserToAddRows = false;
 			this.dgvGoalPoint.AllowUserToResizeRows = false;
 			this.dgvGoalPoint.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.ColumnHeader;
+			this.dgvGoalPoint.BackgroundColor = System.Drawing.SystemColors.ControlLight;
 			dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
 			dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
 			dataGridViewCellStyle1.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
@@ -248,11 +249,11 @@ namespace VehiclePlanner.Module.Implement {
             this.tsbDelete,
             this.tsbSave,
             this.toolStripSeparator1,
-            this.tsbPath,
             this.tsbRun,
             this.tsbRunAll,
             this.tsbStop,
-            this.tsbCharging});
+            this.tsbCharging,
+            this.tsbPath});
 			this.toolStrip1.Location = new System.Drawing.Point(0, 0);
 			this.toolStrip1.Name = "toolStrip1";
 			this.toolStrip1.Size = new System.Drawing.Size(752, 27);
@@ -297,17 +298,6 @@ namespace VehiclePlanner.Module.Implement {
 			this.toolStripSeparator1.Name = "toolStripSeparator1";
 			this.toolStripSeparator1.Size = new System.Drawing.Size(6, 27);
 			// 
-			// tsbPath
-			// 
-			this.tsbPath.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.tsbPath.Image = global::VehiclePlanner.Properties.Resources.Path;
-			this.tsbPath.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.tsbPath.Name = "tsbPath";
-			this.tsbPath.Size = new System.Drawing.Size(24, 24);
-			this.tsbPath.Text = "Path";
-			this.tsbPath.ToolTipText = "Path(Ctrl + P)";
-			this.tsbPath.Click += new System.EventHandler(this.tsbPath_Click);
-			// 
 			// tsbRun
 			// 
 			this.tsbRun.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -343,13 +333,24 @@ namespace VehiclePlanner.Module.Implement {
 			// tsbCharging
 			// 
 			this.tsbCharging.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.tsbCharging.Image = global::VehiclePlanner.Properties.Resources.Alert;
+			this.tsbCharging.Image = global::VehiclePlanner.Properties.Resources.Charge;
 			this.tsbCharging.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.tsbCharging.Name = "tsbCharging";
 			this.tsbCharging.Size = new System.Drawing.Size(24, 24);
 			this.tsbCharging.Text = "Charging";
 			this.tsbCharging.ToolTipText = "Charging(Ctrl + C)";
 			this.tsbCharging.Click += new System.EventHandler(this.tsbCharging_Click);
+			// 
+			// tsbPath
+			// 
+			this.tsbPath.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.tsbPath.Image = global::VehiclePlanner.Properties.Resources.Route;
+			this.tsbPath.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.tsbPath.Name = "tsbPath";
+			this.tsbPath.Size = new System.Drawing.Size(24, 24);
+			this.tsbPath.Text = "Path";
+			this.tsbPath.ToolTipText = "Path(Ctrl + P)";
+			this.tsbPath.Click += new System.EventHandler(this.tsbPath_Click);
 			// 
 			// contextMenuStrip1
 			// 
