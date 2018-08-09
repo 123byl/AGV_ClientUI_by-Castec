@@ -12,6 +12,21 @@
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -40,7 +55,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\iTSLibrary\iTSLibrary\bin\Debug\AsyncSocket.dll</HintPath>
     </Reference>
-    <Reference Include="CtItsParameter">
+    <Reference Include="CtItsParameter, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\CtItsParameter\bin\Debug\CtItsParameter.exe</HintPath>
     </Reference>
     <Reference Include="FactoryMode, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -186,6 +202,10 @@
       <Project>{BF4496A5-452D-44B2-AA68-D17FE68C45A3}</Project>
       <Name>CtDockSuit</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CtExtendLib\CtExtendLib.csproj">
+      <Project>{d6201498-1597-4c93-a2d0-0aa126542df4}</Project>
+      <Name>CtExtendLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CtLib\CtLib\CtLib.csproj">
       <Project>{A9BED8B3-2F9D-42A8-90BD-9FAE0522EB09}</Project>
       <Name>CtLib</Name>
@@ -326,6 +346,18 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.6.1 %28x86 與 x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

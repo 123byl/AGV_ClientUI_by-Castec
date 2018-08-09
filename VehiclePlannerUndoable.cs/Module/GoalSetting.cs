@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using VehiclePlanner.Module.Implement;
 using WeifenLuo.WinFormsUI.Docking;
+using CtExtendLib;
 
 namespace VehiclePlannerUndoable.cs
 {
@@ -105,9 +106,32 @@ namespace VehiclePlannerUndoable.cs
 			string goalname = null;
 			if (cboSingleType.Text == nameof(SingleTowardPairInfo) && mCurrentIndex != -1)
 			{
-				goalname = dgvGoalPoint.Rows[mCurrentIndex].Cells[nameof(SingleTowardPair.Name)].Value.ToString();
+						goalname = dgvGoalPoint.Rows[mCurrentIndex].Cells[nameof(SingleTowardPair.Name)].Value.ToString();
 			}
 			return goalname;
+		}
+		protected override string GetChargeName()
+		{
+			string goal=null;
+			var list = GLCMD.CMD.SingleTowerPairInfo.Where(data => data.StyleName == "ChargingDocking");
+			if (list != null)
+			{
+				DataTable table = new DataTable();
+				table.Columns.Add(nameof(ISingleTowardPairInfo.ID));
+				table.Columns.Add(nameof(ISingleTowardPairInfo.Name));
+				foreach(ISingleTowardPairInfo item in list)
+				{
+					DataRow row = table.NewRow();
+					row[nameof(ISingleTowardPairInfo.ID)] = item.ID;
+					row[nameof(ISingleTowardPairInfo.Name)] = item.Name;
+					table.Rows.Add(row);
+				}
+				var ctl = SelectBox.Show("Select Charge Goal", table);
+				ctl.ShowDialog();
+				goal = ctl.SelectRow?[nameof(ISingleTowardPairInfo.Name)].ToString();
+			
+			}
+			return goal;
 		}
 
 		/// <summary>
