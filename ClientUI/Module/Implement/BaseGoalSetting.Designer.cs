@@ -312,7 +312,7 @@ namespace VehiclePlanner.Module.Implement {
 			// tsbRunAll
 			// 
 			this.tsbRunAll.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.tsbRunAll.Image = global::VehiclePlanner.Properties.Resources.Refresh_2;
+			this.tsbRunAll.Image = global::VehiclePlanner.Properties.Resources.Cycle;
 			this.tsbRunAll.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.tsbRunAll.Name = "tsbRunAll";
 			this.tsbRunAll.Size = new System.Drawing.Size(24, 24);

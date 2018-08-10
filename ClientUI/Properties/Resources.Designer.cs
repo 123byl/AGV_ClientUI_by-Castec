@@ -443,6 +443,16 @@ namespace VehiclePlanner.Properties {
         /// <summary>
         ///   查詢類型 System.Drawing.Bitmap 的當地語系化資源。
         /// </summary>
+        internal static System.Drawing.Bitmap Cycle {
+            get {
+                object obj = ResourceManager.GetObject("Cycle", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類型 System.Drawing.Bitmap 的當地語系化資源。
+        /// </summary>
         internal static System.Drawing.Bitmap D1403_Teach {
             get {
                 object obj = ResourceManager.GetObject("D1403_Teach", resourceCulture);
