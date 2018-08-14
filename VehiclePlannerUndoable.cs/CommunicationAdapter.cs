@@ -98,8 +98,29 @@ namespace VehiclePlannerUndoable.cs
 		/// <param name="path">储存路径</param>
 		/// <returns>是否储存成功</returns>
 		public override bool SaveAs(string path) => mDoc?.SaveAs(path) ?? false;
-
 	}
+
+	public class RequestOriFile : BaseRequestOriFile
+	{
+		/// <summary>
+		/// 檔案物件
+		/// </summary>
+		private FileInfo mDoc = null;
+
+		public RequestOriFile(GetOri response)
+		{
+			var v = response;
+			if (Requited = v != null)
+			{
+				mDoc = v.Response;
+				FileName = mDoc.Name;
+			}
+		}
+
+		public override bool SaveAs(string path) => mDoc?.SaveAs(path) ?? false;
+	}
+
+
 
 	public class ConvertDoPositionComfirm : BaseDoPositionComfirm
 	{
@@ -195,6 +216,18 @@ namespace VehiclePlannerUndoable.cs
 	public class ConvertSetManualVelocity : BaseSetManualVelocity
 	{
 		public ConvertSetManualVelocity(SetManualVelocity response)
+		{
+			var v = response;
+			if (Requited = v != null)
+			{
+				Value = v.Response;
+			}
+		}
+	}
+
+	public class ConvertSetWorkVelocity : BaseSetWorkVelocity
+	{
+		public ConvertSetWorkVelocity(SetWorkVelocity response)
 		{
 			var v = response;
 			if (Requited = v != null)
