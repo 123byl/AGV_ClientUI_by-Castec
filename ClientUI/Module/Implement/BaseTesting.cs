@@ -88,7 +88,7 @@ namespace VehiclePlanner.Module.Implement {
         }
 
         private void btnGetCarStatus_Click(object sender, EventArgs e) {
-            rUI.ITest_GetCar();
+            rUI.AutoReport();
         }
 
         private void btnSendMap_Click(object sender, EventArgs e) {
