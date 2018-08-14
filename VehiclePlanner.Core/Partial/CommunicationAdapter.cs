@@ -185,6 +185,8 @@ namespace VehiclePlanner.Core
     /// 要求Map档
     /// </summary>
     public abstract class BaseRequestMapFile : BaseFileReturn { }
+
+	public abstract class BaseRequestOriFile : BaseFileReturn { }
     
     #endregion FileReturn
 
