@@ -280,7 +280,11 @@ namespace VehiclePlanner.Module.Implement {
 
         private void tsbRunAll_Click(object sender, EventArgs e) {
 			//GetSelectedSingleID();
-			rUI.RunLoop(GetGeneralGoals());
+			var list = GetGeneralGoals();
+			if (list != null)
+			{
+				rUI.RunLoop(list);
+			}
         }
 
 		private void tsbStop_Click(object sender, EventArgs e)
