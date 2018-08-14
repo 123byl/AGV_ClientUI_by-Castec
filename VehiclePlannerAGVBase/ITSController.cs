@@ -485,7 +485,11 @@ namespace VehiclePlannerAGVBase {
             }
         }
 
-    }
+		protected override void LoadMap(string path)
+		{
+			throw new NotImplementedException();
+		}
+	}
 
     #endregion Funciotn - Private Methods
 
