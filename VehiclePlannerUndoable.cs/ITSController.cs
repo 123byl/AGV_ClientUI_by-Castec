@@ -9,9 +9,13 @@ using VehiclePlanner.Core;
 using SerialData;
 using SerialCommunicationData;
 using GLCore;
+using System.Windows.Forms;
+using System.IO;
+using System.Drawing;
 
 namespace VehiclePlannerUndoable.cs
 {
+
 	/// <summary>
 	/// 以Undoable實作之ITS控制器介面
 	/// </summary>
@@ -32,7 +36,11 @@ namespace VehiclePlannerUndoable.cs
 		event EventHandler ShowMotionController;
 
 		event EventHandler CloseMotionController;
+
+		event LoadMapEventHandler OpenMap;
 	}
+
+	public delegate void LoadMapEventHandler(string path);
 
 	/// <summary>
 	/// ITS控制器
@@ -58,12 +66,26 @@ namespace VehiclePlannerUndoable.cs
 		///  Laser繪圖物件ID
 		/// </summary>
 		private int mLaserID = -1;
-
+		/// <summary>
+		/// 掃描地圖暫存名稱
+		/// </summary>
+		private string _oriName = null;
+		/// <summary>
+		/// 連線狀態
+		/// </summary>
 		private bool mConnectStatus = false;
-
+		/// <summary>
+		/// 開啟Controller
+		/// </summary>
 		public event EventHandler ShowMotionController;
-
+		/// <summary>
+		/// 關閉Controller
+		/// </summary>
 		public event EventHandler CloseMotionController;
+		/// <summary>
+		/// 開啟地圖檔
+		/// </summary>
+		public event LoadMapEventHandler OpenMap;
 		#endregion Declaration - Fields
 
 		#region Declaration - Properties
@@ -95,9 +117,17 @@ namespace VehiclePlannerUndoable.cs
 				return mClient.ConnectStatus == AsyncSocket.EConnectStatus.Connect;
 			}
 		}
-
+		/// <summary>
+		/// 雷射繪圖ID
+		/// </summary>
 		public int LaserID { get => mLaserID; set => mLaserID = value; }
+		/// <summary>
+		/// 路徑繪圖ID
+		/// </summary>
 		public int PathID { get => mPathID; set => mPathID = value; }
+		/// <summary>
+		/// 連線狀態
+		/// </summary>
 		public bool ConnectStatus
 		{
 			get => mConnectStatus; set
@@ -106,10 +136,6 @@ namespace VehiclePlannerUndoable.cs
 				OnPropertyChanged();
 			}
 		}
-
-
-
-
 		#endregion Declaration - Properties
 
 		#region Function - Public Methods
@@ -130,10 +156,11 @@ namespace VehiclePlannerUndoable.cs
 				var path = AutoReportPath(isAutoReport);
 				if (laser || status || path)
 				{
+					OnBalloonTip("AutoReport", $"AutoReport {(auto ? "Open" : "Close")}");
 					IsAutoReport = isAutoReport;
-					if (! isAutoReport)
+					if (!isAutoReport)
 					{
-						GLCMD.CMD.SaftyEditMultiGeometry<IPair>(mPathID, true, (list) => { list.Clear(); } );
+						GLCMD.CMD.SaftyEditMultiGeometry<IPair>(mPathID, true, (list) => { list.Clear(); });
 						GLCMD.CMD.SaftyEditMultiGeometry<IPair>(mLaserID, true, (list) => { list.Clear(); });
 					}
 				}
@@ -156,7 +183,7 @@ namespace VehiclePlannerUndoable.cs
 					oriName = SelectFile(oriList);
 					if (!string.IsNullOrEmpty(oriName))
 					{
-						var ori = RequestOriFile(oriName);
+						BaseFileReturn ori = RequestOriFile(oriName);
 						if (ori != null)
 						{
 							System.Windows.Forms.SaveFileDialog saveOri = new System.Windows.Forms.SaveFileDialog() { InitialDirectory = @"D:\MapInfo\Client" };
@@ -165,12 +192,12 @@ namespace VehiclePlannerUndoable.cs
 								if (ori.SaveAs(saveOri.FileName))
 								{
 									success = true;
-									OnConsoleMessage($"Planner - {ori.Name} download completed");
+									OnConsoleMessage($"Planner - {ori.FileName} download completed");
 								}
 								else
 								{
 									success = false;
-									OnConsoleMessage($"Planner - {ori.Name} failed to save");
+									OnConsoleMessage($"Planner - {ori.FileName} failed to save");
 								}
 							}
 
@@ -231,7 +258,7 @@ namespace VehiclePlannerUndoable.cs
 			bool success = result == System.Windows.Forms.DialogResult.OK;
 			if (success)
 			{
-				FileInfo file = new FileInfo();
+				SerialData.FileInfo file = new SerialData.FileInfo();
 				success = file.Load(dialog.FileName);
 				if (success)
 				{
@@ -243,6 +270,10 @@ namespace VehiclePlannerUndoable.cs
 				}
 			}
 			OnBalloonTip("Dowload", $"Ini upload {(success ? "successfully" : "failed")}");
+		}
+		protected override void LoadMap(string path)
+		{
+			OpenMap?.Invoke(path);
 		}
 		#endregion Function - Public Methods
 
@@ -280,13 +311,6 @@ namespace VehiclePlannerUndoable.cs
 		/// 停止与伺服端连线
 		/// </summary>
 		protected override void ClientStop() => mClient.Disconnect();
-
-
-		protected override string RequestOriList()
-		{
-			var oriList = (Send(new RequestOriList(null)) as RequestOriList).Response;
-			return oriList != null ? string.Join(",", oriList) : null;
-		}
 
 		/// <summary>
 		/// 传送命令
@@ -337,18 +361,16 @@ namespace VehiclePlannerUndoable.cs
 			{
 				Status = response as AGVStatus;
 			}
-			else if (response is AGVPath2D)
+			else if (response is AGVPath2D path)
 			{
-				var path = response as AGVPath2D;
 				GLCMD.CMD.SaftyEditMultiGeometry<IPair>(mPathID, true, (line) =>
 				{
 					line.Clear();
 					line.AddRangeIfNotNull(Point2DToPairCollection(path.Points));
 				});
 			}
-			else if (response is AGVLaser)
+			else if (response is AGVLaser laser)
 			{
-				var laser = response as AGVLaser;
 				GLCMD.CMD.SaftyEditMultiGeometry<IPair>(mLaserID, true, (point) =>
 				  {
 					  point.Clear();
@@ -358,12 +380,12 @@ namespace VehiclePlannerUndoable.cs
 			}
 		}
 
+		#region Command & Response
 		protected override BaseRequeLaser ImpRequestLaser()
 		{
 			RequestLaser Info = Send(new RequestLaser(null)) as RequestLaser;
 			return new ConvertRequestLaser(Info);
 		}
-
 
 		protected override BaseDoPositionComfirm ImpDoPositionComfirm()
 		{
@@ -376,7 +398,6 @@ namespace VehiclePlannerUndoable.cs
 			GoTo Info = Send(new GoTo(goalName)) as GoTo;
 			return new ConvertGoTo(Info);
 		}
-
 
 		protected override BaseRequestPath ImpRequestPath(string goalName)
 		{
@@ -405,7 +426,8 @@ namespace VehiclePlannerUndoable.cs
 
 		protected override BaseBoolReturn ImpSetWorkVelocity(int velocity)
 		{
-			throw new NotImplementedException();
+			SetWorkVelocity Info = Send(new SetWorkVelocity(velocity)) as SetWorkVelocity;
+			return new ConvertSetWorkVelocity(Info);
 		}
 
 		protected override BaseListReturn ImpRequestMapList()
@@ -416,7 +438,7 @@ namespace VehiclePlannerUndoable.cs
 
 		protected override BaseBoolReturn UploadMapToAGV(string mapPath)
 		{
-			FileInfo Data = new FileInfo(mapPath);
+			SerialData.FileInfo Data = new SerialData.FileInfo(mapPath);
 			UploadMapToAGV Info = Send(new UploadMapToAGV(Data)) as UploadMapToAGV;
 			return new ConvertUploadMapToAGV(Info);
 		}
@@ -451,6 +473,61 @@ namespace VehiclePlannerUndoable.cs
 			return new ConvertSetManualVelocity(Info);
 		}
 
+		/// <summary>
+		/// 要求自動回傳雷射資料
+		/// </summary>
+		/// <param name="on"></param>
+		/// <returns></returns>
+		protected bool AutoReportLaser(bool on)
+		{
+			AutoReportLaser Info = (AutoReportLaser)Send(new AutoReportLaser(on));
+			bool response = Info.Response;
+			return response;
+		}
+
+		protected bool AutoReportStatus(bool on)
+		{
+			AutoReportStatus Info = (AutoReportStatus)Send(new AutoReportStatus(on));
+			bool response = (Info != null) ? Info.Response : false;
+			return response;
+		}
+
+		protected bool AutoReportPath(bool on)
+		{
+			AutoReportPath Info = (AutoReportPath)Send(new AutoReportPath(on));
+			bool response = Info.Response;
+			return response;
+		}
+
+		protected BaseFileReturn GetParameter()
+		{
+			GetIni Info = Send(new GetIni(null)) as GetIni;
+			return new ConvertGetIni(Info);
+		}
+
+		protected BaseBoolReturn SetParameter(SerialData.FileInfo Ini)
+		{
+			SetIni Info = Send(new SetIni(Ini)) as SetIni;
+			return new ConvertSetIni(Info);
+		}
+
+		/// <summary>
+		/// 取得
+		/// </summary>
+		/// <param name="oriName"></param>
+		/// <returns></returns>
+		protected BaseFileReturn RequestOriFile(string oriName)
+		{
+			GetOri Info = Send(new GetOri(oriName)) as GetOri;
+			return new RequestOriFile(Info);
+		}
+		protected override string RequestOriList()
+		{
+			var oriList = (Send(new RequestOriList(null)) as RequestOriList).Response;
+			return oriList != null ? string.Join(",", oriList) : null;
+		}
+
+		#endregion
 		public override void StartScan(bool scan)
 		{
 			try
@@ -472,6 +549,7 @@ namespace VehiclePlannerUndoable.cs
 								ShowMotionController?.Invoke(this, EventArgs.Empty);
 								OnBalloonTip("Scan Map", "Start Scan Map");
 								OnConsoleMessage($"iTS - The new ori name is {oriName}.ori");
+								_oriName = oriName;
 							}
 						}
 						else
@@ -481,13 +559,38 @@ namespace VehiclePlannerUndoable.cs
 					}
 					else
 					{//停止掃描
-						
+
 						IsScanning = false;
 						if (true || mStatus?.Description == EDescription.Map)
 						{
 							isScanning = StopScanning();
 							CloseMotionController?.Invoke(this, EventArgs.Empty);
 							OnBalloonTip("Scan Map", "Close Scan Map");
+							BaseFileReturn ori = RequestOriFile(_oriName);
+							if (ori != null)
+							{
+								FolderBrowserDialog pathOri = new FolderBrowserDialog() { SelectedPath = @"D:\" };
+								DialogResult Ans = DialogResult.None;
+								DelInvoke?.Invoke(() => Ans = pathOri.ShowDialog());
+								if (Ans == DialogResult.OK)
+								{
+									string directory = pathOri.SelectedPath;
+									if (ori.SaveAs(directory))
+									{
+										OnConsoleMessage($"Planner - {ori.FileName} download completed");
+										string path = directory + $@"\{ori.FileName}";
+										OriToMap(path);
+										OnBalloonTip("File convert", "Ori convert to Map completed");
+										path = path.Replace(".ori", ".map");
+										LoadMap(path);
+									}
+									else
+									{
+										OnConsoleMessage($"Planner - {ori.FileName} failed to save ");
+									}
+								}
+							}
+							_oriName = null;
 						}
 						else
 						{
@@ -506,43 +609,34 @@ namespace VehiclePlannerUndoable.cs
 			}
 		}
 
-		/// <summary>
-		/// 要求自動回傳雷射資料
-		/// </summary>
-		/// <param name="on"></param>
-		/// <returns></returns>
-		protected bool AutoReportLaser(bool on)
+		public void OriToMap(string path)
 		{
-			AutoReportLaser Info = (AutoReportLaser)Send(new AutoReportLaser(on));
-			bool response = Info.Response;
-			return response;
+			int? maxX, maxY, minX, minY;
+			maxX = null; maxY = null; minX = null; minY = null;
+			var lines = File.ReadAllLines(path);
+			StringBuilder sb = new StringBuilder();
+			sb.AppendLine("Obstacle Points");
+
+			foreach (string line in lines)
+			{
+				var data = line.Split(new char[] { ',' });
+				for (int i = 3; i <= data.Length - 2; i += 2)
+				{
+					int x = Convert.ToInt32(data[i]);
+					int y = Convert.ToInt32(data[i + 1]);
+					sb.AppendLine($"{x.ToString()},{y.ToString()}");
+					if (maxX == null) maxX = x; else if (maxX < x) maxX = x;
+					if (maxY == null) maxY = y; else if (maxY < y) maxY = y;
+					if (minX == null) minX = x; else if (minX > x) minX = x;
+					if (minY == null) minY = y; else if (minY > y) minY = y;
+				}
+			}
+			sb.AppendLine($"Minimum Position:{minX},{minY}");
+			sb.AppendLine($"Maximum Position:{maxX},{maxY}");
+			path=path.Replace("ori", "map");
+			File.WriteAllText(path,sb.ToString());
 		}
 
-		protected bool AutoReportStatus(bool on)
-		{
-			AutoReportStatus Info = (AutoReportStatus)Send(new AutoReportStatus(on));
-			bool response = Info.Response;
-			return response;
-		}
-
-		protected bool AutoReportPath(bool on)
-		{
-			AutoReportPath Info = (AutoReportPath)Send(new AutoReportPath(on));
-			bool response = Info.Response;
-			return response;
-		}
-
-		protected BaseFileReturn GetParameter()
-		{
-			GetIni Info = Send(new GetIni(null)) as GetIni;
-			return new ConvertGetIni(Info);
-		}
-
-		protected BaseBoolReturn SetParameter(FileInfo Ini)
-		{
-			SetIni Info = Send(new SetIni(Ini)) as SetIni;
-			return new ConvertSetIni(Info);
-		}
 
 		/// <summary>
 		/// 要求AGV設定新位置
@@ -555,7 +649,7 @@ namespace VehiclePlannerUndoable.cs
 			bool? success = Info?.Response;
 			if (success == true)
 			{
-				GLCMD.CMD.AddAGV(1, Vector.Start.X, Vector.Start.Y, Vector.Angle);
+				//GLCMD.CMD.AddAGV(1, Vector.Start.X, Vector.Start.Y, Vector.Angle);
 				//OnConsoleMessage($"iTS - The position are now at {position}");
 			}
 		}
@@ -578,17 +672,6 @@ namespace VehiclePlannerUndoable.cs
 				yield return new Pair(points[i].X, points[i].Y);
 			}
 
-		}
-
-		/// <summary>
-		/// 取得
-		/// </summary>
-		/// <param name="oriName"></param>
-		/// <returns></returns>
-		protected FileInfo RequestOriFile(string oriName)
-		{
-			var oriFile = (Send(new GetOri(oriName)) as GetOri).Response;
-			return oriFile;
 		}
 
 		#endregion Function - Private Methods
@@ -621,6 +704,8 @@ namespace VehiclePlannerUndoable.cs
 			{
 				case AsyncSocket.EConnectStatus.Connect:
 					ConnectStatus = true;
+					PathID = GLCMD.CMD.AddMultiStripLine("Path", null);
+					LaserID = GLCMD.CMD.AddMultiPair("Laser", null);
 					var status = AutoReportStatus(true);
 					var laser = AutoReportLaser(true);
 					var path = AutoReportPath(true);
@@ -629,15 +714,14 @@ namespace VehiclePlannerUndoable.cs
 					break;
 				case AsyncSocket.EConnectStatus.Disconnect:
 					ConnectStatus = false;
-					GLCMD.CMD.DeleteAGV(1);
 					GLCMD.CMD.SaftyEditMultiGeometry<IPair>(mLaserID, true, (point) => { point.Clear(); });
 					GLCMD.CMD.SaftyEditMultiGeometry<IPair>(mPathID, true, (line) => { line.Clear(); });
 					this.Status = new AGVStatus();
+					GLCMD.CMD.DeleteAGV(1);
 					OnBalloonTip("Disconnect", "Server IP = " + e.RemoteInfo.IP);
 					break;
 			}
 		}
-
 		#endregion Function - Events
 
 	}
