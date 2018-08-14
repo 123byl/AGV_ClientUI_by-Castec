@@ -121,7 +121,7 @@ namespace VehiclePlanner.Module.Implement
 		/// <param name="e"></param>
 		private void tsbCar_Click(object sender, EventArgs e)
 		{
-			rUI.ITest_GetCar();
+			rUI.AutoReport();
 		}
 
 		/// <summary>
@@ -276,7 +276,7 @@ namespace VehiclePlanner.Module.Implement
 					rUI.ShowMotionController();
 					break;
 				case Keys.G | Keys.Control:
-					rUI.ITest_GetCar();
+					rUI.AutoReport();
 					break;
 				case Keys.P | Keys.Control:
 					rUI.ITest_SettingCarPos();
