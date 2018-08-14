@@ -56,7 +56,7 @@ namespace CtExtendLib
 			if (dgvSelect.Columns[e.ColumnIndex].HeaderText == _selectHead)
 			{
 				SelectRow = _table.NewRow();
-				for (int i = 0; i < dgvSelect.ColumnCount - 2; i++)
+				for (int i = 0; i <= dgvSelect.ColumnCount - 2; i++)
 				{
 					var name = dgvSelect.Columns[i].HeaderText;
 					SelectRow[name] = dgvSelect.Rows[e.RowIndex].Cells[name].Value;
