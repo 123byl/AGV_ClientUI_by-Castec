@@ -372,6 +372,7 @@ namespace VehiclePlanner.Core
 								{
 									success = true;
 									OnConsoleMessage($"Planner - {map.FileName} download completed");
+									LoadMap($@"{pathOri.SelectedPath}\{map.FileName}");
 								}
 								else
 								{
@@ -410,10 +411,12 @@ namespace VehiclePlanner.Core
 					if (success.Value)
 					{
 						OnConsoleMessage($"iTS - The {mapName} is now running");
+						OnBalloonTip("Change Map", $"The {mapName} is now running");
 					}
 					else
 					{
 						OnConsoleMessage($"iTS - The {mapName} failed to run");
+						OnBalloonTip("Change Map", $"The {mapName} failed to run");
 					}
 				}
 			}
@@ -508,6 +511,7 @@ namespace VehiclePlanner.Core
 			{
 				if (comfirm.Requited)
 				{
+					OnBalloonTip("Confirm","Confirm Success");
 					double similarity = comfirm.Similarity;
 					if (similarity >= 0 && similarity <= 1)
 					{
@@ -524,6 +528,7 @@ namespace VehiclePlanner.Core
 						OnConsoleMessage($"iTS - The map similarity is 0%");
 					}
 				}
+				else OnBalloonTip("Confirm", "Confirm Failed");
 			}
 			catch (Exception ex)
 			{
@@ -636,6 +641,7 @@ namespace VehiclePlanner.Core
 				}
 				else
 				{
+					OnConsoleMessage($"iTS - send move {direction},Velocity is {mVelocity}");
 					BaseBoolReturn success = SetManualVelocity(direction);
 					if (success.Requited && success.Value)
 					{
@@ -1029,6 +1035,12 @@ namespace VehiclePlanner.Core
 		/// </summary>
 		/// <remarks>是否在掃描中</remarks>
 		protected abstract BaseSetScanningOriFileName SetScanningOriFileName(string oriName);
+
+		/// <summary>
+		/// 下載Map檔後載入Map檔
+		/// </summary>
+		/// <param name="path"></param>
+		protected abstract void LoadMap(string path);
 
 		private BaseBoolReturn SetManualVelocity(MotionDirection direction)
 		{
