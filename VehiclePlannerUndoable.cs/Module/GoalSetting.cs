@@ -104,10 +104,30 @@ namespace VehiclePlannerUndoable.cs
 		protected override string GetGoalName()
 		{
 			string goalname = null;
-			if (cboSingleType.Text == nameof(SingleTowardPairInfo) && mCurrentIndex != -1)
+			var list = GLCMD.CMD.SingleTowerPairInfo.Where(data => data.StyleName == "General");
+			if (list != null)
 			{
-						goalname = dgvGoalPoint.Rows[mCurrentIndex].Cells[nameof(SingleTowardPair.Name)].Value.ToString();
+				DataTable table = new DataTable();
+				table.Columns.Add(nameof(ISingleTowardPairInfo.ID));
+				table.Columns.Add(nameof(ISingleTowardPairInfo.Name));
+				foreach (ISingleTowardPairInfo item in list)
+				{
+					DataRow row = table.NewRow();
+					row[nameof(ISingleTowardPairInfo.ID)] = item.ID;
+					row[nameof(ISingleTowardPairInfo.Name)] = item.Name;
+					table.Rows.Add(row);
+				}
+				var ctl = SelectBox.Show("Select Charge Goal", table);
+				ctl.ShowDialog();
+				goalname = ctl.SelectRow?[nameof(ISingleTowardPairInfo.Name)].ToString();
+				ctl.Dispose();
 			}
+
+
+			//if (cboSingleType.Text == nameof(SingleTowardPairInfo) && mCurrentIndex != -1)
+			//{
+			//			goalname = dgvGoalPoint.Rows[mCurrentIndex].Cells[nameof(SingleTowardPair.Name)].Value.ToString();
+			//}
 			return goalname;
 		}
 		protected override string GetChargeName()
@@ -129,7 +149,7 @@ namespace VehiclePlannerUndoable.cs
 				var ctl = SelectBox.Show("Select Charge Goal", table);
 				ctl.ShowDialog();
 				goal = ctl.SelectRow?[nameof(ISingleTowardPairInfo.Name)].ToString();
-			
+				ctl.Dispose();
 			}
 			return goal;
 		}
@@ -141,12 +161,13 @@ namespace VehiclePlannerUndoable.cs
 		protected override List<string> GetGeneralGoals()
 		{
 			List<string> goals = null;
-			if (cboSingleType.Text == nameof(SingleTowardPairInfo))
-			{
-			goals	 = (from DataGridViewRow row in dgvGoalPoint.Rows
-									  where row.Cells[nameof(SingleTowardPairInfo.StyleName)].Value.ToString() == "General"
-									  select row.Cells[nameof(SingleTowardPairInfo.Name)].Value.ToString()).ToList<string>();
-			}
+			//if (cboSingleType.Text == nameof(SingleTowardPairInfo))
+			//{
+			goals =	GLCMD.CMD.SingleTowerPairInfo.Where(data => data.StyleName == "General").Select(data=>data.Name).ToList<string>();
+			 //(from DataGridViewRow row in dgvGoalPoint.Rows
+				//					  where row.Cells[nameof(SingleTowardPairInfo.StyleName)].Value.ToString() == "General"
+				//					  select row.Cells[nameof(SingleTowardPairInfo.Name)].Value.ToString()).ToList<string>();
+			//}
 			return goals;
 		}
 
