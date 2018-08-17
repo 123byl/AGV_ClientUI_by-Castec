@@ -20,6 +20,7 @@ using System.Threading;
 using VehiclePlanner.Module;
 using CtItsParameter;
 using CtLib.Library;
+using CtExtendLib;
 
 namespace VehiclePlannerUndoable.cs
 {
@@ -77,13 +78,13 @@ namespace VehiclePlannerUndoable.cs
 		}
 		#endregion
 
-		#region Function - Private Methods
-
+		#region Function - Override Methods
 		protected override void Initial(IBaseVehiclePlanner vehiclePlanner)
 		{
 			base.Initial(vehiclePlanner);
 			rVehiclePlanner.Controller.ShowMotionController += Controller_ShowMotionController;
 			rVehiclePlanner.Controller.CloseMotionController += Controller_CloseMotionController;
+			rVehiclePlanner.Controller.OpenMap += Controller_LoadMapEvent;
 			GoalSetting.RefMapControl = MapGL.MapControl;
 		}
 
@@ -116,13 +117,22 @@ namespace VehiclePlannerUndoable.cs
 			OpenFileDialog openMap = new OpenFileDialog()
 			{
 				InitialDirectory = rVehiclePlanner.DefMapDir,
-				Filter = $"MAP|*.{type.ToString().ToLower()}"
+				Filter = $"MAP|*.{type.ToString().ToLower()}|Ori|*.ori"
 			};
 			if (openMap.ShowDialog() == DialogResult.OK)
 			{
+				string path = openMap.FileName;
+				if (Path.GetExtension(path) == ".ori")
+				{
+					(rVehiclePlanner.Controller as ITSController).OriToMap(path);
+					path = path.Replace("ori", "map");
+				}
 				Task.Run(() =>
 				{
-					(GoalSetting as GoalSetting).InvokeIfNecessaryDgv(() => rVehiclePlanner.LoadFile(type, openMap.FileName));
+					(GoalSetting as GoalSetting).InvokeIfNecessaryDgv(() => rVehiclePlanner.LoadFile(type, path));
+					MapGL.MapControl.AdjustZoom();
+					MapGL.MapControl.Focus(GLCMD.CMD.MapCenter.X, GLCMD.CMD.MapCenter.Y);
+
 				});
 			}
 		}
@@ -150,8 +160,32 @@ namespace VehiclePlannerUndoable.cs
 		protected override void StopRunLoop()
 		{
 			rVehiclePlanner.StopRunLoop();
+			OnBalloonTip("Information", "Stop run loop");
 		}
 
+		protected override string SelectFile(string fileList)
+		{
+			string fileName = null;
+			var fileNames = fileList.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+			DataTable table = new DataTable();
+			table.Columns.Add("Name");
+			foreach (string name in fileNames)
+			{
+				DataRow row = table.NewRow();
+				row["Name"] = name;
+				table.Rows.Add(row);
+			}
+			SelectBox selectBox = null;
+			using (selectBox = new SelectBox("Select File", table, "Determine"))
+			{
+				var result = this.InvokeIfNecessary(() => selectBox.ShowDialog(this));
+				fileName = selectBox.SelectRow?["Name"].ToString();
+			}
+			return fileName;
+		}
+		#endregion
+
+		#region Function - Private Methods
 		private Point2D ToPoint2D(IPair Point)
 		{
 			return new Point2D(Point.X, Point.Y);
@@ -175,11 +209,11 @@ namespace VehiclePlannerUndoable.cs
 					OnBalloonTip("Localization", "Set iTS Vector");
 					OnConsoleMessage($"NewPos{mNewPos.ToString()}");
 					Vector2D V = new Vector2D(mNewPos, ToPoint2D(MapGL.MapControl.ScreenToGL(m.X, m.Y)));
-					GLCMD.CMD.AddAGV(2, "Localization",V.Start.X,V.Start.Y,V.Angle);
-					rVehiclePlanner.Controller.SetPosition(V);
+					//GLCMD.CMD.AddAGV(2, "Localization",V.Start.X,V.Start.Y,V.Angle);
+					Task.Run(() => rVehiclePlanner.Controller.SetPosition(V));
 					mNewPos = null;
 					mIsSetting = false;
-					//GLCMD.CMD.DeleteAGV(2);
+					GLCMD.CMD.DeleteAGV(2);
 
 				}
 			}
@@ -191,6 +225,16 @@ namespace VehiclePlannerUndoable.cs
 		private void Controller_CloseMotionController(object sender, EventArgs e)
 		{
 			this.InvokeIfNecessary(this.CloseMotionController);
+		}
+
+		private void Controller_LoadMapEvent(string path)
+		{
+			GLCMD.CMD.Initial();
+			GLCMD.CMD.LoadMap(path);
+			MapGL.MapControl.AdjustZoom();
+			MapGL.MapControl.Focus(GLCMD.CMD.MapCenter.X, GLCMD.CMD.MapCenter.Y);
+			rVehiclePlanner.Controller.PathID = GLCMD.CMD.AddMultiStripLine("Path", null);
+			rVehiclePlanner.Controller.LaserID = GLCMD.CMD.AddMultiPair("Laser", null);
 		}
 		#endregion
 	}
@@ -267,6 +311,8 @@ namespace VehiclePlannerUndoable.cs
 		public override void ClearMap()
 		{
 			GLCMD.CMD.Initial();
+			Controller.PathID = GLCMD.CMD.AddMultiStripLine("Path", null);
+			Controller.LaserID = GLCMD.CMD.AddMultiPair("Laser", null);
 		}
 		public override void LoadFile(FileType type, string fileName)
 		{
@@ -276,6 +322,7 @@ namespace VehiclePlannerUndoable.cs
 				check = File.Exists(fileName);
 				if (check)
 				{
+					GLCMD.CMD.Initial();
 					GLCMD.CMD.LoadMap(fileName);
 
 					/*載入地圖會清除原始資料，重新載入Laser Path繪製*/
@@ -284,10 +331,10 @@ namespace VehiclePlannerUndoable.cs
 
 					mCurMapPath = fileName;
 					SetBalloonTip($"Load { type}", $"\'{fileName}\' is loaded");
-					if (Controller.IsConnected && type == FileType.Map)
-					{
-						Controller.SendAndSetMap(fileName);
-					}
+					//if (Controller.IsConnected && type == FileType.Map)
+					//{
+					//	Controller.SendAndSetMap(fileName);
+					//}
 				}
 				else
 				{
@@ -314,7 +361,11 @@ namespace VehiclePlannerUndoable.cs
 		public void RunLoop(List<string> goals)
 		{
 			if (IsRunLoop) IsRunLoop = false; Thread.Sleep(100);
-			if (goals?.Count > 0) IsRunLoop = true; Task.Run(() =>
+			if (goals?.Count > 0)
+			{
+				IsRunLoop = true;
+				SetBalloonTip("Information", "Start run loop");
+				Task.Run(() =>
 					{
 						int i = 0;
 						do
@@ -325,10 +376,15 @@ namespace VehiclePlannerUndoable.cs
 							{
 								Controller.GoTo(goal);
 								i++;
+								do
+								{
+									Thread.Sleep(1000);
+								} while (Controller.Status.Description != EDescription.Running);
 							}
 							Thread.Sleep(50);
 						} while (IsRunLoop);
 					});
+			}
 		}
 
 		public void StopRunLoop()
