@@ -366,10 +366,14 @@ namespace VehiclePlanner
 			//
 			//當直接關閉表單時，改為隱藏至系統列
 			#endregion 取消程式關閉
+			DialogResult result = MessageBox.Show("是否完全關閉視窗，如否將縮小於常駐程式列", "關閉視窗提示", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+			if (result != DialogResult.Yes)
+			{
+				e.Cancel = true;
 
-			e.Cancel = true;
-
-			HideWindow();
+				HideWindow();
+			}
+			else Exit();
 		}
 
 		#endregion Form
