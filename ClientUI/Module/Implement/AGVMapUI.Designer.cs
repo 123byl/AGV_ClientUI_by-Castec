@@ -121,7 +121,7 @@ namespace VehiclePlanner.Module.Implement {
 			this.tsbSave.Image = global::VehiclePlanner.Properties.Resources.Save;
 			this.tsbSave.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.tsbSave.Name = "tsbSave";
-			this.tsbSave.Size = new System.Drawing.Size(41, 41);
+			this.tsbSave.Size = new System.Drawing.Size(32, 32);
 			this.tsbSave.Text = "toolStripButton1";
 			this.tsbSave.ToolTipText = "Save";
 			this.tsbSave.Click += new System.EventHandler(this.tsbSave_Click);
