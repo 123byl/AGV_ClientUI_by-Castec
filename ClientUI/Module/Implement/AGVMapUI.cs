@@ -129,7 +129,7 @@ namespace VehiclePlanner.Module.Implement
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		private void tsbSetCar_Click(object sender, EventArgs e)
+		protected virtual void tsbSetCar_Click(object sender, EventArgs e)
 		{
 			rUI.ITest_SettingCarPos();
 		}
