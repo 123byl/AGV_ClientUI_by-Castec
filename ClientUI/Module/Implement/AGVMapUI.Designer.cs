@@ -33,6 +33,7 @@ namespace VehiclePlanner.Module.Implement {
 			this.tsbOpenFile = new CtBind.Bindable.ToolStripButton();
 			this.tsbSave = new CtBind.Bindable.ToolStripButton();
 			this.tsbClearMap = new CtBind.Bindable.ToolStripButton();
+			this.tsbInsertMap = new CtBind.Bindable.ToolStripButton();
 			this.tsbConnect = new CtBind.Bindable.ToolStripButton();
 			this.tsbGetMap = new CtBind.Bindable.ToolStripButton();
 			this.tsbSendMap = new CtBind.Bindable.ToolStripButton();
@@ -43,7 +44,6 @@ namespace VehiclePlanner.Module.Implement {
 			this.tsbLocalization = new CtBind.Bindable.ToolStripButton();
 			this.tsbConfirm = new CtBind.Bindable.ToolStripButton();
 			this.tsbGetLaser = new CtBind.Bindable.ToolStripButton();
-			this.tsbInsertMap = new CtBind.Bindable.ToolStripButton();
 			this.pnlShow.SuspendLayout();
 			this.toolStrip1.SuspendLayout();
 			this.SuspendLayout();
@@ -64,10 +64,10 @@ namespace VehiclePlanner.Module.Implement {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.pnlHide.BackColor = System.Drawing.SystemColors.Control;
-			this.pnlHide.Location = new System.Drawing.Point(0, 42);
+			this.pnlHide.Location = new System.Drawing.Point(0, 52);
 			this.pnlHide.Margin = new System.Windows.Forms.Padding(0, 1, 0, 0);
 			this.pnlHide.Name = "pnlHide";
-			this.pnlHide.Size = new System.Drawing.Size(751, 541);
+			this.pnlHide.Size = new System.Drawing.Size(751, 531);
 			this.pnlHide.TabIndex = 1;
 			this.pnlHide.Visible = false;
 			// 
@@ -83,6 +83,7 @@ namespace VehiclePlanner.Module.Implement {
             this.tsbOpenFile,
             this.tsbSave,
             this.tsbClearMap,
+            this.tsbInsertMap,
             this.tsbConnect,
             this.tsbGetMap,
             this.tsbSendMap,
@@ -92,139 +93,156 @@ namespace VehiclePlanner.Module.Implement {
             this.tsbAutoReport,
             this.tsbLocalization,
             this.tsbConfirm,
-            this.tsbGetLaser,
-            this.tsbInsertMap});
+            this.tsbGetLaser});
 			this.toolStrip1.Location = new System.Drawing.Point(0, 0);
 			this.toolStrip1.Margin = new System.Windows.Forms.Padding(0, 0, 0, 1);
 			this.toolStrip1.Name = "toolStrip1";
 			this.toolStrip1.Padding = new System.Windows.Forms.Padding(0);
-			this.toolStrip1.Size = new System.Drawing.Size(751, 44);
+			this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+			this.toolStrip1.Size = new System.Drawing.Size(751, 50);
 			this.toolStrip1.TabIndex = 1;
 			this.toolStrip1.Text = "toolStrip1";
 			// 
 			// tsbOpenFile
 			// 
 			this.tsbOpenFile.AutoSize = false;
-			this.tsbOpenFile.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.tsbOpenFile.Font = new System.Drawing.Font("Microsoft JhengHei UI", 7.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
 			this.tsbOpenFile.Image = global::VehiclePlanner.Properties.Resources.Folder_files;
 			this.tsbOpenFile.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.tsbOpenFile.Name = "tsbOpenFile";
-			this.tsbOpenFile.Size = new System.Drawing.Size(32, 32);
-			this.tsbOpenFile.Text = "toolStripButton1";
+			this.tsbOpenFile.Size = new System.Drawing.Size(60, 40);
+			this.tsbOpenFile.Text = "Open";
+			this.tsbOpenFile.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
 			this.tsbOpenFile.ToolTipText = "OpenFile";
 			this.tsbOpenFile.Click += new System.EventHandler(this.tsbOpenFile_Click);
 			// 
 			// tsbSave
 			// 
 			this.tsbSave.AutoSize = false;
-			this.tsbSave.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.tsbSave.Font = new System.Drawing.Font("Microsoft JhengHei UI", 7.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
 			this.tsbSave.Image = global::VehiclePlanner.Properties.Resources.Save;
 			this.tsbSave.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.tsbSave.Name = "tsbSave";
-			this.tsbSave.Size = new System.Drawing.Size(32, 32);
-			this.tsbSave.Text = "toolStripButton1";
+			this.tsbSave.Size = new System.Drawing.Size(60, 40);
+			this.tsbSave.Text = "Save";
+			this.tsbSave.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
 			this.tsbSave.ToolTipText = "Save";
 			this.tsbSave.Click += new System.EventHandler(this.tsbSave_Click);
 			// 
 			// tsbClearMap
 			// 
 			this.tsbClearMap.AutoSize = false;
-			this.tsbClearMap.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.tsbClearMap.Font = new System.Drawing.Font("Microsoft JhengHei UI", 7.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
 			this.tsbClearMap.Image = global::VehiclePlanner.Properties.Resources.Eraser;
 			this.tsbClearMap.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.tsbClearMap.Name = "tsbClearMap";
-			this.tsbClearMap.Size = new System.Drawing.Size(32, 32);
-			this.tsbClearMap.Text = "toolStripButton2";
+			this.tsbClearMap.Size = new System.Drawing.Size(60, 40);
+			this.tsbClearMap.Text = "Clear";
+			this.tsbClearMap.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
 			this.tsbClearMap.ToolTipText = "Clear Map";
 			this.tsbClearMap.Click += new System.EventHandler(this.tsbClearMap_Click);
+			// 
+			// tsbInsertMap
+			// 
+			this.tsbInsertMap.AutoSize = false;
+			this.tsbInsertMap.Font = new System.Drawing.Font("Microsoft JhengHei UI", 7.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+			this.tsbInsertMap.Image = ((System.Drawing.Image)(resources.GetObject("tsbInsertMap.Image")));
+			this.tsbInsertMap.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.tsbInsertMap.Name = "tsbInsertMap";
+			this.tsbInsertMap.Size = new System.Drawing.Size(60, 40);
+			this.tsbInsertMap.Text = "Insert";
+			this.tsbInsertMap.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+			this.tsbInsertMap.ToolTipText = "Insert Map";
+			this.tsbInsertMap.Click += new System.EventHandler(this.tsbInsertMap_Click);
 			// 
 			// tsbConnect
 			// 
 			this.tsbConnect.AutoSize = false;
-			this.tsbConnect.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.tsbConnect.Font = new System.Drawing.Font("Microsoft JhengHei UI", 7.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
 			this.tsbConnect.Image = global::VehiclePlanner.Properties.Resources.Disconnect;
 			this.tsbConnect.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.tsbConnect.Name = "tsbConnect";
-			this.tsbConnect.Size = new System.Drawing.Size(32, 32);
-			this.tsbConnect.Text = "toolStripButton1";
+			this.tsbConnect.Size = new System.Drawing.Size(60, 40);
+			this.tsbConnect.Text = "Connect";
+			this.tsbConnect.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
 			this.tsbConnect.ToolTipText = "Connect to iTS";
 			this.tsbConnect.Click += new System.EventHandler(this.tsbConnect_Click);
 			// 
 			// tsbGetMap
 			// 
 			this.tsbGetMap.AutoSize = false;
-			this.tsbGetMap.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.tsbGetMap.Enabled = false;
+			this.tsbGetMap.Font = new System.Drawing.Font("Microsoft JhengHei UI", 7.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
 			this.tsbGetMap.Image = global::VehiclePlanner.Properties.Resources.Download;
 			this.tsbGetMap.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.tsbGetMap.Name = "tsbGetMap";
-			this.tsbGetMap.Size = new System.Drawing.Size(32, 32);
-			this.tsbGetMap.Text = "toolStripButton2";
+			this.tsbGetMap.Size = new System.Drawing.Size(60, 40);
+			this.tsbGetMap.Text = "Download";
+			this.tsbGetMap.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
 			this.tsbGetMap.ToolTipText = "Download map";
 			this.tsbGetMap.Click += new System.EventHandler(this.tsbGetMap_Click);
 			// 
 			// tsbSendMap
 			// 
 			this.tsbSendMap.AutoSize = false;
-			this.tsbSendMap.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.tsbSendMap.Enabled = false;
+			this.tsbSendMap.Font = new System.Drawing.Font("Microsoft JhengHei UI", 7.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
 			this.tsbSendMap.Image = global::VehiclePlanner.Properties.Resources.Upload;
 			this.tsbSendMap.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.tsbSendMap.Name = "tsbSendMap";
-			this.tsbSendMap.Size = new System.Drawing.Size(32, 32);
-			this.tsbSendMap.Text = "toolStripButton3";
+			this.tsbSendMap.Size = new System.Drawing.Size(60, 40);
+			this.tsbSendMap.Text = "Upload";
+			this.tsbSendMap.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
 			this.tsbSendMap.ToolTipText = "Upload map";
 			this.tsbSendMap.Click += new System.EventHandler(this.tsbSendMap_Click);
 			// 
 			// tsbChangeMap
 			// 
 			this.tsbChangeMap.AutoSize = false;
-			this.tsbChangeMap.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.tsbChangeMap.Enabled = false;
+			this.tsbChangeMap.Font = new System.Drawing.Font("Microsoft JhengHei UI", 7.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
 			this.tsbChangeMap.Image = global::VehiclePlanner.Properties.Resources.Change;
 			this.tsbChangeMap.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.tsbChangeMap.Name = "tsbChangeMap";
-			this.tsbChangeMap.Size = new System.Drawing.Size(32, 32);
-			this.tsbChangeMap.Text = "toolStripButton1";
+			this.tsbChangeMap.Size = new System.Drawing.Size(60, 40);
+			this.tsbChangeMap.Text = "Chage";
+			this.tsbChangeMap.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
 			this.tsbChangeMap.ToolTipText = "Change map";
 			this.tsbChangeMap.Click += new System.EventHandler(this.tsbChangeMap_Click);
 			// 
 			// tsbScan
 			// 
 			this.tsbScan.AutoSize = false;
-			this.tsbScan.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.tsbScan.Enabled = false;
+			this.tsbScan.Font = new System.Drawing.Font("Microsoft JhengHei UI", 7.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
 			this.tsbScan.Image = global::VehiclePlanner.Properties.Resources.NewScan;
 			this.tsbScan.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.tsbScan.Name = "tsbScan";
-			this.tsbScan.Size = new System.Drawing.Size(32, 32);
-			this.tsbScan.Text = "toolStripButton3";
+			this.tsbScan.Size = new System.Drawing.Size(60, 40);
+			this.tsbScan.Text = "Scan";
+			this.tsbScan.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
 			this.tsbScan.ToolTipText = "Map Scan";
 			this.tsbScan.Click += new System.EventHandler(this.tsbScan_Click);
 			// 
 			// tsbController
 			// 
 			this.tsbController.AutoSize = false;
-			this.tsbController.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.tsbController.Enabled = false;
+			this.tsbController.Font = new System.Drawing.Font("Microsoft JhengHei UI", 7.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
 			this.tsbController.Image = global::VehiclePlanner.Properties.Resources.NewController;
 			this.tsbController.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.tsbController.Name = "tsbController";
-			this.tsbController.Size = new System.Drawing.Size(32, 32);
-			this.tsbController.Text = "toolStripButton4";
+			this.tsbController.Size = new System.Drawing.Size(60, 40);
+			this.tsbController.Text = "Control";
+			this.tsbController.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
 			this.tsbController.ToolTipText = "Controller";
 			this.tsbController.Click += new System.EventHandler(this.tsbController_Click);
 			// 
 			// tsbAutoReport
 			// 
 			this.tsbAutoReport.AutoSize = false;
-			this.tsbAutoReport.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.tsbAutoReport.Enabled = false;
+			this.tsbAutoReport.Font = new System.Drawing.Font("Microsoft JhengHei UI", 7.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
 			this.tsbAutoReport.Image = global::VehiclePlanner.Properties.Resources.AutoResponse;
 			this.tsbAutoReport.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.tsbAutoReport.Name = "tsbAutoReport";
-			this.tsbAutoReport.Size = new System.Drawing.Size(32, 32);
-			this.tsbAutoReport.Text = "toolStripButton5";
+			this.tsbAutoReport.Size = new System.Drawing.Size(60, 40);
+			this.tsbAutoReport.Text = "Auto";
+			this.tsbAutoReport.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
 			this.tsbAutoReport.ToolTipText = "Auto Report";
 			this.tsbAutoReport.Click += new System.EventHandler(this.tsbCar_Click);
 			// 
@@ -232,52 +250,41 @@ namespace VehiclePlanner.Module.Implement {
 			// 
 			this.tsbLocalization.AutoSize = false;
 			this.tsbLocalization.BackColor = System.Drawing.SystemColors.Window;
-			this.tsbLocalization.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.tsbLocalization.Font = new System.Drawing.Font("Microsoft JhengHei UI", 7.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
 			this.tsbLocalization.Image = global::VehiclePlanner.Properties.Resources.Localize;
 			this.tsbLocalization.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.tsbLocalization.Name = "tsbLocalization";
-			this.tsbLocalization.Size = new System.Drawing.Size(32, 32);
-			this.tsbLocalization.Text = "Set Car";
+			this.tsbLocalization.Size = new System.Drawing.Size(60, 40);
+			this.tsbLocalization.Text = "Localize";
+			this.tsbLocalization.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
 			this.tsbLocalization.ToolTipText = "Localization";
 			this.tsbLocalization.Click += new System.EventHandler(this.tsbSetCar_Click);
 			// 
 			// tsbConfirm
 			// 
 			this.tsbConfirm.AutoSize = false;
-			this.tsbConfirm.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.tsbConfirm.Enabled = false;
+			this.tsbConfirm.Font = new System.Drawing.Font("Microsoft JhengHei UI", 7.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
 			this.tsbConfirm.Image = global::VehiclePlanner.Properties.Resources.NewConfirm;
 			this.tsbConfirm.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.tsbConfirm.Name = "tsbConfirm";
-			this.tsbConfirm.Size = new System.Drawing.Size(32, 32);
-			this.tsbConfirm.Text = "toolStripButton7";
+			this.tsbConfirm.Size = new System.Drawing.Size(60, 40);
+			this.tsbConfirm.Text = "Comfirm";
+			this.tsbConfirm.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
 			this.tsbConfirm.ToolTipText = "Confirm";
 			this.tsbConfirm.Click += new System.EventHandler(this.tsbConfirm_Click);
 			// 
 			// tsbGetLaser
 			// 
 			this.tsbGetLaser.AutoSize = false;
-			this.tsbGetLaser.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.tsbGetLaser.Enabled = false;
+			this.tsbGetLaser.Font = new System.Drawing.Font("Microsoft JhengHei UI", 7.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
 			this.tsbGetLaser.Image = global::VehiclePlanner.Properties.Resources.Laser;
 			this.tsbGetLaser.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.tsbGetLaser.Name = "tsbGetLaser";
-			this.tsbGetLaser.Size = new System.Drawing.Size(32, 32);
-			this.tsbGetLaser.Text = "toolStripButton8";
+			this.tsbGetLaser.Size = new System.Drawing.Size(60, 40);
+			this.tsbGetLaser.Text = "Laser";
+			this.tsbGetLaser.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
 			this.tsbGetLaser.ToolTipText = "Get Laser";
 			this.tsbGetLaser.Click += new System.EventHandler(this.tsbGetLaser_Click);
-			// 
-			// tsbInsertMap
-			// 
-			this.tsbInsertMap.AutoSize = false;
-			this.tsbInsertMap.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.tsbInsertMap.Image = ((System.Drawing.Image)(resources.GetObject("tsbInsertMap.Image")));
-			this.tsbInsertMap.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.tsbInsertMap.Name = "tsbInsertMap";
-			this.tsbInsertMap.Size = new System.Drawing.Size(32, 32);
-			this.tsbInsertMap.Text = "toolStripButton1";
-			this.tsbInsertMap.ToolTipText = "Insert Map";
-			this.tsbInsertMap.Click += new System.EventHandler(this.tsbInsertMap_Click);
 			// 
 			// BaseMapGL
 			// 

@@ -186,13 +186,13 @@ namespace VehiclePlanner.Module.Implement {
 			dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
 			this.dgvGoalPoint.DefaultCellStyle = dataGridViewCellStyle2;
 			this.dgvGoalPoint.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.dgvGoalPoint.Location = new System.Drawing.Point(0, 27);
+			this.dgvGoalPoint.Location = new System.Drawing.Point(0, 50);
 			this.dgvGoalPoint.Margin = new System.Windows.Forms.Padding(4);
 			this.dgvGoalPoint.Name = "dgvGoalPoint";
 			this.dgvGoalPoint.RowHeadersVisible = false;
 			this.dgvGoalPoint.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToFirstHeader;
 			this.dgvGoalPoint.RowTemplate.Height = 24;
-			this.dgvGoalPoint.Size = new System.Drawing.Size(752, 749);
+			this.dgvGoalPoint.Size = new System.Drawing.Size(752, 726);
 			this.dgvGoalPoint.TabIndex = 46;
 			this.dgvGoalPoint.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgvGoalPoint_CellMouseClick);
 			// 
@@ -243,6 +243,7 @@ namespace VehiclePlanner.Module.Implement {
 			// 
 			// toolStrip1
 			// 
+			this.toolStrip1.AutoSize = false;
 			this.toolStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
 			this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsbAddNow,
@@ -256,100 +257,116 @@ namespace VehiclePlanner.Module.Implement {
             this.tsbPath});
 			this.toolStrip1.Location = new System.Drawing.Point(0, 0);
 			this.toolStrip1.Name = "toolStrip1";
-			this.toolStrip1.Size = new System.Drawing.Size(752, 27);
+			this.toolStrip1.Size = new System.Drawing.Size(752, 50);
 			this.toolStrip1.TabIndex = 69;
 			this.toolStrip1.Text = "toolStrip1";
 			// 
 			// tsbAddNow
 			// 
-			this.tsbAddNow.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.tsbAddNow.AutoSize = false;
+			this.tsbAddNow.Font = new System.Drawing.Font("Microsoft JhengHei UI", 7.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
 			this.tsbAddNow.Image = global::VehiclePlanner.Properties.Resources.Add;
 			this.tsbAddNow.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.tsbAddNow.Name = "tsbAddNow";
-			this.tsbAddNow.Size = new System.Drawing.Size(24, 24);
-			this.tsbAddNow.Text = "Add now";
+			this.tsbAddNow.Size = new System.Drawing.Size(60, 40);
+			this.tsbAddNow.Text = "Add";
+			this.tsbAddNow.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
 			this.tsbAddNow.ToolTipText = "Add now(Ctrl + N)";
 			this.tsbAddNow.Click += new System.EventHandler(this.tsbAddNow_Click);
 			// 
 			// tsbDelete
 			// 
-			this.tsbDelete.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.tsbDelete.AutoSize = false;
+			this.tsbDelete.Font = new System.Drawing.Font("Microsoft JhengHei UI", 7.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
 			this.tsbDelete.Image = global::VehiclePlanner.Properties.Resources.Delete;
 			this.tsbDelete.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.tsbDelete.Name = "tsbDelete";
-			this.tsbDelete.Size = new System.Drawing.Size(24, 24);
+			this.tsbDelete.Size = new System.Drawing.Size(60, 40);
 			this.tsbDelete.Text = "Delete";
+			this.tsbDelete.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
 			this.tsbDelete.ToolTipText = "Delete(Ctrll + D)";
 			this.tsbDelete.Click += new System.EventHandler(this.tsbDelete_Click);
 			// 
 			// tsbSave
 			// 
-			this.tsbSave.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.tsbSave.AutoSize = false;
+			this.tsbSave.Font = new System.Drawing.Font("Microsoft JhengHei UI", 7.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
 			this.tsbSave.Image = global::VehiclePlanner.Properties.Resources.Save;
 			this.tsbSave.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.tsbSave.Name = "tsbSave";
-			this.tsbSave.Size = new System.Drawing.Size(24, 24);
+			this.tsbSave.Size = new System.Drawing.Size(60, 40);
 			this.tsbSave.Text = "Save";
+			this.tsbSave.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
 			this.tsbSave.ToolTipText = "Save(Ctrl + S)";
 			this.tsbSave.Click += new System.EventHandler(this.tsbSave_Click);
 			// 
 			// toolStripSeparator1
 			// 
 			this.toolStripSeparator1.Name = "toolStripSeparator1";
-			this.toolStripSeparator1.Size = new System.Drawing.Size(6, 27);
+			this.toolStripSeparator1.Size = new System.Drawing.Size(6, 50);
 			// 
 			// tsbRun
 			// 
-			this.tsbRun.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.tsbRun.AutoSize = false;
+			this.tsbRun.Font = new System.Drawing.Font("Microsoft JhengHei UI", 7.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
 			this.tsbRun.Image = global::VehiclePlanner.Properties.Resources.play;
 			this.tsbRun.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.tsbRun.Name = "tsbRun";
-			this.tsbRun.Size = new System.Drawing.Size(24, 24);
+			this.tsbRun.Size = new System.Drawing.Size(60, 40);
 			this.tsbRun.Text = "Run";
+			this.tsbRun.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
 			this.tsbRun.ToolTipText = "Run(Ctrl + R)";
 			this.tsbRun.Click += new System.EventHandler(this.tsbRun_Click);
 			// 
 			// tsbRunAll
 			// 
-			this.tsbRunAll.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.tsbRunAll.AutoSize = false;
+			this.tsbRunAll.Font = new System.Drawing.Font("Microsoft JhengHei UI", 7.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
 			this.tsbRunAll.Image = global::VehiclePlanner.Properties.Resources.Cycle;
 			this.tsbRunAll.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.tsbRunAll.Name = "tsbRunAll";
-			this.tsbRunAll.Size = new System.Drawing.Size(24, 24);
+			this.tsbRunAll.Size = new System.Drawing.Size(60, 40);
 			this.tsbRunAll.Text = "RunAll";
+			this.tsbRunAll.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
 			this.tsbRunAll.ToolTipText = "RunAll(Ctrl + I)";
 			this.tsbRunAll.Click += new System.EventHandler(this.tsbRunAll_Click);
 			// 
 			// tsbStop
 			// 
-			this.tsbStop.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.tsbStop.AutoSize = false;
+			this.tsbStop.Font = new System.Drawing.Font("Microsoft JhengHei UI", 7.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
 			this.tsbStop.Image = global::VehiclePlanner.Properties.Resources.NewStop;
 			this.tsbStop.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.tsbStop.Name = "tsbStop";
-			this.tsbStop.Size = new System.Drawing.Size(24, 24);
-			this.tsbStop.Text = "toolStripButton1";
+			this.tsbStop.Size = new System.Drawing.Size(60, 40);
+			this.tsbStop.Text = "Stop";
+			this.tsbStop.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
 			this.tsbStop.ToolTipText = "Stop";
 			this.tsbStop.Click += new System.EventHandler(this.tsbStop_Click);
 			// 
 			// tsbCharging
 			// 
-			this.tsbCharging.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.tsbCharging.AutoSize = false;
+			this.tsbCharging.Font = new System.Drawing.Font("Microsoft JhengHei UI", 7.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
 			this.tsbCharging.Image = global::VehiclePlanner.Properties.Resources.Charge;
 			this.tsbCharging.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.tsbCharging.Name = "tsbCharging";
-			this.tsbCharging.Size = new System.Drawing.Size(24, 24);
-			this.tsbCharging.Text = "Charging";
+			this.tsbCharging.Size = new System.Drawing.Size(60, 40);
+			this.tsbCharging.Text = "Charge";
+			this.tsbCharging.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
 			this.tsbCharging.ToolTipText = "Charging(Ctrl + C)";
 			this.tsbCharging.Click += new System.EventHandler(this.tsbCharging_Click);
 			// 
 			// tsbPath
 			// 
-			this.tsbPath.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.tsbPath.AutoSize = false;
+			this.tsbPath.Font = new System.Drawing.Font("Microsoft JhengHei UI", 7.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
 			this.tsbPath.Image = global::VehiclePlanner.Properties.Resources.Route;
 			this.tsbPath.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.tsbPath.Name = "tsbPath";
-			this.tsbPath.Size = new System.Drawing.Size(24, 24);
+			this.tsbPath.Size = new System.Drawing.Size(60, 40);
 			this.tsbPath.Text = "Path";
+			this.tsbPath.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
 			this.tsbPath.ToolTipText = "Path(Ctrl + P)";
 			this.tsbPath.Click += new System.EventHandler(this.tsbPath_Click);
 			// 
@@ -441,14 +458,7 @@ namespace VehiclePlanner.Module.Implement {
         private System.Windows.Forms.Button btnGetGoalList;
         protected Inheritable.DataGridView dgvGoalPoint;
         protected System.Windows.Forms.ToolStrip toolStrip1;
-        private System.Windows.Forms.ToolStripButton tsbAddNow;
-        private System.Windows.Forms.ToolStripButton tsbDelete;
-        private System.Windows.Forms.ToolStripButton tsbSave;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.ToolStripButton tsbPath;
-        private System.Windows.Forms.ToolStripButton tsbRun;
-        private System.Windows.Forms.ToolStripButton tsbRunAll;
-        private System.Windows.Forms.ToolStripButton tsbCharging;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem miPath;
         private System.Windows.Forms.ToolStripMenuItem miRun;
@@ -461,6 +471,13 @@ namespace VehiclePlanner.Module.Implement {
         private System.Windows.Forms.DataGridViewTextBoxColumn cX;
         private System.Windows.Forms.DataGridViewTextBoxColumn cY;
         private System.Windows.Forms.DataGridViewTextBoxColumn cToward;
-		private Bindable.ToolStripButton tsbStop;
+		protected System.Windows.Forms.ToolStripButton tsbAddNow;
+		protected System.Windows.Forms.ToolStripButton tsbDelete;
+		protected System.Windows.Forms.ToolStripButton tsbSave;
+		protected System.Windows.Forms.ToolStripButton tsbPath;
+		protected System.Windows.Forms.ToolStripButton tsbRun;
+		protected System.Windows.Forms.ToolStripButton tsbRunAll;
+		protected System.Windows.Forms.ToolStripButton tsbCharging;
+		protected Bindable.ToolStripButton tsbStop;
 	}
 }
