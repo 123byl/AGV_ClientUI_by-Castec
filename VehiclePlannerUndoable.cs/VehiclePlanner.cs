@@ -89,6 +89,10 @@ namespace VehiclePlannerUndoable.cs
 		protected override void Initial(IBaseVehiclePlanner vehiclePlanner)
 		{
 			base.Initial(vehiclePlanner);
+			miLogin.Visible = false;
+			miBypass.Visible = false;
+			miUserManager.Visible = false;
+			miTest.Visible = false;
 			rVehiclePlanner.Controller.ShowMotionController += Controller_ShowMotionController;
 			rVehiclePlanner.Controller.CloseMotionController += Controller_CloseMotionController;
 			rVehiclePlanner.Controller.OpenMap += Controller_LoadMapEvent;
@@ -243,7 +247,8 @@ namespace VehiclePlannerUndoable.cs
 		private void Controller_ConnectStatusChanged(object sender, ConnectStatusChangedEventArgs e)
 		{
 			var enable = e.ConnectStatus == EConnectStatus.Connect ? true : false;
-			MapGL.ButtonEnable(enable);
+			MapGL.ConnectButtonEnable(enable);
+			GoalSetting.ConnectButtonEnable(enable);
 		}
 
 
