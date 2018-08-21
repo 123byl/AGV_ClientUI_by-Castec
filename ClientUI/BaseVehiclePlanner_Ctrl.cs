@@ -546,7 +546,7 @@ namespace VehiclePlanner
 		/// <summary>
 		/// 切換SetCar旗標
 		/// </summary>
-		internal void ITest_SettingCarPos() => mIsSetting = true;
+		public virtual void ITest_SettingCarPos() => mIsSetting = true;
 
 		/// <summary>
 		/// 傳送Map檔
