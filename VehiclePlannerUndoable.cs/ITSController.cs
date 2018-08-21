@@ -12,6 +12,7 @@ using GLCore;
 using System.Windows.Forms;
 using System.IO;
 using System.Drawing;
+using AsyncSocket;
 
 namespace VehiclePlannerUndoable.cs
 {
@@ -38,6 +39,8 @@ namespace VehiclePlannerUndoable.cs
 		event EventHandler CloseMotionController;
 
 		event LoadMapEventHandler OpenMap;
+
+		event ConnectStatusChangedEvent ConnectStatusChanged;
 	}
 
 	public delegate void LoadMapEventHandler(string path);
@@ -86,6 +89,10 @@ namespace VehiclePlannerUndoable.cs
 		/// 開啟地圖檔
 		/// </summary>
 		public event LoadMapEventHandler OpenMap;
+		/// <summary>
+		/// 連線狀態改變
+		/// </summary>
+		public event ConnectStatusChangedEvent ConnectStatusChanged;
 		#endregion Declaration - Fields
 
 		#region Declaration - Properties
@@ -305,7 +312,14 @@ namespace VehiclePlannerUndoable.cs
 		/// </summary>
 		/// <param name="ip">伺服端IP</param>
 		/// <param name="port">伺服端埠号</param>
-		protected override void ClientConnect(string ip, int port) => mClient.Connect(ip, port);
+		protected override void ClientConnect(string ip, int port)
+		{
+			mClient.Connect(ip, port);
+			//if (mClient.ConnectStatus!= AsyncSocket.EConnectStatus.Connect )
+			//{
+			//	Task.Run(() => MessageBox.Show("ITS只允許單一連線，請檢查是否有其他人正在使用Vehicle Planner", "連線警告", MessageBoxButtons.OK, MessageBoxIcon.Warning));
+			//}
+		}
 
 		/// <summary>
 		/// 停止与伺服端连线
@@ -714,13 +728,15 @@ namespace VehiclePlannerUndoable.cs
 					break;
 				case AsyncSocket.EConnectStatus.Disconnect:
 					ConnectStatus = false;
-					GLCMD.CMD.SaftyEditMultiGeometry<IPair>(mLaserID, true, (point) => { point.Clear(); });
-					GLCMD.CMD.SaftyEditMultiGeometry<IPair>(mPathID, true, (line) => { line.Clear(); });
+					//GLCMD.CMD.SaftyEditMultiGeometry<IPair>(mLaserID, true, (point) => { point.Clear(); });
+					//GLCMD.CMD.SaftyEditMultiGeometry<IPair>(mPathID, true, (line) => { line.Clear(); });
 					this.Status = new AGVStatus();
-					GLCMD.CMD.DeleteAGV(1);
+					GLCMD.CMD.Initial();
+					//GLCMD.CMD.DeleteAGV(1);
 					OnBalloonTip("Disconnect", "Server IP = " + e.RemoteInfo.IP);
 					break;
 			}
+			ConnectStatusChanged?.Invoke(sender, e);
 		}
 		#endregion Function - Events
 
