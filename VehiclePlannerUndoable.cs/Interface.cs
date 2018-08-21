@@ -12,6 +12,12 @@ namespace VehiclePlannerUndoable.cs {
         /// 地圖控制項
         /// </summary>
         GLUICtrl MapControl { get; }
+
+		/// <summary>
+		/// 斷連線按鍵顯示與否
+		/// </summary>
+		/// <param name="enable"></param>
+		void ButtonEnable(bool enable);
     }
 
     public interface IGoalSetting : IBaseGoalSetting {
