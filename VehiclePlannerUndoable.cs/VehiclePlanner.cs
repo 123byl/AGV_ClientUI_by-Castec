@@ -21,6 +21,7 @@ using VehiclePlanner.Module;
 using CtItsParameter;
 using CtLib.Library;
 using CtExtendLib;
+using AsyncSocket;
 
 namespace VehiclePlannerUndoable.cs
 {
@@ -34,11 +35,11 @@ namespace VehiclePlannerUndoable.cs
 		/// <summary>
 		/// Car Position 設定位置
 		/// </summary>
-		private Point2D mNewPos = null;
+		private Point2D localizePosition = null;
 		#endregion
 
 		#region Declaration - Properties
-		private IVehiclePlanner rVehiclePlanner = null;
+		public IVehiclePlanner rVehiclePlanner = null;
 
 		private IMapGL MapGL { get => mDockContent[miMapGL] as IMapGL; }
 
@@ -76,6 +77,12 @@ namespace VehiclePlannerUndoable.cs
 			tslbStatus.DataBindings.ExAdd(nameof(tslbStatus.Text), source, dataMember, (sender, e) => { e.Value = (e.Value as AGVStatus).Description.ToString(); });
 			tslbConnect.DataBindings.ExAdd(nameof(tslbConnect.Image), source, nameof(source.ConnectStatus), (sender, e) => { e.Value = (bool)e.Value ? Properties.Resources.LED_L_Green : Properties.Resources.LED_L_Red; });
 		}
+
+		public void CancelLocalize()
+		{
+			localizePosition = null;
+			GLCMD.CMD.DeleteAGV(2);
+		}
 		#endregion
 
 		#region Function - Override Methods
@@ -85,6 +92,7 @@ namespace VehiclePlannerUndoable.cs
 			rVehiclePlanner.Controller.ShowMotionController += Controller_ShowMotionController;
 			rVehiclePlanner.Controller.CloseMotionController += Controller_CloseMotionController;
 			rVehiclePlanner.Controller.OpenMap += Controller_LoadMapEvent;
+			rVehiclePlanner.Controller.ConnectStatusChanged += Controller_ConnectStatusChanged;
 			GoalSetting.RefMapControl = MapGL.MapControl;
 		}
 
@@ -183,6 +191,12 @@ namespace VehiclePlannerUndoable.cs
 			}
 			return fileName;
 		}
+
+		public override void ITest_SettingCarPos()
+		{
+			mIsSetting = !mIsSetting;
+		}
+
 		#endregion
 
 		#region Function - Private Methods
@@ -198,21 +212,20 @@ namespace VehiclePlannerUndoable.cs
 			MouseEventArgs m = (MouseEventArgs)e;
 			if (mIsSetting)
 			{
-				if (mNewPos == null)
+				if (localizePosition == null)
 				{
 					OnBalloonTip("Localization", "Set iTS Position");
-					mNewPos = ToPoint2D(MapGL.MapControl.ScreenToGL(m.X, m.Y));
-					GLCMD.CMD.AddAGV(2, "Localization", mNewPos.X, mNewPos.Y, 0);
+					localizePosition = ToPoint2D(MapGL.MapControl.ScreenToGL(m.X, m.Y));
+					GLCMD.CMD.AddAGV(2, "Localization", localizePosition.X, localizePosition.Y, 0);
 				}
 				else
 				{
 					OnBalloonTip("Localization", "Set iTS Vector");
-					OnConsoleMessage($"NewPos{mNewPos.ToString()}");
-					Vector2D V = new Vector2D(mNewPos, ToPoint2D(MapGL.MapControl.ScreenToGL(m.X, m.Y)));
+					OnConsoleMessage($"NewPos{localizePosition.ToString()}");
+					Vector2D V = new Vector2D(localizePosition, ToPoint2D(MapGL.MapControl.ScreenToGL(m.X, m.Y)));
 					//GLCMD.CMD.AddAGV(2, "Localization",V.Start.X,V.Start.Y,V.Angle);
 					Task.Run(() => rVehiclePlanner.Controller.SetPosition(V));
-					mNewPos = null;
-					mIsSetting = false;
+					localizePosition = null;
 					GLCMD.CMD.DeleteAGV(2);
 
 				}
@@ -226,6 +239,13 @@ namespace VehiclePlannerUndoable.cs
 		{
 			this.InvokeIfNecessary(this.CloseMotionController);
 		}
+
+		private void Controller_ConnectStatusChanged(object sender, ConnectStatusChangedEventArgs e)
+		{
+			var enable = e.ConnectStatus == EConnectStatus.Connect ? true : false;
+			MapGL.ButtonEnable(enable);
+		}
+
 
 		private void Controller_LoadMapEvent(string path)
 		{
