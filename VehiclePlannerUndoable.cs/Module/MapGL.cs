@@ -1,4 +1,5 @@
 ﻿using CtLib.Library;
+using GLCore;
 using GLStyle;
 using GLUI;
 using System;
@@ -60,6 +61,7 @@ namespace VehiclePlannerUndoable.cs
 				tsbGetLaser.Enabled = enable;
 				tsbGetMap.Enabled = enable;
 				tsbLocalization.Enabled = enable;
+				if (!enable) tsbLocalization.Checked = enable;
 				tsbScan.Enabled = enable;
 				tsbSendMap.Enabled = enable;
 			});
@@ -100,6 +102,7 @@ namespace VehiclePlannerUndoable.cs
 				tsbSave.Enabled = true;
 				tsbScan.Enabled = true;
 				tsbSendMap.Enabled = true;
+				ParrentUI.CancelLocalize();
 			}
 			else
 			{
@@ -108,6 +111,7 @@ namespace VehiclePlannerUndoable.cs
 				tsbInsertMap.Enabled = true;
 				tsbOpenFile.Enabled = true;
 				tsbSave.Enabled = true;
+				ParrentUI.CancelLocalize();
 			}
 		}
 	}
