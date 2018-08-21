@@ -154,6 +154,7 @@ namespace VehiclePlanner.Module.Implement {
 			// 
 			this.tsbGetMap.AutoSize = false;
 			this.tsbGetMap.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.tsbGetMap.Enabled = false;
 			this.tsbGetMap.Image = global::VehiclePlanner.Properties.Resources.Download;
 			this.tsbGetMap.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.tsbGetMap.Name = "tsbGetMap";
@@ -166,6 +167,7 @@ namespace VehiclePlanner.Module.Implement {
 			// 
 			this.tsbSendMap.AutoSize = false;
 			this.tsbSendMap.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.tsbSendMap.Enabled = false;
 			this.tsbSendMap.Image = global::VehiclePlanner.Properties.Resources.Upload;
 			this.tsbSendMap.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.tsbSendMap.Name = "tsbSendMap";
@@ -178,6 +180,7 @@ namespace VehiclePlanner.Module.Implement {
 			// 
 			this.tsbChangeMap.AutoSize = false;
 			this.tsbChangeMap.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.tsbChangeMap.Enabled = false;
 			this.tsbChangeMap.Image = global::VehiclePlanner.Properties.Resources.Change;
 			this.tsbChangeMap.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.tsbChangeMap.Name = "tsbChangeMap";
@@ -190,6 +193,7 @@ namespace VehiclePlanner.Module.Implement {
 			// 
 			this.tsbScan.AutoSize = false;
 			this.tsbScan.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.tsbScan.Enabled = false;
 			this.tsbScan.Image = global::VehiclePlanner.Properties.Resources.NewScan;
 			this.tsbScan.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.tsbScan.Name = "tsbScan";
@@ -202,6 +206,7 @@ namespace VehiclePlanner.Module.Implement {
 			// 
 			this.tsbController.AutoSize = false;
 			this.tsbController.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.tsbController.Enabled = false;
 			this.tsbController.Image = global::VehiclePlanner.Properties.Resources.NewController;
 			this.tsbController.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.tsbController.Name = "tsbController";
@@ -214,6 +219,7 @@ namespace VehiclePlanner.Module.Implement {
 			// 
 			this.tsbAutoReport.AutoSize = false;
 			this.tsbAutoReport.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.tsbAutoReport.Enabled = false;
 			this.tsbAutoReport.Image = global::VehiclePlanner.Properties.Resources.AutoResponse;
 			this.tsbAutoReport.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.tsbAutoReport.Name = "tsbAutoReport";
@@ -225,6 +231,7 @@ namespace VehiclePlanner.Module.Implement {
 			// tsbLocalization
 			// 
 			this.tsbLocalization.AutoSize = false;
+			this.tsbLocalization.BackColor = System.Drawing.SystemColors.Window;
 			this.tsbLocalization.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			this.tsbLocalization.Image = global::VehiclePlanner.Properties.Resources.Localize;
 			this.tsbLocalization.ImageTransparentColor = System.Drawing.Color.Magenta;
@@ -238,6 +245,7 @@ namespace VehiclePlanner.Module.Implement {
 			// 
 			this.tsbConfirm.AutoSize = false;
 			this.tsbConfirm.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.tsbConfirm.Enabled = false;
 			this.tsbConfirm.Image = global::VehiclePlanner.Properties.Resources.NewConfirm;
 			this.tsbConfirm.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.tsbConfirm.Name = "tsbConfirm";
@@ -250,6 +258,7 @@ namespace VehiclePlanner.Module.Implement {
 			// 
 			this.tsbGetLaser.AutoSize = false;
 			this.tsbGetLaser.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.tsbGetLaser.Enabled = false;
 			this.tsbGetLaser.Image = global::VehiclePlanner.Properties.Resources.Laser;
 			this.tsbGetLaser.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.tsbGetLaser.Name = "tsbGetLaser";
@@ -294,19 +303,19 @@ namespace VehiclePlanner.Module.Implement {
         protected System.Windows.Forms.Panel pnlShow;
         protected System.Windows.Forms.Panel pnlHide;
         private System.Windows.Forms.ToolStrip toolStrip1;
-        private Bindable.ToolStripButton tsbOpenFile;
-        private Bindable.ToolStripButton tsbClearMap;
-        private Bindable.ToolStripButton tsbScan;
-        private Bindable.ToolStripButton tsbController;
-        private Bindable.ToolStripButton tsbAutoReport;
-        private Bindable.ToolStripButton tsbConfirm;
-        private Bindable.ToolStripButton tsbGetLaser;
-        private Bindable.ToolStripButton tsbConnect;
-        private Bindable.ToolStripButton tsbGetMap;
-        private Bindable.ToolStripButton tsbSendMap;
-		private Bindable.ToolStripButton tsbInsertMap;
-		private Bindable.ToolStripButton tsbChangeMap;
 		protected Bindable.ToolStripButton tsbLocalization;
-		private Bindable.ToolStripButton tsbSave;
+		protected Bindable.ToolStripButton tsbScan;
+		protected Bindable.ToolStripButton tsbController;
+		protected Bindable.ToolStripButton tsbAutoReport;
+		protected Bindable.ToolStripButton tsbConfirm;
+		protected Bindable.ToolStripButton tsbGetLaser;
+		protected Bindable.ToolStripButton tsbGetMap;
+		protected Bindable.ToolStripButton tsbSendMap;
+		protected Bindable.ToolStripButton tsbChangeMap;
+		protected Bindable.ToolStripButton tsbOpenFile;
+		protected Bindable.ToolStripButton tsbClearMap;
+		protected Bindable.ToolStripButton tsbConnect;
+		protected Bindable.ToolStripButton tsbInsertMap;
+		protected Bindable.ToolStripButton tsbSave;
 	}
 }
