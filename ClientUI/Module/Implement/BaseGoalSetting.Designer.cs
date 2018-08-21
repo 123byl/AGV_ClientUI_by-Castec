@@ -328,6 +328,7 @@ namespace VehiclePlanner.Module.Implement {
 			this.tsbStop.Name = "tsbStop";
 			this.tsbStop.Size = new System.Drawing.Size(24, 24);
 			this.tsbStop.Text = "toolStripButton1";
+			this.tsbStop.ToolTipText = "Stop";
 			this.tsbStop.Click += new System.EventHandler(this.tsbStop_Click);
 			// 
 			// tsbCharging
