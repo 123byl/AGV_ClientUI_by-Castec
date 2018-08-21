@@ -17,7 +17,7 @@ namespace VehiclePlannerUndoable.cs {
 		/// 斷連線按鍵顯示與否
 		/// </summary>
 		/// <param name="enable"></param>
-		void ButtonEnable(bool enable);
+		void ConnectButtonEnable(bool enable);
     }
 
     public interface IGoalSetting : IBaseGoalSetting {
@@ -26,6 +26,11 @@ namespace VehiclePlannerUndoable.cs {
         /// 地圖控制項參考
         /// </summary>
         GLUICtrl RefMapControl { get; set; }
+		/// <summary>
+		/// 斷連線按鍵顯示與否
+		/// </summary>
+		/// <param name="enable"></param>
+		void ConnectButtonEnable(bool enable);
 
-    }
+	}
 }

@@ -36,7 +36,7 @@ namespace VehiclePlannerUndoable.cs
 		protected MapGL()
 		{
 			InitializeComponent();
-
+			tsbGetLaser.Visible = false;
 		}
 		public MapGL(CtVehiclePlanner_Ctrl refUI, DockState defState = DockState.Float) : base(refUI, defState)
 		{
@@ -44,13 +44,14 @@ namespace VehiclePlannerUndoable.cs
 
 			// 載入設定檔
 			StyleManager.LoadStyle("Style.ini");
-
+			tsbGetLaser.Visible = false;
+			ConnectButtonEnable(false);
 			mMapGL.Location = new Point(0, 0);
 			mMapGL.Dock = DockStyle.Fill;
 			pnlShow.Controls.Add(mMapGL);
 		}
 
-		public void ButtonEnable(bool enable)
+		public void ConnectButtonEnable(bool enable)
 		{
 			this.InvokeIfNecessary(() =>
 			{

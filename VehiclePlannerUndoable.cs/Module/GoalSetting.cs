@@ -76,6 +76,8 @@ namespace VehiclePlannerUndoable.cs
 			InitializeComponent();
 
 			/*-- 由於無法於介面設計師新增控制項，只好用程式碼新增 --*/
+			tsbPath.Visible = false;
+			ConnectButtonEnable(false);
 			dgvGoalPoint.Columns.Clear();
 			this.Controls.Remove(this.dgvGoalPoint);
 			this.Controls.Add(this.cboSingleType);
@@ -331,6 +333,17 @@ namespace VehiclePlannerUndoable.cs
 					throw new Exception($"未定義{singleType}類型資料");
 			}
 			return singleInfo;
+		}
+
+		public void ConnectButtonEnable(bool enable)
+		{
+			this.InvokeIfNecessary(() =>
+			{
+				tsbRun.Enabled = enable;
+				tsbRunAll.Enabled = enable;
+				tsbStop.Enabled = enable;
+				tsbCharging.Enabled = enable;
+			});
 		}
 
 		#endregion Function - Private Methods
