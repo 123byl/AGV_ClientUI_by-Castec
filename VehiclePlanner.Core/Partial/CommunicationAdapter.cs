@@ -126,6 +126,16 @@ namespace VehiclePlanner.Core
     /// </summary>
     public abstract class BaseSetManualVelocity : BaseBoolReturn { }
 
+	/// <summary>
+	/// 停止運動
+	/// </summary>
+	public abstract class BaseStop : BaseBoolReturn { }
+
+	/// <summary>
+	/// 停止充電
+	/// </summary>
+	public abstract class BaseUncharge : BaseBoolReturn { }
+
     #endregion BoolReturn
 
     #region ListReturn
