@@ -255,11 +255,10 @@ namespace VehiclePlannerUndoable.cs
 	public class ConvertGoTo : BaseGoTo
 	{
 		public ConvertGoTo(GoTo response)
-		{
-			Requited = false;
-			if (response != null)
+		{ 
+			var v = response;
+			if (Requited = v != null)
 			{
-				var v = response;
 				Started = v.Response;
 			}
 		}
@@ -334,5 +333,22 @@ namespace VehiclePlannerUndoable.cs
 		}
 	}
 
+	public class ConvertStop : BaseStop
+	{
+		public ConvertStop(Stop response)
+		{
+			var v = response;
+			if (Requited = v != null) Value = v.Response;
+		}
+	}
+
+	public class ConvertUncharge :BaseUncharge
+	{
+		public ConvertUncharge(Uncharge response)
+		{
+			var v = response;
+			if (Requited = v != null) Value = v.Response;
+		}
+	}
 
 }
