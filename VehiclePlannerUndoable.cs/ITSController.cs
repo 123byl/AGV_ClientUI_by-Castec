@@ -13,6 +13,7 @@ using System.Windows.Forms;
 using System.IO;
 using System.Drawing;
 using AsyncSocket;
+using System.Threading;
 
 namespace VehiclePlannerUndoable.cs
 {
@@ -41,7 +42,10 @@ namespace VehiclePlannerUndoable.cs
 		event LoadMapEventHandler OpenMap;
 
 		event ConnectStatusChangedEvent ConnectStatusChanged;
+
+		event ChargeChangeHandler ChargeChange;
 	}
+	public delegate void ChargeChangeHandler(bool value);
 
 	public delegate void LoadMapEventHandler(string path);
 
@@ -93,6 +97,10 @@ namespace VehiclePlannerUndoable.cs
 		/// 連線狀態改變
 		/// </summary>
 		public event ConnectStatusChangedEvent ConnectStatusChanged;
+		/// <summary>
+		/// 充電狀態改變
+		/// </summary>
+		public event ChargeChangeHandler ChargeChange;
 		#endregion Declaration - Fields
 
 		#region Declaration - Properties
@@ -159,9 +167,9 @@ namespace VehiclePlannerUndoable.cs
 			{
 				bool isAutoReport = auto;
 				var laser = AutoReportLaser(isAutoReport);
-				var status = AutoReportStatus(isAutoReport);
+				//var status = AutoReportStatus(isAutoReport);
 				var path = AutoReportPath(isAutoReport);
-				if (laser || status || path)
+				if (laser  || path)
 				{
 					OnBalloonTip("AutoReport", $"AutoReport {(auto ? "Open" : "Close")}");
 					IsAutoReport = isAutoReport;
@@ -373,6 +381,7 @@ namespace VehiclePlannerUndoable.cs
 		{
 			if (response is AGVStatus)
 			{
+				if (Status.Description != (response as AGVStatus).Description && (response as AGVStatus).Description == EDescription.Charge) ChargeChange?.Invoke(true);
 				Status = response as AGVStatus;
 			}
 			else if (response is AGVPath2D path)
@@ -391,6 +400,17 @@ namespace VehiclePlannerUndoable.cs
 					  point.AddRange(Point2DToPairCollection(laser.Points));
 				  }
 				);
+			}
+			else if (response is ConnectInfomation info)
+			{
+				if (info.IsConnect)
+				{
+					DelInvoke.Invoke(() => MessageBox.Show($"有其他裝置 {info.IpPort}，嘗試連入ITS", "連線警告"));
+				}
+				else
+				{
+					DelInvoke.Invoke(() => MessageBox.Show($"目前由 {info.IpPort} 正在使用，如要使用請先停止他人使用", "連線警告"));
+				}
 			}
 		}
 
@@ -495,7 +515,7 @@ namespace VehiclePlannerUndoable.cs
 		protected bool AutoReportLaser(bool on)
 		{
 			AutoReportLaser Info = (AutoReportLaser)Send(new AutoReportLaser(on));
-			bool response = Info.Response;
+			bool response = (Info != null) ? Info.Response : false;
 			return response;
 		}
 
@@ -509,7 +529,7 @@ namespace VehiclePlannerUndoable.cs
 		protected bool AutoReportPath(bool on)
 		{
 			AutoReportPath Info = (AutoReportPath)Send(new AutoReportPath(on));
-			bool response = Info.Response;
+			bool response = (Info != null) ? Info.Response : false;
 			return response;
 		}
 
@@ -578,6 +598,7 @@ namespace VehiclePlannerUndoable.cs
 						if (true || mStatus?.Description == EDescription.Map)
 						{
 							isScanning = StopScanning();
+							Thread.Sleep(3000);
 							CloseMotionController?.Invoke(this, EventArgs.Empty);
 							OnBalloonTip("Scan Map", "Close Scan Map");
 							BaseFileReturn ori = RequestOriFile(_oriName);
@@ -737,6 +758,28 @@ namespace VehiclePlannerUndoable.cs
 					break;
 			}
 			ConnectStatusChanged?.Invoke(sender, e);
+		}
+
+		protected override BaseBoolReturn RequireStopAGV()
+		{
+			Stop Info = Send(new Stop(null)) as Stop;
+			return new ConvertStop(Info);
+		}
+
+		protected override BaseBoolReturn RequireUncharge()
+		{
+			Uncharge Info = Send(new Uncharge(null)) as Uncharge;
+			return new  ConvertUncharge(Info);
+		}
+
+		public override void StopAGV()
+		{
+			RequireStopAGV();
+		}
+
+		public override void Uncharge()
+		{
+			RequireUncharge();
 		}
 		#endregion Function - Events
 
