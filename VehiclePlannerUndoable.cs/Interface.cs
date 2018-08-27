@@ -32,5 +32,10 @@ namespace VehiclePlannerUndoable.cs {
 		/// <param name="enable"></param>
 		void ConnectButtonEnable(bool enable);
 
+		/// <summary>
+		/// 充電圖形與否
+		/// </summary>
+		/// <param name="isCharge"></param>
+		void ChargeButtonImage(bool isCharge);
 	}
 }
