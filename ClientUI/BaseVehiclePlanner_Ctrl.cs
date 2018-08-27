@@ -1227,10 +1227,10 @@ namespace VehiclePlanner
 			bool ret = true;
 			switch (keyData)
 			{
-				case Keys.C:
-					Console.WriteLine("Main");
-					//Connect(!Controller.IsConnected);
-					break;
+				//case Keys.C:
+				//	Console.WriteLine("Main");
+				//	//Connect(!Controller.IsConnected);
+				//	break;
 				default:
 					ret = base.ProcessCmdKey(ref msg, keyData);
 					break;

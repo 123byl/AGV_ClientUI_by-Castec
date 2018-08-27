@@ -297,7 +297,7 @@ namespace VehiclePlanner.Module.Implement {
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		private void tsbCharging_Click(object sender, EventArgs e) {
+		protected virtual void tsbCharging_Click(object sender, EventArgs e) {
             lock (mKey) {
 				string powerName = GetChargeName();
                 rUI.Charging(powerName);
