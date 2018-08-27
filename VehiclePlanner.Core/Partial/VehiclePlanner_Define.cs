@@ -269,6 +269,14 @@ namespace VehiclePlanner.Core {
         /// 搜尋可用的iTS設備
         /// </summary>
         void FindCar();
+		/// <summary>
+		/// 停止AGV動作
+		/// </summary>
+		void StopAGV();
+		/// <summary>
+		/// 停止充電
+		/// </summary>
+		void Uncharge();
 
         /// <summary>
         /// 要求Map檔
