@@ -489,6 +489,26 @@ namespace VehiclePlannerAGVBase {
 		{
 			throw new NotImplementedException();
 		}
+
+		protected override BaseBoolReturn RequireStopAGV()
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override BaseBoolReturn RequireUncharge()
+		{
+			throw new NotImplementedException();
+		}
+
+		public override void StopAGV()
+		{
+			throw new NotImplementedException();
+		}
+
+		public override void Uncharge()
+		{
+			throw new NotImplementedException();
+		}
 	}
 
     #endregion Funciotn - Private Methods
