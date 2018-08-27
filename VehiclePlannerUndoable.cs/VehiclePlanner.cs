@@ -22,6 +22,7 @@ using CtItsParameter;
 using CtLib.Library;
 using CtExtendLib;
 using AsyncSocket;
+using VehiclePlannerUndoable.cs.Properties;
 
 namespace VehiclePlannerUndoable.cs
 {
@@ -32,10 +33,10 @@ namespace VehiclePlannerUndoable.cs
 	public partial class CtVehiclePlanner_Ctrl : BaseVehiclePlanner_Ctrl
 	{
 		#region Declaration - Field
-		/// <summary>
-		/// Car Position 設定位置
-		/// </summary>
-		private Point2D localizePosition = null;
+		///// <summary>
+		///// Car Position 設定位置
+		///// </summary>
+		//private Point2D localizePosition = null;
 		#endregion
 
 		#region Declaration - Properties
@@ -44,6 +45,8 @@ namespace VehiclePlannerUndoable.cs
 		private IMapGL MapGL { get => mDockContent[miMapGL] as IMapGL; }
 
 		private IGoalSetting GoalSetting { get => mDockContent[miGoalSetting] as IGoalSetting; }
+
+		public bool IsCharge { get; set; } = false;
 		#endregion
 
 		#region Function - Constructors 
@@ -80,8 +83,9 @@ namespace VehiclePlannerUndoable.cs
 
 		public void CancelLocalize()
 		{
-			localizePosition = null;
-			GLCMD.CMD.DeleteAGV(2);
+			//localizePosition = null;
+			//GLCMD.CMD.DeleteAGV(2);
+			GLCMD.CMD.CancelLocalize();
 		}
 		#endregion
 
@@ -89,6 +93,7 @@ namespace VehiclePlannerUndoable.cs
 		protected override void Initial(IBaseVehiclePlanner vehiclePlanner)
 		{
 			base.Initial(vehiclePlanner);
+			base.WindowState = FormWindowState.Maximized;
 			miLogin.Visible = false;
 			miBypass.Visible = false;
 			miUserManager.Visible = false;
@@ -97,6 +102,7 @@ namespace VehiclePlannerUndoable.cs
 			rVehiclePlanner.Controller.CloseMotionController += Controller_CloseMotionController;
 			rVehiclePlanner.Controller.OpenMap += Controller_LoadMapEvent;
 			rVehiclePlanner.Controller.ConnectStatusChanged += Controller_ConnectStatusChanged;
+			rVehiclePlanner.Controller.ChargeChange += Controller_ChargeChange;
 			GoalSetting.RefMapControl = MapGL.MapControl;
 		}
 
@@ -200,7 +206,6 @@ namespace VehiclePlannerUndoable.cs
 		{
 			mIsSetting = !mIsSetting;
 		}
-
 		#endregion
 
 		#region Function - Private Methods
@@ -216,21 +221,24 @@ namespace VehiclePlannerUndoable.cs
 			MouseEventArgs m = (MouseEventArgs)e;
 			if (mIsSetting)
 			{
-				if (localizePosition == null)
+				if (!GLCMD.CMD.IsLocalize)
 				{
 					OnBalloonTip("Localization", "Set iTS Position");
-					localizePosition = ToPoint2D(MapGL.MapControl.ScreenToGL(m.X, m.Y));
-					GLCMD.CMD.AddAGV(2, "Localization", localizePosition.X, localizePosition.Y, 0);
+					//localizePosition = ToPoint2D(MapGL.MapControl.ScreenToGL(m.X, m.Y));
+					//GLCMD.CMD.AddAGV(2, "Localization", localizePosition.X, localizePosition.Y, 0);
+					GLCMD.CMD.StartLocalize(MapGL.MapControl.ScreenToGL(m.X, m.Y));
 				}
 				else
 				{
 					OnBalloonTip("Localization", "Set iTS Vector");
-					OnConsoleMessage($"NewPos{localizePosition.ToString()}");
-					Vector2D V = new Vector2D(localizePosition, ToPoint2D(MapGL.MapControl.ScreenToGL(m.X, m.Y)));
+					//OnConsoleMessage($"NewPos{localizePosition.ToString()}");
+					var toword = GLCMD.CMD.FinishLocalize(MapGL.MapControl.ScreenToGL(m.X, m.Y));
+					Vector2D V = new Vector2D(ToPoint2D(toword.Position), ToPoint2D(MapGL.MapControl.ScreenToGL(m.X, m.Y)));
 					//GLCMD.CMD.AddAGV(2, "Localization",V.Start.X,V.Start.Y,V.Angle);
 					Task.Run(() => rVehiclePlanner.Controller.SetPosition(V));
-					localizePosition = null;
-					GLCMD.CMD.DeleteAGV(2);
+					//localizePosition = null;
+					
+					//GLCMD.CMD.DeleteAGV(2);
 
 				}
 			}
@@ -249,8 +257,14 @@ namespace VehiclePlannerUndoable.cs
 			var enable = e.ConnectStatus == EConnectStatus.Connect ? true : false;
 			MapGL.ConnectButtonEnable(enable);
 			GoalSetting.ConnectButtonEnable(enable);
+			this.InvokeIfNecessary(() => tslbConnect.Image = enable ? Resources.LED_L_Green : Resources.LED_L_Red);
 		}
 
+		private void Controller_ChargeChange(bool value)
+		{
+			IsCharge = true;
+			GoalSetting.ChargeButtonImage(IsCharge);
+		}
 
 		private void Controller_LoadMapEvent(string path)
 		{
@@ -317,6 +331,11 @@ namespace VehiclePlannerUndoable.cs
 			if (Controller.ConnectStatus && (s.Description == EDescription.Arrived || s.Description == EDescription.Idle))
 			{
 				GLCMD.CMD.DoAddSingleTowardPair("General", s.X, s.Y, s.Toward);
+			}
+			else
+			{
+				SetBalloonTip("Set Goal Warnning", "Please check iTS status whether is Arrived or Idle");
+				OnConsoleMessage("Set iTS current position to goal error,please check iTS status whether is Arrived or Idle");
 			}
 		}
 
@@ -415,6 +434,7 @@ namespace VehiclePlannerUndoable.cs
 		public void StopRunLoop()
 		{
 			IsRunLoop = false;
+			Task.Run(()=>Controller.StopAGV());
 		}
 		#endregion
 

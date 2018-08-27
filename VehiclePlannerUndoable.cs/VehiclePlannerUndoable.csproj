@@ -231,6 +231,11 @@
     <Content Include="Image\MagneticTracking.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Image\Pin.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Include="Resources\Uncharge.png" />
+    <None Include="Resources\Charge.png" />
     <None Include="Resources\Zoom.png" />
     <None Include="Resources\Yellow Ball.png" />
     <None Include="Resources\Warning_2.png" />
