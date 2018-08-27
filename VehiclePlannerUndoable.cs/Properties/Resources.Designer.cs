@@ -353,6 +353,16 @@ namespace VehiclePlannerUndoable.cs.Properties {
         /// <summary>
         ///   查詢類型 System.Drawing.Bitmap 的當地語系化資源。
         /// </summary>
+        internal static System.Drawing.Bitmap Charge {
+            get {
+                object obj = ResourceManager.GetObject("Charge", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類型 System.Drawing.Bitmap 的當地語系化資源。
+        /// </summary>
         internal static System.Drawing.Bitmap Check {
             get {
                 object obj = ResourceManager.GetObject("Check", resourceCulture);
@@ -1046,6 +1056,16 @@ namespace VehiclePlannerUndoable.cs.Properties {
         internal static System.Drawing.Bitmap Sub_2 {
             get {
                 object obj = ResourceManager.GetObject("Sub_2", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類型 System.Drawing.Bitmap 的當地語系化資源。
+        /// </summary>
+        internal static System.Drawing.Bitmap Uncharge {
+            get {
+                object obj = ResourceManager.GetObject("Uncharge", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
