@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using VehiclePlanner.Module.Implement;
+using VehiclePlannerUndoable.cs.Properties;
 using WeifenLuo.WinFormsUI.Docking;
 
 
@@ -65,6 +66,7 @@ namespace VehiclePlannerUndoable.cs
 				if (!enable) tsbLocalization.Checked = enable;
 				tsbScan.Enabled = enable;
 				tsbSendMap.Enabled = enable;
+				tsbConnect.Image = enable ? Resources.Connect : Resources.Disconnect;
 			});
 		}
 
