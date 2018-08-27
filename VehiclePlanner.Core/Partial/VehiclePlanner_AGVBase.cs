@@ -1078,6 +1078,18 @@ namespace VehiclePlanner.Core
 		protected abstract BaseBoolReturn SetManualVelocity(int leftVelocity, int rightVelocity);
 
 		/// <summary>
+		/// 停止iTS指令回復
+		/// </summary>
+		/// <returns></returns>
+		protected abstract BaseBoolReturn RequireStopAGV();
+
+		/// <summary>
+		/// 解除充電指令回復
+		/// </summary>
+		/// <returns></returns>
+		protected abstract BaseBoolReturn RequireUncharge();
+
+		/// <summary>
 		/// 用户端连线初始化
 		/// </summary>
 		protected abstract void ClientInitial();
@@ -1119,6 +1131,16 @@ namespace VehiclePlanner.Core
 		/// </summary>
 		/// <param name="reponse"></param>
 		protected abstract void DoReceiveAction(TResponse reponse);
+
+		/// <summary>
+		/// iTS停止移動動作
+		/// </summary>
+		public abstract void StopAGV();
+
+		/// <summary>
+		/// iTS解除充電動作
+		/// </summary>
+		public abstract void Uncharge();
 
 		#endregion Funciton - Private Methdos
 
