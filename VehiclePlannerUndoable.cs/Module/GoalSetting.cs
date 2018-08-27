@@ -15,6 +15,7 @@ using System.Windows.Forms;
 using VehiclePlanner.Module.Implement;
 using WeifenLuo.WinFormsUI.Docking;
 using CtExtendLib;
+using VehiclePlannerUndoable.cs.Properties;
 
 namespace VehiclePlannerUndoable.cs
 {
@@ -44,6 +45,7 @@ namespace VehiclePlannerUndoable.cs
 		#endregion Declaration - Fields
 
 		#region Declaration - Properties
+		private CtVehiclePlanner_Ctrl parentUI { get => (rUI as CtVehiclePlanner_Ctrl); }
 
 		/// <summary>
 		/// MapGL控制項參考
@@ -134,14 +136,14 @@ namespace VehiclePlannerUndoable.cs
 		}
 		protected override string GetChargeName()
 		{
-			string goal=null;
+			string goal = null;
 			var list = GLCMD.CMD.SingleTowerPairInfo.Where(data => data.StyleName == "ChargingDocking");
 			if (list != null)
 			{
 				DataTable table = new DataTable();
 				table.Columns.Add(nameof(ISingleTowardPairInfo.ID));
 				table.Columns.Add(nameof(ISingleTowardPairInfo.Name));
-				foreach(ISingleTowardPairInfo item in list)
+				foreach (ISingleTowardPairInfo item in list)
 				{
 					DataRow row = table.NewRow();
 					row[nameof(ISingleTowardPairInfo.ID)] = item.ID;
@@ -165,10 +167,10 @@ namespace VehiclePlannerUndoable.cs
 			List<string> goals = null;
 			//if (cboSingleType.Text == nameof(SingleTowardPairInfo))
 			//{
-			goals =	GLCMD.CMD.SingleTowerPairInfo.Where(data => data.StyleName == "General").Select(data=>data.Name).ToList<string>();
-			 //(from DataGridViewRow row in dgvGoalPoint.Rows
-				//					  where row.Cells[nameof(SingleTowardPairInfo.StyleName)].Value.ToString() == "General"
-				//					  select row.Cells[nameof(SingleTowardPairInfo.Name)].Value.ToString()).ToList<string>();
+			goals = GLCMD.CMD.SingleTowerPairInfo.Where(data => data.StyleName == "General").Select(data => data.Name).ToList<string>();
+			//(from DataGridViewRow row in dgvGoalPoint.Rows
+			//					  where row.Cells[nameof(SingleTowardPairInfo.StyleName)].Value.ToString() == "General"
+			//					  select row.Cells[nameof(SingleTowardPairInfo.Name)].Value.ToString()).ToList<string>();
 			//}
 			return goals;
 		}
@@ -185,6 +187,18 @@ namespace VehiclePlannerUndoable.cs
 			return list;
 		}
 
+		protected override void tsbCharging_Click(object sender, EventArgs e)
+		{
+			if (parentUI.IsCharge)
+			{
+				Task.Run(() => parentUI.rVehiclePlanner.Controller.Uncharge());
+				ChargeButtonImage(true);
+			}
+			else
+			{
+				base.tsbCharging_Click(sender, e);
+			}
+		}
 		internal void InvokeIfNecessaryDgv(MethodInvoker act)
 		{
 			dgvGoalPoint.InvokeIfNecessary(act);
@@ -207,7 +221,7 @@ namespace VehiclePlannerUndoable.cs
 			}
 		}
 
-		private void cboSingleType_TextChanged(object sender ,EventArgs e )
+		private void cboSingleType_TextChanged(object sender, EventArgs e)
 		{
 			mCurrentIndex = -1;
 			if (sender is ComboBox cbo)
@@ -344,6 +358,26 @@ namespace VehiclePlannerUndoable.cs
 				tsbStop.Enabled = enable;
 				tsbCharging.Enabled = enable;
 			});
+		}
+
+		public void ChargeButtonImage(bool isCharge)
+		{
+			if (isCharge)
+			{
+				this.InvokeIfNecessary(() =>
+				{
+					tsbCharging.Image = Resources.Uncharge;
+					tsbCharging.Text = "UnCharge";
+				});
+			}
+			else
+			{
+				this.InvokeIfNecessary(() =>
+				{
+					tsbCharging.Image = Resources.Charge;
+					tsbCharging.Text = "Charge";
+				});
+			}
 		}
 
 		#endregion Function - Private Methods
