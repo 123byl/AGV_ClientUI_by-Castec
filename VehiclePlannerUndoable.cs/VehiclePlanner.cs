@@ -237,7 +237,7 @@ namespace VehiclePlannerUndoable.cs
 					//GLCMD.CMD.AddAGV(2, "Localization",V.Start.X,V.Start.Y,V.Angle);
 					Task.Run(() => rVehiclePlanner.Controller.SetPosition(V));
 					//localizePosition = null;
-					
+
 					//GLCMD.CMD.DeleteAGV(2);
 
 				}
@@ -258,6 +258,7 @@ namespace VehiclePlannerUndoable.cs
 			MapGL.ConnectButtonEnable(enable);
 			GoalSetting.ConnectButtonEnable(enable);
 			this.InvokeIfNecessary(() => tslbConnect.Image = enable ? Resources.LED_L_Green : Resources.LED_L_Red);
+			if (enable) MapGL.MapControl.Focus(Convert.ToInt32(rVehiclePlanner.Controller.Status.X), Convert.ToInt32(rVehiclePlanner.Controller.Status.Y));
 		}
 
 		private void Controller_ChargeChange(bool value)
@@ -434,7 +435,7 @@ namespace VehiclePlannerUndoable.cs
 		public void StopRunLoop()
 		{
 			IsRunLoop = false;
-			Task.Run(()=>Controller.StopAGV());
+			Task.Run(() => Controller.StopAGV());
 		}
 		#endregion
 
