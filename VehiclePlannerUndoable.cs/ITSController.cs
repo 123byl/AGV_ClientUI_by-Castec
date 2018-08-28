@@ -14,6 +14,7 @@ using System.IO;
 using System.Drawing;
 using AsyncSocket;
 using System.Threading;
+using CtExtendLib;
 
 namespace VehiclePlannerUndoable.cs
 {
@@ -169,7 +170,7 @@ namespace VehiclePlannerUndoable.cs
 				var laser = AutoReportLaser(isAutoReport);
 				//var status = AutoReportStatus(isAutoReport);
 				var path = AutoReportPath(isAutoReport);
-				if (laser  || path)
+				if (laser || path)
 				{
 					OnBalloonTip("AutoReport", $"AutoReport {(auto ? "Open" : "Close")}");
 					IsAutoReport = isAutoReport;
@@ -323,10 +324,6 @@ namespace VehiclePlannerUndoable.cs
 		protected override void ClientConnect(string ip, int port)
 		{
 			mClient.Connect(ip, port);
-			//if (mClient.ConnectStatus!= AsyncSocket.EConnectStatus.Connect )
-			//{
-			//	Task.Run(() => MessageBox.Show("ITS只允許單一連線，請檢查是否有其他人正在使用Vehicle Planner", "連線警告", MessageBoxButtons.OK, MessageBoxIcon.Warning));
-			//}
 		}
 
 		/// <summary>
@@ -566,7 +563,7 @@ namespace VehiclePlannerUndoable.cs
 		{
 			try
 			{
-				BaseBoolReturn isScanning = null;
+				BaseBoolReturn scanReturn = null;
 				if (IsScanning != scan)
 				{
 					if (scan)
@@ -576,9 +573,9 @@ namespace VehiclePlannerUndoable.cs
 							string oriName = string.Empty;
 							if (InputBox.Invoke(out oriName, "MAP Name", "Set Map File Name"))
 							{
-								isScanning = SetScanningOriFileName(oriName);
+								scanReturn = SetScanningOriFileName(oriName);
 							}
-							if (isScanning.Requited && isScanning.Value)
+							if (scanReturn.Requited && scanReturn.Value)
 							{
 								ShowMotionController?.Invoke(this, EventArgs.Empty);
 								OnBalloonTip("Scan Map", "Start Scan Map");
@@ -593,14 +590,15 @@ namespace VehiclePlannerUndoable.cs
 					}
 					else
 					{//停止掃描
-
-						IsScanning = false;
+					 //IsScanning = false;
 						if (true || mStatus?.Description == EDescription.Map)
 						{
-							isScanning = StopScanning();
-							Thread.Sleep(3000);
 							CloseMotionController?.Invoke(this, EventArgs.Empty);
+							scanReturn = StopScanning();
 							OnBalloonTip("Scan Map", "Close Scan Map");
+							LoadingForm load = new LoadingForm();
+							DelInvoke.Invoke(() => load.Start("Wait Load Map", 3));
+
 							BaseFileReturn ori = RequestOriFile(_oriName);
 							if (ori != null)
 							{
@@ -632,9 +630,9 @@ namespace VehiclePlannerUndoable.cs
 							OnConsoleMessage($"The iTS is now in {mStatus?.Description}, can't stop scanning");
 						}
 					}
-					if (isScanning != null)
+					if (scanReturn != null)
 					{
-						IsScanning = isScanning.Value;
+						IsScanning = scanReturn.Value;
 					}
 				}
 			}
@@ -657,19 +655,26 @@ namespace VehiclePlannerUndoable.cs
 				var data = line.Split(new char[] { ',' });
 				for (int i = 3; i <= data.Length - 2; i += 2)
 				{
-					int x = Convert.ToInt32(data[i]);
-					int y = Convert.ToInt32(data[i + 1]);
-					sb.AppendLine($"{x.ToString()},{y.ToString()}");
-					if (maxX == null) maxX = x; else if (maxX < x) maxX = x;
-					if (maxY == null) maxY = y; else if (maxY < y) maxY = y;
-					if (minX == null) minX = x; else if (minX > x) minX = x;
-					if (minY == null) minY = y; else if (minY > y) minY = y;
+					try
+					{
+						int x = Convert.ToInt32(Convert.ToDouble(data[i]));
+						int y = Convert.ToInt32(Convert.ToDouble(data[i + 1]));
+						sb.AppendLine($"{x.ToString()},{y.ToString()}");
+						if (maxX == null) maxX = x; else if (maxX < x) maxX = x;
+						if (maxY == null) maxY = y; else if (maxY < y) maxY = y;
+						if (minX == null) minX = x; else if (minX > x) minX = x;
+						if (minY == null) minY = y; else if (minY > y) minY = y;
+					}
+					catch (Exception ex)
+					{
+						OnConsoleMessage(ex.Message);
+					}
 				}
 			}
 			sb.AppendLine($"Minimum Position:{minX},{minY}");
 			sb.AppendLine($"Maximum Position:{maxX},{maxY}");
-			path=path.Replace("ori", "map");
-			File.WriteAllText(path,sb.ToString());
+			path = path.Replace("ori", "map");
+			File.WriteAllText(path, sb.ToString());
 		}
 
 
@@ -769,7 +774,7 @@ namespace VehiclePlannerUndoable.cs
 		protected override BaseBoolReturn RequireUncharge()
 		{
 			Uncharge Info = Send(new Uncharge(null)) as Uncharge;
-			return new  ConvertUncharge(Info);
+			return new ConvertUncharge(Info);
 		}
 
 		public override void StopAGV()
