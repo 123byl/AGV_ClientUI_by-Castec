@@ -72,7 +72,7 @@ namespace VehiclePlannerUndoable.cs
 
 		protected override void tsbSetCar_Click(object sender, EventArgs e)
 		{
-			ParrentUI.ITest_SettingCarPos();
+			ParrentUI.Locate();
 			tsbLocalization.Checked = !tsbLocalization.Checked;
 			if (tsbLocalization.Checked)
 			{
