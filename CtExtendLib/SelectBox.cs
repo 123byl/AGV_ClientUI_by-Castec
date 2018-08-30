@@ -16,6 +16,7 @@ namespace CtExtendLib
 		public DataRow SelectRow { get; private set; }
 		private DataTable _table;
 		private const string _selectHead = "Click Button";
+		private string _highlight = null;
 		public static SelectBox Show(string title, DataTable table)
 		{
 			return new SelectBox(title, table,"Go To");
@@ -23,9 +24,11 @@ namespace CtExtendLib
 		public SelectBox()
 		{
 			InitializeComponent();
+			dgvSelect.Paint += Dgv_Paint;
+			dgvSelect.SelectionChanged += Dgv_SelectionChanged;
 		}
 
-		public SelectBox(string title, DataTable table,string btnText = "Click") : this()
+		public SelectBox(string title, DataTable table,string btnText = "Click",string highlight = null) : this()
 		{
 			Text = title;
 			_table = table;
@@ -50,10 +53,26 @@ namespace CtExtendLib
 			dgvSelect.Columns.Add(btnCol);
 			dgvSelect.CellContentClick += Dgv_CellContentClick;
 			dgvSelect.DataSource = table;
+			_highlight = highlight;
 		}
+
+		private void Dgv_Paint(object sender ,EventArgs e )
+		{
+			if (_highlight != null)
+			{
+				for (int i = 0; i < dgvSelect.RowCount; i++)
+				{
+					if (dgvSelect.Rows[i].Cells[0].Value.ToString() == _highlight)
+					{
+						dgvSelect.Rows[i].Cells[0].Style.BackColor= Color.LightGreen;
+					}
+				}
+			}
+		}
+
 		private void Dgv_CellContentClick(object sender, DataGridViewCellEventArgs e)
 		{
-			if (dgvSelect.Columns[e.ColumnIndex].HeaderText == _selectHead)
+			if (dgvSelect.Columns[e.ColumnIndex].HeaderText == _selectHead && e.RowIndex !=- 1)
 			{
 				SelectRow = _table.NewRow();
 				for (int i = 0; i <= dgvSelect.ColumnCount - 2; i++)
@@ -63,6 +82,10 @@ namespace CtExtendLib
 				}
 				this.Close();
 			}
+		}
+		private void Dgv_SelectionChanged(object sender ,EventArgs e )
+		{
+			dgvSelect.ClearSelection();
 		}
 
 	}
