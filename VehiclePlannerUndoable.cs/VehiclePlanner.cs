@@ -23,6 +23,7 @@ using CtLib.Library;
 using CtExtendLib;
 using AsyncSocket;
 using VehiclePlannerUndoable.cs.Properties;
+using Hasp;
 
 namespace VehiclePlannerUndoable.cs
 {
@@ -47,12 +48,20 @@ namespace VehiclePlannerUndoable.cs
 		private IGoalSetting GoalSetting { get => mDockContent[miGoalSetting] as IGoalSetting; }
 
 		public bool IsCharge { get; set; } = false;
+
+		private CtHasp _hasp = new CtHasp();
+
+		private bool _dongleMode = false;
 		#endregion
 
 		#region Function - Constructors 
 		public CtVehiclePlanner_Ctrl(IVehiclePlanner vehiclePlanner) : base()
 		{
 			InitializeComponent();
+
+			Load += UI_Load;
+
+			CheckMode();
 
 			rVehiclePlanner = vehiclePlanner;
 
@@ -61,7 +70,6 @@ namespace VehiclePlannerUndoable.cs
 			Bindings(rVehiclePlanner);
 
 			Bindings(rVehiclePlanner.Controller);
-
 		}
 		#endregion
 
@@ -184,17 +192,21 @@ namespace VehiclePlannerUndoable.cs
 		protected override string SelectFile(string fileList)
 		{
 			string fileName = null;
+			string currentFile = null;
 			var fileNames = fileList.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 			DataTable table = new DataTable();
 			table.Columns.Add("Name");
 			foreach (string name in fileNames)
 			{
+				string n;
+				if (name.EndsWith("*")) { n = name.Replace("*", ""); currentFile = n; }
+				else n = name;
 				DataRow row = table.NewRow();
-				row["Name"] = name;
+				row["Name"] = n;
 				table.Rows.Add(row);
 			}
 			SelectBox selectBox = null;
-			using (selectBox = new SelectBox("Select File", table, "Determine"))
+			using (selectBox = new SelectBox("Select File", table, "Determine",currentFile))
 			{
 				var result = this.InvokeIfNecessary(() => selectBox.ShowDialog(this));
 				fileName = selectBox.SelectRow?["Name"].ToString();
@@ -202,13 +214,31 @@ namespace VehiclePlannerUndoable.cs
 			return fileName;
 		}
 
-		public override void ITest_SettingCarPos()
+		public override void Locate()
 		{
 			mIsSetting = !mIsSetting;
 		}
 		#endregion
 
 		#region Function - Private Methods
+		private void CheckMode()
+		{
+			var para = System.Environment.GetCommandLineArgs();
+			foreach(string item in para)
+			{
+				switch (item.ToLower())
+				{
+					case "debug":
+						_dongleMode = false;
+						break;
+					default:
+						_dongleMode = true;
+						break;
+				}
+				if (!_dongleMode) break;
+			}
+		}
+
 		private Point2D ToPoint2D(IPair Point)
 		{
 			return new Point2D(Point.X, Point.Y);
@@ -216,6 +246,17 @@ namespace VehiclePlannerUndoable.cs
 		#endregion
 
 		#region Function - Events
+		private void UI_Load(object sender , EventArgs e)
+		{
+			if (_dongleMode)
+			{
+				if (!_hasp.IsDongleCorrect())
+				{
+					base.Exit();
+				}
+			}
+		}
+
 		protected void MapControl_GLClick(object sender, EventArgs e)
 		{
 			MouseEventArgs m = (MouseEventArgs)e;
