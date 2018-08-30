@@ -546,12 +546,12 @@ namespace VehiclePlanner
 		/// <summary>
 		/// 切換SetCar旗標
 		/// </summary>
-		public virtual void ITest_SettingCarPos() => mIsSetting = true;
+		public virtual void Locate() => mIsSetting = true;
 
 		/// <summary>
 		/// 傳送Map檔
 		/// </summary>
-		internal void ITest_SendMap()
+		internal void UploadMap()
 		{
 			OpenFileDialog openMap = new OpenFileDialog()
 			{
@@ -580,7 +580,7 @@ namespace VehiclePlanner
 		/// 載入Map檔
 		/// </summary>
 		/// <returns></returns>
-		internal void ITest_LoadMap()
+		internal void LoadMap()
 		{
 			try
 			{
@@ -627,7 +627,7 @@ namespace VehiclePlanner
 		/// <summary>
 		/// 車子位置微調修正
 		/// </summary>
-		internal void CarPosConfirm() => Task.Run(() => rVehiclePlanner.Controller.DoPositionComfirm());
+		internal void Confirm() => Task.Run(() => rVehiclePlanner.Controller.DoPositionComfirm());
 
 		/// <summary>
 		/// 啟動馬達激磁
@@ -655,7 +655,7 @@ namespace VehiclePlanner
 		/// <summary>
 		/// 取得Map檔
 		/// </summary>
-		internal void GetMap() => Task.Run(() => rVehiclePlanner.Controller.GetMap());
+		internal void DownloadMap() => Task.Run(() => rVehiclePlanner.Controller.GetMap());
 
 		/// <summary>
 		/// 變更地圖
@@ -803,7 +803,7 @@ namespace VehiclePlanner
 		/// <param name="e"></param>
 		private void tsbGetMap_Click(object sender, EventArgs e)
 		{
-			GetMap();
+			DownloadMap();
 		}
 
 		/// <summary>
@@ -813,7 +813,7 @@ namespace VehiclePlanner
 		/// <param name="e"></param>
 		private void tsbSendMap_Click(object sender, EventArgs e)
 		{
-			ITest_SendMap();
+			UploadMap();
 		}
 
 		#endregion ToolStripButton
