@@ -121,17 +121,11 @@ namespace VehiclePlannerUndoable.cs
 					row[nameof(ISingleTowardPairInfo.Name)] = item.Name;
 					table.Rows.Add(row);
 				}
-				var ctl = SelectBox.Show("Select Charge Goal", table);
+				var ctl = SelectBox.Show("Select Goal", table);
 				ctl.ShowDialog();
 				goalname = ctl.SelectRow?[nameof(ISingleTowardPairInfo.Name)].ToString();
 				ctl.Dispose();
 			}
-
-
-			//if (cboSingleType.Text == nameof(SingleTowardPairInfo) && mCurrentIndex != -1)
-			//{
-			//			goalname = dgvGoalPoint.Rows[mCurrentIndex].Cells[nameof(SingleTowardPair.Name)].Value.ToString();
-			//}
 			return goalname;
 		}
 		protected override string GetChargeName()
