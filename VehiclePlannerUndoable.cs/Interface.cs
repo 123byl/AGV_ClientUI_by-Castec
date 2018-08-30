@@ -18,7 +18,12 @@ namespace VehiclePlannerUndoable.cs {
 		/// </summary>
 		/// <param name="enable"></param>
 		void ConnectButtonEnable(bool enable);
-    }
+
+		/// <summary>
+		/// 移動完畢
+		/// </summary>
+		void MovePositionFinish();
+	}
 
     public interface IGoalSetting : IBaseGoalSetting {
         
