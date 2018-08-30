@@ -105,6 +105,11 @@ namespace VehiclePlanner
 		protected bool mIsSetting = false;
 
 		/// <summary>
+		/// 是否在設定移動任意座標
+		/// </summary>
+		protected bool mIsMovement = false;
+
+		/// <summary>
 		/// MapGL當前滑鼠模式
 		/// </summary>
 		protected CursorMode mCursorMode = CursorMode.Select;
@@ -547,6 +552,8 @@ namespace VehiclePlanner
 		/// 切換SetCar旗標
 		/// </summary>
 		public virtual void Locate() => mIsSetting = true;
+
+		public virtual void MovePosition() => mIsMovement = true;
 
 		/// <summary>
 		/// 傳送Map檔
