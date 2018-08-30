@@ -204,6 +204,11 @@ namespace VehiclePlanner.Module.Implement
 		{
 			rUI.SaveMap();
 		}
+
+		protected virtual void tsbMove_Click(object sender, EventArgs e)
+		{
+			rUI.MovePosition();
+		}
 		#endregion Function - Events
 
 		#region Funciton - Public Methods

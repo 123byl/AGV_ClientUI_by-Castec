@@ -43,6 +43,7 @@ namespace VehiclePlanner.Module.Implement {
 			this.tsbAutoReport = new CtBind.Bindable.ToolStripButton();
 			this.tsbLocalization = new CtBind.Bindable.ToolStripButton();
 			this.tsbConfirm = new CtBind.Bindable.ToolStripButton();
+			this.tsbMove = new CtBind.Bindable.ToolStripButton();
 			this.tsbGetLaser = new CtBind.Bindable.ToolStripButton();
 			this.pnlShow.SuspendLayout();
 			this.toolStrip1.SuspendLayout();
@@ -93,6 +94,7 @@ namespace VehiclePlanner.Module.Implement {
             this.tsbAutoReport,
             this.tsbLocalization,
             this.tsbConfirm,
+            this.tsbMove,
             this.tsbGetLaser});
 			this.toolStrip1.Location = new System.Drawing.Point(0, 0);
 			this.toolStrip1.Margin = new System.Windows.Forms.Padding(0, 0, 0, 1);
@@ -273,6 +275,19 @@ namespace VehiclePlanner.Module.Implement {
 			this.tsbConfirm.ToolTipText = "Confirm";
 			this.tsbConfirm.Click += new System.EventHandler(this.tsbConfirm_Click);
 			// 
+			// tsbMove
+			// 
+			this.tsbMove.AutoSize = false;
+			this.tsbMove.Font = new System.Drawing.Font("Microsoft JhengHei UI", 7.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+			this.tsbMove.Image = global::VehiclePlanner.Properties.Resources.Movement;
+			this.tsbMove.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.tsbMove.Name = "tsbMove";
+			this.tsbMove.Size = new System.Drawing.Size(60, 40);
+			this.tsbMove.Text = "Move";
+			this.tsbMove.TextDirection = System.Windows.Forms.ToolStripTextDirection.Horizontal;
+			this.tsbMove.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+			this.tsbMove.Click += new System.EventHandler(this.tsbMove_Click);
+			// 
 			// tsbGetLaser
 			// 
 			this.tsbGetLaser.AutoSize = false;
@@ -324,5 +339,6 @@ namespace VehiclePlanner.Module.Implement {
 		protected Bindable.ToolStripButton tsbConnect;
 		protected Bindable.ToolStripButton tsbInsertMap;
 		protected Bindable.ToolStripButton tsbSave;
+		protected Bindable.ToolStripButton tsbMove;
 	}
 }
