@@ -81,7 +81,7 @@ namespace VehiclePlanner.Module.Implement
 		/// <param name="e"></param>
 		private void tsbOpenFile_Click(object sender, EventArgs e)
 		{
-			rUI.ITest_LoadMap();
+			rUI.LoadMap();
 		}
 
 		/// <summary>
@@ -131,7 +131,7 @@ namespace VehiclePlanner.Module.Implement
 		/// <param name="e"></param>
 		protected virtual void tsbSetCar_Click(object sender, EventArgs e)
 		{
-			rUI.ITest_SettingCarPos();
+			rUI.Locate();
 		}
 
 		/// <summary>
@@ -141,7 +141,7 @@ namespace VehiclePlanner.Module.Implement
 		/// <param name="e"></param>
 		private void tsbConfirm_Click(object sender, EventArgs e)
 		{
-			rUI.CarPosConfirm();
+			rUI.Confirm();
 		}
 
 		/// <summary>
@@ -172,7 +172,7 @@ namespace VehiclePlanner.Module.Implement
 		/// <param name="e"></param>
 		private void tsbGetMap_Click(object sender, EventArgs e)
 		{
-			rUI.GetMap();
+			rUI.DownloadMap();
 		}
 
 		/// <summary>
@@ -182,7 +182,7 @@ namespace VehiclePlanner.Module.Implement
 		/// <param name="e"></param>
 		private void tsbSendMap_Click(object sender, EventArgs e)
 		{
-			rUI.ITest_SendMap();
+			rUI.UploadMap();
 		}
 
 		/// <summary>
@@ -255,7 +255,7 @@ namespace VehiclePlanner.Module.Implement
 			switch (keyData)
 			{
 				case Keys.O | Keys.Control:
-					rUI.ITest_LoadMap();
+					rUI.LoadMap();
 					break;
 				case Keys.E | Keys.Control:
 					rUI.ClearMap();
@@ -264,10 +264,10 @@ namespace VehiclePlanner.Module.Implement
 					rUI.Connect();
 					break;
 				case Keys.D | Keys.Control:
-					rUI.GetMap();
+					rUI.DownloadMap();
 					break;
 				case Keys.U | Keys.Control:
-					rUI.ITest_SendMap();
+					rUI.UploadMap();
 					break;
 				case Keys.S | Keys.Control:
 					rUI.SaveMap();
@@ -279,10 +279,10 @@ namespace VehiclePlanner.Module.Implement
 					rUI.AutoReport();
 					break;
 				case Keys.P | Keys.Control:
-					rUI.ITest_SettingCarPos();
+					rUI.Locate();
 					break;
 				case Keys.F | Keys.Control:
-					rUI.CarPosConfirm();
+					rUI.Confirm();
 					break;
 				case Keys.L | Keys.Control:
 					rUI.GetLaser();
