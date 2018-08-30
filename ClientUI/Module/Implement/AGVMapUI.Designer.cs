@@ -268,7 +268,7 @@ namespace VehiclePlanner.Module.Implement {
 			this.tsbConfirm.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.tsbConfirm.Name = "tsbConfirm";
 			this.tsbConfirm.Size = new System.Drawing.Size(60, 40);
-			this.tsbConfirm.Text = "Comfirm";
+			this.tsbConfirm.Text = "Confirm";
 			this.tsbConfirm.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
 			this.tsbConfirm.ToolTipText = "Confirm";
 			this.tsbConfirm.Click += new System.EventHandler(this.tsbConfirm_Click);
