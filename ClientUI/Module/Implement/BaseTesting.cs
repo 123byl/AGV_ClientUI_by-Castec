@@ -72,11 +72,11 @@ namespace VehiclePlanner.Module.Implement {
         }
 
         private void btnGetMap_Click(object sender, EventArgs e) {
-            rUI.GetMap();
+            rUI.DownloadMap();
         }
 
         private void btnLoadMap_Click(object sender, EventArgs e) {
-            rUI.ITest_LoadMap();
+            rUI.LoadMap();
         }
 
         private void btnGetOri_Click(object sender, EventArgs e) {
@@ -92,7 +92,7 @@ namespace VehiclePlanner.Module.Implement {
         }
 
         private void btnSendMap_Click(object sender, EventArgs e) {
-            rUI.ITest_SendMap();
+            rUI.UploadMap();
         }
 
         private void btnSimplyOri_Click(object sender, EventArgs e) {
@@ -114,11 +114,11 @@ namespace VehiclePlanner.Module.Implement {
         }
 
         private void btnPosConfirm_Click(object sender, EventArgs e) {
-            rUI.CarPosConfirm();
+            rUI.Confirm();
         }
 
         private void btnSetCar_Click(object sender, EventArgs e) {
-            rUI.ITest_SettingCarPos();
+            rUI.Locate();
         }
 
         private void btnScan_Click(object sender, EventArgs e) {
