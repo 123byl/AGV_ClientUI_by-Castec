@@ -589,6 +589,7 @@
     <None Include="Resources\NewController.png" />
     <None Include="Resources\NewConfirm.png" />
     <None Include="Resources\NewStop.png" />
+    <None Include="Resources\Movement.png" />
     <Content Include="Resources\Radar.png" />
     <None Include="Resources\Scan.png" />
     <None Include="Resources\Unfilter.png" />
@@ -596,6 +597,7 @@
     <None Include="Resources\Redo2.png" />
     <None Include="Resources\Undo1.png" />
     <None Include="Resources\Route.png" />
+    <None Include="Resources\tactile-left-movement.png" />
     <Content Include="Resources\Upload.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
