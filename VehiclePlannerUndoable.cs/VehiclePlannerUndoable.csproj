@@ -237,6 +237,9 @@
     <Content Include="Image\Pin.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Image\Position.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Resources\Uncharge.png" />
     <None Include="Resources\Charge.png" />
     <None Include="Resources\Zoom.png" />

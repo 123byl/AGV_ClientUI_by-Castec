@@ -91,9 +91,12 @@ namespace VehiclePlannerUndoable.cs
 
 		public void CancelLocalize()
 		{
-			//localizePosition = null;
-			//GLCMD.CMD.DeleteAGV(2);
 			GLCMD.CMD.CancelLocalize();
+		}
+
+		public void CancelMovement()
+		{
+			GLCMD.CMD.CancelMovement();
 		}
 		#endregion
 
@@ -218,6 +221,11 @@ namespace VehiclePlannerUndoable.cs
 		{
 			mIsSetting = !mIsSetting;
 		}
+
+		public override void MovePosition()
+		{
+			mIsMovement = !mIsMovement;
+		}
 		#endregion
 
 		#region Function - Private Methods
@@ -260,28 +268,36 @@ namespace VehiclePlannerUndoable.cs
 		protected void MapControl_GLClick(object sender, EventArgs e)
 		{
 			MouseEventArgs m = (MouseEventArgs)e;
+			IPair currentPosition = MapGL.MapControl.ScreenToGL(m.X, m.Y);
 			if (mIsSetting)
 			{
 				if (!GLCMD.CMD.IsLocalize)
 				{
 					OnBalloonTip("Localization", "Set iTS Position");
-					//localizePosition = ToPoint2D(MapGL.MapControl.ScreenToGL(m.X, m.Y));
-					//GLCMD.CMD.AddAGV(2, "Localization", localizePosition.X, localizePosition.Y, 0);
-					GLCMD.CMD.StartLocalize(MapGL.MapControl.ScreenToGL(m.X, m.Y));
+					GLCMD.CMD.StartLocalize(currentPosition);
 				}
 				else
 				{
 					OnBalloonTip("Localization", "Set iTS Vector");
-					//OnConsoleMessage($"NewPos{localizePosition.ToString()}");
-					var toword = GLCMD.CMD.FinishLocalize(MapGL.MapControl.ScreenToGL(m.X, m.Y));
-					Vector2D V = new Vector2D(ToPoint2D(toword.Position), ToPoint2D(MapGL.MapControl.ScreenToGL(m.X, m.Y)));
-					//GLCMD.CMD.AddAGV(2, "Localization",V.Start.X,V.Start.Y,V.Angle);
+					var toword = GLCMD.CMD.FinishLocalize(currentPosition);
+					Vector2D V = new Vector2D(ToPoint2D(toword.Position), ToPoint2D(currentPosition));
 					Task.Run(() => rVehiclePlanner.Controller.SetPosition(V));
-					//localizePosition = null;
-
-					//GLCMD.CMD.DeleteAGV(2);
-
 				}
+			}
+			if (mIsMovement)
+			{
+				if (!GLCMD.CMD.IsMovement)
+				{
+					GLCMD.CMD.StartMovement(currentPosition);
+				}
+				else
+				{
+					var toword = GLCMD.CMD.FinishMovement(currentPosition);
+					Vector2D V = new Vector2D(ToPoint2D(toword.Position), ToPoint2D(currentPosition));
+					MapGL.MovePositionFinish();
+					mIsMovement = false;
+				}
+
 			}
 		}
 		private void Controller_ShowMotionController(object sender, EventArgs e)
