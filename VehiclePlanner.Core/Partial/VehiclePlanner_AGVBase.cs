@@ -517,6 +517,7 @@ namespace VehiclePlanner.Core
 					{
 						mSimilarity = similarity;
 						OnConsoleMessage($"iTS - The map similarity is {mSimilarity:0.0%}");
+						OnBalloonTip("Confirm Information", $"Similarity={mSimilarity:0.0%}");
 					}
 					else if (mSimilarity == -1)
 					{
