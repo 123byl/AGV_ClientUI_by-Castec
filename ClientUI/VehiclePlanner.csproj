@@ -582,6 +582,7 @@
     <None Include="Resources\Filter.png" />
     <None Include="Resources\Highlight.png" />
     <None Include="Resources\Insert.png" />
+    <None Include="Resources\Focus.png" />
     <Content Include="Resources\Laser.png" />
     <None Include="Resources\Path.png" />
     <None Include="Resources\NewScan.png" />

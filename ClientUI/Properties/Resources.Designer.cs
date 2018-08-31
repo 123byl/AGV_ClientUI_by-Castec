@@ -573,6 +573,16 @@ namespace VehiclePlanner.Properties {
         /// <summary>
         ///   查詢類型 System.Drawing.Bitmap 的當地語系化資源。
         /// </summary>
+        internal static System.Drawing.Bitmap Focus {
+            get {
+                object obj = ResourceManager.GetObject("Focus", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類型 System.Drawing.Bitmap 的當地語系化資源。
+        /// </summary>
         internal static System.Drawing.Bitmap Folder_files {
             get {
                 object obj = ResourceManager.GetObject("Folder_files", resourceCulture);
