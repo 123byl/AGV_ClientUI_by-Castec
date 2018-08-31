@@ -114,6 +114,7 @@ namespace VehiclePlannerUndoable.cs
 			rVehiclePlanner.Controller.OpenMap += Controller_LoadMapEvent;
 			rVehiclePlanner.Controller.ConnectStatusChanged += Controller_ConnectStatusChanged;
 			rVehiclePlanner.Controller.ChargeChange += Controller_ChargeChange;
+			rVehiclePlanner.Controller.OnFocus += Controller_OnFocus; 
 			GoalSetting.RefMapControl = MapGL.MapControl;
 		}
 
@@ -332,6 +333,11 @@ namespace VehiclePlannerUndoable.cs
 			MapGL.MapControl.Focus(GLCMD.CMD.MapCenter.X, GLCMD.CMD.MapCenter.Y);
 			rVehiclePlanner.Controller.PathID = GLCMD.CMD.AddMultiStripLine("Path", null);
 			rVehiclePlanner.Controller.LaserID = GLCMD.CMD.AddMultiPair("Laser", null);
+		}
+
+		private void Controller_OnFocus(object sender, EventArgs e)
+		{
+			MapGL.MapControl.Focus((int)rVehiclePlanner.Controller.Status.X, (int)rVehiclePlanner.Controller.Status.Y);
 		}
 		#endregion
 	}

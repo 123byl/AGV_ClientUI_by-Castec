@@ -72,6 +72,9 @@ namespace VehiclePlanner.Core
 		/// </summary>
 		protected bool mBypassSocket = false;
 
+		protected bool mIsFocus = false;
+
+
 		/// <summary>
 		/// iTS位置名稱對照表
 		/// </summary>
@@ -188,6 +191,24 @@ namespace VehiclePlanner.Core
 					OnConsoleMessage($"iTS - Is {(mIsScanning ? "start" : "stop")} scanning");
 				}
 			}
+		}
+
+		public bool IsFocus
+		{
+			get
+			{
+				return mIsFocus;
+			}
+			protected set
+			{
+				if (mIsFocus != value)
+				{
+					mIsFocus = value;
+					OnPropertyChanged();
+					OnConsoleMessage($"iTS - Is {(mIsFocus ? "focus" : "lose focus")} ");
+				}
+			}
+
 		}
 
 		/// <summary>
@@ -1142,6 +1163,12 @@ namespace VehiclePlanner.Core
 		/// iTS解除充電動作
 		/// </summary>
 		public abstract void Uncharge();
+		
+		/// <summary>
+		///是否聚焦於iTS上 
+		/// </summary>
+		/// <param name="isFocus"></param>
+		public abstract void Focus(bool isFocus);
 
 		#endregion Funciton - Private Methdos
 
@@ -1171,7 +1198,6 @@ namespace VehiclePlanner.Core
 				}
 			}
 		}
-
 		#endregion Implement - IDataSource
 
 	}

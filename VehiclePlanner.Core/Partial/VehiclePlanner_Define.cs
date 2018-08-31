@@ -147,6 +147,10 @@ namespace VehiclePlanner.Core {
         /// 是否可連線
         /// </summary>
         bool IsConnectable { get; }
+		/// <summary>
+		/// 是否聚焦
+		/// </summary>
+		bool IsFocus { get; }
         /// <summary>
         /// 車子馬達速度
         /// </summary>
@@ -277,6 +281,8 @@ namespace VehiclePlanner.Core {
 		/// 停止充電
 		/// </summary>
 		void Uncharge();
+
+		void Focus(bool isFocus);
 
         /// <summary>
         /// 要求Map檔

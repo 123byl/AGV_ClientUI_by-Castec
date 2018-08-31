@@ -45,6 +45,7 @@ namespace VehiclePlanner.Module.Implement {
 			this.tsbConfirm = new CtBind.Bindable.ToolStripButton();
 			this.tsbMove = new CtBind.Bindable.ToolStripButton();
 			this.tsbGetLaser = new CtBind.Bindable.ToolStripButton();
+			this.tsbFocus = new CtBind.Bindable.ToolStripButton();
 			this.pnlShow.SuspendLayout();
 			this.toolStrip1.SuspendLayout();
 			this.SuspendLayout();
@@ -95,6 +96,7 @@ namespace VehiclePlanner.Module.Implement {
             this.tsbLocalization,
             this.tsbConfirm,
             this.tsbMove,
+            this.tsbFocus,
             this.tsbGetLaser});
 			this.toolStrip1.Location = new System.Drawing.Point(0, 0);
 			this.toolStrip1.Margin = new System.Windows.Forms.Padding(0, 0, 0, 1);
@@ -301,6 +303,18 @@ namespace VehiclePlanner.Module.Implement {
 			this.tsbGetLaser.ToolTipText = "Get Laser";
 			this.tsbGetLaser.Click += new System.EventHandler(this.tsbGetLaser_Click);
 			// 
+			// tsbFocus
+			// 
+			this.tsbFocus.AutoSize = false;
+			this.tsbFocus.Font = new System.Drawing.Font("Microsoft JhengHei UI", 7.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+			this.tsbFocus.Image = global::VehiclePlanner.Properties.Resources.Focus;
+			this.tsbFocus.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.tsbFocus.Name = "tsbFocus";
+			this.tsbFocus.Size = new System.Drawing.Size(60, 40);
+			this.tsbFocus.Text = "Focus";
+			this.tsbFocus.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+			this.tsbFocus.Click += new System.EventHandler(this.tsbFocus_Click);
+			// 
 			// BaseMapGL
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
@@ -340,5 +354,6 @@ namespace VehiclePlanner.Module.Implement {
 		protected Bindable.ToolStripButton tsbInsertMap;
 		protected Bindable.ToolStripButton tsbSave;
 		protected Bindable.ToolStripButton tsbMove;
+		protected Bindable.ToolStripButton tsbFocus;
 	}
 }

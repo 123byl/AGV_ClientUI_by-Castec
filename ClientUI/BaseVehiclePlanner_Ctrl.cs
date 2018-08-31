@@ -553,7 +553,15 @@ namespace VehiclePlanner
 		/// </summary>
 		public virtual void Locate() => mIsSetting = true;
 
+		/// <summary>
+		/// 切換移動旗標
+		/// </summary>
 		public virtual void MovePosition() => mIsMovement = true;
+
+		public void SetFocus()
+		{
+			rVehiclePlanner.Controller.Focus(!rVehiclePlanner.Controller.IsFocus);
+		}
 
 		/// <summary>
 		/// 傳送Map檔

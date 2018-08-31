@@ -90,6 +90,8 @@ namespace VehiclePlannerUndoable.cs
 				tsbSendMap.Enabled = enable;
 				tsbMove.Enabled = enable;
 				if (!enable) tsbMove.Checked = enable;
+				tsbFocus.Enabled = enable;
+				if (!enable) tsbFocus.Checked = enable;
 				tsbConnect.Image = enable ? Resources.Connect : Resources.Disconnect;
 			});
 		}
@@ -225,6 +227,12 @@ namespace VehiclePlannerUndoable.cs
 			//tsbInsertMap.Enabled = true;
 		}
 
+		protected override void tsbFocus_Click(object sender, EventArgs e)
+		{
+			base.tsbFocus_Click(sender, e);
+			tsbFocus.Checked= ParrentUI.rVehiclePlanner.Controller.IsFocus;
+		}
+
 		private void ButtonControlEnable(bool enable, EMotion type)
 		{
 			//enable = ParrentUI.rVehiclePlanner.Controller.ConnectStatus ? enable : true;
@@ -245,10 +253,10 @@ namespace VehiclePlannerUndoable.cs
 			{
 				case EMotion.Location:
 					tsbLocalization.Checked = enable;
-					tsbMove.Checked = !enable ? false : !enable;
+					tsbMove.Enabled = enable ? false : !enable;
 					break;
 				case EMotion.Movement:
-					tsbLocalization.Checked = !enable ? false : !enable;
+					tsbLocalization.Enabled = enable ? false : !enable;
 					tsbMove.Checked = enable;
 					break;
 				case EMotion.Disconnect:

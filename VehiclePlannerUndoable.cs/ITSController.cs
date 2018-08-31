@@ -45,6 +45,8 @@ namespace VehiclePlannerUndoable.cs
 		event ConnectStatusChangedEvent ConnectStatusChanged;
 
 		event ChargeChangeHandler ChargeChange;
+
+		event EventHandler OnFocus;
 	}
 	public delegate void ChargeChangeHandler(bool value);
 
@@ -102,6 +104,10 @@ namespace VehiclePlannerUndoable.cs
 		/// 充電狀態改變
 		/// </summary>
 		public event ChargeChangeHandler ChargeChange;
+		/// <summary>
+		/// 聚焦
+		/// </summary>
+		public event EventHandler OnFocus;
 		#endregion Declaration - Fields
 
 		#region Declaration - Properties
@@ -118,6 +124,7 @@ namespace VehiclePlannerUndoable.cs
 					mStatus = value;
 					GLCMD.CMD.AddAGV(1, mStatus.Name, mStatus.X, mStatus.Y, mStatus.Toward);
 					OnPropertyChanged();
+					if (IsFocus) OnFocus?.Invoke(this, EventArgs.Empty);
 				}
 			}
 
@@ -293,7 +300,7 @@ namespace VehiclePlannerUndoable.cs
 		}
 		#endregion Function - Public Methods
 
-		#region Function - Private Methods
+		#region Function - Override Methods
 
 		/// <summary>
 		/// 用户端初始化
@@ -714,7 +721,34 @@ namespace VehiclePlannerUndoable.cs
 
 		}
 
-		#endregion Function - Private Methods
+		protected override BaseBoolReturn RequireStopAGV()
+		{
+			Stop Info = Send(new Stop(null)) as Stop;
+			return new ConvertStop(Info);
+		}
+
+		protected override BaseBoolReturn RequireUncharge()
+		{
+			Uncharge Info = Send(new Uncharge(null)) as Uncharge;
+			return new ConvertUncharge(Info);
+		}
+
+		public override void StopAGV()
+		{
+			RequireStopAGV();
+		}
+
+		public override void Uncharge()
+		{
+			RequireUncharge();
+		}
+
+		public override void Focus(bool isFocus)
+		{
+			IsFocus = isFocus;
+		}
+
+		#endregion Function - Override Methods
 
 		#region Function - Events
 
@@ -754,37 +788,13 @@ namespace VehiclePlannerUndoable.cs
 					break;
 				case AsyncSocket.EConnectStatus.Disconnect:
 					ConnectStatus = false;
-					//GLCMD.CMD.SaftyEditMultiGeometry<IPair>(mLaserID, true, (point) => { point.Clear(); });
-					//GLCMD.CMD.SaftyEditMultiGeometry<IPair>(mPathID, true, (line) => { line.Clear(); });
 					this.Status = new AGVStatus();
 					GLCMD.CMD.Initial();
-					//GLCMD.CMD.DeleteAGV(1);
+					IsFocus = false; 
 					OnBalloonTip("Disconnect", "Server IP = " + e.RemoteInfo.IP);
 					break;
 			}
 			ConnectStatusChanged?.Invoke(sender, e);
-		}
-
-		protected override BaseBoolReturn RequireStopAGV()
-		{
-			Stop Info = Send(new Stop(null)) as Stop;
-			return new ConvertStop(Info);
-		}
-
-		protected override BaseBoolReturn RequireUncharge()
-		{
-			Uncharge Info = Send(new Uncharge(null)) as Uncharge;
-			return new ConvertUncharge(Info);
-		}
-
-		public override void StopAGV()
-		{
-			RequireStopAGV();
-		}
-
-		public override void Uncharge()
-		{
-			RequireUncharge();
 		}
 		#endregion Function - Events
 

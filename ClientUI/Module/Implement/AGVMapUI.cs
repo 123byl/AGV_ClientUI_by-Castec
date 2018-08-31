@@ -209,6 +209,11 @@ namespace VehiclePlanner.Module.Implement
 		{
 			rUI.MovePosition();
 		}
+
+		protected virtual void tsbFocus_Click(object sender, EventArgs e)
+		{
+			rUI.SetFocus();
+		}
 		#endregion Function - Events
 
 		#region Funciton - Public Methods
