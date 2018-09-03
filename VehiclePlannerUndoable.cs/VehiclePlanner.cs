@@ -24,6 +24,7 @@ using CtExtendLib;
 using AsyncSocket;
 using VehiclePlannerUndoable.cs.Properties;
 using Hasp;
+using GLUI;
 
 namespace VehiclePlannerUndoable.cs
 {
@@ -91,7 +92,7 @@ namespace VehiclePlannerUndoable.cs
 
 		public void CancelLocalize()
 		{
-			GLCMD.CMD.CancelLocalize();
+			GLCMD.CMD.CancelLocation();
 		}
 
 		public void CancelMovement()
@@ -114,8 +115,10 @@ namespace VehiclePlannerUndoable.cs
 			rVehiclePlanner.Controller.OpenMap += Controller_LoadMapEvent;
 			rVehiclePlanner.Controller.ConnectStatusChanged += Controller_ConnectStatusChanged;
 			rVehiclePlanner.Controller.ChargeChange += Controller_ChargeChange;
-			rVehiclePlanner.Controller.OnFocus += Controller_OnFocus; 
+			rVehiclePlanner.Controller.OnFocus += Controller_OnFocus;
 			GoalSetting.RefMapControl = MapGL.MapControl;
+			MapGL.MapControl.LocationEvent += MapControl_LocationEvent;
+			MapGL.MapControl.MovementEvent += MapControl_MovementEvent;
 		}
 
 		protected override BaseMapGL GetMapGL(DockState dockState)
@@ -210,7 +213,7 @@ namespace VehiclePlannerUndoable.cs
 				table.Rows.Add(row);
 			}
 			SelectBox selectBox = null;
-			using (selectBox = new SelectBox("Select File", table, "Determine",currentFile))
+			using (selectBox = new SelectBox("Select File", table, "Determine", currentFile))
 			{
 				var result = this.InvokeIfNecessary(() => selectBox.ShowDialog(this));
 				fileName = selectBox.SelectRow?["Name"].ToString();
@@ -233,7 +236,7 @@ namespace VehiclePlannerUndoable.cs
 		private void CheckMode()
 		{
 			var para = System.Environment.GetCommandLineArgs();
-			foreach(string item in para)
+			foreach (string item in para)
 			{
 				switch (item.ToLower())
 				{
@@ -255,7 +258,7 @@ namespace VehiclePlannerUndoable.cs
 		#endregion
 
 		#region Function - Events
-		private void UI_Load(object sender , EventArgs e)
+		private void UI_Load(object sender, EventArgs e)
 		{
 			if (_dongleMode)
 			{
@@ -272,31 +275,19 @@ namespace VehiclePlannerUndoable.cs
 			IPair currentPosition = MapGL.MapControl.ScreenToGL(m.X, m.Y);
 			if (mIsSetting)
 			{
-				if (!GLCMD.CMD.IsLocalize)
+				if (!GLCMD.CMD.IsLocation)
 				{
 					OnBalloonTip("Localization", "Set iTS Position");
-					GLCMD.CMD.StartLocalize(currentPosition);
+					GLCMD.CMD.StartLocation(currentPosition);
 				}
-				else
-				{
-					OnBalloonTip("Localization", "Set iTS Vector");
-					var toword = GLCMD.CMD.FinishLocalize(currentPosition);
-					Vector2D V = new Vector2D(ToPoint2D(toword.Position), ToPoint2D(currentPosition));
-					Task.Run(() => rVehiclePlanner.Controller.SetPosition(V));
-				}
+
 			}
 			if (mIsMovement)
 			{
+				MapGL.MapControl.CancelSelect();
 				if (!GLCMD.CMD.IsMovement)
 				{
 					GLCMD.CMD.StartMovement(currentPosition);
-				}
-				else
-				{
-					var toword = GLCMD.CMD.FinishMovement(currentPosition);
-					Vector2D V = new Vector2D(ToPoint2D(toword.Position), ToPoint2D(currentPosition));
-					MapGL.MovePositionFinish();
-					mIsMovement = false;
 				}
 
 			}
@@ -339,6 +330,20 @@ namespace VehiclePlannerUndoable.cs
 		{
 			MapGL.MapControl.Focus((int)rVehiclePlanner.Controller.Status.X, (int)rVehiclePlanner.Controller.Status.Y);
 		}
+
+		private void MapControl_LocationEvent(object sender, LocationEventArgs e)
+		{
+			Vector2D V = new Vector2D(ToPoint2D(e.StartPair), ToPoint2D(e.EndPair));
+			Task.Run(() => rVehiclePlanner.Controller.SetPosition(V));
+		}
+
+		private void MapControl_MovementEvent(object sender, LocationEventArgs e)
+		{
+			Vector2D V = new Vector2D(ToPoint2D(e.StartPair), ToPoint2D(e.EndPair));
+			MapGL.MovePositionFinish();
+			mIsMovement = false;
+		}
+
 		#endregion
 	}
 
