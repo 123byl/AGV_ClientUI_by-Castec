@@ -98,9 +98,11 @@ namespace VehiclePlannerUndoable.cs
 
 		protected override void tsbSetCar_Click(object sender, EventArgs e)
 		{
-			ParrentUI.Locate();
+			MapControl.CancelSelect();
 			ButtonControlEnable(!tsbLocalization.Checked, EMotion.Location);
 			if (!tsbLocalization.Checked) ParrentUI.CancelLocalize();
+			MapControl.SetEditMode(!tsbLocalization.Checked);
+			ParrentUI.Locate();
 			//tsbLocalization.Checked = !tsbLocalization.Checked;
 			//if (tsbLocalization.Checked)
 			//{
@@ -150,9 +152,11 @@ namespace VehiclePlannerUndoable.cs
 
 		protected override void tsbMove_Click(object sender, EventArgs e)
 		{
-			ParrentUI.MovePosition();
+			MapControl.CancelSelect();
 			ButtonControlEnable(!tsbMove.Checked, EMotion.Movement);
 			if (!tsbMove.Checked) ParrentUI.CancelMovement();
+			MapControl.SetEditMode(!tsbMove.Checked);
+			ParrentUI.MovePosition();
 			//tsbMove.Checked = !tsbMove.Checked;
 			//if (tsbMove.Checked)
 			//{
@@ -204,6 +208,7 @@ namespace VehiclePlannerUndoable.cs
 		public void MovePositionFinish()
 		{
 			ButtonControlEnable(!tsbMove.Checked, EMotion.Movement);
+			MapControl.SetEditMode(true);
 			//if (ParrentUI.rVehiclePlanner.Controller.ConnectStatus)
 			//{
 			//	tsbMove.Checked = false;
@@ -230,7 +235,7 @@ namespace VehiclePlannerUndoable.cs
 		protected override void tsbFocus_Click(object sender, EventArgs e)
 		{
 			base.tsbFocus_Click(sender, e);
-			tsbFocus.Checked= ParrentUI.rVehiclePlanner.Controller.IsFocus;
+			tsbFocus.Checked = ParrentUI.rVehiclePlanner.Controller.IsFocus;
 		}
 
 		private void ButtonControlEnable(bool enable, EMotion type)
