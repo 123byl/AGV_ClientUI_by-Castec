@@ -532,7 +532,7 @@ namespace VehiclePlanner.Core
 			{
 				if (comfirm.Requited)
 				{
-					OnBalloonTip("Confirm","Confirm Success");
+					OnBalloonTip("Confirm", "Confirm Success");
 					double similarity = comfirm.Similarity;
 					if (similarity >= 0 && similarity <= 1)
 					{
@@ -1078,12 +1078,12 @@ namespace VehiclePlanner.Core
 					l = -v;
 					break;
 				case MotionDirection.LeftTrun:
-					r = v;
-					l = -v;
+					r = Convert.ToInt32(v * 0.6);
+					l = Convert.ToInt32(-v * 0.6);
 					break;
 				case MotionDirection.RightTurn:
-					r = -v;
-					l = v;
+					r = Convert.ToInt32(-v * 0.6);
+					l = Convert.ToInt32(v * 0.6);
 					break;
 				default:
 					return null;
@@ -1163,7 +1163,7 @@ namespace VehiclePlanner.Core
 		/// iTS解除充電動作
 		/// </summary>
 		public abstract void Uncharge();
-		
+
 		/// <summary>
 		///是否聚焦於iTS上 
 		/// </summary>
