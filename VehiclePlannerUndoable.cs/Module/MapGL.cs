@@ -56,6 +56,7 @@ namespace VehiclePlannerUndoable.cs
 		protected MapGL()
 		{
 			InitializeComponent();
+			mMapGL.SetEditMode(true);
 			tsbGetLaser.Visible = false;
 		}
 
@@ -65,9 +66,10 @@ namespace VehiclePlannerUndoable.cs
 			InitializeComponent();
 
 			// 載入設定檔
+			mMapGL.SetEditMode(true);
 			StyleManager.LoadStyle("Style.ini");
 			tsbGetLaser.Visible = false;
-			//tsbMove.Visible = false;
+			tsbMove.Visible = false;
 			ConnectButtonEnable(false);
 			mMapGL.Location = new Point(0, 0);
 			mMapGL.Dock = DockStyle.Fill;
