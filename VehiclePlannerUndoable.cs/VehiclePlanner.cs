@@ -25,6 +25,7 @@ using AsyncSocket;
 using VehiclePlannerUndoable.cs.Properties;
 using Hasp;
 using GLUI;
+using System.Management;
 
 namespace VehiclePlannerUndoable.cs
 {
@@ -53,6 +54,8 @@ namespace VehiclePlannerUndoable.cs
 		private CtHasp _hasp = new CtHasp();
 
 		private bool _dongleMode = false;
+
+		private string _cpuID = "BFEBFBFF000806E9";
 		#endregion
 
 		#region Function - Constructors 
@@ -62,7 +65,7 @@ namespace VehiclePlannerUndoable.cs
 
 			Load += UI_Load;
 
-			CheckMode();
+			SetCheckMode();
 
 			rVehiclePlanner = vehiclePlanner;
 
@@ -233,7 +236,7 @@ namespace VehiclePlannerUndoable.cs
 		#endregion
 
 		#region Function - Private Methods
-		private void CheckMode()
+		private void SetCheckMode()
 		{
 			var para = System.Environment.GetCommandLineArgs();
 			foreach (string item in para)
@@ -251,6 +254,21 @@ namespace VehiclePlannerUndoable.cs
 			}
 		}
 
+		private bool CheckCPU()
+		{
+			bool re = false;
+			ManagementObjectSearcher management = new ManagementObjectSearcher("Select * FROM Win32_Processor");
+			foreach (ManagementObject obj in management.Get())
+			{
+				if (obj["ProcessorId"].ToString() == _cpuID)
+				{
+					re = true;
+					break;
+				}
+			}
+			return re;
+		}
+
 		private Point2D ToPoint2D(IPair Point)
 		{
 			return new Point2D(Point.X, Point.Y);
@@ -264,6 +282,7 @@ namespace VehiclePlannerUndoable.cs
 			{
 				if (!_hasp.IsDongleCorrect())
 				{
+					//if(!CheckCPU()) 
 					base.Exit();
 				}
 			}
