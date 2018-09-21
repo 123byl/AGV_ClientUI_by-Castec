@@ -383,9 +383,13 @@ namespace VehiclePlannerUndoable.cs
 
 		protected override void DoReceiveAction(Serializable response)
 		{
-			if (response is AGVStatus)
+			if (response is AGVStatus st)
 			{
-				if (Status.Description != (response as AGVStatus).Description && (response as AGVStatus).Description == EDescription.Charge) ChargeChange?.Invoke(true);
+				if (Status.Description != st.Description)
+				{
+					if(st.Description == EDescription.Charge) ChargeChange?.Invoke(true);
+					else if(st.Description == EDescription.Map) IsScanning = true;
+				}
 				Status = response as AGVStatus;
 			}
 			else if (response is AGVPath2D path)
