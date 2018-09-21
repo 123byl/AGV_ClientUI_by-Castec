@@ -762,8 +762,9 @@ namespace VehiclePlannerUndoable.cs
 			if (e.Data is Serializable)
 			{
 				var product = e.Data as Serializable;
+				//if (product is BaseSerialCommand cmd) Console.WriteLine($"{cmd.Type.ToString()}");
 				/*-- 查詢是否有等待該封包 --*/
-				ReceiveDataCheck(product);
+				Task.Run(() => ReceiveDataCheck(product));
 			}
 		}
 
@@ -790,7 +791,7 @@ namespace VehiclePlannerUndoable.cs
 					ConnectStatus = false;
 					this.Status = new AGVStatus();
 					GLCMD.CMD.Initial();
-					IsFocus = false; 
+					IsFocus = false;
 					OnBalloonTip("Disconnect", "Server IP = " + e.RemoteInfo.IP);
 					break;
 			}
