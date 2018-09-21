@@ -652,7 +652,7 @@ namespace VehiclePlanner.Core
 		/// </summary>
 		/// <param name="direction">移動方向</param>
 		/// <param name="velocity">移動速度</param>
-		public void MotionContorl(MotionDirection direction)
+		public MotionDirection MotionContorl(MotionDirection direction)
 		{
 			try
 			{
@@ -681,6 +681,7 @@ namespace VehiclePlanner.Core
 			{
 				OnConsoleMessage(ex.Message);
 			}
+			return direction;
 		}
 		/// <summary>
 		/// 顯示當前Goal點名稱清單

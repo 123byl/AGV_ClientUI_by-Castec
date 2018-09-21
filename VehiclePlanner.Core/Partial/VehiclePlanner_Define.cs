@@ -236,7 +236,7 @@ namespace VehiclePlanner.Core {
         /// </summary>
         /// <param name="direction">移動方向</param>
         /// <param name="velocity">移動速度</param>
-        void MotionContorl(MotionDirection direction);
+        MotionDirection MotionContorl(MotionDirection direction);
         /// <summary>
         /// 要求雷射資料
         /// </summary>

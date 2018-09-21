@@ -164,7 +164,7 @@ namespace VehiclePlanner.Partial.VehiclePlannerUI {
 
             public delegate void DelLoadOri();
 
-            public delegate void DelMotion_Down(MotionDirection direction);
+            public delegate MotionDirection DelMotion_Down(MotionDirection direction);
 
             public delegate void DelMotion_Up();
 
