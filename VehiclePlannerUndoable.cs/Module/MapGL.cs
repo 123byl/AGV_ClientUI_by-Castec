@@ -105,51 +105,6 @@ namespace VehiclePlannerUndoable.cs
 			if (!tsbLocalization.Checked) ParrentUI.CancelLocalize();
 			MapControl.SetEditMode(!tsbLocalization.Checked);
 			ParrentUI.Locate();
-			//tsbLocalization.Checked = !tsbLocalization.Checked;
-			//if (tsbLocalization.Checked)
-			//{
-			//	tsbAutoReport.Enabled = false;
-			//	tsbChangeMap.Enabled = false;
-			//	tsbClearMap.Enabled = false;
-			//	tsbConfirm.Enabled = false;
-			//	tsbConnect.Enabled = false;
-			//	tsbController.Enabled = false;
-			//	tsbGetLaser.Enabled = false;
-			//	tsbGetMap.Enabled = false;
-			//	tsbInsertMap.Enabled = false;
-			//	tsbOpenFile.Enabled = false;
-			//	tsbSave.Enabled = false;
-			//	tsbScan.Enabled = false;
-			//	tsbSendMap.Enabled = false;
-			//	tsbMove.Enabled = false;
-			//}
-			//else if (!tsbLocalization.Checked && ParrentUI.rVehiclePlanner.Controller.ConnectStatus)
-			//{
-			//	tsbAutoReport.Enabled = true;
-			//	tsbChangeMap.Enabled = true;
-			//	tsbClearMap.Enabled = true;
-			//	tsbConfirm.Enabled = true;
-			//	tsbConnect.Enabled = true;
-			//	tsbController.Enabled = true;
-			//	tsbGetLaser.Enabled = true;
-			//	tsbGetMap.Enabled = true;
-			//	tsbInsertMap.Enabled = true;
-			//	tsbOpenFile.Enabled = true;
-			//	tsbSave.Enabled = true;
-			//	tsbScan.Enabled = true;
-			//	tsbSendMap.Enabled = true;
-			//	tsbMove.Enabled = true;
-			//	ParrentUI.CancelLocalize();
-			//}
-			//else
-			//{
-			//	tsbClearMap.Enabled = true;
-			//	tsbConnect.Enabled = true;
-			//	tsbInsertMap.Enabled = true;
-			//	tsbOpenFile.Enabled = true;
-			//	tsbSave.Enabled = true;
-			//	ParrentUI.CancelLocalize();
-			//}
 		}
 
 		protected override void tsbMove_Click(object sender, EventArgs e)
@@ -159,79 +114,12 @@ namespace VehiclePlannerUndoable.cs
 			if (!tsbMove.Checked) ParrentUI.CancelMovement();
 			MapControl.SetEditMode(!tsbMove.Checked);
 			ParrentUI.MovePosition();
-			//tsbMove.Checked = !tsbMove.Checked;
-			//if (tsbMove.Checked)
-			//{
-			//	tsbAutoReport.Enabled = false;
-			//	tsbChangeMap.Enabled = false;
-			//	tsbClearMap.Enabled = false;
-			//	tsbConfirm.Enabled = false;
-			//	tsbConnect.Enabled = false;
-			//	tsbController.Enabled = false;
-			//	tsbGetLaser.Enabled = false;
-			//	tsbGetMap.Enabled = false;
-			//	tsbInsertMap.Enabled = false;
-			//	tsbOpenFile.Enabled = false;
-			//	tsbSave.Enabled = false;
-			//	tsbScan.Enabled = false;
-			//	tsbSendMap.Enabled = false;
-			//	tsbLocalization.Enabled = false;
-			//}
-			//else if (!tsbMove.Checked && ParrentUI.rVehiclePlanner.Controller.ConnectStatus)
-			//{
-			//	tsbAutoReport.Enabled = true;
-			//	tsbChangeMap.Enabled = true;
-			//	tsbClearMap.Enabled = true;
-			//	tsbConfirm.Enabled = true;
-			//	tsbConnect.Enabled = true;
-			//	tsbController.Enabled = true;
-			//	tsbGetLaser.Enabled = true;
-			//	tsbGetMap.Enabled = true;
-			//	tsbInsertMap.Enabled = true;
-			//	tsbOpenFile.Enabled = true;
-			//	tsbSave.Enabled = true;
-			//	tsbScan.Enabled = true;
-			//	tsbSendMap.Enabled = true;
-			//	tsbLocalization.Enabled = true;
-			//	ParrentUI.CancelMovement();
-			//}
-			//else
-			//{
-			//	tsbClearMap.Enabled = true;
-			//	tsbConnect.Enabled = true;
-			//	tsbInsertMap.Enabled = true;
-			//	tsbOpenFile.Enabled = true;
-			//	tsbSave.Enabled = true;
-			//	ParrentUI.CancelMovement();
-			//}
-
 		}
 
 		public void MovePositionFinish()
 		{
 			ButtonControlEnable(!tsbMove.Checked, EMotion.Movement);
 			MapControl.SetEditMode(true);
-			//if (ParrentUI.rVehiclePlanner.Controller.ConnectStatus)
-			//{
-			//	tsbMove.Checked = false;
-			//	tsbAutoReport.Enabled = true;
-			//	tsbChangeMap.Enabled = true;
-			//	tsbClearMap.Enabled = true;
-			//	tsbConfirm.Enabled = true;
-			//	tsbController.Enabled = true;
-			//	tsbGetLaser.Enabled = true;
-			//	tsbGetMap.Enabled = true;
-			//	tsbScan.Enabled = true;
-			//	tsbSendMap.Enabled = true;
-			//	tsbLocalization.Enabled = true;
-			//	tsbMove.Enabled = true;
-			//}
-			//tsbMove.Checked = false;
-			//tsbOpenFile.Enabled = true;
-			//tsbSave.Enabled = true;
-			//tsbClearMap.Enabled = true;
-			//tsbConnect.Enabled = true;
-			//tsbInsertMap.Enabled = true;
 		}
 
 		protected override void tsbFocus_Click(object sender, EventArgs e)
