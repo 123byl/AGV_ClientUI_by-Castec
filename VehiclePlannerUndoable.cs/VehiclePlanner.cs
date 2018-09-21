@@ -163,12 +163,24 @@ namespace VehiclePlannerUndoable.cs
 					(rVehiclePlanner.Controller as ITSController).OriToMap(path);
 					path = path.Replace("ori", "map");
 				}
+
 				Task.Run(() =>
 				{
 					(GoalSetting as GoalSetting).InvokeIfNecessaryDgv(() => rVehiclePlanner.LoadFile(type, path));
 					MapGL.MapControl.AdjustZoom();
 					MapGL.MapControl.Focus(GLCMD.CMD.MapCenter.X, GLCMD.CMD.MapCenter.Y);
+					/*測試用*/
+					//List<IPair> list = new List<IPair>();
+					//var lines = File.ReadAllLines(@"D:\Footprint\data13.txt");
+					//foreach (string line in lines)
+					//{
+					//	var data = line.Split(',');
 
+					//	int y = Convert.ToInt32(data[0]);
+					//	int x = Convert.ToInt32(data[1]);
+					//	list.Add(new Pair(x, y));
+					//}
+					//int id = GLCMD.CMD.AddMultiStripArrowLine("Arrow", list);
 				});
 			}
 		}
@@ -504,7 +516,7 @@ namespace VehiclePlannerUndoable.cs
 						{
 							if (i >= goals.Count) i = 0;
 							string goal = goals[i];
-							if (Controller.Status.Description == EDescription.Idle || Controller.Status.Description == EDescription.Arrived)
+							if (Controller.Status.Description == EDescription.Idle || Controller.Status.Description == EDescription.Arrived || Controller.Status.Description == EDescription.Lock)
 							{
 								Controller.GoTo(goal);
 								i++;
