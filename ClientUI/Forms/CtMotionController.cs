@@ -38,6 +38,8 @@ namespace VehiclePlanner.Forms
 		/// </summary>
 		private BaseVehiclePlanner_Ctrl rUI = null;
 
+		private Keys currentKey = Keys.None;
+
 		#endregion Declaration - Fields
 
 		#region Declaration - Events
@@ -109,6 +111,7 @@ namespace VehiclePlanner.Forms
 			if (!tstVelocity.Focused && DirParse(e.KeyCode, out MotionDirection dir))
 			{
 				Stop(dir);
+				currentKey = Keys.None;
 			}
 		}
 
@@ -120,9 +123,10 @@ namespace VehiclePlanner.Forms
 		/// <returns></returns>
 		protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
 		{
-			if (!tstVelocity.Focused && DirParse(keyData, out MotionDirection dir))
+			if (!tstVelocity.Focused && currentKey != keyData && DirParse(keyData, out MotionDirection dir))
 			{
 				Motion(dir);
+				currentKey = keyData;
 				return true;
 			}
 			return base.ProcessCmdKey(ref msg, keyData);
@@ -314,15 +318,17 @@ namespace VehiclePlanner.Forms
 			{
 				mDirs.Remove(dir);
 				ActivePic(mDirCtrlMapping[dir], false);
-				if (mDirs.Any())
-				{
-					MotionDown?.BeginInvoke(mDirs[0], null, null);
-				}
-				else
-				{
-					MotionUp?.BeginInvoke(null, null);
-				}
+				MotionUp?.BeginInvoke(null, null);
+				//if (mDirs.Any())
+				//{
+				//	MotionDown?.BeginInvoke(mDirs[0], null, null);
+				//}
+				//else
+				//{
+				//	MotionUp?.BeginInvoke(null, null);
+				//}
 			}
+
 		}
 
 		/// <summary>
