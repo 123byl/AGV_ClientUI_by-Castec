@@ -671,7 +671,7 @@ namespace VehiclePlanner.Core
 						isManualMoving = StartManualControl(true);
 					}
 				}
-				if (isManualMoving.Requited && isManualMoving.Value != mIsManualMoving)
+				if (isManualMoving != null && isManualMoving.Requited && isManualMoving.Value != mIsManualMoving)
 				{
 					mIsManualMoving = isManualMoving.Value;
 					OnConsoleMessage($"iTS - {(mIsManualMoving ? "Start" : "Stop")} moving");
@@ -908,12 +908,12 @@ namespace VehiclePlanner.Core
 				{
 					/*-- 加入回應等待任務 --*/
 					tskCompSrc = new CtTaskCompletionSource<TSend, TResponse>(packet);
-					mCmdTsk.Add(tskCompSrc);
+					if (mCmdTsk != null) mCmdTsk.Add(tskCompSrc);
 					/*-- 等待回應 --*/
 					tsk = Task.Run(() =>
 					{
 						bool isTimeout = !tskCompSrc.Task.Wait(mTimeOut);
-						/*--從等待清單中刪除--*/
+							/*--從等待清單中刪除--*/
 						mCmdTsk.Remove(tskCompSrc);
 						if (!isTimeout)
 						{
