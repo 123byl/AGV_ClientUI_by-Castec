@@ -87,6 +87,12 @@
     <Compile Include="Forms\ConnectITS.Designer.cs">
       <DependentUpon>ConnectITS.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\CtNewMotionController.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\CtNewMotionController.Designer.cs">
+      <DependentUpon>CtNewMotionController.cs</DependentUpon>
+    </Compile>
     <Compile Include="Module\AuthorityDockContainer.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -148,6 +154,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Forms\ConnectITS.resx">
       <DependentUpon>ConnectITS.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\CtNewMotionController.resx">
+      <DependentUpon>CtNewMotionController.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Module\Implement\AGVMapUI.resx">
       <DependentUpon>AGVMapUI.cs</DependentUpon>
@@ -576,8 +585,11 @@
     <None Include="Resources\Clear.png" />
     <None Include="Resources\Change.png" />
     <None Include="Resources\Charge.png" />
+    <None Include="Resources\CCW.png" />
     <Content Include="Resources\Controller.png" />
     <None Include="Resources\Cycle.png" />
+    <None Include="Resources\CW.png" />
+    <None Include="Resources\Down.png" />
     <Content Include="Resources\Download.png" />
     <None Include="Resources\Filter.png" />
     <None Include="Resources\Highlight.png" />
@@ -599,6 +611,7 @@
     <None Include="Resources\Undo1.png" />
     <None Include="Resources\Route.png" />
     <None Include="Resources\tactile-left-movement.png" />
+    <None Include="Resources\Up.png" />
     <Content Include="Resources\Upload.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

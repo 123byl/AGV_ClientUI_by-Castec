@@ -363,6 +363,16 @@ namespace VehiclePlanner.Properties {
         /// <summary>
         ///   查詢類型 System.Drawing.Bitmap 的當地語系化資源。
         /// </summary>
+        internal static System.Drawing.Bitmap CCW {
+            get {
+                object obj = ResourceManager.GetObject("CCW", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類型 System.Drawing.Bitmap 的當地語系化資源。
+        /// </summary>
         internal static System.Drawing.Bitmap Change {
             get {
                 object obj = ResourceManager.GetObject("Change", resourceCulture);
@@ -443,6 +453,16 @@ namespace VehiclePlanner.Properties {
         /// <summary>
         ///   查詢類型 System.Drawing.Bitmap 的當地語系化資源。
         /// </summary>
+        internal static System.Drawing.Bitmap CW {
+            get {
+                object obj = ResourceManager.GetObject("CW", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類型 System.Drawing.Bitmap 的當地語系化資源。
+        /// </summary>
         internal static System.Drawing.Bitmap Cycle {
             get {
                 object obj = ResourceManager.GetObject("Cycle", resourceCulture);
@@ -486,6 +506,16 @@ namespace VehiclePlanner.Properties {
         internal static System.Drawing.Bitmap Disconnect {
             get {
                 object obj = ResourceManager.GetObject("Disconnect", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類型 System.Drawing.Bitmap 的當地語系化資源。
+        /// </summary>
+        internal static System.Drawing.Bitmap Down {
+            get {
+                object obj = ResourceManager.GetObject("Down", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -1186,6 +1216,16 @@ namespace VehiclePlanner.Properties {
         internal static System.Drawing.Bitmap Unhighlight {
             get {
                 object obj = ResourceManager.GetObject("Unhighlight", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類型 System.Drawing.Bitmap 的當地語系化資源。
+        /// </summary>
+        internal static System.Drawing.Bitmap Up {
+            get {
+                object obj = ResourceManager.GetObject("Up", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

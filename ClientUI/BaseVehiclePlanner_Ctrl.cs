@@ -140,7 +140,7 @@ namespace VehiclePlanner
 		/// <summary>
 		/// AGV移動控制器
 		/// </summary>
-		private CtMotionController mMotionController = null;
+		private CtNewMotionController mMotionController = null;
 
 		/// <summary>
 		/// 地圖檔選擇清單
@@ -859,7 +859,7 @@ namespace VehiclePlanner
 		{
 			if (mMotionController == null)
 			{
-				mMotionController = new CtMotionController(this, rVehiclePlanner.Controller);
+				mMotionController = new CtNewMotionController(this, rVehiclePlanner.Controller);
 				mMotionController.MotionDown += rVehiclePlanner.Controller.MotionContorl;
 				mMotionController.MotionUp += ITest_Motion_Up;
 				miMotionController.Checked = true;
