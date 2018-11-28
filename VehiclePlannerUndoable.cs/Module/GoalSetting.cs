@@ -186,7 +186,7 @@ namespace VehiclePlannerUndoable.cs
 			if (parentUI.IsCharge)
 			{
 				Task.Run(() => parentUI.rVehiclePlanner.Controller.Uncharge());
-				ChargeButtonImage(true);
+				//ChargeButtonImage(true);
 			}
 			else
 			{

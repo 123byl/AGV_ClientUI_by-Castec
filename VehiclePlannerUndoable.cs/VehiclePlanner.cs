@@ -343,7 +343,7 @@ namespace VehiclePlannerUndoable.cs
 
 		private void Controller_ChargeChange(bool value)
 		{
-			IsCharge = true;
+			IsCharge = value;
 			GoalSetting.ChargeButtonImage(IsCharge);
 		}
 

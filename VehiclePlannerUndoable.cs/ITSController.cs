@@ -15,6 +15,7 @@ using System.Drawing;
 using AsyncSocket;
 using System.Threading;
 using CtExtendLib;
+using System.Diagnostics;
 
 namespace VehiclePlannerUndoable.cs
 {
@@ -68,6 +69,10 @@ namespace VehiclePlannerUndoable.cs
 		/// iTS狀態
 		/// </summary>
 		private AGVStatus mStatus = new AGVStatus();
+		/// <summary>
+		/// 通訊指令交握Log檔名
+		/// </summary>
+		private const string CmdFileName = "Communication.log";
 		/// <summary>
 		/// Path 繪圖物件ID
 		/// </summary>
@@ -348,6 +353,8 @@ namespace VehiclePlannerUndoable.cs
 			bool success = true;
 			try
 			{
+				Console.WriteLine($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fffff")}] >> {packet.ToString()},{packet.TxID}");
+				CtLib.Library.CtLog.ReportLog($"Send >> Type = {packet.ToString()}, ID = {packet.TxID}", CmdFileName);
 				mClient.Send(packet);
 			}
 			catch (Exception)
@@ -385,10 +392,19 @@ namespace VehiclePlannerUndoable.cs
 		{
 			if (response is AGVStatus st)
 			{
-				if (Status.Description != st.Description)
+				if (Status.Battery != 0)
 				{
-					if(st.Description == EDescription.Charge) ChargeChange?.Invoke(true);
-					else if(st.Description == EDescription.Map) IsScanning = true;
+					if (Status.Description == EDescription.Charge) ChargeChange?.Invoke(true);
+					else if (Status.Description != EDescription.Charge) ChargeChange?.Invoke(false);
+				}
+				else
+				{
+					if (Status.Description != st.Description)
+					{
+						if (st.Description == EDescription.Charge) ChargeChange?.Invoke(true);
+						else if (Status.Description == EDescription.Charge) ChargeChange?.Invoke(false);
+						else if (st.Description == EDescription.Map) IsScanning = true;
+					}
 				}
 				Status = response as AGVStatus;
 			}
@@ -763,13 +779,20 @@ namespace VehiclePlannerUndoable.cs
 		/// <param name="e"></param>
 		private void MClient_ReceivedSerialDataEvent(object sender, ReceivedSerialDataEventArgs e)
 		{
+			DateTime time = DateTime.Now;
+			Stopwatch timer = new Stopwatch();
+			timer.Start();
+			Console.WriteLine($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fffff")}] << {e.Data.ToString()},{e.Data.TxID}");
 			if (e.Data is Serializable)
 			{
 				var product = e.Data as Serializable;
 				//if (product is BaseSerialCommand cmd) Console.WriteLine($"{cmd.Type.ToString()}");
 				/*-- 查詢是否有等待該封包 --*/
+
 				Task.Run(() => ReceiveDataCheck(product));
 			}
+			timer.Stop();
+			CtLib.Library.CtLog.ReportLog(time, $"Recv << Type = {e.Data.ToString()}, ID = {e.Data.TxID} Cost Time = {timer.Elapsed}", CmdFileName);
 		}
 
 		/// <summary>
